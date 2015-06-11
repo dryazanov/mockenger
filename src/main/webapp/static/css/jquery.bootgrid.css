@@ -78,7 +78,7 @@
   outline: 0;
 }
 .bootgrid-table th > .column-header-anchor {
-  color: #DDD;
+  /*color: #DDD;*/
   cursor: not-allowed;
   display: block;
   position: relative;
@@ -128,7 +128,7 @@
   margin: 0;
   outline: 0;
 }
-.bootgrid-table>thead>tr>th {
+/*.bootgrid-table>thead>tr>th {
   background-color: #0b3e6f;
   padding: 10px 5px;
 }
@@ -142,7 +142,7 @@
 }
 .bootgrid-table tbody>tr>td {
   border-top: 1px solid #777;
-}
+}*/
 .table-responsive .bootgrid-table {
   table-layout: inherit !important;
 }

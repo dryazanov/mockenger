@@ -1,8 +1,8 @@
 package org.mockenger.dev.repository;
 
-import org.mockenger.dev.model.mocks.request.IMockRequest;
-import org.mockenger.dev.model.mocks.request.IRequestEntity;
-import org.mockenger.dev.model.mocks.request.RequestEntity;
+import org.mockenger.dev.model.mock.request.IMockRequest;
+import org.mockenger.dev.model.mock.request.IRequestEntity;
+import org.mockenger.dev.model.mock.request.RequestEntity;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;

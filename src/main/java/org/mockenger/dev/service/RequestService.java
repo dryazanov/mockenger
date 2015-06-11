@@ -1,7 +1,7 @@
 package org.mockenger.dev.service;
 
-import org.mockenger.dev.model.mocks.request.IMockRequest;
-import org.mockenger.dev.model.mocks.request.IRequestEntity;
+import org.mockenger.dev.model.mock.request.IMockRequest;
+import org.mockenger.dev.model.mock.request.IRequestEntity;
 import org.mockenger.dev.repository.RequestRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +24,10 @@ public class RequestService<T extends IRequestEntity> extends CommonService<T> {
     @Autowired
     private RequestRepository requestRepository;
 
+
+    public IRequestEntity findById(String id) {
+        return requestRepository.findById(id);
+    }
 
     public T findMockedEntities(T mockRequest) {
         List<T> entities = (List<T>) requestRepository.findAll((IMockRequest) mockRequest);

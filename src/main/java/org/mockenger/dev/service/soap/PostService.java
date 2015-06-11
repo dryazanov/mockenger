@@ -2,12 +2,12 @@ package org.mockenger.dev.service.soap;
 
 import org.mockenger.dev.common.HttpUtils;
 import org.mockenger.dev.common.XmlHelper;
-import org.mockenger.dev.model.mocks.request.IRequestEntity;
-import org.mockenger.dev.model.mocks.request.part.Body;
-import org.mockenger.dev.model.mocks.request.part.Headers;
-import org.mockenger.dev.model.mocks.request.part.Parameters;
-import org.mockenger.dev.model.mocks.request.part.Path;
-import org.mockenger.dev.model.mocks.request.soap.PostEntity;
+import org.mockenger.dev.model.mock.request.IRequestEntity;
+import org.mockenger.dev.model.mock.request.part.Body;
+import org.mockenger.dev.model.mock.request.part.Headers;
+import org.mockenger.dev.model.mock.request.part.Parameters;
+import org.mockenger.dev.model.mock.request.part.Path;
+import org.mockenger.dev.model.mock.request.soap.PostEntity;
 import org.mockenger.dev.service.CommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,8 +1,8 @@
 package org.mockenger.dev.web;
 
 import org.mockenger.dev.common.CommonUtils;
-import org.mockenger.dev.model.mocks.group.GroupEntity;
-import org.mockenger.dev.model.mocks.request.IRequestEntity;
+import org.mockenger.dev.model.mock.group.GroupEntity;
+import org.mockenger.dev.model.mock.request.IRequestEntity;
 import org.mockenger.dev.service.rest.DeleteService;
 import org.mockenger.dev.service.rest.GetService;
 import org.mockenger.dev.service.rest.PostService;
