@@ -12,12 +12,6 @@ public class CustomInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(ServletContext container) throws ServletException {
-//        final AnnotationConfigWebApplicationContext webContext = new AnnotationConfigWebApplicationContext();
-//        webContext.register(AppConfiguration.class, MongoDbConfig.class);
-
-        // Manage the lifecycle of the root application context
-//        container.addListener(new ContextLoaderListener(webContext));
-
         // Create the dispatcher servlet's Spring application context
         AnnotationConfigWebApplicationContext dispatcherServlet = new AnnotationConfigWebApplicationContext();
         dispatcherServlet.register(WebMvcConfig.class);
