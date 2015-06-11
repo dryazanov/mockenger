@@ -1,8 +1,8 @@
 package org.mockenger.dev.web;
 
 import org.mockenger.dev.common.CommonUtils;
-import org.mockenger.dev.model.mocks.group.GroupEntity;
-import org.mockenger.dev.model.mocks.request.IRequestEntity;
+import org.mockenger.dev.model.mock.group.GroupEntity;
+import org.mockenger.dev.model.mock.request.IRequestEntity;
 import org.mockenger.dev.model.transformer.ITransformer;
 import org.mockenger.dev.model.transformer.RegexpTransformer;
 import org.mockenger.dev.service.soap.PostService;

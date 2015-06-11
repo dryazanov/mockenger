@@ -1,11 +1,11 @@
 package org.mockenger.dev.service.rest;
 
 import org.mockenger.dev.common.HttpUtils;
-import org.mockenger.dev.model.mocks.request.IRequestEntity;
-import org.mockenger.dev.model.mocks.request.part.Headers;
-import org.mockenger.dev.model.mocks.request.part.Parameters;
-import org.mockenger.dev.model.mocks.request.part.Path;
-import org.mockenger.dev.model.mocks.request.rest.GetEntity;
+import org.mockenger.dev.model.mock.request.IRequestEntity;
+import org.mockenger.dev.model.mock.request.part.Headers;
+import org.mockenger.dev.model.mock.request.part.Parameters;
+import org.mockenger.dev.model.mock.request.part.Path;
+import org.mockenger.dev.model.mock.request.rest.GetEntity;
 import org.mockenger.dev.service.RequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

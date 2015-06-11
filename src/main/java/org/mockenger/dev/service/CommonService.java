@@ -1,6 +1,6 @@
 package org.mockenger.dev.service;
 
-import org.mockenger.dev.model.mocks.request.IRequestEntity;
+import org.mockenger.dev.model.mock.request.IRequestEntity;
 import org.mockenger.dev.model.transformer.IMapTransformer;
 import org.mockenger.dev.model.transformer.ITransformer;
 import org.slf4j.Logger;
