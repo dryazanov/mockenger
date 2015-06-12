@@ -1,9 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
-<html>
+<html xmlns:form="http://www.w3.org/1999/xhtml" xmlns:c="http://www.springframework.org/schema/util">
 <head>
     <title></title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap.dark.css">
@@ -22,84 +21,99 @@
 <body style="padding:10px;">
 
 
-
 <div class="col-lg-6">
-<div class="well bs-component">
-<form class="form-horizontal">
-  <fieldset>
-    <legend>Legend</legend>
-    <div class="form-group">
-      <label for="inputEmail" class="col-lg-2 control-label">Email</label>
-      <div class="col-lg-10">
-        <input type="text" class="form-control" id="inputEmail" placeholder="Email">
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="inputPassword" class="col-lg-2 control-label">Password</label>
-      <div class="col-lg-10">
-        <input type="password" class="form-control" id="inputPassword" placeholder="Password">
-        <div class="checkbox">
-          <label>
-            <input type="checkbox"> Checkbox
-          </label>
-        </div>
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="textArea" class="col-lg-2 control-label">Textarea</label>
-      <div class="col-lg-10">
-        <textarea class="form-control" rows="3" id="textArea"></textarea>
-        <span class="help-block">A longer block of help text that breaks onto a new line and may extend beyond one line.</span>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="col-lg-2 control-label">Radios</label>
-      <div class="col-lg-10">
-        <div class="radio">
-          <label>
-            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="">
-            Option one is this
-          </label>
-        </div>
-        <div class="radio">
-          <label>
-            <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-            Option two can be something else
-          </label>
-        </div>
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="select" class="col-lg-2 control-label">Selects</label>
-      <div class="col-lg-10">
-        <select class="form-control" id="select">
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-          <option>5</option>
-        </select>
-        <br>
-        <select multiple="" class="form-control">
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-          <option>5</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group">
-      <div class="col-lg-10 col-lg-offset-2">
-        <button type="reset" class="btn btn-default">Cancel</button>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </div>
-    </div>
-  </fieldset>
-</form>
-</div>
-</div>
+    <div class="well bs-component">
+        <form:form class="form-horizontal" modelAttribute="requestEntity" action="${pageContext.request.contextPath}/requests/${requestId}/save">
+            <form:hidden path="id"/>
+            <fieldset>
+                <legend>Legend</legend>
+                <div class="form-group">
+                    <label for="inputName" class="col-lg-2 control-label">Name</label>
 
+                    <div class="col-lg-10">
+                        <form:input path="name" cssClass="form-control" id="inputName"/>
+                        <!--<span class="input-group-btn">
+                        <div class="btn-group">
+                              <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                Dropdown
+                                <span class="caret"></span>
+                              </a>
+                      <ul class="dropdown-menu">
+                        <li><a href="#">Dropdown link</a></li>
+                        <li><a href="#">Dropdown link</a></li>
+                        <li><a href="#">Dropdown link</a></li>
+                      </ul>
+                      </div>
+                          </span>
+                          </div>-->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPath" class="col-lg-2 control-label">Request path</label>
+
+                    <div class="col-lg-10">
+                        <form:input path="path.value" cssClass="form-control" id="inputPath"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="selectMethod" class="col-lg-2 control-label">Request method</label>
+
+                    <div class="col-lg-10">
+                        <form:select path="method" items="${requestMethods}" class="form-control" id="selectMethod" />
+                    </div>
+                </div>
+                <hr/>
+
+                <c:forEach items="${requestEntity.headers.values}" var="headerValue">
+                    <c:set var="hd" value="${headerValue.key}"/>
+                    <div class="form-group">
+                        <label for="inputDate" class="col-lg-2 control-label">${hd}</label>
+
+                        <div class="col-lg-10">
+                            <form:input path="headers.values[${hd}]" cssClass="form-control"/>
+                        </div>
+                    </div>
+                </c:forEach>
+                <hr/>
+
+                <c:forEach items="${requestEntity.parameters.values}" var="paramValue">
+                    <c:set var="pv" value="${paramValue.key}"/>
+                    <div class="form-group">
+                        <label for="inputDate" class="col-lg-2 control-label">${pv}</label>
+
+                        <div class="col-lg-10">
+                            <form:input path="parameters.values[${pv}]" cssClass="form-control"/>
+                        </div>
+                    </div>
+                </c:forEach>
+                <hr/>
+
+                <div class="form-group">
+                    <label for="textareaRequest" class="col-lg-2 control-label">Request body</label>
+
+                    <div class="col-lg-10">
+                        <form:textarea path="body.value" cssClass="form-control" rows="20" id="textareaRequest"></form:textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="textareaResponse" class="col-lg-2 control-label">Request body</label>
+
+                    <div class="col-lg-10">
+                        <form:textarea path="response.responseBody" cssClass="form-control" rows="20" id="textareaResponse"></form:textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-lg-10 col-lg-offset-2">
+                        <button type="reset" class="btn btn-default">Cancel</button>
+                        <input type="submit" class="btn btn-primary" />
+                    </div>
+                </div>
+            </fieldset>
+        </form:form>
+    </div>
+</div>
 
 
 </body>

@@ -1,6 +1,4 @@
-package org.mockenger.dev.web;
-
-import javax.servlet.http.HttpServletRequest;
+package org.mockenger.dev.controller;
 
 import org.mockenger.dev.model.error.ErrorMessage;
 import org.slf4j.Logger;
@@ -10,6 +8,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by dryazanov
@@ -24,7 +24,7 @@ public class ExceptionHandlingController {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)  // 500
     public ErrorMessage handleError500(HttpServletRequest req, RuntimeException ex) {
         LOG.error("RuntimeException has occured", ex);
-        return new ErrorMessage("Unable to process request. Internal server error.");
+        return new ErrorMessage("Unable to process request. Internal server error: " + ex.getMessage());
     }
 
     @ResponseBody

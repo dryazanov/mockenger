@@ -198,42 +198,4 @@ public class CommonService<T extends IRequestEntity> {
 
         return (filteredMocks != null && filteredMocks.size() > 0 ? filteredMocks.get(0) : null);
     }
-
-    /*public IRequestEntity validateCheckSum(IMockRequest mockRequest, List<? extends IRequestEntity> filteredMocks) {
-        String checkSum = mockRequest.getCheckSum();
-
-        for (IRequestEntity template : filteredMocks) {
-            if (mockRequest.getBody() != null && !StringUtils.isEmpty(mockRequest.getBody().getValue())) {
-                List<ITransformer> transformers = template.getBody().getTransformers();
-
-                if (!CollectionUtils.isEmpty(transformers)) {
-                    String requestBody = mockRequest.getBody().getValue();
-                    LOG.debug("Transformers found. Updating request body...");
-
-                    for (ITransformer transformer : transformers) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug(new StringBuilder()
-                                .append("Transformer type: ")
-                                .append(transformer.getType())
-                                .append("; pattern: ")
-                                .append(transformer.getPattern())
-                                .append("; replacement: ")
-                                .append(transformer.getReplacement())
-                                .toString());
-                        }
-                        requestBody = transformer.transform(requestBody);
-                    }
-
-                    checkSum = DigestUtils.md5DigestAsHex(requestBody.getBytes());
-                }
-            }
-
-            LOG.debug("Comparing checksums: " + checkSum + " <==> " + template.getCheckSum());
-            if (checkSum.equals(template.getCheckSum())) {
-                return template;
-            }
-        }
-
-        return null;
-    }*/
 }

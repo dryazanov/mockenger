@@ -1,6 +1,7 @@
-package org.mockenger.dev.web;
+package org.mockenger.dev.controller.endpoint;
 
 import org.mockenger.dev.common.CommonUtils;
+import org.mockenger.dev.controller.web.MainController;
 import org.mockenger.dev.model.mock.group.GroupEntity;
 import org.mockenger.dev.model.mock.request.IRequestEntity;
 import org.mockenger.dev.service.rest.DeleteService;

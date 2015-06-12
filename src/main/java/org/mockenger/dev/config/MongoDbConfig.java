@@ -23,6 +23,8 @@ public class MongoDbConfig extends AbstractMongoConfiguration {
     @Value("${db.port}")
     private int DB_PORT;
 
+    //TODO: Add fields login/Password for mongodb
+
     @Override
     protected String getDatabaseName() {
         return DB_NAME;
