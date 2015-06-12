@@ -1,5 +1,6 @@
-package org.mockenger.dev.web;
+package org.mockenger.dev.controller.endpoint;
 
+import org.mockenger.dev.controller.CommonController;
 import org.mockenger.dev.model.dto.GridDTO;
 import org.mockenger.dev.model.mock.MockRequestType;
 import org.mockenger.dev.model.mock.group.GroupEntity;

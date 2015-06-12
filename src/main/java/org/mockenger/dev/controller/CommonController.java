@@ -1,4 +1,4 @@
-package org.mockenger.dev.web;
+package org.mockenger.dev.controller;
 
 import org.mockenger.dev.model.mock.group.GroupEntity;
 import org.mockenger.dev.service.GroupService;
@@ -24,7 +24,7 @@ public class CommonController {
     private RequestService requestService;
 
 
-    public HttpHeaders getResponseHeaders() {
+    protected HttpHeaders getResponseHeaders() {
         return responseHeaders;
     }
 
@@ -32,7 +32,7 @@ public class CommonController {
         return groupService;
     }
 
-    public RequestService getRequestService() {
+    protected RequestService getRequestService() {
         return requestService;
     }
 

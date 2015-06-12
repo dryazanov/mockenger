@@ -21,7 +21,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
         "org.mockenger.dev.config",
         "org.mockenger.dev.service",
         "org.mockenger.dev.repository",
-        "org.mockenger.dev.web"
+        "org.mockenger.dev.controller"
 })
 @PropertySource("classpath:system.properties")
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
