@@ -1,3 +1,3 @@
-{"_class":"org.mockenger.dev.model.mocks.group.GroupEntity","_id":{"$oid":"557050015a672b9af6cfcb41"},"name":"Get customer by gin","recordingStarted":false,"type":"REST"}
-{"_class":"org.mockenger.dev.model.mocks.group.GroupEntity","_id":{"$oid":"5571f383ab6b8c9a859507a7"},"name":"TEST GROUP RENAMED","recordingStarted":false,"type":"REST"}
-{"_class":"org.mockenger.dev.model.mocks.group.GroupEntity","_id":{"$oid":"5573106205fb3b98bf747cfc"},"name":"SOAP GROUP","recordingStarted":false,"type":"SOAP"}
+{"_class":"com.socialstartup.mockenger.model.mocks.group.GroupEntity","_id":{"$oid":"557050015a672b9af6cfcb41"},"name":"Get customer by gin","recordingStarted":false,"type":"REST"}
+{"_class":"com.socialstartup.mockenger.model.mocks.group.GroupEntity","_id":{"$oid":"5571f383ab6b8c9a859507a7"},"name":"TEST GROUP RENAMED","recordingStarted":false,"type":"REST"}
+{"_class":"com.socialstartup.mockenger.model.mocks.group.GroupEntity","_id":{"$oid":"5573106205fb3b98bf747cfc"},"name":"SOAP GROUP","recordingStarted":false,"type":"SOAP"}
