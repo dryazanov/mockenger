@@ -19,6 +19,11 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <spring.framework.version>4.1.6.RELEASE</spring.framework.version>
+        <spring.data.mongodb.version>1.6.2.RELEASE</spring.data.mongodb.version>
+        <servlet.api.version>3.0.1</servlet.api.version>
+        <aspectj.version>1.7.3</aspectj.version>
+        <slf4j.version>1.7.5</slf4j.version>
+        <junit.version>4.9</junit.version>
     </properties>
 
     <build>
