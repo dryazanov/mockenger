@@ -2,12 +2,12 @@ package com.socialstartup.mockenger.frontend.controller.endpoint;
 
 import com.socialstartup.mockenger.frontend.common.CommonUtils;
 import com.socialstartup.mockenger.frontend.controller.web.MainController;
-import com.socialstartup.mockenger.model.mock.group.GroupEntity;
-import com.socialstartup.mockenger.model.mock.request.IRequestEntity;
 import com.socialstartup.mockenger.frontend.service.rest.DeleteService;
 import com.socialstartup.mockenger.frontend.service.rest.GetService;
 import com.socialstartup.mockenger.frontend.service.rest.PostService;
 import com.socialstartup.mockenger.frontend.service.rest.PutService;
+import com.socialstartup.mockenger.model.mock.group.GroupEntity;
+import com.socialstartup.mockenger.model.mock.request.RequestEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,8 +63,8 @@ public class RestController extends MainController {
     @RequestMapping(value = "/**", method = GET)
     public ResponseEntity processGetRequest(@PathVariable String groupId, HttpServletRequest request) {
         GroupEntity group = findGroupById(groupId);
-        IRequestEntity mockRequest = getService.createMockRequest(group.getId(), request);
-        return findMockedEntities(mockRequest, group.isRecordingStarted());
+        RequestEntity mockRequest = getService.createMockRequest(group.getId(), request);
+        return findMockedEntities(mockRequest, group.isRecording());
     }
 
     /**
@@ -77,7 +77,7 @@ public class RestController extends MainController {
     @ResponseBody
     @RequestMapping(value = "/**", method = POST)
     public ResponseEntity processPostRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
-        IRequestEntity mockRequest = null;
+        RequestEntity mockRequest = null;
         GroupEntity group = findGroupById(groupId);
 
         try {
@@ -86,7 +86,7 @@ public class RestController extends MainController {
             e.printStackTrace();
         }
 
-        return findMockedEntities(mockRequest, group.isRecordingStarted());
+        return findMockedEntities(mockRequest, group.isRecording());
     }
 
 
@@ -100,7 +100,7 @@ public class RestController extends MainController {
     @ResponseBody
     @RequestMapping(value = "/**", method = PUT)
     public ResponseEntity processPutRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
-        IRequestEntity mockRequest = null;
+        RequestEntity mockRequest = null;
         GroupEntity group = findGroupById(groupId);
 
         try {
@@ -109,7 +109,7 @@ public class RestController extends MainController {
             e.printStackTrace();
         }
 
-        return findMockedEntities(mockRequest, group.isRecordingStarted());
+        return findMockedEntities(mockRequest, group.isRecording());
     }
 
 
@@ -123,8 +123,8 @@ public class RestController extends MainController {
     @RequestMapping(value = "/**", method = DELETE)
     public ResponseEntity processDeleteRequest(@PathVariable String groupId, HttpServletRequest request) {
         GroupEntity group = findGroupById(groupId);
-        IRequestEntity mockRequest = deleteService.createMockRequest(group.getId(), request);
-        return findMockedEntities(mockRequest, group.isRecordingStarted());
+        RequestEntity mockRequest = deleteService.createMockRequest(group.getId(), request);
+        return findMockedEntities(mockRequest, group.isRecording());
     }
 
 
@@ -134,13 +134,13 @@ public class RestController extends MainController {
      * @param recordRequests
      * @return
      */
-    private ResponseEntity findMockedEntities(IRequestEntity mockRequest, boolean recordRequests) {
+    private ResponseEntity findMockedEntities(RequestEntity mockRequest, boolean recordRequests) {
         if (mockRequest == null) {
             // TODO: Create and throw MockObjectNotCreatedException
             throw new RuntimeException("Can't create mock object");
         }
 
-        IRequestEntity mockResult = getRequestService().findMockedEntities(mockRequest);
+        RequestEntity mockResult = getRequestService().findMockedEntities(mockRequest);
         return generateResponse(mockRequest, mockResult, recordRequests);
     }
 
@@ -151,7 +151,7 @@ public class RestController extends MainController {
      * @param recordRequests
      * @return
      */
-    private ResponseEntity generateResponse(IRequestEntity mockRequest, IRequestEntity mockResult, boolean recordRequests) {
+    private ResponseEntity generateResponse(RequestEntity mockRequest, RequestEntity mockResult, boolean recordRequests) {
         if (mockResult != null) {
             getResponseHeaders().set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             // TODO: Check mockResult.getResponse().getResponseBody() for null values

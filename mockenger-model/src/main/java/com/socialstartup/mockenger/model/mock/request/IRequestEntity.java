@@ -48,9 +48,4 @@ public interface IRequestEntity extends IMockRequest {
     MockResponse getResponse();
 
     void setResponse(MockResponse response);
-
-    /*List<ITransformer> getTransformers();
-
-    void setTransformers(List<ITransformer> transformers);*/
-
 }

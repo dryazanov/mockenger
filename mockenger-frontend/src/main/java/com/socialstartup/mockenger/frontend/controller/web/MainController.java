@@ -1,8 +1,8 @@
 package com.socialstartup.mockenger.frontend.controller.web;
 
 import com.socialstartup.mockenger.frontend.controller.CommonController;
+import com.socialstartup.mockenger.model.RequestType;
 import com.socialstartup.mockenger.model.mock.group.GroupEntity;
-import com.socialstartup.mockenger.model.mock.request.IRequestEntity;
 import com.socialstartup.mockenger.model.mock.request.RequestEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -49,11 +48,11 @@ public class MainController extends CommonController {
 
     @RequestMapping(value = {"/requests/{requestId}/view"}, method = GET)
     public String requestEntityViewPage(@PathVariable(value = "requestId") String requestId, Model model) {
-        IRequestEntity requestEntity = getRequestService().findById(requestId);
+        RequestEntity requestEntity = getRequestService().findById(requestId);
 
         model.addAttribute("requestId", requestId);
         model.addAttribute("requestEntity", requestEntity);
-        model.addAttribute("requestMethods", RequestMethod.values());
+        model.addAttribute("requestMethods", RequestType.values());
 
         return "request/view";
     }

@@ -1,7 +1,5 @@
 package com.socialstartup.mockenger.frontend.repository;
 
-import com.socialstartup.mockenger.model.mock.request.IMockRequest;
-import com.socialstartup.mockenger.model.mock.request.IRequestEntity;
 import com.socialstartup.mockenger.model.mock.request.RequestEntity;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -18,27 +16,26 @@ public class RequestRepository extends GenericRepository<RequestEntity> {
     public static final String COLLECTION_NAME = "request";
 
     @Override
-    protected String getCollectionName() {
+    public String getCollectionName() {
         return COLLECTION_NAME;
     }
 
-    public void removeAllByGroupId(String groupId) {
-        Query query = new Query(Criteria.where(GROUP_ID).is(groupId));
-        getMongoTemplate().findAllAndRemove(query, getType(), getCollectionName());
+    @Override
+    public Class<RequestEntity> getType() {
+        return RequestEntity.class;
     }
 
-    public List<RequestEntity> findAll(IMockRequest mockRequest) {
+    public List<RequestEntity> findAll(RequestEntity mockRequest) {
         Query query = new Query(
                 Criteria.where(GROUP_ID).is(mockRequest.getGroupId())
-                        //.and(PATH).is(mockRequest.getPath().getValue())
                         .and(METHOD).is(mockRequest.getMethod())
-                //.and(PARAMETERS).is(mockRequest.getParameters().getValues())
         );
 
         return getMongoTemplate().find(query, getType(), getCollectionName());
     }
 
-    public void save(IRequestEntity entity) {
-        getMongoTemplate().save(entity, getCollectionName());
+    public List<RequestEntity> findAllByGroupId(String groupId) {
+        Query query = new Query(Criteria.where(GROUP_ID).is(groupId));
+        return getMongoTemplate().find(query, getType(), getCollectionName());
     }
 }

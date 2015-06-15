@@ -1,8 +1,8 @@
 package com.socialstartup.mockenger.frontend.service;
 
-import com.socialstartup.mockenger.model.mock.request.IMockRequest;
-import com.socialstartup.mockenger.model.mock.request.IRequestEntity;
 import com.socialstartup.mockenger.frontend.repository.RequestRepository;
+import com.socialstartup.mockenger.model.mock.request.IMockRequest;
+import com.socialstartup.mockenger.model.mock.request.RequestEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import java.util.List;
  * Created by x079089 on 3/24/2015.
  */
 @Component
-public class RequestService<T extends IRequestEntity> extends CommonService<T> {
+public class RequestService extends CommonService {
 
     /**
      * Logger
@@ -25,12 +25,12 @@ public class RequestService<T extends IRequestEntity> extends CommonService<T> {
     private RequestRepository requestRepository;
 
 
-    public IRequestEntity findById(String id) {
+    public RequestEntity findById(String id) {
         return requestRepository.findById(id);
     }
 
-    public T findMockedEntities(T mockRequest) {
-        List<T> entities = (List<T>) requestRepository.findAll((IMockRequest) mockRequest);
+    public RequestEntity findMockedEntities(RequestEntity mockRequest) {
+        List<RequestEntity> entities = requestRepository.findAll(mockRequest);
 
         if (entities != null && entities.size() > 0) {
             return this.doFilter(mockRequest, entities);
@@ -39,11 +39,15 @@ public class RequestService<T extends IRequestEntity> extends CommonService<T> {
         return null;
     }
 
-    public List<T> findAllByGroupId(String groupId) {
-        return (List<T>) requestRepository.findAllByGroupId(groupId);
+    public List<RequestEntity> findAllByGroupId(String groupId) {
+        return requestRepository.findAllByGroupId(groupId);
     }
 
-    public void save(T entity) {
+    public void save(RequestEntity entity) {
         requestRepository.save(entity);
+    }
+
+    public void remove(RequestEntity entity) {
+        requestRepository.remove(entity);
     }
 }

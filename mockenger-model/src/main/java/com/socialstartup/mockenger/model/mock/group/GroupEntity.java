@@ -1,9 +1,7 @@
 package com.socialstartup.mockenger.model.mock.group;
 
-import com.socialstartup.mockenger.model.mock.MockRequestType;
 import com.socialstartup.mockenger.model.persistent.base.AbstractPersistentEntity;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.annotation.Id;
 
 /**
  * Created by x079089 on 3/12/2015.
@@ -11,18 +9,29 @@ import org.springframework.data.annotation.Id;
 @Document
 public class GroupEntity extends AbstractPersistentEntity<String> {
 
+    private String projectId;
+
     private String name;
 
-    private MockRequestType type;
+    private GroupType type;
 
-    private boolean recordingStarted;
+    private boolean recording;
+
 
     public GroupEntity() {}
 
-    public GroupEntity(String name, MockRequestType type, boolean recordingStarted) {
+    public GroupEntity(String groupId, String name, GroupType type, boolean recording) {
         this.name = name;
         this.type = type;
-        this.recordingStarted = recordingStarted;
+        this.recording = recording;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
     }
 
     public String getName() {
@@ -33,19 +42,19 @@ public class GroupEntity extends AbstractPersistentEntity<String> {
         this.name = name;
     }
 
-    public MockRequestType getType() {
+    public GroupType getType() {
         return type;
     }
 
-    public void setType(MockRequestType type) {
+    public void setType(GroupType type) {
         this.type = type;
     }
 
-    public boolean isRecordingStarted() {
-        return recordingStarted;
+    public boolean isRecording() {
+        return recording;
     }
 
-    public void setRecordingStarted(boolean recordingStarted) {
-        this.recordingStarted = recordingStarted;
+    public void setRecording(boolean recording) {
+        this.recording = recording;
     }
 }

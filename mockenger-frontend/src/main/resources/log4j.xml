@@ -11,7 +11,7 @@
         </layout>
     </appender>
 
-    <logger name="org.mockenger.dev">
+    <logger name="com.socialstartup.mockenger">
         <level value="DEBUG" />
     </logger>
 
