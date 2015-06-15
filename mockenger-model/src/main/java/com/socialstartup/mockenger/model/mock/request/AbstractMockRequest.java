@@ -42,15 +42,4 @@ public abstract class AbstractMockRequest implements IMockRequest {
         this.method = method;
     }
 
-    @Override
-    public String toString() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            LOG.error("Couldn't convert object to json string", e);
-        }
-
-        return this.toString();
-    }
 }
