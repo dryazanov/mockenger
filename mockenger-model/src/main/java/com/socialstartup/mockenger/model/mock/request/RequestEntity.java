@@ -12,6 +12,7 @@ import com.socialstartup.mockenger.model.mock.response.MockResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 
 import java.util.Date;
 
@@ -23,7 +24,7 @@ public class RequestEntity implements IRequestEntity {
     /**
      * Logger
      */
-    @JsonIgnore
+    @Transient
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMockRequest.class);
 
 
