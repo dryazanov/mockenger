@@ -1,11 +1,11 @@
 package com.socialstartup.mockenger.frontend.controller.endpoint;
 
-import com.socialstartup.mockenger.model.mock.MockRequestType;
-import com.socialstartup.mockenger.model.mock.group.GroupEntity;
-import com.socialstartup.mockenger.model.mock.request.IRequestEntity;
 import com.socialstartup.mockenger.frontend.controller.CommonController;
-import com.socialstartup.mockenger.model.dto.GridDTO;
 import com.socialstartup.mockenger.frontend.service.mapper.request.GridRowMapper;
+import com.socialstartup.mockenger.model.dto.GridDTO;
+import com.socialstartup.mockenger.model.mock.group.GroupEntity;
+import com.socialstartup.mockenger.model.mock.group.GroupType;
+import com.socialstartup.mockenger.model.mock.request.RequestEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -100,8 +100,9 @@ public class GroupController extends CommonController {
     @ResponseBody
     @RequestMapping(value = "/groups/{groupId}", method = DELETE)
     public ResponseEntity deleteGroup(@PathVariable String groupId) {
-        if (findGroupById(groupId) != null) {
-            getGroupService().remove(groupId);
+        GroupEntity groupEntity = findGroupById(groupId);
+        if (groupEntity != null) {
+            getGroupService().remove(groupEntity);
             return new ResponseEntity(getResponseHeaders(), HttpStatus.OK);
         } else {
             return new ResponseEntity(getResponseHeaders(), HttpStatus.NOT_FOUND);
@@ -111,7 +112,7 @@ public class GroupController extends CommonController {
 
     @ResponseBody
     @RequestMapping(value = "/groups", method = GET)
-    public ResponseEntity getGroupList(@RequestParam(value = "type") MockRequestType type) {
+    public ResponseEntity getGroupList(@RequestParam(value = "type") GroupType type) {
         if (type != null) {
             List<GroupEntity> groupList = getGroupService().findByType(type);
 
@@ -144,10 +145,10 @@ public class GroupController extends CommonController {
         GroupEntity groupEntity = findGroupById(groupId);
 
         if (groupEntity != null) {
-            List<IRequestEntity> requestList = getRequestService().findAllByGroupId(groupEntity.getId());
+            List<RequestEntity> requestList = getRequestService().findAllByGroupId(groupEntity.getId());
 
             if (requestList == null) {
-                requestList = new ArrayList<IRequestEntity>();
+                requestList = new ArrayList<>();
             }
 
             GridRowMapper mapper = new GridRowMapper();

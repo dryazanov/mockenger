@@ -2,10 +2,10 @@ package com.socialstartup.mockenger.frontend.controller.endpoint;
 
 import com.socialstartup.mockenger.frontend.common.CommonUtils;
 import com.socialstartup.mockenger.frontend.controller.web.MainController;
-import com.socialstartup.mockenger.model.mock.group.GroupEntity;
-import com.socialstartup.mockenger.model.mock.request.IRequestEntity;
-import com.socialstartup.mockenger.model.transformer.ITransformer;
 import com.socialstartup.mockenger.frontend.service.soap.PostService;
+import com.socialstartup.mockenger.model.mock.group.GroupEntity;
+import com.socialstartup.mockenger.model.mock.request.RequestEntity;
+import com.socialstartup.mockenger.model.transformer.ITransformer;
 import com.socialstartup.mockenger.model.transformer.RegexpTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,8 +72,8 @@ public class SoapController extends MainController {
         } catch (TransformerException e) {
             e.printStackTrace();
         }
-        IRequestEntity mockRequest = postService.createMockRequest(group.getId(), soapBody, request);
-        IRequestEntity mockResult = getRequestService().findMockedEntities(mockRequest);
+        RequestEntity mockRequest = postService.createMockRequest(group.getId(), soapBody, request);
+        RequestEntity mockResult = getRequestService().findMockedEntities(mockRequest);
 
         if (mockResult != null) {
             getResponseHeaders().set("Content-Type", MediaType.APPLICATION_XML_VALUE);
@@ -82,7 +82,7 @@ public class SoapController extends MainController {
             return new ResponseEntity(mockResult.getResponse().getResponseBody(), getResponseHeaders(), HttpStatus.valueOf(httpStatusCode));
         } else {
             HttpStatus status = HttpStatus.NOT_FOUND;
-            if (group.isRecordingStarted()) {
+            if (group.isRecording()) {
                 // TODO: Decide which unique id generator is better
                 mockRequest.setId(CommonUtils.generateUniqueId());
                 getRequestService().save(mockRequest);

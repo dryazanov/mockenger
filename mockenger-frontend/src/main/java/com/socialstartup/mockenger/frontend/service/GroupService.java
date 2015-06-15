@@ -1,9 +1,9 @@
 package com.socialstartup.mockenger.frontend.service;
 
-import com.socialstartup.mockenger.model.mock.MockRequestType;
-import com.socialstartup.mockenger.model.mock.group.GroupEntity;
 import com.socialstartup.mockenger.frontend.repository.GroupRepository;
-import com.socialstartup.mockenger.frontend.repository.RequestRepository;
+import com.socialstartup.mockenger.model.mock.group.GroupEntity;
+import com.socialstartup.mockenger.model.mock.group.GroupType;
+import com.socialstartup.mockenger.model.mock.request.RequestEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,29 +16,32 @@ import java.util.List;
 public class GroupService {
 
     @Autowired
-    private GroupRepository groupRepository;
+    private RequestService requestService;
 
     @Autowired
-    private RequestRepository requestRepository;
+    private GroupRepository groupRepository;
 
 
     public GroupEntity findById(String groupId) {
         return groupRepository.findById(groupId);
     }
 
-    public List<GroupEntity> findByType(MockRequestType type) {
+    public List<GroupEntity> findByType(GroupType type) {
         return groupRepository.findAllByType(type);
+    }
+
+    public List<GroupEntity> findAllByProjectId(String projectId) {
+        return groupRepository.findAllByProjectId(projectId);
     }
 
     public void save(GroupEntity entity) {
         groupRepository.save(entity);
     }
 
-    public void remove(String groupId) {
-        GroupEntity entity = groupRepository.findById(groupId);
-        if (entity != null) {
-            requestRepository.removeAllByGroupId(groupId);
-            groupRepository.remove(entity);
+    public void remove(GroupEntity groupEntity) {
+        for (RequestEntity requestEntity : requestService.findAllByGroupId(groupEntity.getId())) {
+            requestService.remove(requestEntity);
         }
+        groupRepository.remove(groupEntity);
     }
 }

@@ -1,6 +1,5 @@
 package com.socialstartup.mockenger.model.persistent.base;
 
-import com.socialstartup.mockenger.model.mock.request.AbstractMockRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.Id;
@@ -14,7 +13,7 @@ import java.io.Serializable;
 public abstract class AbstractPersistentEntity<ID extends Serializable> {
 
     @Transient
-    protected static final Logger LOG = LoggerFactory.getLogger(AbstractMockRequest.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(AbstractPersistentEntity.class);
 
     @Id
     private ID id;

@@ -1,7 +1,7 @@
 package com.socialstartup.mockenger.frontend.service.mapper.request;
 
 import com.socialstartup.mockenger.model.dto.RequestRowDTO;
-import com.socialstartup.mockenger.model.mock.request.IRequestEntity;
+import com.socialstartup.mockenger.model.mock.request.RequestEntity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,17 +12,17 @@ import java.util.List;
  */
 public class GridRowMapper {
 
-    public List<RequestRowDTO> map(List<IRequestEntity> requestEntities) {
+    public List<RequestRowDTO> map(List<RequestEntity> requestEntities) {
         List<RequestRowDTO> dtoList = new ArrayList<RequestRowDTO>(requestEntities.size());
 
-        for (IRequestEntity requestEntity : requestEntities) {
+        for (RequestEntity requestEntity : requestEntities) {
             dtoList.add(convert(requestEntity));
         }
 
         return dtoList;
     }
 
-    private RequestRowDTO convert(IRequestEntity requestEntity) {
+    private RequestRowDTO convert(RequestEntity requestEntity) {
         RequestRowDTO dto = new RequestRowDTO();
 
         dto.setId(requestEntity.getId());

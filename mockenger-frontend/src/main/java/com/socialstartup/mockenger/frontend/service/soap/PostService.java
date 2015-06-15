@@ -1,18 +1,17 @@
 package com.socialstartup.mockenger.frontend.service.soap;
 
 import com.socialstartup.mockenger.commons.utils.XmlHelper;
+import com.socialstartup.mockenger.frontend.common.CommonUtils;
 import com.socialstartup.mockenger.frontend.common.HttpUtils;
 import com.socialstartup.mockenger.frontend.service.CommonService;
-import com.socialstartup.mockenger.model.mock.request.IRequestEntity;
+import com.socialstartup.mockenger.model.mock.request.entity.PostEntity;
 import com.socialstartup.mockenger.model.mock.request.part.Body;
 import com.socialstartup.mockenger.model.mock.request.part.Headers;
 import com.socialstartup.mockenger.model.mock.request.part.Parameters;
 import com.socialstartup.mockenger.model.mock.request.part.Path;
-import com.socialstartup.mockenger.model.mock.request.soap.PostEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.soap.SOAPException;
@@ -26,7 +25,7 @@ import java.io.StringReader;
  * Created by x079089 on 3/24/2015.
  */
 @Component(value = "soapPostService")
-public class PostService<T extends IRequestEntity> extends CommonService<T> {
+public class PostService extends CommonService {
 
     /**
      * Logger
@@ -34,21 +33,19 @@ public class PostService<T extends IRequestEntity> extends CommonService<T> {
     private static final Logger LOG = LoggerFactory.getLogger(PostService.class);
 
 
-    public T createMockRequest(String groupId, String soapBody, HttpServletRequest request) {
-        String checkSum = DigestUtils.md5DigestAsHex(soapBody.getBytes());
-
+    public PostEntity createMockRequest(String groupId, String soapBody, HttpServletRequest request) {
         Body body = new Body(soapBody);
         Path path = new Path(HttpUtils.getUrlPath(request));
         Headers headers = new Headers(HttpUtils.getHeaders(request, false));
         Parameters parameters = new Parameters(HttpUtils.getParameterMap(request));
 
-        T mockRequest = (T) new PostEntity();
+        PostEntity mockRequest = new PostEntity();
         mockRequest.setGroupId(groupId);
         mockRequest.setBody(body);
         mockRequest.setPath(path);
         mockRequest.setHeaders(headers);
         mockRequest.setParameters(parameters);
-        mockRequest.setCheckSum(checkSum);
+        mockRequest.setCheckSum(CommonUtils.getCheckSum(mockRequest));
 
         return mockRequest;
     }
