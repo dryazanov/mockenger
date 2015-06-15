@@ -1,6 +1,7 @@
 package com.socialstartup.mockenger.model.mock.group;
 
 import com.socialstartup.mockenger.model.mock.MockRequestType;
+import com.socialstartup.mockenger.model.persistent.base.AbstractPersistentEntity;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.annotation.Id;
 
@@ -8,10 +9,7 @@ import org.springframework.data.annotation.Id;
  * Created by x079089 on 3/12/2015.
  */
 @Document
-public class GroupEntity {
-
-    @Id
-    private String id;
+public class GroupEntity extends AbstractPersistentEntity<String> {
 
     private String name;
 
@@ -33,14 +31,6 @@ public class GroupEntity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public MockRequestType getType() {

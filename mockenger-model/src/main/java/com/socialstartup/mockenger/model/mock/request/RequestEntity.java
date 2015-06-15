@@ -1,6 +1,5 @@
 package com.socialstartup.mockenger.model.mock.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialstartup.mockenger.model.RequestType;
@@ -9,27 +8,18 @@ import com.socialstartup.mockenger.model.mock.request.part.Headers;
 import com.socialstartup.mockenger.model.mock.request.part.Parameters;
 import com.socialstartup.mockenger.model.mock.request.part.Path;
 import com.socialstartup.mockenger.model.mock.response.MockResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
+import com.socialstartup.mockenger.model.persistent.base.AbstractPersistentEntity;
 
 import java.util.Date;
 
 /**
  * Created by x079089 on 3/12/2015.
  */
-public class RequestEntity implements IRequestEntity {
+public class RequestEntity extends AbstractPersistentEntity<String> implements IRequestEntity {
 
     /**
      * Logger
      */
-    @Transient
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractMockRequest.class);
-
-
-    @Id
-    private String id;
 
     private String groupId;
 
@@ -52,17 +42,6 @@ public class RequestEntity implements IRequestEntity {
     private MockResponse response;
 
 //    private List<ITransformer> transformers;
-
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
 
     @Override
     public String getGroupId() {
@@ -175,15 +154,4 @@ public class RequestEntity implements IRequestEntity {
     }*/
 
 
-    @Override
-    public String toString() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            LOG.error("Couldn't convert object to json string", e);
-        }
-
-        return this.toString();
-    }
 }

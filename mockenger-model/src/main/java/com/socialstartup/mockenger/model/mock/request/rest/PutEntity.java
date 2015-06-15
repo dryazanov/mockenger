@@ -16,6 +16,6 @@ public class PutEntity extends RequestEntity {
 
     @Override
     public String getCheckSum() {
-        return DigestUtils.md5DigestAsHex(getBody().getValue().toString().getBytes());
+        return DigestUtils.md5DigestAsHex(getBody().getValue().getBytes());
     }
 }
