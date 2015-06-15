@@ -1,11 +1,11 @@
 package com.socialstartup.mockenger.model.mock.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialstartup.mockenger.model.RequestType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.annotation.Transient;
 
 /**
  * Created by x079089 on 3/12/2015.
@@ -15,7 +15,7 @@ public abstract class AbstractMockRequest implements IMockRequest {
     /**
      * Logger
      */
-    @JsonIgnore
+    @Transient
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMockRequest.class);
 
     private String groupId;
