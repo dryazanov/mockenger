@@ -1,7 +1,5 @@
 package com.socialstartup.mockenger.model.mock.request;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialstartup.mockenger.model.RequestType;
 import com.socialstartup.mockenger.model.mock.request.part.Body;
 import com.socialstartup.mockenger.model.mock.request.part.Headers;
