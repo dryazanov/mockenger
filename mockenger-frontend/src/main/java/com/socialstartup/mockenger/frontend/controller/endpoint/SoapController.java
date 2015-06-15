@@ -78,7 +78,8 @@ public class SoapController extends MainController {
         if (mockResult != null) {
             getResponseHeaders().set("Content-Type", MediaType.APPLICATION_XML_VALUE);
             // TODO: Check mockResult.getResponse().getResponseBody() for null values
-            return new ResponseEntity(mockResult.getResponse().getResponseBody(), getResponseHeaders(), mockResult.getResponse().getHttpStatus());
+            int httpStatusCode = mockResult.getResponse().getHttpStatus();
+            return new ResponseEntity(mockResult.getResponse().getResponseBody(), getResponseHeaders(), HttpStatus.valueOf(httpStatusCode));
         } else {
             HttpStatus status = HttpStatus.NOT_FOUND;
             if (group.isRecordingStarted()) {

@@ -10,18 +10,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>mockenger-model</artifactId>
+    <artifactId>mockenger-commons</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-mongodb</artifactId>
-            <version>${spring.data.mongodb.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.socialstartup</groupId>
-            <artifactId>mockenger-commons</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.2.2</version>
         </dependency>
     </dependencies>
 
