@@ -155,7 +155,8 @@ public class RestController extends MainController {
         if (mockResult != null) {
             getResponseHeaders().set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             // TODO: Check mockResult.getResponse().getResponseBody() for null values
-            return new ResponseEntity(mockResult.getResponse().getResponseBody(), getResponseHeaders(), mockResult.getResponse().getHttpStatus());
+            int httpStatusCode = mockResult.getResponse().getHttpStatus();
+            return new ResponseEntity(mockResult.getResponse().getResponseBody(), getResponseHeaders(), HttpStatus.valueOf(httpStatusCode));
         } else {
             HttpStatus status = HttpStatus.NOT_FOUND;
             if (recordRequests) {

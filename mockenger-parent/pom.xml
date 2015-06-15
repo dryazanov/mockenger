@@ -10,6 +10,7 @@
     <modules>
         <module>../mockenger-model</module>
         <module>../mockenger-frontend</module>
+        <module>../mockenger-commons</module>
     </modules>
     <packaging>pom</packaging>
 

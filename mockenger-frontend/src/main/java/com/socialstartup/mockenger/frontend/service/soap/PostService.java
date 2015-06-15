@@ -1,12 +1,12 @@
 package com.socialstartup.mockenger.frontend.service.soap;
 
+import com.socialstartup.mockenger.commons.utils.XmlHelper;
 import com.socialstartup.mockenger.frontend.common.HttpUtils;
-import com.socialstartup.mockenger.frontend.common.XmlHelper;
+import com.socialstartup.mockenger.frontend.service.CommonService;
 import com.socialstartup.mockenger.model.mock.request.IRequestEntity;
 import com.socialstartup.mockenger.model.mock.request.part.Body;
 import com.socialstartup.mockenger.model.mock.request.part.Headers;
 import com.socialstartup.mockenger.model.mock.request.part.Parameters;
-import com.socialstartup.mockenger.frontend.service.CommonService;
 import com.socialstartup.mockenger.model.mock.request.part.Path;
 import com.socialstartup.mockenger.model.mock.request.soap.PostEntity;
 import org.slf4j.Logger;
