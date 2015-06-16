@@ -7,11 +7,11 @@ import java.util.Map;
  */
 public class MockResponse implements IMockResponse {
 
-    protected int httpStatus;
+    private int httpStatus;
 
-    private Map<String, String> responseHeaders;
+    private Map<String, String> headers;
 
-    protected String responseBody;
+    private String body;
 
 
     @Override
@@ -25,22 +25,22 @@ public class MockResponse implements IMockResponse {
     }
 
     @Override
-    public Map<String, String> getResponseHeaders() {
-        return responseHeaders;
+    public Map<String, String> getHeaders() {
+        return headers;
     }
 
     @Override
-    public void setResponseHeaders(Map<String, String> responseHeaders) {
-        this.responseHeaders = responseHeaders;
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
     }
 
     @Override
-    public String getResponseBody() {
-        return responseBody;
+    public String getBody() {
+        return body;
     }
 
     @Override
-    public void setResponseBody(String responseBody) {
-        this.responseBody = responseBody;
+    public void setBody(String body) {
+        this.body = body;
     }
 }

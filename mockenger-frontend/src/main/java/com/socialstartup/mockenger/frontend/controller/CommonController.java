@@ -1,19 +1,18 @@
 package com.socialstartup.mockenger.frontend.controller;
 
-import com.socialstartup.mockenger.model.mock.group.GroupEntity;
 import com.socialstartup.mockenger.frontend.service.GroupService;
 import com.socialstartup.mockenger.frontend.service.RequestService;
+import com.socialstartup.mockenger.model.mock.group.GroupEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Controller;
 
 
-@Controller
+//@Controller
 public class CommonController {
 
-    private final String APPLICATION_JSONP_REQUEST_VALUE = "application/javascript";
+//    private final String APPLICATION_JSONP_REQUEST_VALUE = "application/javascript";
 
-    private final String APPLICATION_JSONP_RESPONSE_VALUE = "application/javascript;charset=UTF-8";
+//    private final String APPLICATION_JSONP_RESPONSE_VALUE = "application/javascript;charset=UTF-8";
 
     private HttpHeaders responseHeaders = new HttpHeaders();
 

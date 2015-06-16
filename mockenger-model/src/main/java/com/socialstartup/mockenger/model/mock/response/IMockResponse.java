@@ -11,11 +11,11 @@ public interface IMockResponse {
 
     void setHttpStatus(int httpStatus);
 
-    Map<String, String> getResponseHeaders();
+    Map<String, String> getHeaders();
 
-    void setResponseHeaders(Map<String, String> responseHeaders);
+    void setHeaders(Map<String, String> responseHeaders);
 
-    String getResponseBody();
+    String getBody();
 
-    void setResponseBody(String responseBody);
+    void setBody(String responseBody);
 }

@@ -9,8 +9,6 @@ import com.socialstartup.mockenger.model.mock.request.part.Body;
 import com.socialstartup.mockenger.model.mock.request.part.Headers;
 import com.socialstartup.mockenger.model.mock.request.part.Parameters;
 import com.socialstartup.mockenger.model.mock.request.part.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,12 +24,6 @@ import java.io.StringReader;
  */
 @Component(value = "soapPostService")
 public class PostService extends CommonService {
-
-    /**
-     * Logger
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(PostService.class);
-
 
     public PostEntity createMockRequest(String groupId, String soapBody, HttpServletRequest request) {
         Body body = new Body(soapBody);

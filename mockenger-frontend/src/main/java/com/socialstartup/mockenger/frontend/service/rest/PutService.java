@@ -10,8 +10,6 @@ import com.socialstartup.mockenger.model.mock.request.part.Body;
 import com.socialstartup.mockenger.model.mock.request.part.Headers;
 import com.socialstartup.mockenger.model.mock.request.part.Parameters;
 import com.socialstartup.mockenger.model.mock.request.part.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,14 +19,8 @@ import java.util.Date;
 /**
  * Created by x079089 on 3/24/2015.
  */
-@Component
+@Component(value = "restPutService")
 public class PutService extends RequestService {
-
-    /**
-     * Logger
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(PutService.class);
-
 
     public PutEntity createMockRequest(String groupId, String requestBody, HttpServletRequest request) throws IOException {
         // Prepare request body
