@@ -1,7 +1,5 @@
 package com.socialstartup.mockenger.frontend.controller.endpoint;
 
-import com.socialstartup.mockenger.frontend.common.CommonUtils;
-import com.socialstartup.mockenger.frontend.controller.web.MainController;
 import com.socialstartup.mockenger.frontend.service.soap.PostService;
 import com.socialstartup.mockenger.model.mock.group.GroupEntity;
 import com.socialstartup.mockenger.model.mock.request.RequestEntity;
@@ -11,8 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +28,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  */
 @Controller
 @RequestMapping(value = {"/soap/{groupId}"})
-public class SoapController extends MainController {
+public class SoapController extends ParentController {
 
     /**
      * Logger
@@ -73,13 +69,15 @@ public class SoapController extends MainController {
             e.printStackTrace();
         }
         RequestEntity mockRequest = postService.createMockRequest(group.getId(), soapBody, request);
-        RequestEntity mockResult = getRequestService().findMockedEntities(mockRequest);
+        return findMockedEntities(mockRequest, group.isRecording());
 
-        if (mockResult != null) {
+//        RequestEntity mockResult = getRequestService().findMockedEntities(mockRequest);
+
+        /*if (mockResult != null) {
             getResponseHeaders().set("Content-Type", MediaType.APPLICATION_XML_VALUE);
-            // TODO: Check mockResult.getResponse().getResponseBody() for null values
-            int httpStatusCode = mockResult.getResponse().getHttpStatus();
-            return new ResponseEntity(mockResult.getResponse().getResponseBody(), getResponseHeaders(), HttpStatus.valueOf(httpStatusCode));
+            // TODO: Check mockResult.getMockResponse().getBody() for null values
+            int httpStatusCode = mockResult.getMockResponse().getHttpStatus();
+            return new ResponseEntity(mockResult.getMockResponse().getBody(), getResponseHeaders(), HttpStatus.valueOf(httpStatusCode));
         } else {
             HttpStatus status = HttpStatus.NOT_FOUND;
             if (group.isRecording()) {
@@ -89,6 +87,6 @@ public class SoapController extends MainController {
                 status = HttpStatus.CREATED;
             }
             return new ResponseEntity(getResponseHeaders(), status);
-        }
+        }*/
     }
 }

@@ -95,12 +95,34 @@
                         <form:textarea path="body.value" cssClass="form-control" rows="20" id="textareaRequest"></form:textarea>
                     </div>
                 </div>
+                <hr/>
+
+                <div class="form-group">
+                    <label for="responseStatus" class="col-lg-2 control-label">Response status</label>
+
+                    <div class="col-lg-10">
+                        <form:input path="mockResponse.httpStatus" cssClass="form-control" id="responseStatus"/>
+                    </div>
+                </div>
+                <hr/>
+
+                <c:forEach items="${requestEntity.mockResponse.headers}" var="headerValue">
+                    <c:set var="hd" value="${headerValue.key}"/>
+                    <div class="form-group">
+                        <label for="inputDate" class="col-lg-2 control-label">${hd}</label>
+
+                        <div class="col-lg-10">
+                            <form:input path="mockResponse.headers[${hd}]" cssClass="form-control"/>
+                        </div>
+                    </div>
+                </c:forEach>
+                <hr/>
 
                 <div class="form-group">
                     <label for="textareaResponse" class="col-lg-2 control-label">Request body</label>
 
                     <div class="col-lg-10">
-                        <form:textarea path="response.responseBody" cssClass="form-control" rows="20" id="textareaResponse"></form:textarea>
+                        <form:textarea path="mockResponse.body" cssClass="form-control" rows="20" id="textareaResponse"></form:textarea>
                     </div>
                 </div>
 

@@ -12,7 +12,8 @@ public enum RequestType {
     PATCH,
     DELETE,
     OPTIONS,
-    TRACE;
+    TRACE,
+    CONNECT;
 
     private RequestType() {
     }

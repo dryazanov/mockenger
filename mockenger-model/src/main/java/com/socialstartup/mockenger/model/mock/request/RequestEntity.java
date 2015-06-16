@@ -33,7 +33,7 @@ public class RequestEntity extends AbstractPersistentEntity<String> {
 
     private String checkSum;
 
-    private MockResponse response;
+    private MockResponse mockResponse;
 
     public String getGroupId() {
         return groupId;
@@ -107,11 +107,11 @@ public class RequestEntity extends AbstractPersistentEntity<String> {
         this.checkSum = checkSum;
     }
 
-    public MockResponse getResponse() {
-        return response;
+    public MockResponse getMockResponse() {
+        return mockResponse;
     }
 
-    public void setResponse(MockResponse response) {
-        this.response = response;
+    public void setMockResponse(MockResponse mockResponse) {
+        this.mockResponse = mockResponse;
     }
 }
