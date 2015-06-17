@@ -12,6 +12,7 @@
         <module>../mockenger-frontend</module>
         <module>../mockenger-commons</module>
         <module>../mockenger-standalone</module>
+        <module>../mockenger-data</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -1,7 +1,6 @@
 package com.socialstartup.mockenger.frontend.service;
 
-import com.socialstartup.mockenger.frontend.repository.RequestRepository;
-import com.socialstartup.mockenger.model.mock.request.IMockRequest;
+import com.socialstartup.mockenger.data.repository.impl.RequestRepository;
 import com.socialstartup.mockenger.model.mock.request.RequestEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

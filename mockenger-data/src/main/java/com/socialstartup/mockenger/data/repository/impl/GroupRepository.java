@@ -1,7 +1,9 @@
-package com.socialstartup.mockenger.frontend.repository;
+package com.socialstartup.mockenger.data.repository.impl;
 
+import com.socialstartup.mockenger.data.repository.impl.GenericRepository;
 import com.socialstartup.mockenger.model.mock.group.GroupEntity;
 import com.socialstartup.mockenger.model.mock.group.GroupType;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
@@ -17,6 +19,10 @@ public class GroupRepository extends GenericRepository<GroupEntity> {
     public static final String COLLECTION_NAME = "group";
 
     protected final static String GROUP_TYPE = "type";
+
+    public GroupRepository(MongoTemplate mongoTemplate) {
+        super(mongoTemplate);
+    }
 
     @Override
     protected String getCollectionName() {

@@ -1,4 +1,4 @@
-package com.socialstartup.mockenger.frontend.repository;
+package com.socialstartup.mockenger.data.repository.impl;
 
 import com.socialstartup.mockenger.model.persistent.base.AbstractPersistentEntity;
 import org.slf4j.Logger;
@@ -19,7 +19,6 @@ public abstract class GenericRepository<T extends AbstractPersistentEntity> {
     private static final Logger LOG = LoggerFactory.getLogger(GenericRepository.class);
 
 
-    @Autowired
     private MongoTemplate mongoTemplate;
 
 //    protected Class<T> type;
@@ -30,9 +29,11 @@ public abstract class GenericRepository<T extends AbstractPersistentEntity> {
 
     protected final static String METHOD = "method";
 
+    public GenericRepository(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
-
-    /*public GenericRepository() {
+/*public GenericRepository() {
         this.type = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 

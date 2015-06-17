@@ -18,12 +18,13 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @EnableWebMvc
 @EnableAspectJAutoProxy
 @ComponentScan(basePackages = {
+        "com.socialstartup.mockenger.data.config",
         "com.socialstartup.mockenger.frontend.config",
         "com.socialstartup.mockenger.frontend.service",
-        "com.socialstartup.mockenger.frontend.repository",
         "com.socialstartup.mockenger.frontend.controller"
 })
 @PropertySource("classpath:system.properties")
+@PropertySource("classpath:mongodb.properties")
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     @Bean
