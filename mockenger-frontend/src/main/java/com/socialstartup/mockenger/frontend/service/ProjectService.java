@@ -1,6 +1,6 @@
 package com.socialstartup.mockenger.frontend.service;
 
-import com.socialstartup.mockenger.frontend.repository.ProjectRepository;
+import com.socialstartup.mockenger.data.repository.impl.ProjectRepository;
 import com.socialstartup.mockenger.model.mock.group.GroupEntity;
 import com.socialstartup.mockenger.model.mock.project.ProjectEntity;
 import com.socialstartup.mockenger.model.mock.project.ProjectType;

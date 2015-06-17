@@ -24,7 +24,7 @@
     <dependencies>
         <dependency>
             <groupId>com.socialstartup</groupId>
-            <artifactId>mockenger-model</artifactId>
+            <artifactId>mockenger-data</artifactId>
             <version>0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

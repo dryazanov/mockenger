@@ -1,6 +1,8 @@
-package com.socialstartup.mockenger.frontend.repository;
+package com.socialstartup.mockenger.data.repository.impl;
 
+import com.socialstartup.mockenger.data.repository.impl.GenericRepository;
 import com.socialstartup.mockenger.model.mock.request.RequestEntity;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
@@ -14,6 +16,10 @@ import java.util.List;
 public class RequestRepository extends GenericRepository<RequestEntity> {
 
     public static final String COLLECTION_NAME = "request";
+
+    public RequestRepository(MongoTemplate mongoTemplate) {
+        super(mongoTemplate);
+    }
 
     @Override
     public String getCollectionName() {

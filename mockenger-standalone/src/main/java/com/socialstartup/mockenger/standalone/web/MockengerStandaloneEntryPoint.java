@@ -10,20 +10,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * Created by ydolzhenko on 15.06.15.
  */
-@Configuration()
-@Controller
+@Configuration
 @EnableAutoConfiguration
 public class MockengerStandaloneEntryPoint {
-
-    @RequestMapping("/")
-    @ResponseBody
-    String home() {
-        return "Hello World!";
-    }
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(MockengerStandaloneEntryPoint.class, args);
     }
-
 
 }
