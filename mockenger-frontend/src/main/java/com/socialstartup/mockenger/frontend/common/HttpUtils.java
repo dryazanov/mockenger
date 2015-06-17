@@ -1,14 +1,12 @@
 package com.socialstartup.mockenger.frontend.common;
 
-import com.socialstartup.mockenger.model.RequestType;
+import com.socialstartup.mockenger.data.model.RequestType;
 import org.springframework.util.*;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Created by x079089 on 3/20/2015.

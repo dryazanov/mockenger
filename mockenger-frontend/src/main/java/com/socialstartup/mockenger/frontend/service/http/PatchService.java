@@ -3,11 +3,11 @@ package com.socialstartup.mockenger.frontend.service.http;
 import com.socialstartup.mockenger.frontend.common.CommonUtils;
 import com.socialstartup.mockenger.frontend.common.HttpUtils;
 import com.socialstartup.mockenger.frontend.service.RequestService;
-import com.socialstartup.mockenger.model.mock.request.entity.PatchEntity;
-import com.socialstartup.mockenger.model.mock.request.part.Body;
-import com.socialstartup.mockenger.model.mock.request.part.Headers;
-import com.socialstartup.mockenger.model.mock.request.part.Parameters;
-import com.socialstartup.mockenger.model.mock.request.part.Path;
+import com.socialstartup.mockenger.data.model.mock.request.entity.PatchEntity;
+import com.socialstartup.mockenger.data.model.mock.request.part.Body;
+import com.socialstartup.mockenger.data.model.mock.request.part.Headers;
+import com.socialstartup.mockenger.data.model.mock.request.part.Parameters;
+import com.socialstartup.mockenger.data.model.mock.request.part.Path;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;

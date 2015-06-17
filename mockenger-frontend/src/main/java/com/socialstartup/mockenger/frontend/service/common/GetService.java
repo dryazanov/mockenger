@@ -1,7 +1,7 @@
 package com.socialstartup.mockenger.frontend.service.common;
 
 import com.socialstartup.mockenger.frontend.service.RequestService;
-import com.socialstartup.mockenger.model.mock.request.entity.GetEntity;
+import com.socialstartup.mockenger.data.model.mock.request.entity.GetEntity;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;

@@ -1,7 +1,7 @@
 package com.socialstartup.mockenger.frontend.service.mapper.request;
 
-import com.socialstartup.mockenger.model.dto.RequestRowDTO;
-import com.socialstartup.mockenger.model.mock.request.RequestEntity;
+import com.socialstartup.mockenger.data.model.dto.RequestRowDTO;
+import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

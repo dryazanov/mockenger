@@ -1,10 +1,10 @@
 package com.socialstartup.mockenger.frontend.service;
 
 import com.socialstartup.mockenger.frontend.common.CommonUtils;
-import com.socialstartup.mockenger.model.RequestType;
-import com.socialstartup.mockenger.model.mock.request.RequestEntity;
-import com.socialstartup.mockenger.model.transformer.IMapTransformer;
-import com.socialstartup.mockenger.model.transformer.ITransformer;
+import com.socialstartup.mockenger.data.model.RequestType;
+import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
+import com.socialstartup.mockenger.data.model.transformer.IMapTransformer;
+import com.socialstartup.mockenger.data.model.transformer.ITransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

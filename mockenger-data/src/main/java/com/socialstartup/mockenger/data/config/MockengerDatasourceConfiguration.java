@@ -1,9 +1,8 @@
 package com.socialstartup.mockenger.data.config;
 
 import com.mongodb.Mongo;
-import com.socialstartup.mockenger.data.repository.impl.GroupRepository;
-import com.socialstartup.mockenger.data.repository.impl.ProjectRepository;
-import com.socialstartup.mockenger.data.repository.impl.RequestRepository;
+import com.socialstartup.mockenger.data.repository.RequestEntityRepository;
+import com.socialstartup.mockenger.data.repository.impl.RequestEntityRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -69,20 +68,8 @@ public class MockengerDatasourceConfiguration extends AbstractMongoConfiguration
 
     //TODO replace me with spring data's custom
     @Bean
-    public RequestRepository requestRepository(MongoTemplate mongoTemplate) {
-        return new RequestRepository(mongoTemplate);
-    }
-
-    //TODO replace me with spring data's custom
-    @Bean
-    public GroupRepository groupRepository(MongoTemplate mongoTemplate) {
-        return new GroupRepository(mongoTemplate);
-    }
-
-    //TODO replace me with spring data's custom
-    @Bean
-    public ProjectRepository projectRepository(MongoTemplate mongoTemplate) {
-        return new ProjectRepository(mongoTemplate);
+    public RequestEntityRepository requestRepository(MongoTemplate mongoTemplate) {
+        return new RequestEntityRepositoryImpl(mongoTemplate);
     }
 
 
