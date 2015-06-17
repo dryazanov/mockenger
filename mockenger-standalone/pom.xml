@@ -26,6 +26,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring.boot.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.socialstartup</groupId>
+            <artifactId>mockenger-core</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
 
 
     </dependencies>
