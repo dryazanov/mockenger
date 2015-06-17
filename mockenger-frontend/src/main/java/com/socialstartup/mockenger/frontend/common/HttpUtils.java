@@ -1,62 +1,57 @@
 package com.socialstartup.mockenger.frontend.common;
 
-import com.socialstartup.mockenger.data.model.RequestType;
-import org.springframework.util.*;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by x079089 on 3/20/2015.
  */
 public class HttpUtils {
 
-    private static HashMap<RequestMethod, RequestType> requestMethodsToTypesMap = new HashMap<>();
-    private static HashMap<RequestType, RequestMethod> requestTypesToMethodsMap = new HashMap<>();
-
-    static {
-        requestMethodsToTypesMap.put(RequestMethod.DELETE, RequestType.DELETE);
-        requestMethodsToTypesMap.put(RequestMethod.GET, RequestType.GET);
-        requestMethodsToTypesMap.put(RequestMethod.HEAD, RequestType.HEAD);
-        requestMethodsToTypesMap.put(RequestMethod.OPTIONS, RequestType.OPTIONS);
-        requestMethodsToTypesMap.put(RequestMethod.PATCH, RequestType.PATCH);
-        requestMethodsToTypesMap.put(RequestMethod.POST, RequestType.POST);
-        requestMethodsToTypesMap.put(RequestMethod.PUT, RequestType.PUT);
-        requestMethodsToTypesMap.put(RequestMethod.TRACE, RequestType.TRACE);
-        requestMethodsToTypesMap.entrySet()
-                .stream().forEach(entry -> requestTypesToMethodsMap.put(entry.getValue(), entry.getKey()));
-    }
+    /**
+     * Logger
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(HttpUtils.class);
 
     private static AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     public static Map<String, String> getHeaders(HttpServletRequest servletRequest, boolean strictMatch) {
-        Map<String, String> requestHeaders = new HashMap<String, String>();
+        String headerName;
+        String headerValue;
+        Map<String, String> requestHeaders = new HashMap<>();
         Enumeration<String> headerNames = servletRequest.getHeaderNames();
 
         while (headerNames.hasMoreElements()) {
-            String name = headerNames.nextElement();
+            headerName = headerNames.nextElement();
             if (strictMatch) {
-                requestHeaders.put(name, servletRequest.getHeader(name));
+                headerValue = servletRequest.getHeader(headerName);
             } else {
-                requestHeaders.put(name.toLowerCase(), servletRequest.getHeader(name).toLowerCase());
+                headerName = headerName.toLowerCase();
+                headerValue = servletRequest.getHeader(headerName).toLowerCase();
             }
+            headerValue = headerValue.replaceAll("(?<=[,;])\\s+", "");
+            requestHeaders.put(headerName, headerValue);
         }
 
         return requestHeaders;
     }
 
     public static Map<String, String> getParameterMap(HttpServletRequest servletRequest) {
-        Map<String, String> parameterMap = new TreeMap<String, String>();
+        Map<String, String> parameterMap = new TreeMap<>();
         Enumeration<String> parameterNames = servletRequest.getParameterNames();
 
         while (parameterNames.hasMoreElements()) {
             String name = parameterNames.nextElement();
             parameterMap.put(name, servletRequest.getParameter(name));
         }
-
-//        System.out.println(parameterMap);
 
         return parameterMap;
     }
@@ -65,19 +60,5 @@ public class HttpUtils {
         return antPathMatcher.extractPathWithinPattern(
                 (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE),
                 (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE));
-    }
-
-    public static RequestType getRequestTypeByMethod(RequestMethod requestMethod) {
-        if (!requestMethodsToTypesMap.containsKey(requestMethod)) {
-            throw new IllegalArgumentException(String.format("Request method '%s' is unknown to mapper", requestMethod));
-        }
-        return requestMethodsToTypesMap.get(requestMethod);
-    }
-
-    public static RequestMethod getRequestMethodByType(RequestType requestType) {
-        if (!requestTypesToMethodsMap.containsKey(requestType)) {
-            throw new IllegalArgumentException(String.format("Request type '%s' is unknown to mapper", requestType));
-        }
-        return requestTypesToMethodsMap.get(requestType);
     }
 }
