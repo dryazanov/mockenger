@@ -1,21 +1,17 @@
 package com.socialstartup.mockenger.frontend.config;
 
-import com.socialstartup.mockenger.data.config.MockengerDatasourceConfiguration;
+import com.socialstartup.mockenger.config.MockengerCoreConfiguration;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.http.MediaType;
-import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
 @EnableWebMvc
 @EnableAspectJAutoProxy
+@Import(value = MockengerCoreConfiguration.class)
 @ComponentScan(basePackages = {
-        "com.socialstartup.mockenger.data.config",
         "com.socialstartup.mockenger.frontend.config",
         "com.socialstartup.mockenger.frontend.service",
         "com.socialstartup.mockenger.frontend.controller"
