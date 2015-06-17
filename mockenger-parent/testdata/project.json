@@ -1,1 +1,1 @@
-{"_class":"com.socialstartup.mockenger.model.mocks.project.ProjectEntity","_id":{"$oid":"557050015a672b9af6cfcb49"},"name":"First project","type":"RESTFUL"}
+{"_class":"com.socialstartup.mockenger.data.model.mock.project.ProjectEntity","_id":{"$oid":"557050015a672b9af6cfcb49"},"name":"First project","type":"RESTFUL"}
