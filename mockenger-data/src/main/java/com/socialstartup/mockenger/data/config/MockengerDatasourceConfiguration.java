@@ -1,8 +1,6 @@
 package com.socialstartup.mockenger.data.config;
 
 import com.mongodb.Mongo;
-import com.socialstartup.mockenger.data.repository.RequestEntityRepository;
-import com.socialstartup.mockenger.data.repository.impl.RequestEntityRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -11,7 +9,6 @@ import org.springframework.data.authentication.UserCredentials;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.MongoFactoryBean;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
@@ -67,12 +64,5 @@ public class MockengerDatasourceConfiguration extends AbstractMongoConfiguration
             return new UserCredentials(params.getUsername(), params.getPassword());
         }
     }
-
-    //TODO replace me with spring data's custom
-    @Bean
-    public RequestEntityRepository requestRepository(MongoTemplate mongoTemplate) {
-        return new RequestEntityRepositoryImpl(mongoTemplate);
-    }
-
 
 }
