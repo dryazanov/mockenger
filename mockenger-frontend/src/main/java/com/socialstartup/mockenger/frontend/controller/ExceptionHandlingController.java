@@ -1,6 +1,6 @@
 package com.socialstartup.mockenger.frontend.controller;
 
-import com.socialstartup.mockenger.model.error.ErrorMessage;
+import com.socialstartup.mockenger.data.model.error.ErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

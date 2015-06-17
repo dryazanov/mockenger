@@ -2,10 +2,10 @@ package com.socialstartup.mockenger.frontend.controller.endpoint;
 
 import com.socialstartup.mockenger.frontend.controller.CommonController;
 import com.socialstartup.mockenger.frontend.service.mapper.request.GridRowMapper;
-import com.socialstartup.mockenger.model.dto.GridDTO;
-import com.socialstartup.mockenger.model.mock.group.GroupEntity;
-import com.socialstartup.mockenger.model.mock.group.GroupType;
-import com.socialstartup.mockenger.model.mock.request.RequestEntity;
+import com.socialstartup.mockenger.data.model.dto.GridDTO;
+import com.socialstartup.mockenger.data.model.mock.group.GroupEntity;
+import com.socialstartup.mockenger.data.model.mock.group.GroupType;
+import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

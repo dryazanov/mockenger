@@ -1,7 +1,7 @@
 package com.socialstartup.mockenger.frontend.service;
 
-import com.socialstartup.mockenger.data.repository.impl.RequestRepository;
-import com.socialstartup.mockenger.model.mock.request.RequestEntity;
+import com.socialstartup.mockenger.data.repository.RequestEntityRepository;
+import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +21,15 @@ public class RequestService extends CommonService {
     private static final Logger LOG = LoggerFactory.getLogger(RequestService.class);
 
     @Autowired
-    private RequestRepository requestRepository;
+    private RequestEntityRepository requestEntityRepository;
 
 
     public RequestEntity findById(String id) {
-        return requestRepository.findById(id);
+        return requestEntityRepository.findById(id);
     }
 
     public RequestEntity findMockedEntities(RequestEntity mockRequest) {
-        List<RequestEntity> entities = requestRepository.findAll(mockRequest);
+        List<RequestEntity> entities = requestEntityRepository.findAll(mockRequest);
 
         if (entities != null && entities.size() > 0) {
             return this.doFilter(mockRequest, entities);
@@ -39,14 +39,14 @@ public class RequestService extends CommonService {
     }
 
     public List<RequestEntity> findAllByGroupId(String groupId) {
-        return requestRepository.findAllByGroupId(groupId);
+        return requestEntityRepository.findByGroupId(groupId);
     }
 
     public void save(RequestEntity entity) {
-        requestRepository.save(entity);
+        requestEntityRepository.save(entity);
     }
 
     public void remove(RequestEntity entity) {
-        requestRepository.remove(entity);
+        requestEntityRepository.remove(entity);
     }
 }

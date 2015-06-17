@@ -1,9 +1,8 @@
 package com.socialstartup.mockenger.data.repository.impl;
 
-import com.socialstartup.mockenger.model.persistent.base.AbstractPersistentEntity;
+import com.socialstartup.mockenger.data.model.persistent.base.AbstractPersistentEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.List;
@@ -11,6 +10,7 @@ import java.util.List;
 /**
  * Created by x079089 on 3/24/2015.
  */
+//TODO remove me
 public abstract class GenericRepository<T extends AbstractPersistentEntity> {
 
     /**

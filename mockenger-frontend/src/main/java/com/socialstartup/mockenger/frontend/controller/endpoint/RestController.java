@@ -2,8 +2,8 @@ package com.socialstartup.mockenger.frontend.controller.endpoint;
 
 import com.socialstartup.mockenger.frontend.service.rest.PostService;
 import com.socialstartup.mockenger.frontend.service.rest.PutService;
-import com.socialstartup.mockenger.model.mock.group.GroupEntity;
-import com.socialstartup.mockenger.model.mock.request.RequestEntity;
+import com.socialstartup.mockenger.data.model.mock.group.GroupEntity;
+import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -7,8 +7,8 @@ import com.socialstartup.mockenger.frontend.service.http.PatchService;
 import com.socialstartup.mockenger.frontend.service.http.PostService;
 import com.socialstartup.mockenger.frontend.service.http.PutService;
 import com.socialstartup.mockenger.frontend.service.http.TraceService;
-import com.socialstartup.mockenger.model.mock.group.GroupEntity;
-import com.socialstartup.mockenger.model.mock.request.RequestEntity;
+import com.socialstartup.mockenger.data.model.mock.group.GroupEntity;
+import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.socialstartup.mockenger.model.RequestType.CONNECT;
+import static com.socialstartup.mockenger.data.model.RequestType.CONNECT;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.HEAD;

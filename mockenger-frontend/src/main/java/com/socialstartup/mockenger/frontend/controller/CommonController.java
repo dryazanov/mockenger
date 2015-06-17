@@ -2,7 +2,7 @@ package com.socialstartup.mockenger.frontend.controller;
 
 import com.socialstartup.mockenger.frontend.service.GroupService;
 import com.socialstartup.mockenger.frontend.service.RequestService;
-import com.socialstartup.mockenger.model.mock.group.GroupEntity;
+import com.socialstartup.mockenger.data.model.mock.group.GroupEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 

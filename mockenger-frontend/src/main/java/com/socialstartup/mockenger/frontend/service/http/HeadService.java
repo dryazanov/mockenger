@@ -2,7 +2,7 @@ package com.socialstartup.mockenger.frontend.service.http;
 
 import com.socialstartup.mockenger.frontend.service.RequestService;
 import com.socialstartup.mockenger.frontend.service.common.BodilessService;
-import com.socialstartup.mockenger.model.mock.request.entity.HeadEntity;
+import com.socialstartup.mockenger.data.model.mock.request.entity.HeadEntity;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;

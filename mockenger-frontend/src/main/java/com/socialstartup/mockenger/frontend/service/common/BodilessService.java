@@ -2,10 +2,10 @@ package com.socialstartup.mockenger.frontend.service.common;
 
 import com.socialstartup.mockenger.frontend.common.CommonUtils;
 import com.socialstartup.mockenger.frontend.common.HttpUtils;
-import com.socialstartup.mockenger.model.mock.request.RequestEntity;
-import com.socialstartup.mockenger.model.mock.request.part.Headers;
-import com.socialstartup.mockenger.model.mock.request.part.Parameters;
-import com.socialstartup.mockenger.model.mock.request.part.Path;
+import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
+import com.socialstartup.mockenger.data.model.mock.request.part.Headers;
+import com.socialstartup.mockenger.data.model.mock.request.part.Parameters;
+import com.socialstartup.mockenger.data.model.mock.request.part.Path;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;

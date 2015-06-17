@@ -1,6 +1,6 @@
 package com.socialstartup.mockenger.frontend.common;
 
-import com.socialstartup.mockenger.model.mock.request.RequestEntity;
+import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
