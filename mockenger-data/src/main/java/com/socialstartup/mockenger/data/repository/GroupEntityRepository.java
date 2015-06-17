@@ -14,5 +14,4 @@ public interface GroupEntityRepository extends CrudRepository<GroupEntity, Strin
     List<GroupEntity> findByType(GroupType type);
 
     List<GroupEntity> findByProjectId(String projectId);
-
 }

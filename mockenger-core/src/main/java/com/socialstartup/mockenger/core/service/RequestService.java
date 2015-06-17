@@ -25,11 +25,11 @@ public class RequestService extends CommonService {
 
 
     public RequestEntity findById(String id) {
-        return requestEntityRepository.findById(id);
+        return requestEntityRepository.findOne(id);
     }
 
     public RequestEntity findMockedEntities(RequestEntity mockRequest) {
-        List<RequestEntity> entities = requestEntityRepository.findAll(mockRequest);
+        List<RequestEntity> entities = requestEntityRepository.findByGroupIdAndMethod(mockRequest.getGroupId(), mockRequest.getMethod());
 
         if (entities != null && entities.size() > 0) {
             return this.doFilter(mockRequest, entities);
@@ -38,7 +38,7 @@ public class RequestService extends CommonService {
         return null;
     }
 
-    public List<RequestEntity> findAllByGroupId(String groupId) {
+    public List<RequestEntity> findByGroupId(String groupId) {
         return requestEntityRepository.findByGroupId(groupId);
     }
 
@@ -47,6 +47,6 @@ public class RequestService extends CommonService {
     }
 
     public void remove(RequestEntity entity) {
-        requestEntityRepository.remove(entity);
+        requestEntityRepository.delete(entity);
     }
 }

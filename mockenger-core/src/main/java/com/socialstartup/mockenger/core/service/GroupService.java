@@ -21,15 +21,15 @@ public class GroupService {
     private GroupEntityRepository groupEntityRepository;
 
 
-    public GroupEntity findById(String groupId) {
-        return groupEntityRepository.findOne(groupId);
+    public GroupEntity findById(String id) {
+        return groupEntityRepository.findOne(id);
     }
 
     public List<GroupEntity> findByType(GroupType type) {
         return groupEntityRepository.findByType(type);
     }
 
-    public List<GroupEntity> findAllByProjectId(String projectId) {
+    public List<GroupEntity> findByProjectId(String projectId) {
         return groupEntityRepository.findByProjectId(projectId);
     }
 
@@ -38,7 +38,7 @@ public class GroupService {
     }
 
     public void remove(GroupEntity groupEntity) {
-        requestService.findAllByGroupId(groupEntity.getId()).forEach(requestService::remove);
+        requestService.findByGroupId(groupEntity.getId()).forEach(requestService::remove);
         groupEntityRepository.delete(groupEntity);
     }
 }
