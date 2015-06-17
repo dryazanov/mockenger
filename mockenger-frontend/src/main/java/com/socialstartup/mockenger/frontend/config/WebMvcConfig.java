@@ -1,6 +1,6 @@
 package com.socialstartup.mockenger.frontend.config;
 
-import com.socialstartup.mockenger.config.MockengerCoreConfiguration;
+import com.socialstartup.mockenger.core.config.MockengerCoreConfiguration;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.http.MediaType;
@@ -12,8 +12,8 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @EnableAspectJAutoProxy
 @Import(value = MockengerCoreConfiguration.class)
 @ComponentScan(basePackages = {
+        "com.socialstartup.mockenger.core.web",
         "com.socialstartup.mockenger.frontend.config",
-        "com.socialstartup.mockenger.frontend.service",
         "com.socialstartup.mockenger.frontend.controller"
 })
 @PropertySource("classpath:system.properties")

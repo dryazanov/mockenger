@@ -1,6 +1,6 @@
 package com.socialstartup.mockenger.standalone.config;
 
-import com.socialstartup.mockenger.config.MockengerCoreConfiguration;
+import com.socialstartup.mockenger.core.config.MockengerCoreConfiguration;
 import org.springframework.context.annotation.Import;
 
 /**
