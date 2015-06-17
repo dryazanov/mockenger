@@ -10,4 +10,5 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @Import(value = MockengerDatasourceConfiguration.class)
 public class MockengerCoreConfiguration {
+
 }

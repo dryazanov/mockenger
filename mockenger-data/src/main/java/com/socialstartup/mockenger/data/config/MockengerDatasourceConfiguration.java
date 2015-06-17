@@ -5,6 +5,7 @@ import com.socialstartup.mockenger.data.repository.RequestEntityRepository;
 import com.socialstartup.mockenger.data.repository.impl.RequestEntityRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.authentication.UserCredentials;
 import org.springframework.data.mongodb.MongoDbFactory;
@@ -21,6 +22,7 @@ import org.springframework.util.StringUtils;
  */
 @Configuration
 @EnableMongoRepositories(basePackages = {"com.socialstartup.mockenger.data.repository"})
+@ComponentScan(basePackageClasses = {MockengerDatasourceConfiguration.class})
 public class MockengerDatasourceConfiguration extends AbstractMongoConfiguration {
 
     @Autowired
