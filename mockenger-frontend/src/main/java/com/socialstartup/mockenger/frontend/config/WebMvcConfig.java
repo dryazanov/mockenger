@@ -14,8 +14,8 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @Configuration
 @EnableWebMvc
 @EnableAspectJAutoProxy
-@Import(value = MockengerDatasourceConfiguration.class)
 @ComponentScan(basePackages = {
+        "com.socialstartup.mockenger.data.config",
         "com.socialstartup.mockenger.frontend.config",
         "com.socialstartup.mockenger.frontend.service",
         "com.socialstartup.mockenger.frontend.controller"
