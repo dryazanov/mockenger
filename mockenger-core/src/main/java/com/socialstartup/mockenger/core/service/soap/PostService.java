@@ -1,9 +1,9 @@
 package com.socialstartup.mockenger.core.service.soap;
 
 import com.socialstartup.mockenger.commons.utils.XmlHelper;
+import com.socialstartup.mockenger.core.service.CommonService;
 import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.core.util.HttpUtils;
-import com.socialstartup.mockenger.core.service.CommonService;
 import com.socialstartup.mockenger.data.model.mock.request.entity.PostEntity;
 import com.socialstartup.mockenger.data.model.mock.request.part.Body;
 import com.socialstartup.mockenger.data.model.mock.request.part.Headers;
@@ -17,6 +17,7 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
+import java.io.IOException;
 import java.io.StringReader;
 
 /**
@@ -42,11 +43,15 @@ public class PostService extends CommonService {
         return mockRequest;
     }
 
-    public String getSoapBody(String requestBody) throws SOAPException, TransformerException {
+    public String getSoapBody2(String requestBody) throws SOAPException, TransformerException {
         StringReader stringReader = new StringReader(requestBody);
         Source source = new StreamSource(stringReader);
         SOAPMessage soapMessage = XmlHelper.soapToXmlConverter(source);
+        return XmlHelper.xmlToStringConverter(soapMessage.getSOAPBody(), true);
+    }
 
+    public String getSoapBody(String requestBody) throws SOAPException, TransformerException, IOException {
+        SOAPMessage soapMessage = XmlHelper.stringToXmlConverter(requestBody);
         return XmlHelper.xmlToStringConverter(soapMessage.getSOAPBody(), true);
     }
 }

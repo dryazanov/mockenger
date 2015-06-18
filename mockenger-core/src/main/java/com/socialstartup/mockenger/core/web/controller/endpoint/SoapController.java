@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.soap.SOAPException;
 import javax.xml.transform.TransformerException;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -54,7 +55,6 @@ public class SoapController extends ParentController {
     @ResponseBody
     @RequestMapping(value = {"/**"}, method = POST)
     public ResponseEntity processPostRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
-
         GroupEntity group = findGroupById(groupId);
 
         ITransformer transformer = new RegexpTransformer(">\\s+<", "><");
@@ -67,26 +67,10 @@ public class SoapController extends ParentController {
             e.printStackTrace();
         } catch (TransformerException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         RequestEntity mockRequest = postService.createMockRequest(group.getId(), soapBody, request);
         return findMockedEntities(mockRequest, group.isRecording());
-
-//        RequestEntity mockResult = getRequestService().findMockedEntities(mockRequest);
-
-        /*if (mockResult != null) {
-            getResponseHeaders().set("Content-Type", MediaType.APPLICATION_XML_VALUE);
-            // TODO: Check mockResult.getMockResponse().getBody() for null values
-            int httpStatusCode = mockResult.getMockResponse().getHttpStatus();
-            return new ResponseEntity(mockResult.getMockResponse().getBody(), getResponseHeaders(), HttpStatus.valueOf(httpStatusCode));
-        } else {
-            HttpStatus status = HttpStatus.NOT_FOUND;
-            if (group.isRecording()) {
-                // TODO: Decide which unique id generator is better
-                mockRequest.setId(CommonUtils.generateUniqueId());
-                getRequestService().save(mockRequest);
-                status = HttpStatus.CREATED;
-            }
-            return new ResponseEntity(getResponseHeaders(), status);
-        }*/
     }
 }
