@@ -76,8 +76,29 @@ public class RestController extends ParentController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/**", method = POST)
-    public ResponseEntity processPostRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
+    @RequestMapping(value = "/**", method = POST, consumes = "application/json")
+    public ResponseEntity processPostJsonRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
+        RequestEntity mockRequest = null;
+        GroupEntity group = findGroupById(groupId);
+
+        try {
+            mockRequest = postService.createMockRequest(group.getId(), requestBody, request);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return findMockedEntities(mockRequest, group.isRecording());
+    }
+    /**
+     *
+     * @param groupId
+     * @param requestBody
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/**", method = POST, consumes = "application/xml")
+    public ResponseEntity processPostXmlRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
         RequestEntity mockRequest = null;
         GroupEntity group = findGroupById(groupId);
 

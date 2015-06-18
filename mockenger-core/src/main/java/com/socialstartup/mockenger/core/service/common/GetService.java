@@ -12,8 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class GetService extends RequestService {
     public GetEntity createMockRequest(String groupId, HttpServletRequest request) {
-        GetEntity getEntity = new GetEntity();
-        BodilessService.fillUpEntity(getEntity, groupId, request);
-        return getEntity;
+        return (GetEntity) fillUpEntity(new GetEntity(), groupId, request);
     }
 }

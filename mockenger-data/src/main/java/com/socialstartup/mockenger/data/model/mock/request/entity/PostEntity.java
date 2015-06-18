@@ -2,6 +2,7 @@ package com.socialstartup.mockenger.data.model.mock.request.entity;
 
 import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
 import com.socialstartup.mockenger.data.model.RequestType;
+import com.socialstartup.mockenger.data.model.mock.request.part.Body;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -11,5 +12,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class PostEntity extends RequestEntity {
     public PostEntity() {
         setMethod(RequestType.POST);
+    }
+
+    public PostEntity(Body body) {
+        this();
+        setBody(body);
     }
 }

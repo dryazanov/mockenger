@@ -1,5 +1,11 @@
 package com.socialstartup.mockenger.core.service;
 
+import com.socialstartup.mockenger.core.service.common.CommonService;
+import com.socialstartup.mockenger.core.util.CommonUtils;
+import com.socialstartup.mockenger.core.util.HttpUtils;
+import com.socialstartup.mockenger.data.model.mock.request.part.Headers;
+import com.socialstartup.mockenger.data.model.mock.request.part.Parameters;
+import com.socialstartup.mockenger.data.model.mock.request.part.Path;
 import com.socialstartup.mockenger.data.repository.RequestEntityRepository;
 import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
 import org.slf4j.Logger;
@@ -7,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,16 +36,6 @@ public class RequestService extends CommonService {
         return requestEntityRepository.findOne(id);
     }
 
-    public RequestEntity findMockedEntities(RequestEntity mockRequest) {
-        List<RequestEntity> entities = requestEntityRepository.findByGroupIdAndMethod(mockRequest.getGroupId(), mockRequest.getMethod());
-
-        if (entities != null && entities.size() > 0) {
-            return this.doFilter(mockRequest, entities);
-        }
-
-        return null;
-    }
-
     public List<RequestEntity> findByGroupId(String groupId) {
         return requestEntityRepository.findByGroupId(groupId);
     }
@@ -48,5 +46,30 @@ public class RequestService extends CommonService {
 
     public void remove(RequestEntity entity) {
         requestEntityRepository.delete(entity);
+    }
+
+    public RequestEntity findMockedEntities(RequestEntity mockRequest) {
+        List<RequestEntity> entities = requestEntityRepository.findByGroupIdAndMethod(mockRequest.getGroupId(), mockRequest.getMethod());
+
+        if (entities != null && entities.size() > 0) {
+            return this.doFilter(mockRequest, entities);
+        }
+
+        return null;
+    }
+
+    protected RequestEntity fillUpEntity(RequestEntity mockRequest, String groupId, HttpServletRequest request) {
+        Path path = new Path(HttpUtils.getUrlPath(request));
+        Headers headers = new Headers(HttpUtils.getHeaders(request, false));
+        Parameters parameters = new Parameters(HttpUtils.getParameterMap(request));
+
+        mockRequest.setGroupId(groupId);
+        mockRequest.setCreationDate(new Date());
+        mockRequest.setPath(path);
+        mockRequest.setHeaders(headers);
+        mockRequest.setParameters(parameters);
+        mockRequest.setCheckSum(CommonUtils.getCheckSum(mockRequest));
+
+        return mockRequest;
     }
 }

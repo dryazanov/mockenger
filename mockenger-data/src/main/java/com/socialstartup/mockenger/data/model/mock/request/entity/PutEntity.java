@@ -14,13 +14,8 @@ public class PutEntity extends RequestEntity {
         setMethod(RequestType.PUT);
     }
 
-    @Override
-    public Body getBody() {
-        return this.body;
-    }
-
-    @Override
-    public void setBody(Body body) {
-        this.body = body;
+    public PutEntity(Body body) {
+        this();
+        setBody(body);
     }
 }
