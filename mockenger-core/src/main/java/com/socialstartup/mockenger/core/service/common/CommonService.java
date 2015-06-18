@@ -1,4 +1,4 @@
-package com.socialstartup.mockenger.core.service;
+package com.socialstartup.mockenger.core.service.common;
 
 import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.data.model.RequestType;
