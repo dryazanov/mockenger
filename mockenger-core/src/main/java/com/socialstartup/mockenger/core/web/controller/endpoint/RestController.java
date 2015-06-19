@@ -2,6 +2,7 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.socialstartup.mockenger.core.service.rest.PostService;
 import com.socialstartup.mockenger.core.service.rest.PutService;
+import com.socialstartup.mockenger.core.web.exception.BadContentTypeException;
 import com.socialstartup.mockenger.data.model.mock.group.GroupEntity;
 import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -70,25 +72,33 @@ public class RestController extends ParentController {
 
     /**
      *
+     */
+    @ResponseBody
+    @RequestMapping(value = "/**", method = {POST, PUT})
+    public void processPosRequest() {
+        throw new BadContentTypeException("Invalid header 'Content-type': application/json or application/xml are only allowed in REST requests.");
+    }
+
+    /**
+     *
      * @param groupId
-     * @param requestBody
+     * @param jsonBody
      * @param request
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/**", method = POST, consumes = "application/json")
-    public ResponseEntity processPostJsonRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
+    public ResponseEntity processPostJsonRequest(@PathVariable String groupId, @RequestBody String jsonBody, HttpServletRequest request) {
         RequestEntity mockRequest = null;
         GroupEntity group = findGroupById(groupId);
-
         try {
-            mockRequest = postService.createMockRequest(group.getId(), requestBody, request);
+            mockRequest = postService.createMockRequestFromJson(group.getId(), jsonBody, request);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return findMockedEntities(mockRequest, group.isRecording());
     }
+
     /**
      *
      * @param groupId
@@ -103,11 +113,30 @@ public class RestController extends ParentController {
         GroupEntity group = findGroupById(groupId);
 
         try {
-            mockRequest = postService.createMockRequest(group.getId(), requestBody, request);
+            mockRequest = postService.createMockRequestFromXml(group.getId(), requestBody, request, true);
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+        return findMockedEntities(mockRequest, group.isRecording());
+    }
+
+    /**
+     *
+     * @param groupId
+     * @param jsonBody
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/**", method = PUT, consumes = "application/json")
+    public ResponseEntity processPutJsonRequest(@PathVariable String groupId, @RequestBody String jsonBody, HttpServletRequest request) {
+        RequestEntity mockRequest = null;
+        GroupEntity group = findGroupById(groupId);
+        try {
+            mockRequest = putService.createMockRequestFromJson(group.getId(), jsonBody, request);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return findMockedEntities(mockRequest, group.isRecording());
     }
 
@@ -119,17 +148,16 @@ public class RestController extends ParentController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/**", method = PUT)
-    public ResponseEntity processPutRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
+    @RequestMapping(value = "/**", method = PUT, consumes = "application/xml")
+    public ResponseEntity processPutXmlRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
         RequestEntity mockRequest = null;
         GroupEntity group = findGroupById(groupId);
 
         try {
-            mockRequest = putService.createMockRequest(group.getId(), requestBody, request);
-        } catch (IOException e) {
+            mockRequest = putService.createMockRequestFromXml(group.getId(), requestBody, request, true);
+        } catch (TransformerException e) {
             e.printStackTrace();
         }
-
         return findMockedEntities(mockRequest, group.isRecording());
     }
 }

@@ -2,10 +2,11 @@ package com.socialstartup.mockenger.core.service.rest;
 
 import com.socialstartup.mockenger.core.service.AbstractServiceTest;
 import com.socialstartup.mockenger.data.model.RequestType;
-import com.socialstartup.mockenger.data.model.mock.request.entity.PostEntity;
+import com.socialstartup.mockenger.data.model.mock.request.entity.PutEntity;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
+import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
 /**
@@ -14,17 +15,29 @@ import java.io.IOException;
 public class PutServiceTest extends AbstractServiceTest {
 
     @InjectMocks
-    private PostService classUnderTest;
+    private PutService classUnderTest;
 
     @Test
-    public void testCreateMockRequest() throws IOException {
-        PostEntity postEntity = classUnderTest.createMockRequest(GROUP_ID, JSON_DATA, httpServletRequestMock);
-        checkEntityWithBody(postEntity, RequestType.POST, JSON_DATA);
+    public void testCreateMockRequestJson() throws IOException {
+        PutEntity putEntity = classUnderTest.createMockRequestFromJson(GROUP_ID, JSON_DATA, httpServletRequestMock);
+        checkEntityWithBody(putEntity, RequestType.PUT, JSON_DATA);
     }
 
     @Test
-    public void testCreateMockRequestWithSpaces() throws IOException {
-        PostEntity postEntity = classUnderTest.createMockRequest(GROUP_ID, JSON_WITH_SPACES, httpServletRequestMock);
-        checkEntityWithBody(postEntity, RequestType.POST, JSON_DATA);
+    public void testCreateMockRequestJsonWithSpaces() throws IOException {
+        PutEntity putEntity = classUnderTest.createMockRequestFromJson(GROUP_ID, JSON_WITH_SPACES, httpServletRequestMock);
+        checkEntityWithBody(putEntity, RequestType.PUT, JSON_DATA);
+    }
+
+    @Test
+    public void testCreateMockRequestXml() throws TransformerException {
+        PutEntity putEntity = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA, httpServletRequestMock, true);
+        checkEntityWithBody(putEntity, RequestType.PUT, XML_DATA);
+    }
+
+    @Test
+    public void testCreateMockRequestXmlWithSpaces() throws TransformerException {
+        PutEntity putEntity = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_SPACES, httpServletRequestMock, true);
+        checkEntityWithBody(putEntity, RequestType.PUT, XML_DATA);
     }
 }

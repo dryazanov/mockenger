@@ -28,17 +28,45 @@ public abstract class AbstractServiceTest {
 
     protected static final String JSON_WITH_SPACES = "{\"valid\": \"ok\",   \"mock\" : \"4\"}";
 
-    protected static final String SOAP_XML_DATA = new StringBuilder("<?xml version='1.0' encoding='UTF-8'?>")
+    protected static final String XML_DATA = new StringBuilder()
+            .append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+            .append("<note>")
+            .append("<to>Tove</to>")
+            .append("<from>Jani</from>")
+            .append("<heading>Reminder</heading>")
+            .append("<body>Don't forget me this weekend!</body>")
+            .append("</note>")
+            .toString();
+
+    protected static final String XML_DATA_WITH_SPACES = new StringBuilder()
+            .append("<?xml version=\"1.0\" encoding=\"UTF-8\"?> ")
+            .append(" <note> ")
+            .append("<to>Tove</to> ")
+            .append(" <from>Jani</from>")
+            .append("<heading>Reminder</heading> ")
+            .append(" <body>Don't forget me this weekend!</body> ")
+            .append("</note> ")
+            .toString();
+
+    protected static final String SOAP_XML_DATA = new StringBuilder()
+            .append("<?xml version='1.0' encoding='UTF-8'?>")
             .append("<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">")
             .append("<S:Header/>")
             .append("<S:Body>")
-            .append("<ns3:MyAccountCustomerDataRequestElement><identificationNumber>100000000002</identificationNumber></ns3:MyAccountCustomerDataRequestElement></S:Body>")
+            .append("<ns3:MyAccountCustomerDataRequestElement xmlns:ns3=\"http://www.af-klm.com/services/passenger/data-v1/xsd\">")
+            .append("<identificationNumber>100000000002</identificationNumber>")
+            .append("</ns3:MyAccountCustomerDataRequestElement>")
+            .append("</S:Body>")
             .append("</S:Envelope>")
             .toString();
 
-    protected static final String SOAP_XML_BODY = "<S:Body><ns3:MyAccountCustomerDataRequestElement><identificationNumber>100000000002</identificationNumber></ns3:MyAccountCustomerDataRequestElement></S:Body>";
-
-    protected static final String SOAP_XML_BODY_WITH_SPACES = "<S:Body> <ns3:MyAccountCustomerDataRequestElement> <identificationNumber>100000000002</identificationNumber> </ns3:MyAccountCustomerDataRequestElement> </S:Body>";
+    protected static final String SOAP_XML_BODY = new StringBuilder()
+            .append("<S:Body xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">")
+            .append("<ns3:MyAccountCustomerDataRequestElement xmlns:ns3=\"http://www.af-klm.com/services/passenger/data-v1/xsd\">")
+            .append("<identificationNumber>100000000002</identificationNumber>")
+            .append("</ns3:MyAccountCustomerDataRequestElement>")
+            .append("</S:Body>")
+            .toString();
 
     @Mock
     protected HttpServletRequest httpServletRequestMock;
