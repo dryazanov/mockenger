@@ -1,10 +1,9 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.socialstartup.mockenger.core.service.soap.PostService;
+import com.socialstartup.mockenger.core.web.exception.BadContentTypeException;
 import com.socialstartup.mockenger.data.model.mock.group.GroupEntity;
 import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
-import com.socialstartup.mockenger.data.model.transformer.ITransformer;
-import com.socialstartup.mockenger.data.model.transformer.RegexpTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +43,15 @@ public class SoapController extends ParentController {
 
     /**
      *
+     */
+    @ResponseBody
+    @RequestMapping(value = "/**", method = POST)
+    public void processPosRequest() {
+        throw new BadContentTypeException("Invalid header 'Content-type': application/soap+xml is only allowed in SOAP requests.");
+    }
+
+    /**
+     *
      * @param requestBody
      * @param groupId
      * @param request
@@ -53,16 +61,12 @@ public class SoapController extends ParentController {
      * @throws FileNotFoundException
      */
     @ResponseBody
-    @RequestMapping(value = {"/**"}, method = POST)
+    @RequestMapping(value = {"/**"}, method = POST, consumes = "application/soap+xml")
     public ResponseEntity processPostRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
-        GroupEntity group = findGroupById(groupId);
-
-        ITransformer transformer = new RegexpTransformer(">\\s+<", "><");
-        requestBody = transformer.transform(requestBody.trim());
-
         String soapBody = null;
+        GroupEntity group = findGroupById(groupId);
         try {
-            soapBody = postService.getSoapBody(requestBody);
+            soapBody = postService.getSoapBody(requestBody, true);
         } catch (SOAPException e) {
             e.printStackTrace();
         } catch (TransformerException e) {

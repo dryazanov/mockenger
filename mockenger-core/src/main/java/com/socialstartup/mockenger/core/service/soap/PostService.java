@@ -4,6 +4,7 @@ import com.socialstartup.mockenger.commons.utils.XmlHelper;
 import com.socialstartup.mockenger.core.service.RequestService;
 import com.socialstartup.mockenger.data.model.mock.request.entity.PostEntity;
 import com.socialstartup.mockenger.data.model.mock.request.part.Body;
+import com.socialstartup.mockenger.data.model.transformer.RegexpTransformer;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +45,11 @@ public class PostService extends RequestService {
      * @throws TransformerException
      * @throws IOException
      */
-    public String getSoapBody(String requestBody) throws SOAPException, TransformerException, IOException {
+    public String getSoapBody(String requestBody, boolean removeWhitespaces) throws SOAPException, TransformerException, IOException {
+        if (removeWhitespaces) {
+            requestBody = new RegexpTransformer(">\\s+<", "><").transform(requestBody.trim());
+        }
+
         SOAPMessage soapMessage = XmlHelper.stringToXmlConverter(requestBody);
         return XmlHelper.xmlToStringConverter(soapMessage.getSOAPBody(), true);
     }
