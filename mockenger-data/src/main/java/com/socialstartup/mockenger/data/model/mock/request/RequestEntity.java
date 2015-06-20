@@ -7,12 +7,14 @@ import com.socialstartup.mockenger.data.model.mock.request.part.Parameters;
 import com.socialstartup.mockenger.data.model.mock.request.part.Path;
 import com.socialstartup.mockenger.data.model.mock.response.MockResponse;
 import com.socialstartup.mockenger.data.model.persistent.base.AbstractPersistentEntity;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
 /**
  * Created by x079089 on 3/12/2015.
  */
+@Document(collection = "request")
 public class RequestEntity extends AbstractPersistentEntity<String> {
 
     private String groupId;

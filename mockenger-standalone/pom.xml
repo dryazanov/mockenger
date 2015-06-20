@@ -9,12 +9,19 @@
         <relativePath>../mockenger-parent/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>mockenger-standalone</artifactId>
 
     <dependencies>
+        <!-- Module Dependencies -->
         <dependency>
-            <!-- Import dependency management from Spring Boot -->
+            <groupId>com.socialstartup</groupId>
+            <artifactId>mockenger-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- /Module Dependencies -->
+
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-dependencies</artifactId>
             <version>${spring.boot.version}</version>
@@ -26,13 +33,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring.boot.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.socialstartup</groupId>
-            <artifactId>mockenger-core</artifactId>
-            <version>0.1-SNAPSHOT</version>
-        </dependency>
-
-
     </dependencies>
 
 

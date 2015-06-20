@@ -11,7 +11,5 @@ import java.util.List;
  */
 public interface ProjectEntityRepository extends CrudRepository<ProjectEntity, String> {
 
-
     List<ProjectEntity> findByType(ProjectType type);
-
 }

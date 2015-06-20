@@ -21,8 +21,8 @@ public class ProjectService {
     private ProjectEntityRepository projectEntityRepository;
 
 
-    public ProjectEntity findById(String projectId) {
-        return projectEntityRepository.findOne(projectId);
+    public ProjectEntity findById(String id) {
+        return projectEntityRepository.findOne(id);
     }
 
     public List<ProjectEntity> findByType(ProjectType type) {
@@ -34,7 +34,7 @@ public class ProjectService {
     }
 
     public void remove(ProjectEntity projectEntity) {
-        groupService.findAllByProjectId(projectEntity.getId()).forEach(groupService::remove);
+        groupService.findByProjectId(projectEntity.getId()).forEach(groupService::remove);
         projectEntityRepository.delete(projectEntity);
     }
 }
