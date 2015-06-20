@@ -1,7 +1,7 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
-import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.core.service.mapper.request.GridRowMapper;
+import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.dto.GridDTO;
 import com.socialstartup.mockenger.data.model.mock.group.GroupEntity;
 import com.socialstartup.mockenger.data.model.mock.group.GroupType;
@@ -30,6 +30,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
  * Created by x079089 on 3/24/2015.
  */
 @Controller
+@RequestMapping(value = {"/groups"})
 public class GroupController extends AbstractController {
 
     /**
@@ -43,7 +44,7 @@ public class GroupController extends AbstractController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/groups", method = POST)
+    @RequestMapping(value = {"", "/"}, method = POST)
     public ResponseEntity addGroup(@RequestBody GroupEntity groupEntity) {
         if (groupEntity.getId() != null && findGroupById(groupEntity.getId()) != null) {
             // TODO: Create ErrorMessage class and use it in the response body
@@ -61,7 +62,7 @@ public class GroupController extends AbstractController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/groups/{groupId}", method = PUT)
+    @RequestMapping(value = "/{groupId}", method = PUT)
     public ResponseEntity saveGroup(@PathVariable String groupId, @RequestBody GroupEntity groupEntity) {
         if (findGroupById(groupId) != null) {
             getGroupService().save(groupEntity);
@@ -78,7 +79,7 @@ public class GroupController extends AbstractController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/groups/{groupId}", method = GET)
+    @RequestMapping(value = "/{groupId}", method = GET)
     public ResponseEntity getGroup(@PathVariable String groupId) {
         GroupEntity groupEntity = findGroupById(groupId);
 
@@ -98,7 +99,7 @@ public class GroupController extends AbstractController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/groups/{groupId}", method = DELETE)
+    @RequestMapping(value = "/{groupId}", method = DELETE)
     public ResponseEntity deleteGroup(@PathVariable String groupId) {
         GroupEntity groupEntity = findGroupById(groupId);
         if (groupEntity != null) {
@@ -111,7 +112,7 @@ public class GroupController extends AbstractController {
 
 
     @ResponseBody
-    @RequestMapping(value = "/groups", method = GET)
+    @RequestMapping(value = {"", "/"}, method = GET)
     public ResponseEntity getGroupList(@RequestParam(value = "type") GroupType type) {
         if (type != null) {
             List<GroupEntity> groupList = getGroupService().findByType(type);
@@ -140,12 +141,12 @@ public class GroupController extends AbstractController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/groups/{groupId}/requests", method = GET)
+    @RequestMapping(value = "/{groupId}/requests", method = GET)
     public ResponseEntity getRequestList(@PathVariable String groupId) {
         GroupEntity groupEntity = findGroupById(groupId);
 
         if (groupEntity != null) {
-            List<RequestEntity> requestList = getRequestService().findAllByGroupId(groupEntity.getId());
+            List<RequestEntity> requestList = getRequestService().findByGroupId(groupEntity.getId());
 
             if (requestList == null) {
                 requestList = new ArrayList<>();

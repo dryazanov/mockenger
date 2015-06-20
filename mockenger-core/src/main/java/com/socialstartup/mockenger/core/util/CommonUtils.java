@@ -17,6 +17,9 @@ public class CommonUtils {
 
 
     public static String getCheckSum(RequestEntity requestEntity) {
+        if (requestEntity.getCheckSum() != null) {
+            return requestEntity.getCheckSum();
+        }
         if (requestEntity.getBody() != null && requestEntity.getBody().getValue() != null) {
             String bodyValue = requestEntity.getBody().getValue();
             if (!StringUtils.isEmpty(bodyValue)) {
