@@ -31,7 +31,7 @@ public class PutServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCreateMockRequestXml() throws TransformerException {
-        PutEntity putEntity = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA, httpServletRequestMock, true);
+        PutEntity putEntity = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_XML_DECLARATION, httpServletRequestMock, true);
         checkEntityWithBody(putEntity, RequestType.PUT, XML_DATA);
     }
 

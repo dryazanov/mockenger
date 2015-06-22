@@ -30,7 +30,7 @@ public class ExceptionHandlingAdvice {
     @ExceptionHandler(BadContentTypeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
     public ErrorMessage handleBadContentTypeException(BadContentTypeException ex) {
-        LOG.error("BadContentTypeException has occurred", ex);
+        LOG.debug("BadContentTypeException has occurred", ex);
         return new ErrorMessage(ex.getMessage());
     }
 

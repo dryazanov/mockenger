@@ -169,7 +169,7 @@ public class CommonService {
             }
 
             String requestCheckSum = "";
-            String mockCheckSum = CommonUtils.getCheckSum(template);
+            String mockCheckSum = template.getCheckSum();
             RequestType method = mockRequest.getMethod();
             if (method != null) {
                 if (method.equals(RequestType.POST) || method.equals(RequestType.PUT)) {
@@ -182,9 +182,9 @@ public class CommonService {
                                 body = transformer.transform(body);
                             }
                         }
-                        requestCheckSum = CommonUtils.getCheckSum(mockRequest);
+                        requestCheckSum = CommonUtils.generateCheckSum(body);
 
-                        LOG.debug("Bodies");
+                        LOG.debug("BODIES");
                         LOG.debug(body);
                         LOG.debug(template.getBody().getValue());
 
