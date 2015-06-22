@@ -50,6 +50,9 @@ public class PutService extends RequestService {
 
         if (removeWhitespaces) {
             requestBody = new RegexpTransformer(">\\s+<", "><").transform(requestBody.trim());
+            if (requestBody.contains("<?xml")){
+                requestBody = requestBody.substring(requestBody.indexOf("?>") + 2);
+            }
         }
         Body body = new Body(requestBody);
         return (PutEntity) fillUpEntity(new PutEntity(body), groupId, request);

@@ -17,9 +17,6 @@ public class CommonUtils {
 
 
     public static String getCheckSum(RequestEntity requestEntity) {
-        if (requestEntity.getCheckSum() != null) {
-            return requestEntity.getCheckSum();
-        }
         if (requestEntity.getBody() != null && requestEntity.getBody().getValue() != null) {
             String bodyValue = requestEntity.getBody().getValue();
             if (!StringUtils.isEmpty(bodyValue)) {
@@ -38,7 +35,18 @@ public class CommonUtils {
         if (requestEntity.getParameters() != null && requestEntity.getParameters().getValues() != null) {
             sb.append(requestEntity.getParameters().getValues());
         }
-        byte[] bytesArray = sb.append(requestEntity.getMethod()).toString().getBytes();
-        return DigestUtils.md5DigestAsHex(bytesArray);
+        sb.append(requestEntity.getMethod());
+        return DigestUtils.md5DigestAsHex(sb.toString().getBytes());
+    }
+
+
+    public static String generateCheckSum(String ... args) {
+        StringBuilder sb = new StringBuilder();
+        for (String argument : args) {
+            if (!StringUtils.isEmpty(argument)) {
+                sb.append(argument);
+            }
+        }
+        return DigestUtils.md5DigestAsHex(sb.toString().getBytes());
     }
 }

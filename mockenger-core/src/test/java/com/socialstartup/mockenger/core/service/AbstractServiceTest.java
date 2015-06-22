@@ -29,6 +29,15 @@ public abstract class AbstractServiceTest {
     protected static final String JSON_WITH_SPACES = "{\"valid\": \"ok\",   \"mock\" : \"4\"}";
 
     protected static final String XML_DATA = new StringBuilder()
+            .append("<note>")
+            .append("<to>Tove</to>")
+            .append("<from>Jani</from>")
+            .append("<heading>Reminder</heading>")
+            .append("<body>Don't forget me this weekend!</body>")
+            .append("</note>")
+            .toString();
+
+    protected static final String XML_DATA_WITH_XML_DECLARATION = new StringBuilder()
             .append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
             .append("<note>")
             .append("<to>Tove</to>")

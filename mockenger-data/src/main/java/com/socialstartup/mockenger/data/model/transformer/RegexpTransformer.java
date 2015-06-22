@@ -1,28 +1,35 @@
 package com.socialstartup.mockenger.data.model.transformer;
 
-import org.slf4j.*;
-
 /**
  * Created by x079089 on 3/22/2015.
  */
 public class RegexpTransformer extends AbstractTransformer {
 
     /**
-     * Logger
+     * Default constructor
      */
-    private static final Logger LOG = LoggerFactory.getLogger(RegexpTransformer.class);
-
-
     public RegexpTransformer() {
         setType(TransformerType.REGEXP);
     }
 
+    /**
+     * Constructor with params
+     *
+     * @param pattern
+     * @param replacement
+     */
     public RegexpTransformer(String pattern, String replacement) {
         this();
         setPattern(pattern);
         setReplacement(replacement);
     }
 
+    /**
+     * Runs transformation against provided source
+     *
+     * @param source
+     * @return
+     */
     @Override
     public String transform(String source) {
         validate();
