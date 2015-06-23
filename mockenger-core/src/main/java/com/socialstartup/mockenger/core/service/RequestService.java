@@ -88,7 +88,10 @@ public class RequestService {
      */
     public RequestEntity doFilter(RequestEntity r, List<RequestEntity> list) {
         for (RequestEntity m : list) {
+            LOG.debug("");
             if (!pathsEqual(r, m) || !parametersEqual(r, m) || !headersEqual(r, m)) {
+                LOG.debug("------------------------------");
+                LOG.debug("Skip this mock");
                 continue;
             }
 
@@ -96,6 +99,8 @@ public class RequestService {
                 return m;
             }
         }
+        LOG.debug("==============================");
+        LOG.debug("No mocks found!");
         return null;
     }
 
@@ -255,6 +260,8 @@ public class RequestService {
             }
 
             if (usersRequestCheckSum != null && usersRequestCheckSum.equals(mockedCheckSum)) {
+                LOG.debug("##############################");
+                LOG.debug("Mock found!");
                 return true;
             }
         }

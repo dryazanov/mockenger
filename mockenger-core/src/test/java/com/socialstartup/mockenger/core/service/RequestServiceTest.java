@@ -143,7 +143,7 @@ public class RequestServiceTest {
         postEntity2.setBody(new Body(JSON1));
         postEntity2.setCheckSum(CommonUtils.getCheckSum(postEntity2));
 
-        entityList = new ArrayList<>(Arrays.asList(postEntity1, postEntity2));
+        entityList = new ArrayList<>(Arrays.asList(postEntity2, postEntity1));
     }
 
     @Test
