@@ -7,8 +7,8 @@ import com.socialstartup.mockenger.core.service.http.PatchService;
 import com.socialstartup.mockenger.core.service.http.PostService;
 import com.socialstartup.mockenger.core.service.http.PutService;
 import com.socialstartup.mockenger.core.service.http.TraceService;
-import com.socialstartup.mockenger.data.model.mock.group.GroupEntity;
-import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
+import com.socialstartup.mockenger.data.model.persistent.mock.group.Profile;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.socialstartup.mockenger.data.model.RequestType.CONNECT;
+import static com.socialstartup.mockenger.data.model.dict.RequestMethod.CONNECT;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
@@ -102,8 +102,8 @@ public class HttpController extends ParentController {
     @ResponseBody
     @RequestMapping(value = "/**", method = HEAD)
     public ResponseEntity processHeadRequest(@PathVariable String groupId, HttpServletRequest request) {
-        GroupEntity group = findGroupById(groupId);
-        RequestEntity mockRequest = headService.createMockRequest(group.getId(), request);
+        Profile group = findGroupById(groupId);
+        AbstractRequest mockRequest = headService.createMockRequest(group.getId(), request);
         return findMockedEntities(mockRequest, group.isRecording());
     }
 
@@ -116,8 +116,8 @@ public class HttpController extends ParentController {
     @ResponseBody
     @RequestMapping(value = "/**", method = OPTIONS)
     public ResponseEntity processOptionsRequest(@PathVariable String groupId, HttpServletRequest request) {
-        GroupEntity group = findGroupById(groupId);
-        RequestEntity mockRequest = optionsService.createMockRequest(group.getId(), request);
+        Profile group = findGroupById(groupId);
+        AbstractRequest mockRequest = optionsService.createMockRequest(group.getId(), request);
         return findMockedEntities(mockRequest, group.isRecording());
     }
 
@@ -130,8 +130,8 @@ public class HttpController extends ParentController {
     @ResponseBody
     @RequestMapping(value = "/**", method = TRACE)
     public ResponseEntity processTraceRequest(@PathVariable String groupId, HttpServletRequest request) {
-        GroupEntity group = findGroupById(groupId);
-        RequestEntity mockRequest = traceService.createMockRequest(group.getId(), request);
+        Profile group = findGroupById(groupId);
+        AbstractRequest mockRequest = traceService.createMockRequest(group.getId(), request);
         return findMockedEntities(mockRequest, group.isRecording());
     }
 
@@ -145,8 +145,8 @@ public class HttpController extends ParentController {
     @RequestMapping(value = "/**")
     public ResponseEntity processOtherRequests(@PathVariable String groupId, HttpServletRequest request) {
         if (request.getMethod().equals(CONNECT)) {
-            GroupEntity group = findGroupById(groupId);
-            RequestEntity mockRequest = connectService.createMockRequest(group.getId(), request);
+            Profile group = findGroupById(groupId);
+            AbstractRequest mockRequest = connectService.createMockRequest(group.getId(), request);
             return findMockedEntities(mockRequest, group.isRecording());
         }
         return new ResponseEntity(getResponseHeaders(), HttpStatus.NOT_FOUND);
@@ -162,8 +162,8 @@ public class HttpController extends ParentController {
     @ResponseBody
     @RequestMapping(value = "/**", method = POST)
     public ResponseEntity processPostRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
-        GroupEntity group = findGroupById(groupId);
-        RequestEntity mockRequest = postService.createMockRequest(group.getId(), requestBody, request);
+        Profile group = findGroupById(groupId);
+        AbstractRequest mockRequest = postService.createMockRequest(group.getId(), requestBody, request);
         return findMockedEntities(mockRequest, group.isRecording());
     }
 
@@ -177,8 +177,8 @@ public class HttpController extends ParentController {
     @ResponseBody
     @RequestMapping(value = "/**", method = PUT)
     public ResponseEntity processPutRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
-        GroupEntity group = findGroupById(groupId);
-        RequestEntity mockRequest = putService.createMockRequest(group.getId(), requestBody, request);
+        Profile group = findGroupById(groupId);
+        AbstractRequest mockRequest = putService.createMockRequest(group.getId(), requestBody, request);
         return findMockedEntities(mockRequest, group.isRecording());
     }
 
@@ -192,8 +192,8 @@ public class HttpController extends ParentController {
     @ResponseBody
     @RequestMapping(value = "/**", method = PATCH)
     public ResponseEntity processPatchRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
-        GroupEntity group = findGroupById(groupId);
-        RequestEntity mockRequest = patchService.createMockRequest(group.getId(), requestBody, request);
+        Profile group = findGroupById(groupId);
+        AbstractRequest mockRequest = patchService.createMockRequest(group.getId(), requestBody, request);
         return findMockedEntities(mockRequest, group.isRecording());
     }
 }

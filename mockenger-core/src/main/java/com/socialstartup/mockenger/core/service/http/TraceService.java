@@ -1,7 +1,7 @@
 package com.socialstartup.mockenger.core.service.http;
 
 import com.socialstartup.mockenger.core.service.RequestService;
-import com.socialstartup.mockenger.data.model.mock.request.entity.TraceEntity;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.TraceRequest;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Component
 public class TraceService extends RequestService {
-    public TraceEntity createMockRequest(String groupId, HttpServletRequest request) {
-        return (TraceEntity) fillUpEntity(new TraceEntity(), groupId, request);
+    public TraceRequest createMockRequest(String groupId, HttpServletRequest request) {
+        return (TraceRequest) fillUpEntity(new TraceRequest(), groupId, request);
     }
 }

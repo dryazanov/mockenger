@@ -1,8 +1,8 @@
 package com.socialstartup.mockenger.core.service.rest;
 
 import com.socialstartup.mockenger.core.service.AbstractServiceTest;
-import com.socialstartup.mockenger.data.model.RequestType;
-import com.socialstartup.mockenger.data.model.mock.request.entity.PostEntity;
+import com.socialstartup.mockenger.data.model.dict.RequestMethod;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.PostRequest;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
@@ -19,25 +19,25 @@ public class PostServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCreateMockRequestJson() throws IOException {
-        PostEntity postEntity = classUnderTest.createMockRequestFromJson(GROUP_ID, JSON_DATA, httpServletRequestMock);
-        checkEntityWithBody(postEntity, RequestType.POST, JSON_DATA);
+        PostRequest postRequest = classUnderTest.createMockRequestFromJson(GROUP_ID, JSON_DATA, httpServletRequestMock);
+        checkEntityWithBody(postRequest, RequestMethod.POST, JSON_DATA);
     }
 
     @Test
     public void testCreateMockRequestJsonWithSpaces() throws IOException {
-        PostEntity postEntity = classUnderTest.createMockRequestFromJson(GROUP_ID, JSON_WITH_SPACES, httpServletRequestMock);
-        checkEntityWithBody(postEntity, RequestType.POST, JSON_DATA);
+        PostRequest postRequest = classUnderTest.createMockRequestFromJson(GROUP_ID, JSON_WITH_SPACES, httpServletRequestMock);
+        checkEntityWithBody(postRequest, RequestMethod.POST, JSON_DATA);
     }
 
     @Test
     public void testCreateMockRequestXml() throws TransformerException {
-        PostEntity postEntity = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_XML_DECLARATION, httpServletRequestMock, true);
-        checkEntityWithBody(postEntity, RequestType.POST, XML_DATA);
+        PostRequest postRequest = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_XML_DECLARATION, httpServletRequestMock, true);
+        checkEntityWithBody(postRequest, RequestMethod.POST, XML_DATA);
     }
 
     @Test
     public void testCreateMockRequestXmlWithSpaces() throws TransformerException {
-        PostEntity postEntity = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_SPACES, httpServletRequestMock, true);
-        checkEntityWithBody(postEntity, RequestType.POST, XML_DATA);
+        PostRequest postRequest = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_SPACES, httpServletRequestMock, true);
+        checkEntityWithBody(postRequest, RequestMethod.POST, XML_DATA);
     }
 }

@@ -1,7 +1,7 @@
 package com.socialstartup.mockenger.core.service.common;
 
 import com.socialstartup.mockenger.core.service.RequestService;
-import com.socialstartup.mockenger.data.model.mock.request.entity.DeleteEntity;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.DeleteRequest;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Component
 public class DeleteService extends RequestService {
-    public DeleteEntity createMockRequest(String groupId, HttpServletRequest request) {
-        return (DeleteEntity) fillUpEntity(new DeleteEntity(), groupId, request);
+    public DeleteRequest createMockRequest(String groupId, HttpServletRequest request) {
+        return (DeleteRequest) fillUpEntity(new DeleteRequest(), groupId, request);
     }
 }

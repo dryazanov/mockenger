@@ -3,8 +3,8 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 import com.socialstartup.mockenger.core.service.rest.PostService;
 import com.socialstartup.mockenger.core.service.rest.PutService;
 import com.socialstartup.mockenger.core.web.exception.BadContentTypeException;
-import com.socialstartup.mockenger.data.model.mock.group.GroupEntity;
-import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
+import com.socialstartup.mockenger.data.model.persistent.mock.group.Profile;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,8 +89,8 @@ public class RestController extends ParentController {
     @ResponseBody
     @RequestMapping(value = "/**", method = POST, consumes = "application/json")
     public ResponseEntity processPostJsonRequest(@PathVariable String groupId, @RequestBody String jsonBody, HttpServletRequest request) {
-        RequestEntity mockRequest = null;
-        GroupEntity group = findGroupById(groupId);
+        AbstractRequest mockRequest = null;
+        Profile group = findGroupById(groupId);
         try {
             mockRequest = postService.createMockRequestFromJson(group.getId(), jsonBody, request);
         } catch (IOException e) {
@@ -109,8 +109,8 @@ public class RestController extends ParentController {
     @ResponseBody
     @RequestMapping(value = "/**", method = POST, consumes = "application/xml")
     public ResponseEntity processPostXmlRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
-        RequestEntity mockRequest = null;
-        GroupEntity group = findGroupById(groupId);
+        AbstractRequest mockRequest = null;
+        Profile group = findGroupById(groupId);
 
         try {
             mockRequest = postService.createMockRequestFromXml(group.getId(), requestBody, request, true);
@@ -130,8 +130,8 @@ public class RestController extends ParentController {
     @ResponseBody
     @RequestMapping(value = "/**", method = PUT, consumes = "application/json")
     public ResponseEntity processPutJsonRequest(@PathVariable String groupId, @RequestBody String jsonBody, HttpServletRequest request) {
-        RequestEntity mockRequest = null;
-        GroupEntity group = findGroupById(groupId);
+        AbstractRequest mockRequest = null;
+        Profile group = findGroupById(groupId);
         try {
             mockRequest = putService.createMockRequestFromJson(group.getId(), jsonBody, request);
         } catch (IOException e) {
@@ -150,8 +150,8 @@ public class RestController extends ParentController {
     @ResponseBody
     @RequestMapping(value = "/**", method = PUT, consumes = "application/xml")
     public ResponseEntity processPutXmlRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
-        RequestEntity mockRequest = null;
-        GroupEntity group = findGroupById(groupId);
+        AbstractRequest mockRequest = null;
+        Profile group = findGroupById(groupId);
 
         try {
             mockRequest = putService.createMockRequestFromXml(group.getId(), requestBody, request, true);

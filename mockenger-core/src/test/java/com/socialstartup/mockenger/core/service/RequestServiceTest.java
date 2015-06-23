@@ -1,12 +1,12 @@
 package com.socialstartup.mockenger.core.service;
 
 import com.socialstartup.mockenger.core.util.CommonUtils;
-import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
-import com.socialstartup.mockenger.data.model.mock.request.entity.PostEntity;
-import com.socialstartup.mockenger.data.model.mock.request.part.Body;
-import com.socialstartup.mockenger.data.model.mock.request.part.Headers;
-import com.socialstartup.mockenger.data.model.mock.request.part.Parameters;
-import com.socialstartup.mockenger.data.model.mock.request.part.Path;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.PostRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Body;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Headers;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Parameters;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
 import com.socialstartup.mockenger.data.model.transformer.IMapTransformer;
 import com.socialstartup.mockenger.data.model.transformer.ITransformer;
 import com.socialstartup.mockenger.data.model.transformer.KeyValueTransformer;
@@ -76,10 +76,10 @@ public class RequestServiceTest {
     private final Map<String, String> badParameters = new TreeMap<>();
     private final Map<String, String> moreParameters = new TreeMap<>();
 
-    private final PostEntity entityUnderTest = new PostEntity();
-    private final PostEntity postEntity1 = new PostEntity();
-    private final PostEntity postEntity2 = new PostEntity();
-    private List<RequestEntity> entityList;
+    private final PostRequest entityUnderTest = new PostRequest();
+    private final PostRequest postRequest1 = new PostRequest();
+    private final PostRequest postRequest2 = new PostRequest();
+    private List<AbstractRequest> entityList;
 
 
     IMapTransformer keyValueTransformerHeader = new KeyValueTransformer(CONTENT_TYPE, CHARSET_KOI8R, CHARSET_UTF8);
@@ -128,27 +128,27 @@ public class RequestServiceTest {
         entityUnderTest.setCheckSum(CommonUtils.getCheckSum(entityUnderTest));
 
         // Initially "good" mocked entity
-        postEntity1.setGroupId(GROUP_ID);
-        postEntity1.setPath(new Path(URL1));
-        postEntity1.setHeaders(new Headers(goodHeaders));
-        postEntity1.setParameters(new Parameters(goodParameters));
-        postEntity1.setBody(new Body(JSON1));
-        postEntity1.setCheckSum(CommonUtils.getCheckSum(postEntity1));
+        postRequest1.setGroupId(GROUP_ID);
+        postRequest1.setPath(new Path(URL1));
+        postRequest1.setHeaders(new Headers(goodHeaders));
+        postRequest1.setParameters(new Parameters(goodParameters));
+        postRequest1.setBody(new Body(JSON1));
+        postRequest1.setCheckSum(CommonUtils.getCheckSum(postRequest1));
 
         // Initially "good" mocked entity but some parts will be converted to "bad"
-        postEntity2.setGroupId(GROUP_ID);
-        postEntity2.setPath(new Path(URL1));
-        postEntity2.setHeaders(new Headers(goodHeaders));
-        postEntity2.setParameters(new Parameters(goodParameters));
-        postEntity2.setBody(new Body(JSON1));
-        postEntity2.setCheckSum(CommonUtils.getCheckSum(postEntity2));
+        postRequest2.setGroupId(GROUP_ID);
+        postRequest2.setPath(new Path(URL1));
+        postRequest2.setHeaders(new Headers(goodHeaders));
+        postRequest2.setParameters(new Parameters(goodParameters));
+        postRequest2.setBody(new Body(JSON1));
+        postRequest2.setCheckSum(CommonUtils.getCheckSum(postRequest2));
 
-        entityList = new ArrayList<>(Arrays.asList(postEntity2, postEntity1));
+        entityList = new ArrayList<>(Arrays.asList(postRequest2, postRequest1));
     }
 
     @Test
     public void testDoFilterForPostPath() {
-        postEntity2.setPath(new Path(URL2));
+        postRequest2.setPath(new Path(URL2));
         checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
     }
 
@@ -157,14 +157,14 @@ public class RequestServiceTest {
         List<ITransformer> transformers = new ArrayList<>(Arrays.asList(regexpTransformerPath));
 
         entityUnderTest.setPath(new Path(URL2));
-        postEntity1.setPath(new Path(transformers, URL1));
+        postRequest1.setPath(new Path(transformers, URL1));
 
         checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
     }
 
     @Test
     public void testDoFilterForPostParameters() {
-        postEntity2.setParameters(new Parameters(badParameters));
+        postRequest2.setParameters(new Parameters(badParameters));
         checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
     }
 
@@ -176,14 +176,14 @@ public class RequestServiceTest {
         parameters.put(PARAM_NAME1, PARAM_VALUE4);
 
         entityUnderTest.setParameters(new Parameters(parameters));
-        postEntity1.setParameters(new Parameters(transformers, goodParameters));
+        postRequest1.setParameters(new Parameters(transformers, goodParameters));
 
         checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
     }
 
     @Test
     public void testDoFilterForPostHeaders() {
-        postEntity2.setHeaders(new Headers(badHeaders));
+        postRequest2.setHeaders(new Headers(badHeaders));
         checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
     }
 
@@ -195,7 +195,7 @@ public class RequestServiceTest {
         headers.put(HOST, HOST_VALUE1);
 
         entityUnderTest.setHeaders(new Headers(headers));
-        postEntity1.setHeaders(new Headers(transformers, goodHeaders));
+        postRequest1.setHeaders(new Headers(transformers, goodHeaders));
 
         checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
     }
@@ -203,13 +203,13 @@ public class RequestServiceTest {
     @Test
     public void testDoFilterForPostMoreHeaders() {
         entityUnderTest.setHeaders(new Headers(moreHeaders));
-        postEntity2.setHeaders(new Headers(badHeaders));
+        postRequest2.setHeaders(new Headers(badHeaders));
         checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
     }
 
     @Test
     public void testDoFilterForPostBody() {
-        postEntity2.setBody(new Body(JSON2));
+        postRequest2.setBody(new Body(JSON2));
         checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
     }
 
@@ -218,8 +218,8 @@ public class RequestServiceTest {
         List<ITransformer> transformers = new ArrayList<>(Arrays.asList(regexpTransformerBody));
 
         entityUnderTest.setBody(new Body(XML_BODY2));
-        postEntity1.setBody(new Body(transformers, XML_BODY1));
-        postEntity1.setCheckSum(CommonUtils.getCheckSum(postEntity1));
+        postRequest1.setBody(new Body(transformers, XML_BODY1));
+        postRequest1.setCheckSum(CommonUtils.getCheckSum(postRequest1));
 
         checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
     }
@@ -229,8 +229,8 @@ public class RequestServiceTest {
         List<ITransformer> transformers = new ArrayList<>(Arrays.asList(xPathTransformerBody));
 
         entityUnderTest.setBody(new Body(XML_BODY2));
-        postEntity1.setBody(new Body(transformers, XML_BODY1));
-        postEntity1.setCheckSum(CommonUtils.getCheckSum(postEntity1));
+        postRequest1.setBody(new Body(transformers, XML_BODY1));
+        postRequest1.setCheckSum(CommonUtils.getCheckSum(postRequest1));
 
         checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
     }
@@ -242,8 +242,8 @@ public class RequestServiceTest {
 
     @Test
     public void testDoFilterForPostMoreParameters() {
-        postEntity1.setParameters(new Parameters(moreParameters));
-        postEntity2.setParameters(new Parameters(badParameters));
+        postRequest1.setParameters(new Parameters(moreParameters));
+        postRequest2.setParameters(new Parameters(badParameters));
 
         assertNull(classUnderTest.doFilter(entityUnderTest, entityList));
     }
@@ -251,8 +251,8 @@ public class RequestServiceTest {
     @Test
     public void testDoFilterForPostBadPathNothingFound() {
         Path path = new Path(URL2);
-        postEntity1.setPath(path);
-        postEntity2.setPath(path);
+        postRequest1.setPath(path);
+        postRequest2.setPath(path);
 
         assertNull(classUnderTest.doFilter(entityUnderTest, entityList));
     }
@@ -260,8 +260,8 @@ public class RequestServiceTest {
     @Test
     public void testDoFilterForPostBadParametersNothingFound() {
         Parameters parameters = new Parameters(badParameters);
-        postEntity1.setParameters(parameters);
-        postEntity2.setParameters(parameters);
+        postRequest1.setParameters(parameters);
+        postRequest2.setParameters(parameters);
 
         assertNull(classUnderTest.doFilter(entityUnderTest, entityList));
     }
@@ -269,16 +269,16 @@ public class RequestServiceTest {
     @Test
     public void testDoFilterForPostBadHeadersNothingFound() {
         Headers headers = new Headers(badHeaders);
-        postEntity1.setHeaders(headers);
-        postEntity2.setHeaders(headers);
+        postRequest1.setHeaders(headers);
+        postRequest2.setHeaders(headers);
 
         assertNull(classUnderTest.doFilter(entityUnderTest, entityList));
     }
 
     @Test
     public void testDoFilterForPostMoreHeadersNothingFound() {
-        postEntity1.setHeaders(new Headers(moreHeaders));
-        postEntity2.setHeaders(new Headers(badHeaders));
+        postRequest1.setHeaders(new Headers(moreHeaders));
+        postRequest2.setHeaders(new Headers(badHeaders));
 
         assertNull(classUnderTest.doFilter(entityUnderTest, entityList));
     }
@@ -287,21 +287,21 @@ public class RequestServiceTest {
     public void testDoFilterForPostBadBodyNothingFound() {
         Body body = new Body(JSON2);
         String checksum = CommonUtils.generateCheckSum(body.getValue());
-        postEntity1.setBody(body);
-        postEntity1.setCheckSum(checksum);
-        postEntity2.setBody(body);
-        postEntity2.setCheckSum(checksum);
+        postRequest1.setBody(body);
+        postRequest1.setCheckSum(checksum);
+        postRequest2.setBody(body);
+        postRequest2.setCheckSum(checksum);
 
         assertNull(classUnderTest.doFilter(entityUnderTest, entityList));
     }
 
-    private void checkCorrectResult(RequestEntity result) {
+    private void checkCorrectResult(AbstractRequest result) {
         assertNotNull(result);
-        assertEquals(postEntity1.getGroupId(), result.getGroupId());
-        assertEquals(postEntity1.getCheckSum(), result.getCheckSum());
-        assertEquals(postEntity1.getPath().getValue(), result.getPath().getValue());
-        assertEquals(postEntity1.getHeaders().getValues(), result.getHeaders().getValues());
-        assertEquals(postEntity1.getParameters().getValues(), result.getParameters().getValues());
-        assertEquals(postEntity1.getCheckSum(), result.getCheckSum());
+        assertEquals(postRequest1.getGroupId(), result.getGroupId());
+        assertEquals(postRequest1.getCheckSum(), result.getCheckSum());
+        assertEquals(postRequest1.getPath().getValue(), result.getPath().getValue());
+        assertEquals(postRequest1.getHeaders().getValues(), result.getHeaders().getValues());
+        assertEquals(postRequest1.getParameters().getValues(), result.getParameters().getValues());
+        assertEquals(postRequest1.getCheckSum(), result.getCheckSum());
     }
 }

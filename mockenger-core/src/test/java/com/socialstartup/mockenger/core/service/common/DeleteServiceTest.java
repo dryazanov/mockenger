@@ -1,8 +1,8 @@
 package com.socialstartup.mockenger.core.service.common;
 
 import com.socialstartup.mockenger.core.service.AbstractServiceTest;
-import com.socialstartup.mockenger.data.model.RequestType;
-import com.socialstartup.mockenger.data.model.mock.request.entity.DeleteEntity;
+import com.socialstartup.mockenger.data.model.dict.RequestMethod;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.DeleteRequest;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
@@ -16,7 +16,7 @@ public class DeleteServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCreateMockRequest() {
-        DeleteEntity deleteEntity = classUnderTest.createMockRequest(GROUP_ID, httpServletRequestMock);
-        checkEntityWithoutBody(deleteEntity, RequestType.DELETE);
+        DeleteRequest deleteEntity = classUnderTest.createMockRequest(GROUP_ID, httpServletRequestMock);
+        checkEntityWithoutBody(deleteEntity, RequestMethod.DELETE);
     }
 }

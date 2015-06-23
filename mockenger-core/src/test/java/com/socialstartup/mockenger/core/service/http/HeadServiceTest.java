@@ -1,9 +1,8 @@
 package com.socialstartup.mockenger.core.service.http;
 
 import com.socialstartup.mockenger.core.service.AbstractServiceTest;
-import com.socialstartup.mockenger.core.service.http.HeadService;
-import com.socialstartup.mockenger.data.model.RequestType;
-import com.socialstartup.mockenger.data.model.mock.request.entity.HeadEntity;
+import com.socialstartup.mockenger.data.model.dict.RequestMethod;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.HeadRequest;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
@@ -17,7 +16,7 @@ public class HeadServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCreateMockRequest() {
-        HeadEntity headEntity = classUnderTest.createMockRequest(GROUP_ID, httpServletRequestMock);
-        checkEntityWithoutBody(headEntity, RequestType.HEAD);
+        HeadRequest headEntity = classUnderTest.createMockRequest(GROUP_ID, httpServletRequestMock);
+        checkEntityWithoutBody(headEntity, RequestMethod.HEAD);
     }
 }

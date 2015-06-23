@@ -1,8 +1,8 @@
 package com.socialstartup.mockenger.core.service;
 
 import com.socialstartup.mockenger.data.repository.ProjectEntityRepository;
-import com.socialstartup.mockenger.data.model.mock.project.ProjectEntity;
-import com.socialstartup.mockenger.data.model.mock.project.ProjectType;
+import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
+import com.socialstartup.mockenger.data.model.persistent.mock.project.ProjectType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,20 +21,20 @@ public class ProjectService {
     private ProjectEntityRepository projectEntityRepository;
 
 
-    public ProjectEntity findById(String id) {
+    public Project findById(String id) {
         return projectEntityRepository.findOne(id);
     }
 
-    public List<ProjectEntity> findByType(ProjectType type) {
+    public List<Project> findByType(ProjectType type) {
         return projectEntityRepository.findByType(type);
     }
 
-    public void save(ProjectEntity entity) {
+    public void save(Project entity) {
         projectEntityRepository.save(entity);
     }
 
-    public void remove(ProjectEntity projectEntity) {
-        groupService.findByProjectId(projectEntity.getId()).forEach(groupService::remove);
-        projectEntityRepository.delete(projectEntity);
+    public void remove(Project project) {
+        groupService.findByProjectId(project.getId()).forEach(groupService::remove);
+        projectEntityRepository.delete(project);
     }
 }

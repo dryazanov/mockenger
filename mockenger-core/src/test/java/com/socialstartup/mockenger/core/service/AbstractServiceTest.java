@@ -1,8 +1,8 @@
 package com.socialstartup.mockenger.core.service;
 
 import com.socialstartup.mockenger.core.util.CommonUtils;
-import com.socialstartup.mockenger.data.model.RequestType;
-import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
+import com.socialstartup.mockenger.data.model.dict.RequestMethod;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.junit.Before;
 import org.mockito.Mock;
 
@@ -92,7 +92,7 @@ public abstract class AbstractServiceTest {
         when(httpServletRequestMock.getParameterNames()).thenReturn(emptyEnumeration);
     }
 
-    protected void checkEntityWithoutBody(RequestEntity entity, RequestType method) {
+    protected void checkEntityWithoutBody(AbstractRequest entity, RequestMethod method) {
         String checkSum = CommonUtils.getCheckSum(entity);
 
         assertNotNull(entity);
@@ -102,7 +102,7 @@ public abstract class AbstractServiceTest {
         assertEquals(checkSum, entity.getCheckSum());
     }
 
-    protected void checkEntityWithBody(RequestEntity entity, RequestType method, String compareWith) {
+    protected void checkEntityWithBody(AbstractRequest entity, RequestMethod method, String compareWith) {
         String checkSum = CommonUtils.getCheckSum(entity);
 
         assertNotNull(entity);

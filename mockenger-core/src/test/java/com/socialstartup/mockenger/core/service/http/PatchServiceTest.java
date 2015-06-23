@@ -1,8 +1,8 @@
 package com.socialstartup.mockenger.core.service.http;
 
 import com.socialstartup.mockenger.core.service.AbstractServiceTest;
-import com.socialstartup.mockenger.data.model.RequestType;
-import com.socialstartup.mockenger.data.model.mock.request.entity.PatchEntity;
+import com.socialstartup.mockenger.data.model.dict.RequestMethod;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.PatchRequest;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
@@ -16,7 +16,7 @@ public class PatchServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCreateMockRequest() {
-        PatchEntity patchEntity = classUnderTest.createMockRequest(GROUP_ID, JSON_DATA, httpServletRequestMock);
-        checkEntityWithBody(patchEntity, RequestType.PATCH, JSON_DATA);
+        PatchRequest patchRequest = classUnderTest.createMockRequest(GROUP_ID, JSON_DATA, httpServletRequestMock);
+        checkEntityWithBody(patchRequest, RequestMethod.PATCH, JSON_DATA);
     }
 }

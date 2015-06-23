@@ -1,7 +1,5 @@
 package com.socialstartup.mockenger.data.model.transformer;
 
-import com.socialstartup.mockenger.data.model.error.TransformerExeption;
-
 /**
  * Created by x079089 on 3/22/2015.
  */
