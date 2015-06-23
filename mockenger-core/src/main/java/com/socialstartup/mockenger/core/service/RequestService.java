@@ -180,30 +180,30 @@ public class RequestService {
      */
     private boolean headersEqual(RequestEntity requestEntityFromUser, RequestEntity mockedRequestEntity) {
         List<IMapTransformer> transformers;
-        Map<String, String> usersParameters;
-        Map<String, String> mockedParameters;
+        Map<String, String> usersHeaders;
+        Map<String, String> mockedHeaders;
 
         if (requestEntityFromUser.getHeaders() != null && mockedRequestEntity.getHeaders() != null) {
             // Transform and check headers
-            usersParameters = new HashMap<>(requestEntityFromUser.getHeaders().getValues());
-            mockedParameters = new HashMap<>(mockedRequestEntity.getHeaders().getValues());
+            usersHeaders = new HashMap<>(requestEntityFromUser.getHeaders().getValues());
+            mockedHeaders = new HashMap<>(mockedRequestEntity.getHeaders().getValues());
 
-            if (CommonUtils.allNotEmpty(usersParameters, mockedParameters)) {
+            if (CommonUtils.allNotEmpty(usersHeaders, mockedHeaders)) {
                 transformers = mockedRequestEntity.getHeaders().getTransformers();
                 if (!CollectionUtils.isEmpty(transformers)) {
                     for (IMapTransformer transformer : transformers) {
-                        String value = usersParameters.get(transformer.getKey());
+                        String value = usersHeaders.get(transformer.getKey());
                         if (!StringUtils.isEmpty(value)) {
-                            usersParameters.put(transformer.getKey(), transformer.transform(value));
+                            usersHeaders.put(transformer.getKey(), transformer.transform(value));
                         }
                     }
                 }
 
                 LOG.debug("HEADERS");
-                LOG.debug(usersParameters.toString());
-                LOG.debug(mockedParameters.toString());
+                LOG.debug(usersHeaders.toString());
+                LOG.debug(mockedHeaders.toString());
 
-                if (!CommonUtils.containsAll(usersParameters, mockedParameters)) {
+                if (!CommonUtils.containsAll(usersHeaders, mockedHeaders)) {
                     return false;
                 }
             }
@@ -246,7 +246,7 @@ public class RequestService {
                     LOG.debug(mockedCheckSum);
                 }
             } else {
-                // For GET and DELETE just comparing checksums
+                // For other methods we only compare checksums
                 usersRequestCheckSum = CommonUtils.generateCheckSum(requestEntityFromUser);
 
                 LOG.debug("CHECKSUMS");
