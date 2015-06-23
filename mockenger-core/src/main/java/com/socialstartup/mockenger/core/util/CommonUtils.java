@@ -1,9 +1,11 @@
 package com.socialstartup.mockenger.core.util;
 
 import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -48,5 +50,69 @@ public class CommonUtils {
             }
         }
         return DigestUtils.md5DigestAsHex(sb.toString().getBytes());
+    }
+
+
+    /**
+     * Checks if all the provided map are empty
+     *
+     * @param parameters
+     * @return
+     */
+    public static boolean allEmpty(Map<String, String>... parameters) {
+        for (Map<String, String> map : parameters) {
+            if (!CollectionUtils.isEmpty(map)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * Checks if all the provided maps are not empty
+     *
+     * @param parameters
+     * @return
+     */
+    public static boolean allNotEmpty(Map<String, String>... parameters) {
+        for (Map<String, String> map : parameters) {
+            if (CollectionUtils.isEmpty(map)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * Checks if map1 contains all the entities from map2
+     *
+     * @param map1
+     * @param map2
+     * @return
+     */
+    public static boolean containsAll(Map<String, String> map1, Map<String, String> map2) {
+        return map1.entrySet().containsAll(map2.entrySet());
+    }
+
+
+    /**
+     * Checks if two maps contain the same entities
+     *
+     * @param map1
+     * @param map2
+     * @return
+     */
+    public static boolean containsEqualEntries(Map<String, String> map1, Map<String, String> map2) {
+        if (CollectionUtils.isEmpty(map1) || CollectionUtils.isEmpty(map2)) {
+            return false;
+        }
+        for (Map.Entry<String, String> entry : map2.entrySet()) {
+            if (!map1.containsKey(entry.getKey()) || !map1.get(entry.getKey()).equals(entry.getValue())) {
+                return false;
+            }
+        }
+        return true;
     }
 }
