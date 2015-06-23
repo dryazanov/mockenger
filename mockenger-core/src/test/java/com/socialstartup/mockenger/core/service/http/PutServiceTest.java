@@ -1,8 +1,8 @@
 package com.socialstartup.mockenger.core.service.http;
 
 import com.socialstartup.mockenger.core.service.AbstractServiceTest;
-import com.socialstartup.mockenger.data.model.RequestType;
-import com.socialstartup.mockenger.data.model.mock.request.entity.PutEntity;
+import com.socialstartup.mockenger.data.model.dict.RequestMethod;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.PutRequest;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
@@ -16,7 +16,7 @@ public class PutServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCreateMockRequest() {
-        PutEntity putEntity = classUnderTest.createMockRequest(GROUP_ID, JSON_DATA, httpServletRequestMock);
-        checkEntityWithBody(putEntity, RequestType.PUT, JSON_DATA);
+        PutRequest putRequest = classUnderTest.createMockRequest(GROUP_ID, JSON_DATA, httpServletRequestMock);
+        checkEntityWithBody(putRequest, RequestMethod.PUT, JSON_DATA);
     }
 }

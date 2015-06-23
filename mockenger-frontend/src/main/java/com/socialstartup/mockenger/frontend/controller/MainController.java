@@ -1,9 +1,9 @@
 package com.socialstartup.mockenger.frontend.controller;
 
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
-import com.socialstartup.mockenger.data.model.RequestType;
-import com.socialstartup.mockenger.data.model.mock.group.GroupEntity;
-import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
+import com.socialstartup.mockenger.data.model.dict.RequestMethod;
+import com.socialstartup.mockenger.data.model.persistent.mock.group.Profile;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -31,9 +31,9 @@ public class MainController extends AbstractController {
 
     @RequestMapping(value = {"/groups/{groupId}/view"}, method = GET)
     public String groupPage(@PathVariable(value = "groupId") String groupId, Model model) {
-        GroupEntity groupEntity = findGroupById(groupId);
+        Profile profile = findGroupById(groupId);
 
-        if (groupEntity != null) {
+        if (profile != null) {
             model.addAttribute("groupId", groupId);
             return "group/view";
         } else {
@@ -42,24 +42,24 @@ public class MainController extends AbstractController {
     }
 
     @ModelAttribute("requestEntity")
-    public RequestEntity requestEntity() {
-        return new RequestEntity();
+    public AbstractRequest requestEntity() {
+        return new AbstractRequest();
     }
 
     @RequestMapping(value = {"/requests/{requestId}/view"}, method = GET)
     public String requestEntityViewPage(@PathVariable(value = "requestId") String requestId, Model model) {
-        RequestEntity requestEntity = getRequestService().findById(requestId);
+        AbstractRequest abstractRequest = getRequestService().findById(requestId);
 
         model.addAttribute("requestId", requestId);
-        model.addAttribute("requestEntity", requestEntity);
-        model.addAttribute("requestMethods", RequestType.values());
+        model.addAttribute("requestEntity", abstractRequest);
+        model.addAttribute("requestMethods", RequestMethod.values());
 
         return "request/view";
     }
 
     @RequestMapping(value = {"/requests/{requestId}/save"}, method = POST)
-    public String requestEntitySave(@PathVariable(value = "requestId") String requestId, RequestEntity requestEntity, Model model) {
-        LOG.debug(requestEntity.toString());
+    public String requestEntitySave(@PathVariable(value = "requestId") String requestId, AbstractRequest abstractRequest, Model model) {
+        LOG.debug(abstractRequest.toString());
 
         return "request/view";
     }

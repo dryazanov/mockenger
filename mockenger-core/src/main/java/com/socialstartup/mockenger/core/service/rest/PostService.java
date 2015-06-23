@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialstartup.mockenger.core.service.RequestService;
-import com.socialstartup.mockenger.data.model.mock.request.entity.PostEntity;
-import com.socialstartup.mockenger.data.model.mock.request.part.Body;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.PostRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Body;
 import com.socialstartup.mockenger.data.model.transformer.RegexpTransformer;
 import org.springframework.stereotype.Component;
 
@@ -26,14 +26,14 @@ public class PostService extends RequestService {
      * @return
      * @throws IOException
      */
-    public PostEntity createMockRequestFromJson(String groupId, String requestBody, HttpServletRequest request) throws IOException {
+    public PostRequest createMockRequestFromJson(String groupId, String requestBody, HttpServletRequest request) throws IOException {
         // Convert String to JsonObject and back to String to remove whitespaces
         ObjectMapper objectMapper = new ObjectMapper(new JsonFactory());
         JsonNode jsonNode = objectMapper.readTree(requestBody);
         requestBody = objectMapper.writeValueAsString(jsonNode);
 
         Body body = new Body(requestBody);
-        return (PostEntity) fillUpEntity(new PostEntity(body), groupId, request);
+        return (PostRequest) fillUpEntity(new PostRequest(body), groupId, request);
     }
 
     /**
@@ -45,7 +45,7 @@ public class PostService extends RequestService {
      * @return
      * @throws TransformerException
      */
-    public PostEntity createMockRequestFromXml(String groupId, String requestBody, HttpServletRequest request, boolean removeWhitespaces)
+    public PostRequest createMockRequestFromXml(String groupId, String requestBody, HttpServletRequest request, boolean removeWhitespaces)
             throws TransformerException {
 
         if (removeWhitespaces) {
@@ -55,6 +55,6 @@ public class PostService extends RequestService {
             }
         }
         Body body = new Body(requestBody);
-        return (PostEntity) fillUpEntity(new PostEntity(body), groupId, request);
+        return (PostRequest) fillUpEntity(new PostRequest(body), groupId, request);
     }
 }

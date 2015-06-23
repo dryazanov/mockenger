@@ -3,9 +3,9 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 import com.socialstartup.mockenger.core.service.mapper.request.GridRowMapper;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.dto.GridDTO;
-import com.socialstartup.mockenger.data.model.mock.group.GroupEntity;
-import com.socialstartup.mockenger.data.model.mock.group.GroupType;
-import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
+import com.socialstartup.mockenger.data.model.persistent.mock.group.Profile;
+import com.socialstartup.mockenger.data.model.persistent.mock.group.ProfileType;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -40,32 +40,32 @@ public class GroupController extends AbstractController {
 
     /**
      *
-     * @param groupEntity
+     * @param profile
      * @return
      */
     @ResponseBody
     @RequestMapping(value = {"", "/"}, method = POST)
-    public ResponseEntity addGroup(@RequestBody GroupEntity groupEntity) {
-        if (groupEntity.getId() != null && findGroupById(groupEntity.getId()) != null) {
+    public ResponseEntity addGroup(@RequestBody Profile profile) {
+        if (profile.getId() != null && findGroupById(profile.getId()) != null) {
             // TODO: Create ErrorMessage class and use it in the response body
             return new ResponseEntity(getResponseHeaders(), HttpStatus.CONFLICT);
         }
 
-        getGroupService().save(groupEntity);
+        getGroupService().save(profile);
         return new ResponseEntity(getResponseHeaders(), HttpStatus.CREATED);
     }
 
 
     /**
      *
-     * @param groupEntity
+     * @param profile
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/{groupId}", method = PUT)
-    public ResponseEntity saveGroup(@PathVariable String groupId, @RequestBody GroupEntity groupEntity) {
+    public ResponseEntity saveGroup(@PathVariable String groupId, @RequestBody Profile profile) {
         if (findGroupById(groupId) != null) {
-            getGroupService().save(groupEntity);
+            getGroupService().save(profile);
             return new ResponseEntity(getResponseHeaders(), HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity(getResponseHeaders(), HttpStatus.NOT_FOUND);
@@ -81,11 +81,11 @@ public class GroupController extends AbstractController {
     @ResponseBody
     @RequestMapping(value = "/{groupId}", method = GET)
     public ResponseEntity getGroup(@PathVariable String groupId) {
-        GroupEntity groupEntity = findGroupById(groupId);
+        Profile profile = findGroupById(groupId);
 
-        if (groupEntity != null) {
+        if (profile != null) {
             getResponseHeaders().set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-            return new ResponseEntity(groupEntity, getResponseHeaders(), HttpStatus.OK);
+            return new ResponseEntity(profile, getResponseHeaders(), HttpStatus.OK);
         } else {
             return new ResponseEntity(getResponseHeaders(), HttpStatus.NOT_FOUND);
         }
@@ -101,9 +101,9 @@ public class GroupController extends AbstractController {
     @ResponseBody
     @RequestMapping(value = "/{groupId}", method = DELETE)
     public ResponseEntity deleteGroup(@PathVariable String groupId) {
-        GroupEntity groupEntity = findGroupById(groupId);
-        if (groupEntity != null) {
-            getGroupService().remove(groupEntity);
+        Profile profile = findGroupById(groupId);
+        if (profile != null) {
+            getGroupService().remove(profile);
             return new ResponseEntity(getResponseHeaders(), HttpStatus.OK);
         } else {
             return new ResponseEntity(getResponseHeaders(), HttpStatus.NOT_FOUND);
@@ -113,12 +113,12 @@ public class GroupController extends AbstractController {
 
     @ResponseBody
     @RequestMapping(value = {"", "/"}, method = GET)
-    public ResponseEntity getGroupList(@RequestParam(value = "type") GroupType type) {
+    public ResponseEntity getGroupList(@RequestParam(value = "type") ProfileType type) {
         if (type != null) {
-            List<GroupEntity> groupList = getGroupService().findByType(type);
+            List<Profile> groupList = getGroupService().findByType(type);
 
             if (groupList == null) {
-                groupList = new ArrayList<GroupEntity>();
+                groupList = new ArrayList<Profile>();
             }
 
             GridDTO bootGrid = new GridDTO();
@@ -143,10 +143,10 @@ public class GroupController extends AbstractController {
     @ResponseBody
     @RequestMapping(value = "/{groupId}/requests", method = GET)
     public ResponseEntity getRequestList(@PathVariable String groupId) {
-        GroupEntity groupEntity = findGroupById(groupId);
+        Profile profile = findGroupById(groupId);
 
-        if (groupEntity != null) {
-            List<RequestEntity> requestList = getRequestService().findByGroupId(groupEntity.getId());
+        if (profile != null) {
+            List<AbstractRequest> requestList = getRequestService().findByGroupId(profile.getId());
 
             if (requestList == null) {
                 requestList = new ArrayList<>();

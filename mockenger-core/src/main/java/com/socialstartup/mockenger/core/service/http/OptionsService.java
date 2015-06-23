@@ -1,7 +1,7 @@
 package com.socialstartup.mockenger.core.service.http;
 
 import com.socialstartup.mockenger.core.service.RequestService;
-import com.socialstartup.mockenger.data.model.mock.request.entity.OptionsEntity;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.OptionsRequest;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Component
 public class OptionsService extends RequestService {
-    public OptionsEntity createMockRequest(String groupId, HttpServletRequest request) {
-        return (OptionsEntity) fillUpEntity(new OptionsEntity(), groupId, request);
+    public OptionsRequest createMockRequest(String groupId, HttpServletRequest request) {
+        return (OptionsRequest) fillUpEntity(new OptionsRequest(), groupId, request);
     }
 }

@@ -1,8 +1,8 @@
 package com.socialstartup.mockenger.core.service.http;
 
 import com.socialstartup.mockenger.core.service.AbstractServiceTest;
-import com.socialstartup.mockenger.data.model.RequestType;
-import com.socialstartup.mockenger.data.model.mock.request.entity.TraceEntity;
+import com.socialstartup.mockenger.data.model.dict.RequestMethod;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.TraceRequest;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
@@ -16,7 +16,7 @@ public class TraceServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCreateMockRequest() {
-        TraceEntity traceEntity = classUnderTest.createMockRequest(GROUP_ID, httpServletRequestMock);
-        checkEntityWithoutBody(traceEntity, RequestType.TRACE);
+        TraceRequest traceEntity = classUnderTest.createMockRequest(GROUP_ID, httpServletRequestMock);
+        checkEntityWithoutBody(traceEntity, RequestMethod.TRACE);
     }
 }

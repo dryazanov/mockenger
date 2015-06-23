@@ -1,7 +1,7 @@
 package com.socialstartup.mockenger.core.web.advice;
 
 import com.socialstartup.mockenger.core.web.exception.BadContentTypeException;
-import com.socialstartup.mockenger.data.model.error.ErrorMessage;
+import com.socialstartup.mockenger.data.model.dto.ErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

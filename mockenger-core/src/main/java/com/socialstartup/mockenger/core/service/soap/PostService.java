@@ -2,8 +2,8 @@ package com.socialstartup.mockenger.core.service.soap;
 
 import com.socialstartup.mockenger.commons.utils.XmlHelper;
 import com.socialstartup.mockenger.core.service.RequestService;
-import com.socialstartup.mockenger.data.model.mock.request.entity.PostEntity;
-import com.socialstartup.mockenger.data.model.mock.request.part.Body;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.PostRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Body;
 import com.socialstartup.mockenger.data.model.transformer.RegexpTransformer;
 import org.springframework.stereotype.Component;
 
@@ -25,9 +25,9 @@ public class PostService extends RequestService {
      * @param request
      * @return
      */
-    public PostEntity createMockRequest(String groupId, String soapBody, HttpServletRequest request) {
+    public PostRequest createMockRequest(String groupId, String soapBody, HttpServletRequest request) {
         Body body = new Body(soapBody);
-        return (PostEntity) fillUpEntity(new PostEntity(body), groupId, request);
+        return (PostRequest) fillUpEntity(new PostRequest(body), groupId, request);
     }
 
     /*public String getSoapBody2(String requestBody) throws SOAPException, TransformerException {

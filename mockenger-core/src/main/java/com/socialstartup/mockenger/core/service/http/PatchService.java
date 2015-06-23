@@ -1,8 +1,8 @@
 package com.socialstartup.mockenger.core.service.http;
 
 import com.socialstartup.mockenger.core.service.RequestService;
-import com.socialstartup.mockenger.data.model.mock.request.entity.PatchEntity;
-import com.socialstartup.mockenger.data.model.mock.request.part.Body;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.PatchRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Body;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,10 +19,10 @@ public class PatchService extends RequestService {
      * @param request
      * @return
      */
-    public PatchEntity createMockRequest(String groupId, String requestBody, HttpServletRequest request) {
+    public PatchRequest createMockRequest(String groupId, String requestBody, HttpServletRequest request) {
         // TODO: Think about the best way to store requestBody. Now we store requestBody as it is,
         // TODO: maybe we should replace whitespaces or encode somehow.
         Body body = new Body(requestBody);
-        return (PatchEntity) fillUpEntity(new PatchEntity(body), groupId, request);
+        return (PatchRequest) fillUpEntity(new PatchRequest(body), groupId, request);
     }
 }

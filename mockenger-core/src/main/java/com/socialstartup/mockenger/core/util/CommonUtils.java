@@ -1,6 +1,6 @@
 package com.socialstartup.mockenger.core.util;
 
-import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
@@ -18,26 +18,26 @@ public class CommonUtils {
     }
 
 
-    public static String getCheckSum(RequestEntity requestEntity) {
-        if (requestEntity.getBody() != null && requestEntity.getBody().getValue() != null) {
-            String bodyValue = requestEntity.getBody().getValue();
+    public static String getCheckSum(AbstractRequest abstractRequest) {
+        if (abstractRequest.getBody() != null && abstractRequest.getBody().getValue() != null) {
+            String bodyValue = abstractRequest.getBody().getValue();
             if (!StringUtils.isEmpty(bodyValue)) {
                 return DigestUtils.md5DigestAsHex(bodyValue.getBytes());
             }
         }
-        return CommonUtils.generateCheckSum(requestEntity);
+        return CommonUtils.generateCheckSum(abstractRequest);
     }
 
 
-    public static String generateCheckSum(RequestEntity requestEntity) {
+    public static String generateCheckSum(AbstractRequest abstractRequest) {
         StringBuilder sb = new StringBuilder();
-        if (requestEntity.getPath() != null && requestEntity.getPath().getValue() != null) {
-            sb.append(requestEntity.getPath().getValue());
+        if (abstractRequest.getPath() != null && abstractRequest.getPath().getValue() != null) {
+            sb.append(abstractRequest.getPath().getValue());
         }
-        if (requestEntity.getParameters() != null && requestEntity.getParameters().getValues() != null) {
-            sb.append(requestEntity.getParameters().getValues());
+        if (abstractRequest.getParameters() != null && abstractRequest.getParameters().getValues() != null) {
+            sb.append(abstractRequest.getParameters().getValues());
         }
-        sb.append(requestEntity.getMethod());
+        sb.append(abstractRequest.getMethod());
         return DigestUtils.md5DigestAsHex(sb.toString().getBytes());
     }
 

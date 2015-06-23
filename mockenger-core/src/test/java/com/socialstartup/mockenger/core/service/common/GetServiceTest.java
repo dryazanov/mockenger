@@ -1,8 +1,8 @@
 package com.socialstartup.mockenger.core.service.common;
 
 import com.socialstartup.mockenger.core.service.AbstractServiceTest;
-import com.socialstartup.mockenger.data.model.RequestType;
-import com.socialstartup.mockenger.data.model.mock.request.entity.GetEntity;
+import com.socialstartup.mockenger.data.model.dict.RequestMethod;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.GetRequest;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
@@ -16,7 +16,7 @@ public class GetServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCreateMockRequest() {
-        GetEntity getEntity = classUnderTest.createMockRequest(GROUP_ID, httpServletRequestMock);
-        checkEntityWithoutBody(getEntity, RequestType.GET);
+        GetRequest getEntity = classUnderTest.createMockRequest(GROUP_ID, httpServletRequestMock);
+        checkEntityWithoutBody(getEntity, RequestMethod.GET);
     }
 }

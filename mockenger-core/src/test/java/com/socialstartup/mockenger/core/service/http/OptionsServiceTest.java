@@ -1,9 +1,8 @@
 package com.socialstartup.mockenger.core.service.http;
 
 import com.socialstartup.mockenger.core.service.AbstractServiceTest;
-import com.socialstartup.mockenger.core.service.http.OptionsService;
-import com.socialstartup.mockenger.data.model.RequestType;
-import com.socialstartup.mockenger.data.model.mock.request.entity.OptionsEntity;
+import com.socialstartup.mockenger.data.model.dict.RequestMethod;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.OptionsRequest;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
@@ -17,7 +16,7 @@ public class OptionsServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCreateMockRequest() {
-        OptionsEntity optionsEntity = classUnderTest.createMockRequest(GROUP_ID, httpServletRequestMock);
-        checkEntityWithoutBody(optionsEntity, RequestType.OPTIONS);
+        OptionsRequest optionsEntity = classUnderTest.createMockRequest(GROUP_ID, httpServletRequestMock);
+        checkEntityWithoutBody(optionsEntity, RequestMethod.OPTIONS);
     }
 }

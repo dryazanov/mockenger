@@ -2,7 +2,7 @@ package com.socialstartup.mockenger.core.web.controller.base;
 
 import com.socialstartup.mockenger.core.service.GroupService;
 import com.socialstartup.mockenger.core.service.RequestService;
-import com.socialstartup.mockenger.data.model.mock.group.GroupEntity;
+import com.socialstartup.mockenger.data.model.persistent.mock.group.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 
@@ -40,14 +40,14 @@ public class AbstractController {
      * @param groupId
      * @return
      */
-    protected GroupEntity findGroupById(String groupId) {
-        GroupEntity groupEntity = getGroupService().findById(groupId);
+    protected Profile findGroupById(String groupId) {
+        Profile profile = getGroupService().findById(groupId);
 
-        if (groupEntity == null) {
+        if (profile == null) {
             // TODO: Create and throw GroupNotFoundException
             throw new RuntimeException("Group with ID '" + groupId + "' not found");
         }
 
-        return groupEntity;
+        return profile;
     }
 }

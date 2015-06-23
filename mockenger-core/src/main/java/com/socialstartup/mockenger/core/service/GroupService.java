@@ -1,8 +1,8 @@
 package com.socialstartup.mockenger.core.service;
 
 import com.socialstartup.mockenger.data.repository.GroupEntityRepository;
-import com.socialstartup.mockenger.data.model.mock.group.GroupEntity;
-import com.socialstartup.mockenger.data.model.mock.group.GroupType;
+import com.socialstartup.mockenger.data.model.persistent.mock.group.Profile;
+import com.socialstartup.mockenger.data.model.persistent.mock.group.ProfileType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,24 +21,24 @@ public class GroupService {
     private GroupEntityRepository groupEntityRepository;
 
 
-    public GroupEntity findById(String id) {
+    public Profile findById(String id) {
         return groupEntityRepository.findOne(id);
     }
 
-    public List<GroupEntity> findByType(GroupType type) {
+    public List<Profile> findByType(ProfileType type) {
         return groupEntityRepository.findByType(type);
     }
 
-    public List<GroupEntity> findByProjectId(String projectId) {
+    public List<Profile> findByProjectId(String projectId) {
         return groupEntityRepository.findByProjectId(projectId);
     }
 
-    public void save(GroupEntity entity) {
+    public void save(Profile entity) {
         groupEntityRepository.save(entity);
     }
 
-    public void remove(GroupEntity groupEntity) {
-        requestService.findByGroupId(groupEntity.getId()).forEach(requestService::remove);
-        groupEntityRepository.delete(groupEntity);
+    public void remove(Profile profile) {
+        requestService.findByGroupId(profile.getId()).forEach(requestService::remove);
+        groupEntityRepository.delete(profile);
     }
 }

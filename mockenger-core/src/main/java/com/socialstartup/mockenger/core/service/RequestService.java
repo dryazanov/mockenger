@@ -2,11 +2,11 @@ package com.socialstartup.mockenger.core.service;
 
 import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.core.util.HttpUtils;
-import com.socialstartup.mockenger.data.model.RequestType;
-import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
-import com.socialstartup.mockenger.data.model.mock.request.part.Headers;
-import com.socialstartup.mockenger.data.model.mock.request.part.Parameters;
-import com.socialstartup.mockenger.data.model.mock.request.part.Path;
+import com.socialstartup.mockenger.data.model.dict.RequestMethod;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Headers;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Parameters;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
 import com.socialstartup.mockenger.data.model.transformer.IMapTransformer;
 import com.socialstartup.mockenger.data.model.transformer.ITransformer;
 import com.socialstartup.mockenger.data.repository.RequestEntityRepository;
@@ -38,24 +38,24 @@ public class RequestService {
     private RequestEntityRepository requestEntityRepository;
 
 
-    public RequestEntity findById(String id) {
+    public AbstractRequest findById(String id) {
         return requestEntityRepository.findOne(id);
     }
 
-    public List<RequestEntity> findByGroupId(String groupId) {
+    public List<AbstractRequest> findByGroupId(String groupId) {
         return requestEntityRepository.findByGroupId(groupId);
     }
 
-    public void save(RequestEntity entity) {
+    public void save(AbstractRequest entity) {
         requestEntityRepository.save(entity);
     }
 
-    public void remove(RequestEntity entity) {
+    public void remove(AbstractRequest entity) {
         requestEntityRepository.delete(entity);
     }
 
-    public RequestEntity findMockedEntities(RequestEntity mockRequest) {
-        List<RequestEntity> entities = requestEntityRepository.findByGroupIdAndMethod(mockRequest.getGroupId(), mockRequest.getMethod());
+    public AbstractRequest findMockedEntities(AbstractRequest mockRequest) {
+        List<AbstractRequest> entities = requestEntityRepository.findByGroupIdAndMethod(mockRequest.getGroupId(), mockRequest.getMethod());
 
         if (entities != null && entities.size() > 0) {
             return doFilter(mockRequest, entities);
@@ -64,7 +64,7 @@ public class RequestService {
         return null;
     }
 
-    public RequestEntity fillUpEntity(RequestEntity mockRequest, String groupId, HttpServletRequest request) {
+    public AbstractRequest fillUpEntity(AbstractRequest mockRequest, String groupId, HttpServletRequest request) {
         Path path = new Path(HttpUtils.getUrlPath(request));
         Headers headers = new Headers(HttpUtils.getHeaders(request, false));
         Parameters parameters = new Parameters(HttpUtils.getParameterMap(request));
@@ -86,8 +86,8 @@ public class RequestService {
      * @param list
      * @return
      */
-    public RequestEntity doFilter(RequestEntity r, List<RequestEntity> list) {
-        for (RequestEntity m : list) {
+    public AbstractRequest doFilter(AbstractRequest r, List<AbstractRequest> list) {
+        for (AbstractRequest m : list) {
             LOG.debug("");
             if (!pathsEqual(r, m) || !parametersEqual(r, m) || !headersEqual(r, m)) {
                 LOG.debug("------------------------------");
@@ -107,16 +107,16 @@ public class RequestService {
     /**
      * Compare request paths
      *
-     * @param requestEntityFromUser
-     * @param mockedRequestEntity
+     * @param abstractRequestFromUser
+     * @param mockedAbstractRequest
      * @return
      */
-    private boolean pathsEqual(RequestEntity requestEntityFromUser, RequestEntity mockedRequestEntity) {
+    private boolean pathsEqual(AbstractRequest abstractRequestFromUser, AbstractRequest mockedAbstractRequest) {
         List<IMapTransformer> transformers;
 
-        if (requestEntityFromUser.getPath() != null && mockedRequestEntity.getPath() != null) {
-            String path = requestEntityFromUser.getPath().getValue();
-            transformers = mockedRequestEntity.getPath().getTransformers();
+        if (abstractRequestFromUser.getPath() != null && mockedAbstractRequest.getPath() != null) {
+            String path = abstractRequestFromUser.getPath().getValue();
+            transformers = mockedAbstractRequest.getPath().getTransformers();
             if (!CollectionUtils.isEmpty(transformers)) {
                 for (ITransformer transformer : transformers) {
                     path = transformer.transform(path);
@@ -125,9 +125,9 @@ public class RequestService {
 
             LOG.debug("PATHS");
             LOG.debug(path);
-            LOG.debug(mockedRequestEntity.getPath().getValue());
+            LOG.debug(mockedAbstractRequest.getPath().getValue());
 
-            if (!path.equals(mockedRequestEntity.getPath().getValue())) {
+            if (!path.equals(mockedAbstractRequest.getPath().getValue())) {
                 return false;
             }
         }
@@ -138,22 +138,22 @@ public class RequestService {
     /**
      * Compare request parameters
      *
-     * @param requestEntityFromUser
-     * @param mockedRequestEntity
+     * @param abstractRequestFromUser
+     * @param mockedAbstractRequest
      * @return
      */
-    private boolean parametersEqual(RequestEntity requestEntityFromUser, RequestEntity mockedRequestEntity) {
+    private boolean parametersEqual(AbstractRequest abstractRequestFromUser, AbstractRequest mockedAbstractRequest) {
         List<IMapTransformer> transformers;
         Map<String, String> usersParameters;
         Map<String, String> mockedParameters;
 
-        if (requestEntityFromUser.getParameters() != null && mockedRequestEntity.getParameters() != null) {
+        if (abstractRequestFromUser.getParameters() != null && mockedAbstractRequest.getParameters() != null) {
             // Transform and check query parameters
-            usersParameters = new HashMap<>(requestEntityFromUser.getParameters().getValues());
-            mockedParameters = new HashMap<>(mockedRequestEntity.getParameters().getValues());
+            usersParameters = new HashMap<>(abstractRequestFromUser.getParameters().getValues());
+            mockedParameters = new HashMap<>(mockedAbstractRequest.getParameters().getValues());
 
             if (CommonUtils.allNotEmpty(usersParameters, mockedParameters)) {
-                transformers = mockedRequestEntity.getParameters().getTransformers();
+                transformers = mockedAbstractRequest.getParameters().getTransformers();
                 if (!CollectionUtils.isEmpty(transformers)) {
                     for (IMapTransformer transformer : transformers) {
                         String value = usersParameters.get(transformer.getKey());
@@ -179,22 +179,22 @@ public class RequestService {
     /**
      * Compare request headers
      *
-     * @param requestEntityFromUser
-     * @param mockedRequestEntity
+     * @param abstractRequestFromUser
+     * @param mockedAbstractRequest
      * @return
      */
-    private boolean headersEqual(RequestEntity requestEntityFromUser, RequestEntity mockedRequestEntity) {
+    private boolean headersEqual(AbstractRequest abstractRequestFromUser, AbstractRequest mockedAbstractRequest) {
         List<IMapTransformer> transformers;
         Map<String, String> usersHeaders;
         Map<String, String> mockedHeaders;
 
-        if (requestEntityFromUser.getHeaders() != null && mockedRequestEntity.getHeaders() != null) {
+        if (abstractRequestFromUser.getHeaders() != null && mockedAbstractRequest.getHeaders() != null) {
             // Transform and check headers
-            usersHeaders = new HashMap<>(requestEntityFromUser.getHeaders().getValues());
-            mockedHeaders = new HashMap<>(mockedRequestEntity.getHeaders().getValues());
+            usersHeaders = new HashMap<>(abstractRequestFromUser.getHeaders().getValues());
+            mockedHeaders = new HashMap<>(mockedAbstractRequest.getHeaders().getValues());
 
             if (CommonUtils.allNotEmpty(usersHeaders, mockedHeaders)) {
-                transformers = mockedRequestEntity.getHeaders().getTransformers();
+                transformers = mockedAbstractRequest.getHeaders().getTransformers();
                 if (!CollectionUtils.isEmpty(transformers)) {
                     for (IMapTransformer transformer : transformers) {
                         String value = usersHeaders.get(transformer.getKey());
@@ -220,21 +220,21 @@ public class RequestService {
     /**
      * Compare request bodies
      *
-     * @param requestEntityFromUser
-     * @param mockedRequestEntity
+     * @param abstractRequestFromUser
+     * @param mockedAbstractRequest
      * @return
      */
-    private boolean bodiesEqual(RequestEntity requestEntityFromUser, RequestEntity mockedRequestEntity) {
+    private boolean bodiesEqual(AbstractRequest abstractRequestFromUser, AbstractRequest mockedAbstractRequest) {
         List<IMapTransformer> transformers;
         String usersRequestCheckSum = "";
-        String mockedCheckSum = mockedRequestEntity.getCheckSum();
+        String mockedCheckSum = mockedAbstractRequest.getCheckSum();
 
-        if (requestEntityFromUser.getMethod() != null) {
-            if (requestEntityFromUser.getMethod().equals(RequestType.POST) || requestEntityFromUser.getMethod().equals(RequestType.PUT)) {
+        if (abstractRequestFromUser.getMethod() != null) {
+            if (abstractRequestFromUser.getMethod().equals(RequestMethod.POST) || abstractRequestFromUser.getMethod().equals(RequestMethod.PUT)) {
                 // Transform request body
-                if (requestEntityFromUser.getBody() != null && mockedRequestEntity.getBody() != null) {
-                    String body = requestEntityFromUser.getBody().getValue();
-                    transformers = mockedRequestEntity.getBody().getTransformers();
+                if (abstractRequestFromUser.getBody() != null && mockedAbstractRequest.getBody() != null) {
+                    String body = abstractRequestFromUser.getBody().getValue();
+                    transformers = mockedAbstractRequest.getBody().getTransformers();
                     if (!CollectionUtils.isEmpty(transformers)) {
                         for (ITransformer transformer : transformers) {
                             body = transformer.transform(body);
@@ -244,7 +244,7 @@ public class RequestService {
 
                     LOG.debug("BODIES");
                     LOG.debug(body);
-                    LOG.debug(mockedRequestEntity.getBody().getValue());
+                    LOG.debug(mockedAbstractRequest.getBody().getValue());
 
                     LOG.debug("CHECKSUMS");
                     LOG.debug(usersRequestCheckSum);
@@ -252,7 +252,7 @@ public class RequestService {
                 }
             } else {
                 // For other methods we only compare checksums
-                usersRequestCheckSum = CommonUtils.generateCheckSum(requestEntityFromUser);
+                usersRequestCheckSum = CommonUtils.generateCheckSum(abstractRequestFromUser);
 
                 LOG.debug("CHECKSUMS");
                 LOG.debug(usersRequestCheckSum);

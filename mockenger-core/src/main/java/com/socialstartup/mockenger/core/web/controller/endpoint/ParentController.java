@@ -4,8 +4,8 @@ import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.core.service.common.DeleteService;
 import com.socialstartup.mockenger.core.service.common.GetService;
-import com.socialstartup.mockenger.data.model.mock.group.GroupEntity;
-import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
+import com.socialstartup.mockenger.data.model.persistent.mock.group.Profile;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +32,8 @@ public class ParentController extends AbstractController {
      * @return
      */
     protected ResponseEntity doGetRequest(String groupId, HttpServletRequest request) {
-        GroupEntity group = findGroupById(groupId);
-        RequestEntity mockRequest = getService.createMockRequest(group.getId(), request);
+        Profile group = findGroupById(groupId);
+        AbstractRequest mockRequest = getService.createMockRequest(group.getId(), request);
         return findMockedEntities(mockRequest, group.isRecording());
     }
 
@@ -44,8 +44,8 @@ public class ParentController extends AbstractController {
      * @return
      */
     protected ResponseEntity doDeleteRequest(String groupId, HttpServletRequest request) {
-        GroupEntity group = findGroupById(groupId);
-        RequestEntity mockRequest = deleteService.createMockRequest(group.getId(), request);
+        Profile group = findGroupById(groupId);
+        AbstractRequest mockRequest = deleteService.createMockRequest(group.getId(), request);
         return findMockedEntities(mockRequest, group.isRecording());
     }
 
@@ -55,13 +55,13 @@ public class ParentController extends AbstractController {
      * @param recordRequests
      * @return
      */
-    protected ResponseEntity findMockedEntities(RequestEntity mockRequest, boolean recordRequests) {
+    protected ResponseEntity findMockedEntities(AbstractRequest mockRequest, boolean recordRequests) {
         if (mockRequest == null) {
             // TODO: Create and throw MockObjectNotCreatedException
             throw new RuntimeException("Can't create mock object");
         }
 
-        RequestEntity mockResult = getRequestService().findMockedEntities(mockRequest);
+        AbstractRequest mockResult = getRequestService().findMockedEntities(mockRequest);
         return generateResponse(mockRequest, mockResult, recordRequests);
     }
 
@@ -72,7 +72,7 @@ public class ParentController extends AbstractController {
      * @param recordRequests
      * @return
      */
-    protected ResponseEntity generateResponse(RequestEntity mockRequest, RequestEntity mockResult, boolean recordRequests) {
+    protected ResponseEntity generateResponse(AbstractRequest mockRequest, AbstractRequest mockResult, boolean recordRequests) {
         if (mockResult != null) {
             // TODO: Check mockResult.getMockResponse().getBody() for null values
             int httpStatusCode = mockResult.getMockResponse().getHttpStatus();

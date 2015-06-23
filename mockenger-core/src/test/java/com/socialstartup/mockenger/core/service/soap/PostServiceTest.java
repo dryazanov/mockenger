@@ -1,8 +1,8 @@
 package com.socialstartup.mockenger.core.service.soap;
 
 import com.socialstartup.mockenger.core.service.AbstractServiceTest;
-import com.socialstartup.mockenger.data.model.RequestType;
-import com.socialstartup.mockenger.data.model.mock.request.entity.PostEntity;
+import com.socialstartup.mockenger.data.model.dict.RequestMethod;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.PostRequest;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
@@ -23,14 +23,14 @@ public class PostServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCreateMockRequest() throws IOException {
-        PostEntity postEntity = classUnderTest.createMockRequest(GROUP_ID, SOAP_XML_BODY, httpServletRequestMock);
-        checkEntityWithBody(postEntity, RequestType.POST, SOAP_XML_BODY);
+        PostRequest postRequest = classUnderTest.createMockRequest(GROUP_ID, SOAP_XML_BODY, httpServletRequestMock);
+        checkEntityWithBody(postRequest, RequestMethod.POST, SOAP_XML_BODY);
     }
 
     @Test
     public void testCreateMockRequestWithSpaces() throws IOException {
-        PostEntity postEntity = classUnderTest.createMockRequest(GROUP_ID, SOAP_XML_BODY, httpServletRequestMock);
-        checkEntityWithBody(postEntity, RequestType.POST, SOAP_XML_BODY);
+        PostRequest postRequest = classUnderTest.createMockRequest(GROUP_ID, SOAP_XML_BODY, httpServletRequestMock);
+        checkEntityWithBody(postRequest, RequestMethod.POST, SOAP_XML_BODY);
     }
 
     @Test

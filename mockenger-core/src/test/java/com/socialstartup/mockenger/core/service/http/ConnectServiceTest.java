@@ -1,8 +1,8 @@
 package com.socialstartup.mockenger.core.service.http;
 
 import com.socialstartup.mockenger.core.service.AbstractServiceTest;
-import com.socialstartup.mockenger.data.model.RequestType;
-import com.socialstartup.mockenger.data.model.mock.request.entity.ConnectEntity;
+import com.socialstartup.mockenger.data.model.dict.RequestMethod;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.ConnectRequest;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
@@ -16,7 +16,7 @@ public class ConnectServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCreateMockRequest() {
-        ConnectEntity connectEntity = classUnderTest.createMockRequest(GROUP_ID, httpServletRequestMock);
-        checkEntityWithoutBody(connectEntity, RequestType.CONNECT);
+        ConnectRequest connectEntity = classUnderTest.createMockRequest(GROUP_ID, httpServletRequestMock);
+        checkEntityWithoutBody(connectEntity, RequestMethod.CONNECT);
     }
 }

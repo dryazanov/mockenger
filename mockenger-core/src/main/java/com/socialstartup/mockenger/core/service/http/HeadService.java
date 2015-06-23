@@ -1,7 +1,7 @@
 package com.socialstartup.mockenger.core.service.http;
 
 import com.socialstartup.mockenger.core.service.RequestService;
-import com.socialstartup.mockenger.data.model.mock.request.entity.HeadEntity;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.HeadRequest;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Component
 public class HeadService extends RequestService {
-    public HeadEntity createMockRequest(String groupId, HttpServletRequest request) {
-        return (HeadEntity) fillUpEntity(new HeadEntity(), groupId, request);
+    public HeadRequest createMockRequest(String groupId, HttpServletRequest request) {
+        return (HeadRequest) fillUpEntity(new HeadRequest(), groupId, request);
     }
 }

@@ -2,8 +2,8 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.socialstartup.mockenger.core.service.soap.PostService;
 import com.socialstartup.mockenger.core.web.exception.BadContentTypeException;
-import com.socialstartup.mockenger.data.model.mock.group.GroupEntity;
-import com.socialstartup.mockenger.data.model.mock.request.RequestEntity;
+import com.socialstartup.mockenger.data.model.persistent.mock.group.Profile;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +64,7 @@ public class SoapController extends ParentController {
     @RequestMapping(value = {"/**"}, method = POST, consumes = "application/soap+xml")
     public ResponseEntity processPostRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
         String soapBody = null;
-        GroupEntity group = findGroupById(groupId);
+        Profile group = findGroupById(groupId);
         try {
             soapBody = postService.getSoapBody(requestBody, true);
         } catch (SOAPException e) {
@@ -74,7 +74,7 @@ public class SoapController extends ParentController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        RequestEntity mockRequest = postService.createMockRequest(group.getId(), soapBody, request);
+        AbstractRequest mockRequest = postService.createMockRequest(group.getId(), soapBody, request);
         return findMockedEntities(mockRequest, group.isRecording());
     }
 }
