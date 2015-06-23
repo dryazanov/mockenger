@@ -7,6 +7,11 @@ import com.socialstartup.mockenger.data.model.mock.request.part.Body;
 import com.socialstartup.mockenger.data.model.mock.request.part.Headers;
 import com.socialstartup.mockenger.data.model.mock.request.part.Parameters;
 import com.socialstartup.mockenger.data.model.mock.request.part.Path;
+import com.socialstartup.mockenger.data.model.transformer.IMapTransformer;
+import com.socialstartup.mockenger.data.model.transformer.ITransformer;
+import com.socialstartup.mockenger.data.model.transformer.KeyValueTransformer;
+import com.socialstartup.mockenger.data.model.transformer.RegexpTransformer;
+import com.socialstartup.mockenger.data.model.transformer.XPathTranformer;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -35,40 +40,54 @@ public class RequestServiceTest {
     private static final String JSON1 = "{\"valid\":\"ok\",\"mock\":\"4\"}";
     private static final String JSON2 = "{\"valid\":\"not ok\",\"mock\":\"1\"}";
 
-    private static String URL1 = "/service/test/1";
-    private static String URL2 = "/service/test/2";
+    private static final String URL1 = "/service/test/1";
+    private static final String URL2 = "/service/test/2";
 
-    private static String CONTENT_TYPE = "content-type";
-    private static String CONTENT_TYPE_VALUE1 = "application/soap+xml;charset=utf-8";
-    private static String CONTENT_TYPE_VALUE2 = "text/jpeg; charset=koi8r";
+    private static final String XML_BODY1 = "<note><to>Tove</to><from>Jani</from><heading>Reminder</heading></note>";
+    private static final String XML_BODY2 = "<note><to>Tove</to><from>Jani</from><heading>Huyainder</heading></note>";
 
-    private static String HOST = "host";
-    private static String HOST_VALUE1 = "localhost:8080";
-    private static String HOST_VALUE2 = "google.com";
+    private static final String CONTENT_TYPE = "content-type";
+    private static final String CHARSET_KOI8R = "charset=koi8r";
+    private static final String CHARSET_UTF8 = "charset=utf-8";
+    private static final String CONTENT_TYPE_VALUE1 = "application/soap+xml;" + CHARSET_UTF8;
+    private static final String CONTENT_TYPE_VALUE2 = "text/jpeg; " + CHARSET_KOI8R;
+    private static final String CONTENT_TYPE_VALUE3 = "application/soap+xml;" + CHARSET_KOI8R;
 
-    private static String ACCEPT = "accept";
-    private static String ACCEPT_VALUE1 = "*/*";
+    private static final String HOST = "host";
+    private static final String HOST_VALUE1 = "localhost:8080";
+    private static final String HOST_VALUE2 = "google.com";
 
-    private Map<String, String> goodHeaders = new HashMap<>();
-    private Map<String, String> badHeaders = new HashMap<>();
-    private Map<String, String> moreHeaders = new HashMap<>();
+    private static final String ACCEPT = "accept";
+    private static final String ACCEPT_VALUE1 = "*/*";
 
-    private static String PARAM_NAME1 = "a";
-    private static String PARAM_NAME2 = "b";
-    private static String PARAM_NAME3 = "c";
-    private static String PARAM_VALUE1 = "1";
-    private static String PARAM_VALUE2 = "2";
-    private static String PARAM_VALUE3 = "3";
+    private final Map<String, String> goodHeaders = new HashMap<>();
+    private final Map<String, String> badHeaders = new HashMap<>();
+    private final Map<String, String> moreHeaders = new HashMap<>();
 
-    private Map<String, String> goodParameters = new TreeMap<>();
-    private Map<String, String> badParameters = new TreeMap<>();
-    private Map<String, String> moreParameters = new TreeMap<>();
+    private static final String PARAM_NAME1 = "a";
+    private static final String PARAM_NAME2 = "b";
+    private static final String PARAM_NAME3 = "c";
+    private static final String PARAM_VALUE1 = "1";
+    private static final String PARAM_VALUE2 = "2";
+    private static final String PARAM_VALUE3 = "3";
+    private static final String PARAM_VALUE4 = "111";
 
+    private final Map<String, String> goodParameters = new TreeMap<>();
+    private final Map<String, String> badParameters = new TreeMap<>();
+    private final Map<String, String> moreParameters = new TreeMap<>();
 
-    private PostEntity entityUnderTest = new PostEntity();
-    private PostEntity postEntity1 = new PostEntity();
-    private PostEntity postEntity2 = new PostEntity();
+    private final PostEntity entityUnderTest = new PostEntity();
+    private final PostEntity postEntity1 = new PostEntity();
+    private final PostEntity postEntity2 = new PostEntity();
     private List<RequestEntity> entityList;
+
+
+    IMapTransformer keyValueTransformerHeader = new KeyValueTransformer(CONTENT_TYPE, CHARSET_KOI8R, CHARSET_UTF8);
+    IMapTransformer keyValueTransformerParam = new KeyValueTransformer(PARAM_NAME1, PARAM_VALUE4, PARAM_VALUE1);
+    ITransformer regexpTransformerPath = new RegexpTransformer("\\d+", "1");
+    ITransformer regexpTransformerBody = new RegexpTransformer("(?<=<heading>)\\w+(?=</heading>)", "Reminder");
+    ITransformer xPathTransformerBody = new XPathTranformer("/note/heading/text()", "Reminder");
+
 
     @InjectMocks
     private RequestService classUnderTest;
@@ -100,6 +119,7 @@ public class RequestServiceTest {
         moreParameters.put(PARAM_NAME2, PARAM_VALUE1);
         moreParameters.put(PARAM_NAME3, PARAM_VALUE3);
 
+        // Simulate request from user
         entityUnderTest.setGroupId(GROUP_ID);
         entityUnderTest.setPath(new Path(URL1));
         entityUnderTest.setHeaders(new Headers(goodHeaders));
@@ -107,6 +127,7 @@ public class RequestServiceTest {
         entityUnderTest.setBody(new Body(JSON1));
         entityUnderTest.setCheckSum(CommonUtils.getCheckSum(entityUnderTest));
 
+        // Initially "good" mocked entity
         postEntity1.setGroupId(GROUP_ID);
         postEntity1.setPath(new Path(URL1));
         postEntity1.setHeaders(new Headers(goodHeaders));
@@ -114,6 +135,7 @@ public class RequestServiceTest {
         postEntity1.setBody(new Body(JSON1));
         postEntity1.setCheckSum(CommonUtils.getCheckSum(postEntity1));
 
+        // Initially "good" mocked entity but some parts will be converted to "bad"
         postEntity2.setGroupId(GROUP_ID);
         postEntity2.setPath(new Path(URL1));
         postEntity2.setHeaders(new Headers(goodHeaders));
@@ -121,35 +143,60 @@ public class RequestServiceTest {
         postEntity2.setBody(new Body(JSON1));
         postEntity2.setCheckSum(CommonUtils.getCheckSum(postEntity2));
 
-        entityList = new ArrayList<>(Arrays.asList(postEntity1, postEntity2));
-
-//        Enumeration headers = Collections.enumeration(Arrays.asList(CONTENT_TYPE, HOST));
-//        when(httpServletRequestMock.getHeader(eq(CONTENT_TYPE))).thenReturn("");
-//        when(httpServletRequestMock.getHeader(eq(HOST))).thenReturn("");
-//        when(httpServletRequestMock.getHeaderNames()).thenReturn(headers);
-
-//        Enumeration emptyEnumeration = Collections.enumeration(Collections.EMPTY_LIST);
-
-//        when(httpServletRequestMock.getAttribute(anyString())).thenReturn("");
-//        when(httpServletRequestMock.getParameterNames()).thenReturn(emptyEnumeration);
-
+        entityList = new ArrayList<>(Arrays.asList(postEntity2, postEntity1));
     }
 
     @Test
-    public void testDoFilterForPostBadPath() {
+    public void testDoFilterForPostPath() {
         postEntity2.setPath(new Path(URL2));
         checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
     }
 
     @Test
-    public void testDoFilterForPostBadParameters() {
+    public void testDoFilterForPostPathWithTransformer() {
+        List<ITransformer> transformers = new ArrayList<>(Arrays.asList(regexpTransformerPath));
+
+        entityUnderTest.setPath(new Path(URL2));
+        postEntity1.setPath(new Path(transformers, URL1));
+
+        checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
+    }
+
+    @Test
+    public void testDoFilterForPostParameters() {
         postEntity2.setParameters(new Parameters(badParameters));
         checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
     }
 
     @Test
-    public void testDoFilterForPostBadHeaders() {
+    public void testDoFilterForPostParametersWithTransformer() {
+        List<IMapTransformer> transformers = new ArrayList<>(Arrays.asList(keyValueTransformerParam));
+        Map<String, String> parameters = new TreeMap<>();
+        parameters.put(PARAM_NAME2, PARAM_VALUE2);
+        parameters.put(PARAM_NAME1, PARAM_VALUE4);
+
+        entityUnderTest.setParameters(new Parameters(parameters));
+        postEntity1.setParameters(new Parameters(transformers, goodParameters));
+
+        checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
+    }
+
+    @Test
+    public void testDoFilterForPostHeaders() {
         postEntity2.setHeaders(new Headers(badHeaders));
+        checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
+    }
+
+    @Test
+    public void testDoFilterForPostHeadersWithTransformer() {
+        List<IMapTransformer> transformers = new ArrayList<>(Arrays.asList(keyValueTransformerHeader));
+        Map<String, String> headers = new TreeMap<>();
+        headers.put(CONTENT_TYPE, CONTENT_TYPE_VALUE3);
+        headers.put(HOST, HOST_VALUE1);
+
+        entityUnderTest.setHeaders(new Headers(headers));
+        postEntity1.setHeaders(new Headers(transformers, goodHeaders));
+
         checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
     }
 
@@ -161,8 +208,30 @@ public class RequestServiceTest {
     }
 
     @Test
-    public void testDoFilterForPostBadBody() {
+    public void testDoFilterForPostBody() {
         postEntity2.setBody(new Body(JSON2));
+        checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
+    }
+
+    @Test
+    public void testDoFilterForPostBodyWithTransformer1() {
+        List<ITransformer> transformers = new ArrayList<>(Arrays.asList(regexpTransformerBody));
+
+        entityUnderTest.setBody(new Body(XML_BODY2));
+        postEntity1.setBody(new Body(transformers, XML_BODY1));
+        postEntity1.setCheckSum(CommonUtils.getCheckSum(postEntity1));
+
+        checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
+    }
+
+    @Test
+    public void testDoFilterForPostBodyWithTransformer2() {
+        List<ITransformer> transformers = new ArrayList<>(Arrays.asList(xPathTransformerBody));
+
+        entityUnderTest.setBody(new Body(XML_BODY2));
+        postEntity1.setBody(new Body(transformers, XML_BODY1));
+        postEntity1.setCheckSum(CommonUtils.getCheckSum(postEntity1));
+
         checkCorrectResult(classUnderTest.doFilter(entityUnderTest, entityList));
     }
 
