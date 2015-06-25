@@ -7,11 +7,7 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Body;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Headers;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Parameters;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
-import com.socialstartup.mockenger.data.model.persistent.transformer.IMapTransformer;
-import com.socialstartup.mockenger.data.model.persistent.transformer.ITransformer;
-import com.socialstartup.mockenger.data.model.persistent.transformer.KeyValueTransformer;
-import com.socialstartup.mockenger.data.model.persistent.transformer.RegexpTransformer;
-import com.socialstartup.mockenger.data.model.persistent.transformer.XPathTransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -82,11 +78,11 @@ public class RequestServiceTest {
     private List<AbstractRequest> entityList;
 
 
-    IMapTransformer keyValueTransformerHeader = new KeyValueTransformer(CONTENT_TYPE, CHARSET_KOI8R, CHARSET_UTF8);
-    IMapTransformer keyValueTransformerParam = new KeyValueTransformer(PARAM_NAME1, PARAM_VALUE4, PARAM_VALUE1);
-    ITransformer regexpTransformerPath = new RegexpTransformer("\\d+", "1");
-    ITransformer regexpTransformerBody = new RegexpTransformer("(?<=<heading>)\\w+(?=</heading>)", "Reminder");
-    ITransformer xPathTransformerBody = new XPathTransformer("/note/heading/text()", "Reminder");
+    AbstractMapTransformer keyValueTransformerHeader = new KeyValueTransformer(CONTENT_TYPE, CHARSET_KOI8R, CHARSET_UTF8);
+    AbstractMapTransformer keyValueTransformerParam = new KeyValueTransformer(PARAM_NAME1, PARAM_VALUE4, PARAM_VALUE1);
+    AbstractTransformer regexpTransformerPath = new RegexpTransformer("\\d+", "1");
+    AbstractTransformer regexpTransformerBody = new RegexpTransformer("(?<=<heading>)\\w+(?=</heading>)", "Reminder");
+    AbstractTransformer xPathTransformerBody = new XPathTransformer("/note/heading/text()", "Reminder");
 
 
     @InjectMocks
@@ -154,7 +150,7 @@ public class RequestServiceTest {
 
     @Test
     public void testDoFilterForPostPathWithTransformer() {
-        List<ITransformer> transformers = new ArrayList<>(Arrays.asList(regexpTransformerPath));
+        List<AbstractTransformer> transformers = new ArrayList<>(Arrays.asList(regexpTransformerPath));
 
         entityUnderTest.setPath(new Path(URL2));
         postRequest1.setPath(new Path(transformers, URL1));
@@ -170,7 +166,7 @@ public class RequestServiceTest {
 
     @Test
     public void testDoFilterForPostParametersWithTransformer() {
-        List<IMapTransformer> transformers = new ArrayList<>(Arrays.asList(keyValueTransformerParam));
+        List<AbstractMapTransformer> transformers = new ArrayList<>(Arrays.asList(keyValueTransformerParam));
         Map<String, String> parameters = new TreeMap<>();
         parameters.put(PARAM_NAME2, PARAM_VALUE2);
         parameters.put(PARAM_NAME1, PARAM_VALUE4);
@@ -189,7 +185,7 @@ public class RequestServiceTest {
 
     @Test
     public void testDoFilterForPostHeadersWithTransformer() {
-        List<IMapTransformer> transformers = new ArrayList<>(Arrays.asList(keyValueTransformerHeader));
+        List<AbstractMapTransformer> transformers = new ArrayList<>(Arrays.asList(keyValueTransformerHeader));
         Map<String, String> headers = new TreeMap<>();
         headers.put(CONTENT_TYPE, CONTENT_TYPE_VALUE3);
         headers.put(HOST, HOST_VALUE1);
@@ -215,7 +211,7 @@ public class RequestServiceTest {
 
     @Test
     public void testDoFilterForPostBodyWithTransformer1() {
-        List<ITransformer> transformers = new ArrayList<>(Arrays.asList(regexpTransformerBody));
+        List<AbstractTransformer> transformers = new ArrayList<>(Arrays.asList(regexpTransformerBody));
 
         entityUnderTest.setBody(new Body(XML_BODY2));
         postRequest1.setBody(new Body(transformers, XML_BODY1));
@@ -226,7 +222,7 @@ public class RequestServiceTest {
 
     @Test
     public void testDoFilterForPostBodyWithTransformer2() {
-        List<ITransformer> transformers = new ArrayList<>(Arrays.asList(xPathTransformerBody));
+        List<AbstractTransformer> transformers = new ArrayList<>(Arrays.asList(xPathTransformerBody));
 
         entityUnderTest.setBody(new Body(XML_BODY2));
         postRequest1.setBody(new Body(transformers, XML_BODY1));

@@ -2,7 +2,7 @@ package com.socialstartup.mockenger.frontend.controller;
 
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
-import com.socialstartup.mockenger.data.model.persistent.mock.group.Profile;
+import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +31,9 @@ public class MainController extends AbstractController {
 
     @RequestMapping(value = {"/groups/{groupId}/view"}, method = GET)
     public String groupPage(@PathVariable(value = "groupId") String groupId, Model model) {
-        Profile profile = findGroupById(groupId);
+        Group group = findGroupById(groupId);
 
-        if (profile != null) {
+        if (group != null) {
             model.addAttribute("groupId", groupId);
             return "group/view";
         } else {

@@ -1,6 +1,7 @@
 package com.socialstartup.mockenger.data.model.persistent.mock.request.part;
 
 import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractTransformer;
 
 import java.util.List;
 import java.util.Map;
@@ -8,7 +9,7 @@ import java.util.Map;
 /**
  * Created by x079089 on 3/31/2015.
  */
-public class Parameters extends AbstractPart {
+public class Parameters extends AbstractPart<AbstractMapTransformer> {
 
     private Map<String, String> values;
 

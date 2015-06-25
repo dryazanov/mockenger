@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by x079089 on 3/31/2015.
  */
-public class Path extends AbstractPart {
+public class Path extends AbstractPart<AbstractTransformer> {
 
     private String value;
 

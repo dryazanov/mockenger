@@ -9,6 +9,7 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Param
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
 import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
 import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractTransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.Transformer;
 import com.socialstartup.mockenger.data.repository.RequestEntityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,9 +116,9 @@ public class RequestService {
 
         if (abstractRequestFromUser.getPath() != null && mockedAbstractRequest.getPath() != null) {
             String path = abstractRequestFromUser.getPath().getValue();
-            List<? extends AbstractTransformer> transformers = mockedAbstractRequest.getPath().getTransformers();
+            List<AbstractTransformer> transformers = mockedAbstractRequest.getPath().getTransformers();
             if (!CollectionUtils.isEmpty(transformers)) {
-                for ( transformer : transformers) {
+                for (Transformer transformer : transformers) {
                     path = transformer.transform(path);
                 }
             }
@@ -142,7 +143,7 @@ public class RequestService {
      * @return
      */
     private boolean parametersEqual(AbstractRequest abstractRequestFromUser, AbstractRequest mockedAbstractRequest) {
-        List<IMapTransformer> transformers;
+        List<AbstractMapTransformer> transformers;
         Map<String, String> usersParameters;
         Map<String, String> mockedParameters;
 
@@ -154,7 +155,7 @@ public class RequestService {
             if (CommonUtils.allNotEmpty(usersParameters, mockedParameters)) {
                 transformers = mockedAbstractRequest.getParameters().getTransformers();
                 if (!CollectionUtils.isEmpty(transformers)) {
-                    for (IMapTransformer transformer : transformers) {
+                    for (AbstractMapTransformer transformer : transformers) {
                         String value = usersParameters.get(transformer.getKey());
                         if (!StringUtils.isEmpty(value)) {
                             usersParameters.put(transformer.getKey(), transformer.transform(value));
@@ -183,7 +184,7 @@ public class RequestService {
      * @return
      */
     private boolean headersEqual(AbstractRequest abstractRequestFromUser, AbstractRequest mockedAbstractRequest) {
-        List<IMapTransformer> transformers;
+        List<AbstractMapTransformer> transformers;
         Map<String, String> usersHeaders;
         Map<String, String> mockedHeaders;
 
@@ -195,7 +196,7 @@ public class RequestService {
             if (CommonUtils.allNotEmpty(usersHeaders, mockedHeaders)) {
                 transformers = mockedAbstractRequest.getHeaders().getTransformers();
                 if (!CollectionUtils.isEmpty(transformers)) {
-                    for (IMapTransformer transformer : transformers) {
+                    for (AbstractMapTransformer transformer : transformers) {
                         String value = usersHeaders.get(transformer.getKey());
                         if (!StringUtils.isEmpty(value)) {
                             usersHeaders.put(transformer.getKey(), transformer.transform(value));
@@ -224,7 +225,7 @@ public class RequestService {
      * @return
      */
     private boolean bodiesEqual(AbstractRequest abstractRequestFromUser, AbstractRequest mockedAbstractRequest) {
-        List<IMapTransformer> transformers;
+        List<AbstractTransformer> transformers;
         String usersRequestCheckSum = "";
         String mockedCheckSum = mockedAbstractRequest.getCheckSum();
 
@@ -235,7 +236,7 @@ public class RequestService {
                     String body = abstractRequestFromUser.getBody().getValue();
                     transformers = mockedAbstractRequest.getBody().getTransformers();
                     if (!CollectionUtils.isEmpty(transformers)) {
-                        for (ITransformer transformer : transformers) {
+                        for (Transformer transformer : transformers) {
                             body = transformer.transform(body);
                         }
                     }
