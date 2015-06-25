@@ -1,8 +1,7 @@
 package com.socialstartup.mockenger.core.service;
 
+import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.repository.GroupEntityRepository;
-import com.socialstartup.mockenger.data.model.persistent.mock.group.Profile;
-import com.socialstartup.mockenger.data.model.persistent.mock.group.GroupType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,23 +20,19 @@ public class GroupService {
     private GroupEntityRepository groupEntityRepository;
 
 
-    public Profile findById(String id) {
+    public Group findById(String id) {
         return groupEntityRepository.findOne(id);
     }
 
-    public List<Profile> findByType(GroupType type) {
-        return groupEntityRepository.findByType(type);
-    }
-
-    public List<Profile> findByProjectId(String projectId) {
+    public List<Group> findByProjectId(String projectId) {
         return groupEntityRepository.findByProjectId(projectId);
     }
 
-    public void save(Profile entity) {
+    public void save(Group entity) {
         groupEntityRepository.save(entity);
     }
 
-    public void remove(Profile profile) {
+    public void remove(Group profile) {
         requestService.findByGroupId(profile.getId()).forEach(requestService::remove);
         groupEntityRepository.delete(profile);
     }

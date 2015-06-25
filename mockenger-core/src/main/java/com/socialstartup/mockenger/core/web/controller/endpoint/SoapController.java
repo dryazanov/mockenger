@@ -2,7 +2,7 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.socialstartup.mockenger.core.service.soap.PostService;
 import com.socialstartup.mockenger.core.web.exception.BadContentTypeException;
-import com.socialstartup.mockenger.data.model.persistent.mock.group.Profile;
+import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +64,7 @@ public class SoapController extends ParentController {
     @RequestMapping(value = {"/**"}, method = POST, consumes = "application/soap+xml")
     public ResponseEntity processPostRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
         String soapBody = null;
-        Profile group = findGroupById(groupId);
+        Group group = findGroupById(groupId);
         try {
             soapBody = postService.getSoapBody(requestBody, true);
         } catch (SOAPException e) {

@@ -1,5 +1,6 @@
 package com.socialstartup.mockenger.core.service;
 
+import com.socialstartup.mockenger.data.model.dict.ProjectType;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.repository.ProjectEntityRepository;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
@@ -25,7 +26,7 @@ public class ProjectService {
         return projectEntityRepository.findOne(id);
     }
 
-    public List<Project> findByType(RequestMethod.ProjectType type) {
+    public List<Project> findByType(ProjectType type) {
         return projectEntityRepository.findByType(type);
     }
 

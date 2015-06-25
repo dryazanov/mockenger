@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Created by x079089 on 3/31/2015.
  */
-public class Headers extends AbstractPart {
+public class Headers extends AbstractPart<AbstractMapTransformer> {
 
     private Map<String, String> values;
 

@@ -5,7 +5,7 @@ import com.socialstartup.mockenger.data.model.dict.TransformerType;
 /**
  * Created by x079089 on 3/22/2015.
  */
-public abstract class AbstractTransformer {
+public abstract class AbstractTransformer implements Transformer {
 
     protected TransformerType type;
 
@@ -47,5 +47,4 @@ public abstract class AbstractTransformer {
         this.replacement = replacement;
     }
 
-    abstract String transform(String source);
 }

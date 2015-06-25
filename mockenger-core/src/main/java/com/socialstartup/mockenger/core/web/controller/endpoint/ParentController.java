@@ -4,7 +4,7 @@ import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.core.service.common.DeleteService;
 import com.socialstartup.mockenger.core.service.common.GetService;
-import com.socialstartup.mockenger.data.model.persistent.mock.group.Profile;
+import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,7 +32,7 @@ public class ParentController extends AbstractController {
      * @return
      */
     protected ResponseEntity doGetRequest(String groupId, HttpServletRequest request) {
-        Profile group = findGroupById(groupId);
+        Group group = findGroupById(groupId);
         AbstractRequest mockRequest = getService.createMockRequest(group.getId(), request);
         return findMockedEntities(mockRequest, group.isRecording());
     }
@@ -44,7 +44,7 @@ public class ParentController extends AbstractController {
      * @return
      */
     protected ResponseEntity doDeleteRequest(String groupId, HttpServletRequest request) {
-        Profile group = findGroupById(groupId);
+        Group group = findGroupById(groupId);
         AbstractRequest mockRequest = deleteService.createMockRequest(group.getId(), request);
         return findMockedEntities(mockRequest, group.isRecording());
     }
