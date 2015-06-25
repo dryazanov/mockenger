@@ -4,7 +4,7 @@ import com.socialstartup.mockenger.commons.utils.XmlHelper;
 import com.socialstartup.mockenger.core.service.RequestService;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.PostRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Body;
-import com.socialstartup.mockenger.data.model.transformer.RegexpTransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.RegexpTransformer;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;

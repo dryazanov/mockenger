@@ -1,4 +1,6 @@
-package com.socialstartup.mockenger.data.model.transformer;
+package com.socialstartup.mockenger.data.model.persistent.transformer;
+
+import com.socialstartup.mockenger.data.model.dict.TransformerType;
 
 /**
  * Created by x079089 on 3/22/2015.

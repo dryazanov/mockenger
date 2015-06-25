@@ -1,6 +1,5 @@
 package com.socialstartup.mockenger.data.model.persistent.mock.request;
 
-import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Body;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 

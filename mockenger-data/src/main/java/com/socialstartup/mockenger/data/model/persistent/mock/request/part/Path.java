@@ -1,8 +1,8 @@
 package com.socialstartup.mockenger.data.model.persistent.mock.request.part;
 
-import com.socialstartup.mockenger.data.model.transformer.ITransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractTransformer;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Created by x079089 on 3/31/2015.
@@ -17,7 +17,7 @@ public class Path extends AbstractPart {
         this.value = value;
     }
 
-    public Path(List<ITransformer> transformers, String value) {
+    public Path(List<AbstractTransformer> transformers, String value) {
         this.transformers = transformers;
         this.value = value;
     }

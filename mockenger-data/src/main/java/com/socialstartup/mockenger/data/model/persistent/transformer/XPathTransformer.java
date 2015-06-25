@@ -1,6 +1,7 @@
-package com.socialstartup.mockenger.data.model.transformer;
+package com.socialstartup.mockenger.data.model.persistent.transformer;
 
 import com.socialstartup.mockenger.commons.utils.XmlHelper;
+import com.socialstartup.mockenger.data.model.dict.TransformerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -27,19 +28,19 @@ import java.io.StringWriter;
 /**
  * Created by x079089 on 3/23/2015.
  */
-public class XPathTranformer extends AbstractTransformer {
+public class XPathTransformer extends AbstractTransformer {
 
     /**
      * Logger
      */
-    private static final Logger LOG = LoggerFactory.getLogger(XPathTranformer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XPathTransformer.class);
 
 
-    public XPathTranformer() {
+    public XPathTransformer() {
         setType(TransformerType.XPATH);
     }
 
-    public XPathTranformer(String pattern, String replacement) {
+    public XPathTransformer(String pattern, String replacement) {
         this();
         setPattern(pattern);
         setReplacement(replacement);

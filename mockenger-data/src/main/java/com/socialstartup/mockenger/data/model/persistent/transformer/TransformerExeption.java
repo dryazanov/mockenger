@@ -1,4 +1,4 @@
-package com.socialstartup.mockenger.data.model.transformer;
+package com.socialstartup.mockenger.data.model.persistent.transformer;
 
 /**
  * Created by x079089 on 3/23/2015.

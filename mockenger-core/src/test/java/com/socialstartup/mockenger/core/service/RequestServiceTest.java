@@ -7,11 +7,11 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Body;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Headers;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Parameters;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
-import com.socialstartup.mockenger.data.model.transformer.IMapTransformer;
-import com.socialstartup.mockenger.data.model.transformer.ITransformer;
-import com.socialstartup.mockenger.data.model.transformer.KeyValueTransformer;
-import com.socialstartup.mockenger.data.model.transformer.RegexpTransformer;
-import com.socialstartup.mockenger.data.model.transformer.XPathTranformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.IMapTransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.ITransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.KeyValueTransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.RegexpTransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.XPathTransformer;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -86,7 +86,7 @@ public class RequestServiceTest {
     IMapTransformer keyValueTransformerParam = new KeyValueTransformer(PARAM_NAME1, PARAM_VALUE4, PARAM_VALUE1);
     ITransformer regexpTransformerPath = new RegexpTransformer("\\d+", "1");
     ITransformer regexpTransformerBody = new RegexpTransformer("(?<=<heading>)\\w+(?=</heading>)", "Reminder");
-    ITransformer xPathTransformerBody = new XPathTranformer("/note/heading/text()", "Reminder");
+    ITransformer xPathTransformerBody = new XPathTransformer("/note/heading/text()", "Reminder");
 
 
     @InjectMocks

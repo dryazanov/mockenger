@@ -7,8 +7,8 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRe
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Headers;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Parameters;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
-import com.socialstartup.mockenger.data.model.transformer.IMapTransformer;
-import com.socialstartup.mockenger.data.model.transformer.ITransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractTransformer;
 import com.socialstartup.mockenger.data.repository.RequestEntityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,13 +112,12 @@ public class RequestService {
      * @return
      */
     private boolean pathsEqual(AbstractRequest abstractRequestFromUser, AbstractRequest mockedAbstractRequest) {
-        List<IMapTransformer> transformers;
 
         if (abstractRequestFromUser.getPath() != null && mockedAbstractRequest.getPath() != null) {
             String path = abstractRequestFromUser.getPath().getValue();
-            transformers = mockedAbstractRequest.getPath().getTransformers();
+            List<? extends AbstractTransformer> transformers = mockedAbstractRequest.getPath().getTransformers();
             if (!CollectionUtils.isEmpty(transformers)) {
-                for (ITransformer transformer : transformers) {
+                for ( transformer : transformers) {
                     path = transformer.transform(path);
                 }
             }

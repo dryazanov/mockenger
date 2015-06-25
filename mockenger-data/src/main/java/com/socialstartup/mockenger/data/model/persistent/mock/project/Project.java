@@ -1,5 +1,7 @@
 package com.socialstartup.mockenger.data.model.persistent.mock.project;
 
+import com.socialstartup.mockenger.data.model.dict.ProjectType;
+import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.base.AbstractPersistentEntity;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,7 +14,6 @@ public class Project extends AbstractPersistentEntity<String> {
     private String name;
 
     private ProjectType type;
-
 
     public Project() {}
 
