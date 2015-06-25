@@ -5,7 +5,7 @@ package com.socialstartup.mockenger.data.model.dict;
  * Created by x079089 on 3/12/2015.
  */
 public enum ProjectType {
-    RESTL("REST"),
+    REST("REST"),
     SOAP("SOAP"),
     SIMPLE("Simple");
 
