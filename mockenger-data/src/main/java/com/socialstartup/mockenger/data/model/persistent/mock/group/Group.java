@@ -7,22 +7,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * Created by x079089 on 3/12/2015.
  */
 @Document(collection = "group")
-public class Profile extends AbstractPersistentEntity<String> {
+public class Group extends AbstractPersistentEntity<String> {
 
     private String projectId;
 
     private String name;
 
-    private ProfileType type;
-
     private boolean recording;
 
 
-    public Profile() {}
+    public Group() {}
 
-    public Profile(String groupId, String name, ProfileType type, boolean recording) {
+    public Group(String groupId, String name,  boolean recording) {
         this.name = name;
-        this.type = type;
         this.recording = recording;
     }
 
@@ -40,14 +37,6 @@ public class Profile extends AbstractPersistentEntity<String> {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public ProfileType getType() {
-        return type;
-    }
-
-    public void setType(ProfileType type) {
-        this.type = type;
     }
 
     public boolean isRecording() {

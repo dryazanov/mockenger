@@ -1,21 +1,21 @@
 package com.socialstartup.mockenger.data.model.persistent.mock.request.part;
 
-import com.socialstartup.mockenger.data.model.transformer.ITransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractTransformer;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Created by x079089 on 3/31/2015.
  */
-public abstract class AbstractPart {
+public abstract class AbstractPart<T extends AbstractTransformer> {
 
-    protected List<ITransformer> transformers;
+    protected List<T> transformers;
 
-    public List<ITransformer> getTransformers() {
+    public List<T> getTransformers() {
         return transformers;
     }
 
-    public void setTransformers(List<ITransformer> transformers) {
+    public void setTransformers(List<T> transformers) {
         this.transformers = transformers;
     }
 }

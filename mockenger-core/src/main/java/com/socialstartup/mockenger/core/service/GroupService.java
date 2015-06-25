@@ -2,7 +2,7 @@ package com.socialstartup.mockenger.core.service;
 
 import com.socialstartup.mockenger.data.repository.GroupEntityRepository;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Profile;
-import com.socialstartup.mockenger.data.model.persistent.mock.group.ProfileType;
+import com.socialstartup.mockenger.data.model.persistent.mock.group.GroupType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +25,7 @@ public class GroupService {
         return groupEntityRepository.findOne(id);
     }
 
-    public List<Profile> findByType(ProfileType type) {
+    public List<Profile> findByType(GroupType type) {
         return groupEntityRepository.findByType(type);
     }
 

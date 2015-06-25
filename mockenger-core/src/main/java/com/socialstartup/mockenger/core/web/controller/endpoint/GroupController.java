@@ -4,7 +4,7 @@ import com.socialstartup.mockenger.core.service.mapper.request.GridRowMapper;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.dto.Grid;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Profile;
-import com.socialstartup.mockenger.data.model.persistent.mock.group.ProfileType;
+import com.socialstartup.mockenger.data.model.persistent.mock.group.GroupType;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,7 +113,7 @@ public class GroupController extends AbstractController {
 
     @ResponseBody
     @RequestMapping(value = {"", "/"}, method = GET)
-    public ResponseEntity getGroupList(@RequestParam(value = "type") ProfileType type) {
+    public ResponseEntity getGroupList(@RequestParam(value = "type") GroupType type) {
         if (type != null) {
             List<Profile> groupList = getGroupService().findByType(type);
 

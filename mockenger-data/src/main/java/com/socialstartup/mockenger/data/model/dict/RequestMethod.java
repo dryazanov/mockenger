@@ -13,8 +13,6 @@ public enum RequestMethod {
     DELETE,
     OPTIONS,
     TRACE,
-    CONNECT;
+    CONNECT
 
-    private RequestMethod() {
-    }
 }

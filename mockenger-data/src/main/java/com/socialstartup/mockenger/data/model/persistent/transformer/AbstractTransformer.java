@@ -1,9 +1,11 @@
-package com.socialstartup.mockenger.data.model.transformer;
+package com.socialstartup.mockenger.data.model.persistent.transformer;
+
+import com.socialstartup.mockenger.data.model.dict.TransformerType;
 
 /**
  * Created by x079089 on 3/22/2015.
  */
-public abstract class AbstractTransformer implements ITransformer {
+public abstract class AbstractTransformer {
 
     protected TransformerType type;
 
@@ -21,33 +23,29 @@ public abstract class AbstractTransformer implements ITransformer {
         }
     }
 
-    @Override
     public TransformerType getType() {
         return this.type;
     }
 
-    @Override
     public void setType(TransformerType type) {
         this.type = type;
     }
 
-    @Override
     public String getPattern() {
         return this.pattern;
     }
 
-    @Override
     public void setPattern(String pattern) {
         this.pattern = pattern;
     }
 
-    @Override
     public String getReplacement() {
         return this.replacement;
     }
 
-    @Override
     public void setReplacement(String replacement) {
         this.replacement = replacement;
     }
+
+    abstract String transform(String source);
 }

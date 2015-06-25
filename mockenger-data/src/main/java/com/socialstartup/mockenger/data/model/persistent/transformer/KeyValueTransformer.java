@@ -1,11 +1,12 @@
-package com.socialstartup.mockenger.data.model.transformer;
+package com.socialstartup.mockenger.data.model.persistent.transformer;
+
+import com.socialstartup.mockenger.data.model.dict.TransformerType;
 
 /**
  * Created by x079089 on 3/22/2015.
  */
-public class KeyValueTransformer extends AbstractTransformer implements IMapTransformer {
+public class KeyValueTransformer extends AbstractMapTransformer {
 
-    private String key;
 
     /**
      * Default constructor
@@ -40,13 +41,4 @@ public class KeyValueTransformer extends AbstractTransformer implements IMapTran
         return value.replaceAll(this.pattern, this.replacement);
     }
 
-    @Override
-    public String getKey() {
-        return this.key;
-    }
-
-    @Override
-    public void setKey(String key) {
-        this.key = key;
-    }
 }
