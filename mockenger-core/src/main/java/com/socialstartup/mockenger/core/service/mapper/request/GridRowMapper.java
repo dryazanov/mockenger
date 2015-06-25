@@ -1,6 +1,6 @@
 package com.socialstartup.mockenger.core.service.mapper.request;
 
-import com.socialstartup.mockenger.data.model.dto.RequestRowDTO;
+import com.socialstartup.mockenger.data.model.dto.RequestRow;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 
 import java.text.SimpleDateFormat;
@@ -12,8 +12,8 @@ import java.util.List;
  */
 public class GridRowMapper {
 
-    public List<RequestRowDTO> map(List<AbstractRequest> requestEntities) {
-        List<RequestRowDTO> dtoList = new ArrayList<RequestRowDTO>(requestEntities.size());
+    public List<RequestRow> map(List<AbstractRequest> requestEntities) {
+        List<RequestRow> dtoList = new ArrayList<RequestRow>(requestEntities.size());
 
         for (AbstractRequest abstractRequest : requestEntities) {
             dtoList.add(convert(abstractRequest));
@@ -22,8 +22,8 @@ public class GridRowMapper {
         return dtoList;
     }
 
-    private RequestRowDTO convert(AbstractRequest abstractRequest) {
-        RequestRowDTO dto = new RequestRowDTO();
+    private RequestRow convert(AbstractRequest abstractRequest) {
+        RequestRow dto = new RequestRow();
 
         dto.setId(abstractRequest.getId());
         dto.setMethod(abstractRequest.getMethod().toString());

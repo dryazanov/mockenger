@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by x079089 on 6/9/2015.
  */
-public class GridDTO {
+public class Grid {
 
     private int current;
 

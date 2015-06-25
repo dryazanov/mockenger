@@ -3,7 +3,7 @@ package com.socialstartup.mockenger.data.model.dto;
 /**
  * Created by x079089 on 3/12/2015.
  */
-public class RequestRowDTO {
+public class RequestRow {
 
     private String id;
 

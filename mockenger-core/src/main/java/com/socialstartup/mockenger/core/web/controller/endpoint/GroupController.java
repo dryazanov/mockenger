@@ -2,7 +2,7 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.socialstartup.mockenger.core.service.mapper.request.GridRowMapper;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
-import com.socialstartup.mockenger.data.model.dto.GridDTO;
+import com.socialstartup.mockenger.data.model.dto.Grid;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Profile;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.ProfileType;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
@@ -121,7 +121,7 @@ public class GroupController extends AbstractController {
                 groupList = new ArrayList<Profile>();
             }
 
-            GridDTO bootGrid = new GridDTO();
+            Grid bootGrid = new Grid();
             bootGrid.setCurrent(1);
             bootGrid.setTotal(3);
             bootGrid.setRowCount(3);
@@ -153,7 +153,7 @@ public class GroupController extends AbstractController {
             }
 
             GridRowMapper mapper = new GridRowMapper();
-            GridDTO bootGrid = new GridDTO();
+            Grid bootGrid = new Grid();
             bootGrid.setCurrent(1);
             bootGrid.setTotal(3);
             bootGrid.setRowCount(3);
