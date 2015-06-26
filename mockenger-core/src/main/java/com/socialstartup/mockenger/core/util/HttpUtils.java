@@ -1,7 +1,5 @@
 package com.socialstartup.mockenger.core.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerMapping;
 
@@ -17,16 +15,15 @@ import java.util.TreeMap;
 public class HttpUtils {
 
     /**
-     * Logger
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(HttpUtils.class);
-
-    /**
      * Regex pattern to find in header's value all "," and ";" and spaces after them
      */
     private final static String DELIMITER_PATTERN = "(?<=[,;])\\s+";
 
+    /**
+     * Path matcher
+     */
     private final static AntPathMatcher antPathMatcher = new AntPathMatcher();
+
 
     /**
      * Gets all the headers from request and returns them as Map<String, String>

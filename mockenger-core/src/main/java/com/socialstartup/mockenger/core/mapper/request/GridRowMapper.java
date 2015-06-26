@@ -1,4 +1,4 @@
-package com.socialstartup.mockenger.core.service.mapper.request;
+package com.socialstartup.mockenger.core.mapper.request;
 
 import com.socialstartup.mockenger.data.model.dto.RequestRow;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
