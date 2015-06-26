@@ -1,6 +1,6 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
-import com.socialstartup.mockenger.core.service.mapper.request.GridRowMapper;
+import com.socialstartup.mockenger.core.mapper.request.GridRowMapper;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.dto.Grid;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;

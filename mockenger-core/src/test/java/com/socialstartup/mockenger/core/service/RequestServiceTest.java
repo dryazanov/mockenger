@@ -135,32 +135,6 @@ public class RequestServiceTest {
         moreParameters.put(PARAM_NAME1, PARAM_VALUE2);
         moreParameters.put(PARAM_NAME2, PARAM_VALUE1);
         moreParameters.put(PARAM_NAME3, PARAM_VALUE3);
-
-        // Simulate request from user
-        postTestRequest.setGroupId(GROUP_ID);
-        postTestRequest.setPath(new Path(URL1));
-        postTestRequest.setHeaders(new Headers(goodHeaders));
-        postTestRequest.setParameters(new Parameters(goodParameters));
-        postTestRequest.setBody(new Body(JSON1));
-        postTestRequest.setCheckSum(CommonUtils.getCheckSum(postTestRequest));
-
-        // Initially "good" mocked entity
-        postRequest1.setGroupId(GROUP_ID);
-        postRequest1.setPath(new Path(URL1));
-        postRequest1.setHeaders(new Headers(goodHeaders));
-        postRequest1.setParameters(new Parameters(goodParameters));
-        postRequest1.setBody(new Body(JSON1));
-        postRequest1.setCheckSum(CommonUtils.getCheckSum(postRequest1));
-
-        // Initially "good" mocked entity but some parts will be converted to "bad"
-        postRequest2.setGroupId(GROUP_ID);
-        postRequest2.setPath(new Path(URL1));
-        postRequest2.setHeaders(new Headers(goodHeaders));
-        postRequest2.setParameters(new Parameters(goodParameters));
-        postRequest2.setBody(new Body(JSON1));
-        postRequest2.setCheckSum(CommonUtils.getCheckSum(postRequest2));
-
-        postRequestList = new ArrayList<>(Arrays.asList(postRequest2, postRequest1));
     }
 
     @Test
@@ -403,6 +377,7 @@ public class RequestServiceTest {
 
     @Test
     public void testFindMockedEntitiesNullResult() {
+        createPostRequests();
         when(requestEntityRepositoryMock.findByGroupIdAndMethod(eq(GROUP_ID), eq(RequestMethod.POST))).thenReturn(Collections.emptyList());
         AbstractRequest result = classUnderTest.findMockedEntities(postTestRequest);
 
