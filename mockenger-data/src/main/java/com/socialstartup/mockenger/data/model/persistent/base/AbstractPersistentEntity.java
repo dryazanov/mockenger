@@ -18,11 +18,11 @@ public abstract class AbstractPersistentEntity<ID extends Serializable> {
     @Id
     private ID id;
 
-    public final ID getId() {
+    public ID getId() {
         return id;
     }
 
-    public final void setId(ID id) {
+    public void setId(ID id) {
         this.id = id;
     }
 }
