@@ -1,7 +1,11 @@
 package com.socialstartup.mockenger.core.web.advice;
 
 import com.socialstartup.mockenger.core.web.exception.BadContentTypeException;
+import com.socialstartup.mockenger.core.web.exception.ObjectAlreadyExistsException;
+import com.socialstartup.mockenger.core.web.exception.ObjectNotFoundException;
 import com.socialstartup.mockenger.data.model.dto.ErrorMessage;
+import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
+import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -32,6 +36,44 @@ public class ExceptionHandlingAdvice {
     public ErrorMessage handleBadContentTypeException(BadContentTypeException ex) {
         LOG.debug("BadContentTypeException has occurred", ex);
         return new ErrorMessage(ex.getMessage());
+    }
+
+    /**
+     * Handle errors about bad content-type in the header
+     *
+     * @param ex
+     * @return error message
+     */
+    @ResponseBody
+    @ExceptionHandler(ObjectAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT) // 409
+    public ErrorMessage handleObjectAlreadyExistsException(ObjectAlreadyExistsException ex) {
+        LOG.debug("ObjectAlreadyExistsException has occurred", ex);
+        return new ErrorMessage("Object already exists");
+    }
+
+    /**
+     * Handle errors when a record of project, group or request not found
+     *
+     * @param ex
+     * @return error message
+     */
+    @ResponseBody
+    @ExceptionHandler(ObjectNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND) // 404
+    public ErrorMessage handleObjectNotFoundException(ObjectNotFoundException ex) {
+        String className = "";
+        String template = "%s with ID '%s' not found";
+        if (ex.getClazz() instanceof Project) {
+            className = "Project";
+        } else if (ex.getClazz() instanceof Group) {
+            className = "Group";
+        } else {
+            className = "Item";
+        }
+        String message = String.format(template, className, ex.getItemId());
+        LOG.debug(message, ex);
+        return new ErrorMessage(message);
     }
 
 
