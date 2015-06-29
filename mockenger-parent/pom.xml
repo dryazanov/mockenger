@@ -34,6 +34,7 @@
         <junit.version>4.11</junit.version>
         <mockito.version>1.10.19</mockito.version>
         <powermock.version>1.6.2</powermock.version>
+        <jsonpath.version>2.0.0</jsonpath.version>
         <xalan.version>2.7.2</xalan.version>
     </properties>
 
@@ -155,6 +156,12 @@
                 <groupId>org.powermock</groupId>
                 <artifactId>powermock-api-mockito</artifactId>
                 <version>${powermock.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.jayway.jsonpath</groupId>
+                <artifactId>json-path-assert</artifactId>
+                <version>${jsonpath.version}</version>
                 <scope>test</scope>
             </dependency>
 
