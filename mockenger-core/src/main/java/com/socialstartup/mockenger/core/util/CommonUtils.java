@@ -17,7 +17,6 @@ public class CommonUtils {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
-
     public static String getCheckSum(AbstractRequest abstractRequest) {
         if (abstractRequest.getBody() != null && abstractRequest.getBody().getValue() != null) {
             String bodyValue = abstractRequest.getBody().getValue();

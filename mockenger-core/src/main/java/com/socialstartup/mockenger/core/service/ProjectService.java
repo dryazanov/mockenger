@@ -1,9 +1,8 @@
 package com.socialstartup.mockenger.core.service;
 
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
-import com.socialstartup.mockenger.data.model.dict.RequestMethod;
-import com.socialstartup.mockenger.data.repository.ProjectEntityRepository;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
+import com.socialstartup.mockenger.data.repository.ProjectEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +20,10 @@ public class ProjectService {
     @Autowired
     private ProjectEntityRepository projectEntityRepository;
 
+
+    public Iterable<Project> findAll() {
+        return projectEntityRepository.findAll();
+    }
 
     public Project findById(String id) {
         return projectEntityRepository.findOne(id);

@@ -5,8 +5,6 @@ import com.socialstartup.mockenger.core.service.rest.PutService;
 import com.socialstartup.mockenger.core.web.exception.BadContentTypeException;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +18,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 /**
  * Created by x079089 on 3/24/2015.
@@ -28,11 +29,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @Controller
 @RequestMapping(value = {"/rest/{groupId}"})
 public class RestController extends ParentController {
-
-    /**
-     * Logger
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(RestController.class);
 
     @Autowired
     @Qualifier("restPostService")
