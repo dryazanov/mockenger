@@ -31,9 +31,13 @@
         <aspectj.version>1.7.3</aspectj.version>
         <slf4j.version>1.7.5</slf4j.version>
         <logback.version>1.1.3</logback.version>
-        <junit.version>4.9</junit.version>
-        <mockito.version>1.9.5</mockito.version>
+        <junit.version>4.11</junit.version>
+        <mockito.version>1.10.19</mockito.version>
+        <powermock.version>1.6.2</powermock.version>
+        <jsonpath.version>2.0.0</jsonpath.version>
         <xalan.version>2.7.2</xalan.version>
+        <validation.api.version>1.0.0.GA</validation.api.version>
+        <hibernate.validator.version>4.1.0.Final</hibernate.validator.version>
     </properties>
 
     <dependencyManagement>
@@ -114,6 +118,16 @@
                 <artifactId>aspectjrt</artifactId>
                 <version>${aspectj.version}</version>
             </dependency>
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>${validation.api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate.validator.version}</version>
+            </dependency>
             <!-- Test Dependencies -->
 
             <dependency>
@@ -142,6 +156,24 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-module-junit4</artifactId>
+                <version>${powermock.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-api-mockito</artifactId>
+                <version>${powermock.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.jayway.jsonpath</groupId>
+                <artifactId>json-path-assert</artifactId>
+                <version>${jsonpath.version}</version>
                 <scope>test</scope>
             </dependency>
 

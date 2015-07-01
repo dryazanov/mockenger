@@ -1,9 +1,11 @@
 package com.socialstartup.mockenger.data.model.persistent.mock.project;
 
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
-import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.base.AbstractPersistentEntity;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by x079089 on 6/15/2015.
@@ -11,8 +13,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "project")
 public class Project extends AbstractPersistentEntity<String> {
 
+    @NotBlank
     private String name;
 
+    @NotNull
     private ProjectType type;
 
     public Project() {}

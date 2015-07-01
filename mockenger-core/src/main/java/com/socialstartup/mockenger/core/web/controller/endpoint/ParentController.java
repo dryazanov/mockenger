@@ -1,9 +1,8 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
-import com.socialstartup.mockenger.core.util.CommonUtils;
-import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.core.service.common.DeleteService;
 import com.socialstartup.mockenger.core.service.common.GetService;
+import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,8 +84,6 @@ public class ParentController extends AbstractController {
         } else {
             HttpStatus status = HttpStatus.NOT_FOUND;
             if (recordRequests) {
-                // TODO: Decide which unique id generator is better
-                mockRequest.setId(CommonUtils.generateUniqueId());
                 getRequestService().save(mockRequest);
                 status = HttpStatus.CREATED;
             }
