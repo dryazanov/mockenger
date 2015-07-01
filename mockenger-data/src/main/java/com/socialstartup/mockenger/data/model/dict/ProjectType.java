@@ -28,4 +28,13 @@ public enum ProjectType {
     public List<RequestMethod> getAllowedMethods() {
         return allowedMethods;
     }
+
+    public static boolean contains(String value) {
+        for (ProjectType type : ProjectType.values()) {
+            if (type.name().equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

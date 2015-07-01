@@ -4,8 +4,6 @@ import com.socialstartup.mockenger.core.web.exception.BadContentTypeException;
 import com.socialstartup.mockenger.core.web.exception.ObjectAlreadyExistsException;
 import com.socialstartup.mockenger.core.web.exception.ObjectNotFoundException;
 import com.socialstartup.mockenger.data.model.dto.ErrorMessage;
-import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
-import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -64,10 +62,8 @@ public class ExceptionHandlingAdvice {
     public ErrorMessage handleObjectNotFoundException(ObjectNotFoundException ex) {
         String className = "";
         String template = "%s with ID '%s' not found";
-        if (ex.getClazz() instanceof Project) {
-            className = "Project";
-        } else if (ex.getClazz() instanceof Group) {
-            className = "Group";
+        if (ex.getClassName() != null) {
+            className = ex.getClassName();
         } else {
             className = "Item";
         }
@@ -90,6 +86,6 @@ public class ExceptionHandlingAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
     public ErrorMessage handleIllegalArgumentException(HttpServletRequest req, IllegalArgumentException ex) {
         LOG.error("IllegalArgumentException has occurred", ex);
-        return new ErrorMessage("Unable to process request. " + ex.getMessage());
+        return new ErrorMessage((ex == null || ex.getMessage() == null) ? "Unable to process request" : ex.getMessage());
     }
 }

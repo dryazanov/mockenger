@@ -1,19 +1,21 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
-import com.socialstartup.mockenger.core.web.exception.ObjectAlreadyExistsException;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,12 @@ public class ProjectController extends AbstractController {
      * Logger
      */
     private static final Logger LOG = LoggerFactory.getLogger(ProjectController.class);
+
+
+    public ProjectController() {
+        getResponseHeaders().set("Content-Type", MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
+    }
+
 
     /**
      *
@@ -54,10 +62,12 @@ public class ProjectController extends AbstractController {
      */
     @ResponseBody
     @RequestMapping(value = {"", "/"}, method = POST)
-    public ResponseEntity addGroup(@RequestBody Project project) {
-        if (project.getId() != null && getProjectService().findById(project.getId()) != null) {
-            throw new ObjectAlreadyExistsException();
+    public ResponseEntity addProject(@Valid @RequestBody Project project, BindingResult result) {
+        if (result.hasErrors()) {
+            String error = String.format("%s: %s", result.getFieldError().getField(), result.getFieldError().getDefaultMessage());
+            throw new IllegalArgumentException(error);
         }
+        project.setId(null);
         getProjectService().save(project);
         return new ResponseEntity(getResponseHeaders(), HttpStatus.CREATED);
     }
@@ -70,8 +80,8 @@ public class ProjectController extends AbstractController {
      */
     @ResponseBody
     @RequestMapping(value = "/{projectId}", method = PUT)
-    public ResponseEntity saveGroup(@PathVariable String projectId, @RequestBody Project project) {
-        findGroupById(projectId); // Check if project exists
+    public ResponseEntity saveProject(@PathVariable String projectId, @RequestBody Project project) {
+        findProjectById(projectId); // Check if project exists
         getProjectService().save(project);
         return new ResponseEntity(getResponseHeaders(), HttpStatus.NO_CONTENT);
     }

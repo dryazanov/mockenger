@@ -36,6 +36,8 @@
         <powermock.version>1.6.2</powermock.version>
         <jsonpath.version>2.0.0</jsonpath.version>
         <xalan.version>2.7.2</xalan.version>
+        <validation.api.version>1.0.0.GA</validation.api.version>
+        <hibernate.validator.version>4.1.0.Final</hibernate.validator.version>
     </properties>
 
     <dependencyManagement>
@@ -115,6 +117,16 @@
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjrt</artifactId>
                 <version>${aspectj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>${validation.api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate.validator.version}</version>
             </dependency>
             <!-- Test Dependencies -->
 

@@ -6,11 +6,16 @@ import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by x079089 on 3/22/2015.
  */
 public class CommonUtils {
+
+    public static String generateUniqueId() {
+        return UUID.randomUUID().toString().replaceAll("-", "");
+    }
 
     public static String getCheckSum(AbstractRequest abstractRequest) {
         if (abstractRequest.getBody() != null && abstractRequest.getBody().getValue() != null) {
