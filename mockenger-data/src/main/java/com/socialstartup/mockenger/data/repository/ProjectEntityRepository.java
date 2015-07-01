@@ -1,7 +1,6 @@
 package com.socialstartup.mockenger.data.repository;
 
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
-import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import org.springframework.data.repository.CrudRepository;
 

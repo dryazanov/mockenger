@@ -11,7 +11,7 @@ import org.springframework.http.HttpHeaders;
 
 
 //@Controller
-public class AbstractController {
+public abstract class AbstractController {
 
 //    private final String APPLICATION_JSONP_REQUEST_VALUE = "application/javascript";
 
@@ -54,7 +54,7 @@ public class AbstractController {
         Project project = getProjectService().findById(projectId);
 
         if (project == null) {
-            throw new ObjectNotFoundException(project, projectId);
+            throw new ObjectNotFoundException("Project", projectId);
         }
 
         return project;
@@ -69,7 +69,7 @@ public class AbstractController {
         Group group = getGroupService().findById(groupId);
 
         if (group == null) {
-            throw new ObjectNotFoundException(group, groupId);
+            throw new ObjectNotFoundException("Group", groupId);
         }
 
         return group;

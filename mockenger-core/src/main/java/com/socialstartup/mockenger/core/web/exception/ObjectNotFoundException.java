@@ -1,27 +1,25 @@
 package com.socialstartup.mockenger.core.web.exception;
 
-import com.socialstartup.mockenger.data.model.persistent.base.AbstractPersistentEntity;
-
 /**
  * Created by x079089 on 6/19/2015.
  */
 public class ObjectNotFoundException extends RuntimeException {
 
-    private AbstractPersistentEntity clazz;
+    private String className;
 
     private String itemId;
 
-    public ObjectNotFoundException(AbstractPersistentEntity clazz, String itemId) {
-        this.clazz = clazz;
+    public ObjectNotFoundException(String className, String itemId) {
+        this.className = className;
         this.itemId = itemId;
     }
 
-    public AbstractPersistentEntity getClazz() {
-        return clazz;
+    public String getClassName() {
+        return className;
     }
 
-    public void setClazz(AbstractPersistentEntity clazz) {
-        this.clazz = clazz;
+    public void setClassName(String className) {
+        this.className = className;
     }
 
     public String getItemId() {
