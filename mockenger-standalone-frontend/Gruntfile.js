@@ -69,6 +69,27 @@ module.exports = function(grunt) {
                 //'src/main/webapp/scripts/app/**/*.js',
                 //'src/main/webapp/scripts/components/**/*.js'
             ]
+        },
+        browserSync: {
+            dev: {
+                bsFiles: {
+                    src : [
+                        'src/main/resources/static/**/*.html',
+                        'src/main/resources/static/**/*.json',
+                        'src/main/resources/static/assets/styles/**/*.css',
+                        'src/main/resources/static/scripts/**/*.js',
+                        'src/main/resources/static/assets/images/**/*.{png,jpg,jpeg,gif,webp,svg}',
+                        'tmp/**/*.{css,js}'
+                    ]
+                }
+            },
+            options: {
+                watchTask: true,
+                server: {
+                    baseDir: "src/main/resources/static",
+                    index: "index.html"
+                }
+            }
         }
     });
 
@@ -76,6 +97,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-wiredep');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-browser-sync');
 
     // task setup
 
@@ -95,9 +117,9 @@ module.exports = function(grunt) {
 
     grunt.registerTask('serve', [
         'clean:server',
-        //'wiredep',
+        'wiredep',
         //'ngconstant:dev',
-        //'browserSync',
+        'browserSync',
         'watch'
     ]);
 };
