@@ -37,6 +37,17 @@ module.exports = function(grunt) {
             },
             server: '.tmp'
         },
+        watch: {
+            bower: {
+                files: ['bower.json'],
+                tasks: ['wiredep']
+            }
+            //,
+            //ngconstant: {
+            //    files: ['Gruntfile.js', 'pom.xml'],
+            //    tasks: ['ngconstant:dev']
+            //}
+        },
 
         wiredep: {
             app: {
@@ -64,6 +75,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-wiredep');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     // task setup
 
@@ -76,9 +88,16 @@ module.exports = function(grunt) {
         'jshint'
     ]);
 
-
     grunt.registerTask('default', [
         'test',
         'build'
+    ]);
+
+    grunt.registerTask('serve', [
+        'clean:server',
+        //'wiredep',
+        //'ngconstant:dev',
+        //'browserSync',
+        'watch'
     ]);
 };
