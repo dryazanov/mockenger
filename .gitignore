@@ -1,3 +1,9 @@
-*.iml
 target
 .idea
+node_modules
+
+#Maaan, be careful with this one
+**/src/main/resources/static/libs
+
+*.log
+*.iml
