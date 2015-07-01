@@ -1,0 +1,20 @@
+{
+  "name": "mockenger-standalone-frontend",
+  "version": "0.0.0",
+  "homepage": "https://github.com/yuridolzhenko/mockenger",
+  "authors": [
+    "Yuri Dolzhenko <yuri.dolzhenko@gmail.com>"
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+
+  "dependencies": {
+    "angular": "1.4.1"
+  }
+}
