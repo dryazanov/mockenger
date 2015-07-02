@@ -24,6 +24,10 @@ public class GroupService {
         return groupEntityRepository.findOne(id);
     }
 
+    public Iterable<Group> findAll() {
+        return groupEntityRepository.findAll();
+    }
+
     public List<Group> findByProjectId(String projectId) {
         return groupEntityRepository.findByProjectId(projectId);
     }
