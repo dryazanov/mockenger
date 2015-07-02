@@ -11,6 +11,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-wiredep": "^2.0.0",
     "requirejs": "2.1",
+    "time-grunt": "^1.2.1",
     "xml2js": "0.4.5"
   },
   "engines": {

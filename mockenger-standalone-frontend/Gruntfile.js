@@ -15,6 +15,8 @@ var parseVersionFromPomXml = function() {
 
 module.exports = function(grunt) {
 
+    require('time-grunt')(grunt);
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
 
@@ -86,8 +88,8 @@ module.exports = function(grunt) {
             options: {
                 watchTask: true,
                 server: {
-                    baseDir: "src/main/resources/static",
-                    index: "index.html"
+                    baseDir: 'src/main/resources/static',
+                    index: 'index.html'
                 }
             }
         }
