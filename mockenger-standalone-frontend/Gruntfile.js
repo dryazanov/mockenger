@@ -130,6 +130,13 @@ module.exports = function(grunt) {
     // task setup
 
     grunt.registerTask('test', [
+        'clean:server',
+        'wiredep',
+        //'wiredep:test',
+        'ngconstant:dev',
+        'jshint'
+        //,
+        //'karma'
     ]);
 
     grunt.registerTask('build', [
