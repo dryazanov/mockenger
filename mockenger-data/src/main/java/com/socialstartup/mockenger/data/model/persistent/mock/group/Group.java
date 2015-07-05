@@ -1,6 +1,7 @@
 package com.socialstartup.mockenger.data.model.persistent.mock.group;
 
 import com.socialstartup.mockenger.data.model.persistent.base.AbstractPersistentEntity;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -11,6 +12,7 @@ public class Group extends AbstractPersistentEntity<String> {
 
     private String projectId;
 
+    @NotBlank
     private String name;
 
     private boolean recording;
@@ -18,7 +20,8 @@ public class Group extends AbstractPersistentEntity<String> {
 
     public Group() {}
 
-    public Group(String groupId, String name,  boolean recording) {
+    public Group(String projectId, String name, boolean recording) {
+        this.projectId = projectId;
         this.name = name;
         this.recording = recording;
     }

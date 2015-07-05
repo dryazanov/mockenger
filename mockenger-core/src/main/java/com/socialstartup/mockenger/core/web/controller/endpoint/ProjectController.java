@@ -1,7 +1,6 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
-import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -28,13 +26,16 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
  * Created by x079089 on 3/24/2015.
  */
 @Controller
-@RequestMapping(value = {"/projects"})
+//@RequestMapping(value = {"/projects"})
 public class ProjectController extends AbstractController {
 
     /**
      * Logger
      */
     private static final Logger LOG = LoggerFactory.getLogger(ProjectController.class);
+
+    private static final String ENDPOINT = "/projects";
+    private static final String ENDPOINT_WITH_PROJECTID = ENDPOINT + "/{projectId}";
 
 
     public ProjectController() {
@@ -48,10 +49,22 @@ public class ProjectController extends AbstractController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{projectId}", method = GET)
+    @RequestMapping(value = ENDPOINT_WITH_PROJECTID, method = GET)
     public ResponseEntity getProject(@PathVariable String projectId) {
         Project project = findProjectById(projectId);
         return new ResponseEntity(project, getResponseHeaders(), HttpStatus.OK);
+    }
+
+
+    /**
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = {ENDPOINT, ENDPOINT + "/"}, method = GET)
+    public ResponseEntity getProjectList() {
+        Iterable<Project> projectList = getProjectService().findAll();
+        return new ResponseEntity((projectList != null ? projectList : new ArrayList<>()), getResponseHeaders(), HttpStatus.OK);
     }
 
 
@@ -61,7 +74,7 @@ public class ProjectController extends AbstractController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = {"", "/"}, method = POST)
+    @RequestMapping(value = {ENDPOINT, ENDPOINT + "/"}, method = POST)
     public ResponseEntity addProject(@Valid @RequestBody Project project, BindingResult result) {
         if (result.hasErrors()) {
             String error = String.format("%s: %s", result.getFieldError().getField(), result.getFieldError().getDefaultMessage());
@@ -79,9 +92,13 @@ public class ProjectController extends AbstractController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{projectId}", method = PUT)
-    public ResponseEntity saveProject(@PathVariable String projectId, @RequestBody Project project) {
+    @RequestMapping(value = ENDPOINT_WITH_PROJECTID, method = PUT)
+    public ResponseEntity saveProject(@PathVariable String projectId, @Valid @RequestBody Project project, BindingResult result) {
         findProjectById(projectId); // Check if project exists
+        if (result.hasErrors()) {
+            String error = String.format("%s: %s", result.getFieldError().getField(), result.getFieldError().getDefaultMessage());
+            throw new IllegalArgumentException(error);
+        }
         getProjectService().save(project);
         return new ResponseEntity(getResponseHeaders(), HttpStatus.NO_CONTENT);
     }
@@ -93,24 +110,10 @@ public class ProjectController extends AbstractController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{projectId}", method = DELETE)
+    @RequestMapping(value = ENDPOINT_WITH_PROJECTID, method = DELETE)
     public ResponseEntity deleteProject(@PathVariable String projectId) {
         Project project = findProjectById(projectId);
         getProjectService().remove(project);
         return new ResponseEntity(getResponseHeaders(), HttpStatus.OK);
-    }
-
-
-    /**
-     *
-     * @param projectId
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/{projectId}/groups", method = GET)
-    public ResponseEntity getGroupList(@PathVariable String projectId) {
-        Project project = findProjectById(projectId);
-        List<Group> groupList = getGroupService().findByProjectId(project.getId());
-        return new ResponseEntity((groupList != null ? groupList : new ArrayList<>()), getResponseHeaders(), HttpStatus.OK);
     }
 }
