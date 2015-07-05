@@ -1,5 +1,6 @@
 target
 .idea
+.tmp
 node_modules
 
 #Maaan, be careful with this one
