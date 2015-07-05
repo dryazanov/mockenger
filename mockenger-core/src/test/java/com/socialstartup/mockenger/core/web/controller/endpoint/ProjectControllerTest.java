@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialstartup.mockenger.core.config.TestContext;
 import com.socialstartup.mockenger.core.service.ProjectService;
-import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import org.junit.Before;
@@ -20,9 +19,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Iterator;
-
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -38,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {TestContext.class})
-public class ProjectControllerTest {
+public class ProjectControllerTest extends AbstractControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
@@ -47,9 +45,9 @@ public class ProjectControllerTest {
 
     private MockMvc mockMvc;
 
-    private static final String ENDPOINT = "/projects/";
-    private static final String PROJECT_ID_TEST = "TEST_ID";
-    private static final String PROJECT_NAME_TEST = "Unit-test project";
+    private static final String ENDPOINT_PROJECT = "/projects/";
+//    private static final String PROJECT_ID_TEST = "TEST_ID";
+//    private static final String PROJECT_NAME_TEST = "Unit-test project";
     private static final String PROJECT_NAME_TWO = "ABC project";
     private static final String CONTENT_TYPE = "application/json;charset=UTF-8";
 
@@ -83,28 +81,26 @@ public class ProjectControllerTest {
 
     @Test
     public void testGetProjectNotFound() throws Exception {
-        ResultActions resultActions = getProjectRest(PROJECT_ID_TEST);
+        ResultActions resultActions = getProjectRest(PROJECT_ID);
         resultActions.andExpect(status().isNotFound())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]").value("Project with ID '" + PROJECT_ID_TEST + "' not found"));
+                .andExpect(jsonPath("$.errors[0]").value("Project with ID '" + PROJECT_ID + "' not found"));
     }
 
     @Test
     public void testAddProjectWithEmptyName() throws Exception {
-        Project project = getNewProject();
-        project.setName("");
-        ResultActions resultActions = createProjectRest(project);
-        resultActions.andExpect(status().isBadRequest())
-                .andExpect(content().contentType(CONTENT_TYPE))
-                .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]").value("name: may not be empty"));
+        testAddProject("");
     }
 
     @Test
     public void testAddProjectWithNullName() throws Exception {
+        testAddProject(null);
+    }
+
+    private void testAddProject(String name) throws Exception {
         Project project = getNewProject();
-        project.setName(null);
+        project.setName(name);
         ResultActions resultActions = createProjectRest(project);
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE))
@@ -116,6 +112,7 @@ public class ProjectControllerTest {
     public void testAddProjectWithNullType() throws Exception {
         Project project = getNewProject();
         project.setType(null);
+
         ResultActions resultActions = createProjectRest(project);
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE))
@@ -151,63 +148,84 @@ public class ProjectControllerTest {
     }
 
     @Test
+    public void testSaveProjectWithEmptyName() throws Exception {
+        testSaveProject("");
+    }
+
+    @Test
+    public void testSaveProjectWithNullName() throws Exception {
+        testSaveProject(null);
+    }
+
+    private void testSaveProject(String name) throws Exception {
+        Project project = createProject();
+        project.setName(name);
+
+        ResultActions resultActions = updateProjectRest(project);
+        resultActions.andExpect(status().isBadRequest())
+                .andExpect(content().contentType(CONTENT_TYPE))
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors[0]").value("name: may not be empty"));
+    }
+
+    @Test
+    public void testSaveProjectWithNullType() throws Exception {
+        Project project = createProject();
+        project.setType(null);
+
+        ResultActions resultActions = updateProjectRest(project);
+        resultActions.andExpect(status().isBadRequest())
+                .andExpect(content().contentType(CONTENT_TYPE))
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors[0]").value("type: may not be null"));
+    }
+
+    @Test
     public void testDeleteProject() throws Exception {
         Project project = createProject();
         ResultActions resultActions = deleteProjectRest(project.getId());
         resultActions.andExpect(status().isOk()).andExpect(content().contentType(CONTENT_TYPE));
     }
 
+    @Test
+    public void testGetProjectList() throws Exception {
+        createProject();
+        createProject();
+        createProject();
+
+        ResultActions resultActions = getProjectAllRest();
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().contentType(CONTENT_TYPE))
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$.[0].name", is(PROJECT_NAME_TEST)))
+                .andExpect(jsonPath("$.[1].name", is(PROJECT_NAME_TEST)))
+                .andExpect(jsonPath("$.[2].name", is(PROJECT_NAME_TEST)));
+
+        deleteAllProjects();
+    }
+
+
+    private ResultActions getProjectAllRest() throws Exception {
+        return this.mockMvc.perform(get(ENDPOINT_PROJECT).accept(MediaType.parseMediaType(CONTENT_TYPE)));
+    }
 
     private ResultActions getProjectRest(String projectId) throws Exception {
-        return this.mockMvc.perform(get(ENDPOINT + projectId).accept(MediaType.parseMediaType(CONTENT_TYPE)));
+        return this.mockMvc.perform(get(ENDPOINT_PROJECT + projectId).accept(MediaType.parseMediaType(CONTENT_TYPE)));
     }
 
     private ResultActions createProjectRest(Project project) throws Exception {
         String projectJson = new ObjectMapper(new JsonFactory()).writeValueAsString(project);
-        return this.mockMvc.perform(post(ENDPOINT).contentType(MediaType.parseMediaType(CONTENT_TYPE)).content(projectJson));
+        return this.mockMvc.perform(post(ENDPOINT_PROJECT).contentType(MediaType.parseMediaType(CONTENT_TYPE)).content(projectJson));
     }
 
     private ResultActions updateProjectRest(Project project) throws Exception {
         String projectJson = new ObjectMapper(new JsonFactory()).writeValueAsString(project);
-        return this.mockMvc.perform(put(ENDPOINT + project.getId()).contentType(MediaType.parseMediaType(CONTENT_TYPE)).content(projectJson));
+        return this.mockMvc.perform(put(ENDPOINT_PROJECT + project.getId()).contentType(MediaType.parseMediaType(CONTENT_TYPE)).content(projectJson));
     }
 
     private ResultActions deleteProjectRest(String projectId) throws Exception {
-        return this.mockMvc.perform(delete(ENDPOINT + projectId).contentType(MediaType.parseMediaType(CONTENT_TYPE)));
+        return this.mockMvc.perform(delete(ENDPOINT_PROJECT + projectId).contentType(MediaType.parseMediaType(CONTENT_TYPE)));
     }
 
-    private Project getProject(String projectId) throws Exception {
-        return this.projectService.findById(projectId);
-    }
 
-    private Iterable<Project> getAllProjects() throws Exception {
-        return this.projectService.findAll();
-    }
-
-    private Project getAnyProject() throws Exception {
-        return this.projectService.findAll().iterator().next();
-    }
-
-    private void deleteProject(Project project) throws Exception {
-        this.projectService.remove(project);
-    }
-
-    private void deleteAllProjects() throws Exception {
-        Iterator<Project> iterator = getAllProjects().iterator();
-        while (iterator.hasNext()) {
-            deleteProject(iterator.next());
-        }
-    }
-
-    private Project createProject() throws Exception {
-        Project project = getNewProject();
-        this.projectService.save(project);
-        return project;
-    }
-
-    private Project getNewProject() throws Exception {
-        Project project = new Project(PROJECT_NAME_TEST, ProjectType.SIMPLE);
-        project.setId(CommonUtils.generateUniqueId());
-        return project;
-    }
 }
