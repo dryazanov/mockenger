@@ -7,8 +7,11 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Param
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
 import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
 import com.socialstartup.mockenger.data.model.persistent.base.AbstractPersistentEntity;
+import com.socialstartup.mockenger.data.validator.MockResponseValidation;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -17,8 +20,10 @@ import java.util.Date;
 @Document(collection = "request")
 public class AbstractRequest extends AbstractPersistentEntity<String> {
 
+    @NotNull(message = "groupId: may not be null")
     private String groupId;
 
+    @NotBlank(message = "name: may not be null or empty")
     private String name;
 
     private Date creationDate;
@@ -33,9 +38,12 @@ public class AbstractRequest extends AbstractPersistentEntity<String> {
 
     protected Body body;
 
+    @NotBlank(message = "checkSum: may not be null or empty")
     private String checkSum;
 
+    @MockResponseValidation
     private MockResponse mockResponse;
+
 
     public String getGroupId() {
         return groupId;

@@ -1,10 +1,18 @@
 package com.socialstartup.mockenger.data.model.persistent.transformer;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.socialstartup.mockenger.data.model.dict.TransformerType;
 
 /**
  * Created by x079089 on 3/22/2015.
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = RegexpTransformer.class, name = "RegexpTransformer"),
+    @JsonSubTypes.Type(value = XPathTransformer.class, name = "XPathTransformer"),
+    @JsonSubTypes.Type(value = KeyValueTransformer.class, name = "KeyValueTransformer")
+})
 public abstract class AbstractTransformer implements Transformer {
 
     protected TransformerType type;
