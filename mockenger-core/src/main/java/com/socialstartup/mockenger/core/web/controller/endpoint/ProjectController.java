@@ -2,10 +2,7 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -26,21 +23,10 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
  * Created by x079089 on 3/24/2015.
  */
 @Controller
-//@RequestMapping(value = {"/projects"})
 public class ProjectController extends AbstractController {
 
-    /**
-     * Logger
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(ProjectController.class);
-
-    private static final String ENDPOINT = "/projects";
-    private static final String ENDPOINT_WITH_PROJECTID = ENDPOINT + "/{projectId}";
-
-
-    public ProjectController() {
-        getResponseHeaders().set("Content-Type", MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
-    }
+    private static final String PROJECTS = PROJECTS_ENDPOINT;
+    private static final String PROJECTID = PROJECT_ID_ENDPOINT;
 
 
     /**
@@ -49,7 +35,7 @@ public class ProjectController extends AbstractController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = ENDPOINT_WITH_PROJECTID, method = GET)
+    @RequestMapping(value = PROJECTID, method = GET)
     public ResponseEntity getProject(@PathVariable String projectId) {
         Project project = findProjectById(projectId);
         return new ResponseEntity(project, getResponseHeaders(), HttpStatus.OK);
@@ -61,7 +47,7 @@ public class ProjectController extends AbstractController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = {ENDPOINT, ENDPOINT + "/"}, method = GET)
+    @RequestMapping(value = PROJECTS, method = GET)
     public ResponseEntity getProjectList() {
         Iterable<Project> projectList = getProjectService().findAll();
         return new ResponseEntity((projectList != null ? projectList : new ArrayList<>()), getResponseHeaders(), HttpStatus.OK);
@@ -71,14 +57,14 @@ public class ProjectController extends AbstractController {
     /**
      *
      * @param project
+     * @param result
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = {ENDPOINT, ENDPOINT + "/"}, method = POST)
+    @RequestMapping(value = PROJECTS, method = POST)
     public ResponseEntity addProject(@Valid @RequestBody Project project, BindingResult result) {
         if (result.hasErrors()) {
-            String error = String.format("%s: %s", result.getFieldError().getField(), result.getFieldError().getDefaultMessage());
-            throw new IllegalArgumentException(error);
+            throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
         project.setId(null);
         getProjectService().save(project);
@@ -88,17 +74,18 @@ public class ProjectController extends AbstractController {
 
     /**
      *
+     * @param projectId
      * @param project
+     * @param result
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = ENDPOINT_WITH_PROJECTID, method = PUT)
+    @RequestMapping(value = PROJECTID, method = PUT)
     public ResponseEntity saveProject(@PathVariable String projectId, @Valid @RequestBody Project project, BindingResult result) {
-        findProjectById(projectId); // Check if project exists
         if (result.hasErrors()) {
-            String error = String.format("%s: %s", result.getFieldError().getField(), result.getFieldError().getDefaultMessage());
-            throw new IllegalArgumentException(error);
+            throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
+        findProjectById(projectId); // Check if project exists
         getProjectService().save(project);
         return new ResponseEntity(getResponseHeaders(), HttpStatus.NO_CONTENT);
     }
@@ -110,7 +97,7 @@ public class ProjectController extends AbstractController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = ENDPOINT_WITH_PROJECTID, method = DELETE)
+    @RequestMapping(value = PROJECTID, method = DELETE)
     public ResponseEntity deleteProject(@PathVariable String projectId) {
         Project project = findProjectById(projectId);
         getProjectService().remove(project);

@@ -1,28 +1,17 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
-import com.socialstartup.mockenger.core.mapper.request.GridRowMapper;
 import com.socialstartup.mockenger.core.service.common.DeleteService;
 import com.socialstartup.mockenger.core.service.common.GetService;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
-import com.socialstartup.mockenger.data.model.dto.Grid;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
-import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 /**
  *
@@ -100,33 +89,5 @@ public class ParentController extends AbstractController {
             }
             return new ResponseEntity(getResponseHeaders(), status);
         }
-    }
-
-    /**
-     *
-     * @param groupId
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/projects/{projectId}/groups/{groupId}/requests", method = GET)
-    public ResponseEntity getRequestList(@PathVariable String projectId, @PathVariable String groupId) {
-        Project project = findProjectById(projectId);
-        Group group = findGroupById(groupId);
-
-        List<AbstractRequest> requestList = getRequestService().findByGroupId(group.getId());
-
-        if (requestList == null) {
-            requestList = new ArrayList<>();
-        }
-
-        GridRowMapper mapper = new GridRowMapper();
-        Grid bootGrid = new Grid();
-        bootGrid.setCurrent(1);
-        bootGrid.setTotal(3);
-        bootGrid.setRowCount(3);
-        bootGrid.setRows(mapper.map(requestList));
-
-        getResponseHeaders().set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-        return new ResponseEntity(bootGrid, getResponseHeaders(), HttpStatus.OK);
     }
 }

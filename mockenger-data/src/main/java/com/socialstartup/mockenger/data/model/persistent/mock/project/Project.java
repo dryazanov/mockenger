@@ -13,10 +13,10 @@ import javax.validation.constraints.NotNull;
 @Document(collection = "project")
 public class Project extends AbstractPersistentEntity<String> {
 
-    @NotBlank
+    @NotBlank(message = "name: may not be null or empty")
     private String name;
 
-    @NotNull
+    @NotNull(message = "type: may not be null")
     private ProjectType type;
 
     public Project() {}
