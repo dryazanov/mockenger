@@ -3,6 +3,7 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 import com.socialstartup.mockenger.core.service.common.DeleteService;
 import com.socialstartup.mockenger.core.service.common.GetService;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
+import com.socialstartup.mockenger.core.web.exception.MockObjectNotCreatedException;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,10 +57,8 @@ public class ParentController extends AbstractController {
      */
     protected ResponseEntity findMockedEntities(AbstractRequest mockRequest, boolean recordRequests) {
         if (mockRequest == null) {
-            // TODO: Create and throw MockObjectNotCreatedException
-            throw new RuntimeException("Can't create mock object");
+            throw new MockObjectNotCreatedException("mockRequest is null");
         }
-
         AbstractRequest mockResult = getRequestService().findMockedEntities(mockRequest);
         return generateResponse(mockRequest, mockResult, recordRequests);
     }

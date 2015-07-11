@@ -30,13 +30,6 @@ public class PostService extends RequestService {
         return (PostRequest) fillUpEntity(new PostRequest(body), groupId, request);
     }
 
-    /*public String getSoapBody2(String requestBody) throws SOAPException, TransformerException {
-        StringReader stringReader = new StringReader(requestBody);
-        Source source = new StreamSource(stringReader);
-        SOAPMessage soapMessage = XmlHelper.soapToXmlConverter(source);
-        return XmlHelper.xmlToStringConverter(soapMessage.getSOAPBody(), true);
-    }*/
-
     /**
      *
      * @param requestBody

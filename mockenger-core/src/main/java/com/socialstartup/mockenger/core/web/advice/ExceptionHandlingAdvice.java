@@ -1,6 +1,7 @@
 package com.socialstartup.mockenger.core.web.advice;
 
 import com.socialstartup.mockenger.core.web.exception.BadContentTypeException;
+import com.socialstartup.mockenger.core.web.exception.MockObjectNotCreatedException;
 import com.socialstartup.mockenger.core.web.exception.ObjectAlreadyExistsException;
 import com.socialstartup.mockenger.core.web.exception.ObjectNotFoundException;
 import com.socialstartup.mockenger.data.model.dto.ErrorMessage;
@@ -83,10 +84,19 @@ public class ExceptionHandlingAdvice {
 
     @ResponseBody
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400
+    public ErrorMessage handleMockObjectNotCreatedException(MockObjectNotCreatedException ex) {
+        String msg = "Failed to create an instance of the mock-object";
+        LOG.error(msg, ex);
+        return new ErrorMessage(String.format("%s: %s", msg, ex.getMessage()));
+    }
+
+    @ResponseBody
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)  // 500
     public ErrorMessage handleError500(HttpServletRequest req, RuntimeException ex) {
         LOG.error("RuntimeException has occurred", ex);
-        return new ErrorMessage("Unable to process request. Internal server error: " + ex.getMessage());
+        return new ErrorMessage(String.format("Unable to process request. Internal server error: %s", ex.getMessage()));
     }
 
     @ResponseBody
