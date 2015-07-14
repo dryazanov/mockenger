@@ -66,6 +66,8 @@ public class AbstractControllerTest {
     protected static final String REQUEST_PATH = "/unit/test/mock/request";
 
     protected static final String CONTENT_TYPE_JSON_UTF8 = "application/json;charset=UTF-8";
+    protected static final String CONTENT_TYPE_SOAP_UTF8 = "application/soap+xml;charset=UTF-8";
+    protected static final String CONTENT_TYPE_XML_UTF8 = "application/xml;charset=UTF-8";
     protected static final String MOCK_REQUEST_BODY = "{\"name\":\"NAME\",\"type\":\"TYPE\"}";
     protected static final String MOCK_RESPONSE_BODY = "{\"result\":\"OK\"}";
 
@@ -177,6 +179,10 @@ public class AbstractControllerTest {
         AbstractRequest request = getNewRequest(groupId);
         this.requestService.save(request);
         return request;
+    }
+
+    protected void createRequest(AbstractRequest request) {
+        this.requestService.save(request);
     }
 
     protected static AbstractRequest getNewRequest(String groupId) {

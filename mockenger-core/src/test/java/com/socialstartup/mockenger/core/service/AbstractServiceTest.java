@@ -57,24 +57,20 @@ public abstract class AbstractServiceTest {
             .append("</note> ")
             .toString();
 
-    protected static final String SOAP_XML_DATA = new StringBuilder()
-            .append("<?xml version='1.0' encoding='UTF-8'?>")
-            .append("<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">")
-            .append("<S:Header/>")
-            .append("<S:Body>")
-            .append("<ns3:MyAccountCustomerDataRequestElement xmlns:ns3=\"http://www.af-klm.com/services/passenger/data-v1/xsd\">")
-            .append("<identificationNumber>100000000002</identificationNumber>")
-            .append("</ns3:MyAccountCustomerDataRequestElement>")
-            .append("</S:Body>")
-            .append("</S:Envelope>")
-            .toString();
-
     protected static final String SOAP_XML_BODY = new StringBuilder()
             .append("<S:Body xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">")
             .append("<ns3:MyAccountCustomerDataRequestElement xmlns:ns3=\"http://www.af-klm.com/services/passenger/data-v1/xsd\">")
             .append("<identificationNumber>100000000002</identificationNumber>")
             .append("</ns3:MyAccountCustomerDataRequestElement>")
             .append("</S:Body>")
+            .toString();
+
+    protected static final String SOAP_XML_DATA = new StringBuilder()
+            .append("<?xml version='1.0' encoding='UTF-8'?>")
+            .append("<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">")
+            .append("<S:Header/>")
+            .append(SOAP_XML_BODY)
+            .append("</S:Envelope>")
             .toString();
 
     @Mock

@@ -35,6 +35,13 @@ public class SoapController extends ParentController {
 
 
     /**
+     * Constructor with default content-type for responses
+     */
+    public SoapController() {
+        getResponseHeaders().set("Content-Type", "application/soap+xml;charset=UTF-8");
+    }
+
+    /**
      *
      */
     @ResponseBody
@@ -54,7 +61,7 @@ public class SoapController extends ParentController {
      * @throws FileNotFoundException
      */
     @ResponseBody
-    @RequestMapping(value = {"/**"}, method = POST, consumes = "application/soap+xml")
+    @RequestMapping(value = "/**", method = POST, consumes = "application/soap+xml")
     public ResponseEntity processPostRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
         String soapBody = null;
         Group group = findGroupById(groupId);
