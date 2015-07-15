@@ -31,6 +31,7 @@ import java.util.TreeMap;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
@@ -45,11 +46,15 @@ public class SoapControllerTest extends AbstractControllerTest {
     private static final String ENDPOINT_TEMPLATE = "/soap/%s/%s";
     private static final String CONTENT_TYPE_TEXT_HTML = "text/html";
     private static final String REQUEST_PATH = "test/soap/mock/request";
+    private static final String ID1 = "200000000001";
+    private static final String ID2 = "100000000002";
 
     protected static final String SOAP_XML_REQUEST_BODY = new StringBuilder()
             .append("<S:Body xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">")
             .append("<ns3:DataRequestElement xmlns:ns3=\"http://www.af-klm.com/services/passenger/data-v1/xsd\">")
-            .append("<identificationNumber>200000000001</identificationNumber>")
+            .append("<identificationNumber>")
+            .append(ID1)
+            .append("</identificationNumber>")
             .append("</ns3:DataRequestElement>")
             .append("</S:Body>")
             .toString();
@@ -102,11 +107,10 @@ public class SoapControllerTest extends AbstractControllerTest {
         deleteRequest(request);
     }
 
-
     @Test
     public void testProcessPosRequestOk() throws Exception {
         ResultActions resultActions = this.mockMvc.perform(
-                post(endpoint).contentType(MediaType.parseMediaType(CONTENT_TYPE_SOAP_UTF8)).content(SOAP_XML_REQUEST.replace("200000000001", "100000000002")));
+                post(endpoint).contentType(MediaType.parseMediaType(CONTENT_TYPE_SOAP_UTF8)).content(SOAP_XML_REQUEST.replace(ID1, ID2)));
 
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_SOAP_UTF8.toLowerCase()))
@@ -117,25 +121,25 @@ public class SoapControllerTest extends AbstractControllerTest {
     @Test
     public void testProcessPosRequestInvalidContentType() throws Exception {
         ResultActions resultActions = this.mockMvc.perform(
-                post(endpoint).contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)).content(SOAP_XML_REQUEST.replace("200000000001", "100000000002")));
+                post(endpoint).contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)).content(SOAP_XML_REQUEST.replace(ID1, ID2)));
 
         resultActions.andExpect(status().isBadRequest());
     }
 
-//    @Test
-//    public void testProcessPosRequestInvalidBody() throws Exception {
-//        ResultActions resultActions = this.mockMvc.perform(
-//                post(endpoint).contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)).content(SOAP_XML_REQUEST + "<invalidTag>"));
-//
-//        resultActions.andExpect(status().isBadRequest());
-//    }
+    @Test
+    public void testProcessPosRequestInvalidBody() throws Exception {
+        ResultActions resultActions = this.mockMvc.perform(
+                post(endpoint).contentType(MediaType.parseMediaType(CONTENT_TYPE_SOAP_UTF8)).content(SOAP_XML_REQUEST + "<invalidTag>"));
 
+        resultActions.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors[0]").value("Failed to create an instance of the mock-object: Cannot create SOAP message"));
+    }
 
     private PostRequest createSoapMockRequest(String groupId) {
         Map<String, String> headersMap = new TreeMap<>();
         headersMap.put("content-type", CONTENT_TYPE_SOAP_UTF8.toLowerCase());
 
-        RegexpTransformer regexpTransformer = new RegexpTransformer("100000000002", "200000000001");
+        RegexpTransformer regexpTransformer = new RegexpTransformer(ID2, ID1);
 
         PostRequest postRequest = new PostRequest();
         postRequest.setGroupId(groupId);
