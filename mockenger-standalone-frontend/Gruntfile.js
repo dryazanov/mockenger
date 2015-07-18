@@ -15,8 +15,8 @@ var parseVersionFromPomXml = function() {
 // usemin custom step
 var useminAutoprefixer = {
     name: 'autoprefixer',
-    createConfig: function(context, block) {
-        if(block.src.length === 0) {
+    createConfig: function (context, block) {
+        if (block.src.length === 0) {
             return {};
         } else {
             return require('grunt-usemin/lib/config/cssmin').createConfig(context, block); // Reuse cssmins createConfig
@@ -35,7 +35,7 @@ module.exports = function(grunt) {
         mockengerfrontend: {
             // configurable paths
             app: require('./bower.json').appPath || 'app',
-            dist: 'target/classes/static'
+            dist: 'dist'
         },
 
         clean: {
@@ -146,24 +146,126 @@ module.exports = function(grunt) {
                     }
                 }
             }
+        },
+
+        copy: {
+            fonts: {
+                files: [{
+                    expand: true,
+                    dot: true,
+                    flatten: true,
+                    cwd: 'src/main/resources/stastic',
+                    dest: '<%= mockengerfrontend.dist %>/assets/fonts',
+                    src: [
+                        'lib/bootstrap/fonts/*.*'
+                    ]
+                }]
+            },
+            dist: {
+                files: [{
+                    expand: true,
+                    dot: true,
+                    cwd: 'src/main/resources/stastic',
+                    dest: '<%= mockengerfrontend.dist %>',
+                    src: [
+                        '*.html',
+                        'modules/**/*.html',
+                        'modules/**/assets/images/**/*.{png,gif,webp,jpg,jpeg,svg}',
+
+                        'assets/images/**/*.{png,gif,webp,jpg,jpeg,svg}',
+                        'assets/fonts/*'
+                    ]
+                }
+                ]
+            }
+        },
+
+
+        concat: {
+            // src and dest is configured in a subtask called "generated" by usemin
+        },
+        uglifyjs: {
+            // src and dest is configured in a subtask called "generated" by usemin
+        },
+        cssmin: {
+            // src and dest is configured in a subtask called "generated" by usemin
+        },
+        autoprefixer: {
+            // src and dest is configured in a subtask called "generated" by usemin
+        },
+        rev: {
+            dist: {
+                files: {
+                    src: [
+                        '<%= mockengerfrontend.dist %>/scripts/**/*.js',
+                        '<%= mockengerfrontend.dist %>/assets/styles/**/*.css',
+                        '<%= mockengerfrontend.dist %>/assets/images/**/*.{png,jpg,jpeg,gif,webp,svg}',
+                        '<%= mockengerfrontend.dist %>/assets/fonts/*'
+                    ]
+                }
+            }
+        },
+
+        usemin: {
+            html: ['<%= mockengerfrontend.dist %>/**/*.html'],
+            css: ['<%= mockengerfrontend.dist %>/assets/styles/**/*.css'],
+            js: ['<%= mockengerfrontend.dist %>/scripts/**/*.js'],
+            options: {
+                assetsDirs: ['<%= mockengerfrontend.dist %>', '<%= mockengerfrontend.dist %>/assets/styles', '<%= mockengerfrontend.dist %>/assets/images', '<%= mockengerfrontend.dist %>/assets/fonts'],
+                patterns: {
+                    js: [
+                        [/(assets\/images\/.*?\.(?:gif|jpeg|jpg|png|webp|svg))/gm, 'Update the JS to reference our revved images']
+                    ]
+                },
+                dirs: ['<%= mockengerfrontend.dist %>']
+            }
+        },
+
+        htmlmin: {
+            dist: {
+                options: {
+                    removeCommentsFromCDATA: true,
+                    // https://github.com/yeoman/grunt-usemin/issues/44
+                    collapseWhitespace: true,
+                    collapseBooleanAttributes: true,
+                    conservativeCollapse: true,
+                    removeAttributeQuotes: true,
+                    removeRedundantAttributes: true,
+                    useShortDoctype: true,
+                    removeEmptyAttributes: true,
+                    keepClosingSlash: true
+                },
+                files: [{
+                    expand: true,
+                    cwd: '<%= sandbox.dist %>',
+                    src: ['*.html', '**/*.html'],
+                    dest: '<%= sandbox.dist %>'
+                }]
+            }
         }
 
 
     });
 
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-wiredep');
-    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-browser-sync');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-open');
+    grunt.loadNpmTasks('grunt-wiredep');
+    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-ng-constant');
-
     grunt.loadNpmTasks('grunt-usemin');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-filerev');
-    grunt.loadNpmTasks('grunt-angular-templates');
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    //grunt.loadNpmTasks('grunt-filerev');
+    grunt.loadNpmTasks('grunt-rev');
+    grunt.loadNpmTasks('grunt-autoprefixer');
+    grunt.loadNpmTasks('grunt-contrib-htmlmin');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+
+
 
     // task setup
 
@@ -182,6 +284,19 @@ module.exports = function(grunt) {
         'wiredep:app',
         'ngconstant:prod',
         'useminPrepare'
+        //,
+        //'concat',
+        //
+        //'copy:fonts',
+        //'copy:dist',
+        //
+        //'cssmin',
+        //'autoprefixer',
+        //'uglify',
+        //'rev',
+        //'usemin'
+        //,
+        //'htmlmin'
     ]);
 
     grunt.registerTask('default', [
