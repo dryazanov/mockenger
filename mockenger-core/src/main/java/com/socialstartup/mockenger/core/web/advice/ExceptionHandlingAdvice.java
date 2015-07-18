@@ -1,12 +1,14 @@
 package com.socialstartup.mockenger.core.web.advice;
 
 import com.socialstartup.mockenger.core.web.exception.BadContentTypeException;
+import com.socialstartup.mockenger.core.web.exception.MockObjectNotCreatedException;
 import com.socialstartup.mockenger.core.web.exception.ObjectAlreadyExistsException;
 import com.socialstartup.mockenger.core.web.exception.ObjectNotFoundException;
 import com.socialstartup.mockenger.data.model.dto.ErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -72,13 +74,29 @@ public class ExceptionHandlingAdvice {
         return new ErrorMessage(message);
     }
 
+    @ResponseBody
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400
+    public ErrorMessage handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        LOG.error("JSON is not readable", ex);
+        return new ErrorMessage("Unable to process request: json is not readable");
+    }
+
+    @ResponseBody
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400
+    public ErrorMessage handleMockObjectNotCreatedException(MockObjectNotCreatedException ex) {
+        String msg = "Failed to create an instance of the mock-object";
+        LOG.error(msg, ex);
+        return new ErrorMessage(String.format("%s: %s", msg, ex.getMessage()));
+    }
 
     @ResponseBody
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)  // 500
     public ErrorMessage handleError500(HttpServletRequest req, RuntimeException ex) {
         LOG.error("RuntimeException has occurred", ex);
-        return new ErrorMessage("Unable to process request. Internal server error: " + ex.getMessage());
+        return new ErrorMessage(String.format("Unable to process request. Internal server error: %s", ex.getMessage()));
     }
 
     @ResponseBody

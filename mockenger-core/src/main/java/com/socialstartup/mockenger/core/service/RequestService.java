@@ -43,6 +43,10 @@ public class RequestService {
         return requestEntityRepository.findOne(id);
     }
 
+    public Iterable<AbstractRequest> findAll() {
+        return requestEntityRepository.findAll();
+    }
+
     public List<AbstractRequest> findByGroupId(String groupId) {
         return requestEntityRepository.findByGroupId(groupId);
     }

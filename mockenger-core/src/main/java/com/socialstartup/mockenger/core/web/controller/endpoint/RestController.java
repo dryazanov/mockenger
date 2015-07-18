@@ -3,6 +3,7 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 import com.socialstartup.mockenger.core.service.rest.PostService;
 import com.socialstartup.mockenger.core.service.rest.PutService;
 import com.socialstartup.mockenger.core.web.exception.BadContentTypeException;
+import com.socialstartup.mockenger.core.web.exception.MockObjectNotCreatedException;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +88,7 @@ public class RestController extends ParentController {
         try {
             mockRequest = postService.createMockRequestFromJson(group.getId(), jsonBody, request);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new MockObjectNotCreatedException("Cannot read json from the provided source", e);
         }
         return findMockedEntities(mockRequest, group.isRecording());
     }
@@ -108,7 +109,7 @@ public class RestController extends ParentController {
         try {
             mockRequest = postService.createMockRequestFromXml(group.getId(), requestBody, request, true);
         } catch (TransformerException e) {
-            e.printStackTrace();
+            throw new MockObjectNotCreatedException("Cannot read xml from the provided source", e);
         }
         return findMockedEntities(mockRequest, group.isRecording());
     }
@@ -128,7 +129,7 @@ public class RestController extends ParentController {
         try {
             mockRequest = putService.createMockRequestFromJson(group.getId(), jsonBody, request);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new MockObjectNotCreatedException("Cannot read json from the provided source", e);
         }
         return findMockedEntities(mockRequest, group.isRecording());
     }
@@ -149,7 +150,7 @@ public class RestController extends ParentController {
         try {
             mockRequest = putService.createMockRequestFromXml(group.getId(), requestBody, request, true);
         } catch (TransformerException e) {
-            e.printStackTrace();
+            throw new MockObjectNotCreatedException("Cannot read xml from the provided source", e);
         }
         return findMockedEntities(mockRequest, group.isRecording());
     }

@@ -12,7 +12,7 @@ public class Group extends AbstractPersistentEntity<String> {
 
     private String projectId;
 
-    @NotBlank
+    @NotBlank(message = "name: may not be null or empty")
     private String name;
 
     private boolean recording;
