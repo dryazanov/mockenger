@@ -1,3 +1,5 @@
+<!doctype html>
+
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -5,21 +7,36 @@
     <title>The HTML5 Herald</title>
     <meta name="description" content="The HTML5 Herald">
     <meta name="author" content="SitePoint">
-
+    <!-- build:css assets/styles/vendor.css -->
     <!-- bower:css -->
+    <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css" />
     <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css assets/styles/main.css -->
+    <link rel="stylesheet" href="assets/styles/main.css">
+    <!-- endbuild -->
 
     <!--[if lt IE 9]>
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 </head>
 
-<body>
-<h1>SOCIAL STARTU!!!!P</h1>
-
-
+<body ng-app="mockengerClientMainApp">
+<div ng-include src="'modules/main/views/mainView.html'"></div>
+<!-- build:js scripts/vendor.js -->
 <!-- bower:js -->
+<script src="libs/jquery/dist/jquery.js"></script>
 <script src="libs/angular/angular.js"></script>
+<script src="libs/bootstrap/dist/js/bootstrap.js"></script>
 <!-- endbower -->
+<!-- endbuild -->
+
+<!-- build:js /scripts/angulartemplate.js -->
+<script src="modules/main/app.js"></script>
+<script src="modules/main/app.constants.js"></script>
+<script src="modules/main/controllers/mainController.js"></script>
+<script src="modules/main/services/testService.js"></script>
+<!-- endbuild -->
+
 </body>
 </html>
