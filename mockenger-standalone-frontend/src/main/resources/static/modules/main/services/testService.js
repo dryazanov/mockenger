@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('mockengerClientMainApp').factory('testService', [function () {
+angular.module('mockengerClientMainApp').factory('testService', ['CLIENT_VERSION', function (CLIENT_VERSION) {
 
     function doSomethingUseful() {
-        return 'it works';
+        return CLIENT_VERSION;
     }
 
     return {
