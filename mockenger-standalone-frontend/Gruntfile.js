@@ -117,7 +117,7 @@ module.exports = function(grunt) {
                 },
                 constants: {
                     ENV: 'dev',
-                    VERSION: parseVersionFromPomXml()
+                    CLIENT_VERSION: parseVersionFromPomXml()
                 }
             },
             prod: {
@@ -126,7 +126,7 @@ module.exports = function(grunt) {
                 },
                 constants: {
                     ENV: 'prod',
-                    VERSION: parseVersionFromPomXml()
+                    CLIENT_VERSION: parseVersionFromPomXml()
                 }
             }
         },

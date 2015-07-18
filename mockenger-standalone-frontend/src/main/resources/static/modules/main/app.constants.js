@@ -4,6 +4,6 @@ angular.module('mockengerClientMainApp')
 
 .constant('ENV', 'dev')
 
-.constant('VERSION', '0.1-SNAPSHOT')
+.constant('CLIENT_VERSION', '0.1-SNAPSHOT')
 
 ;
