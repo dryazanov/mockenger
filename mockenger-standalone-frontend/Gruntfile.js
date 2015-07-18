@@ -3,10 +3,10 @@ var fs = require('fs');
 
 var parseString = require('xml2js').parseString;
 // Returns the second occurence of the version number
-var parseVersionFromPomXml = function() {
+var parseVersionFromPomXml = function () {
     var version;
     var pomXml = fs.readFileSync('pom.xml', 'utf8');
-    parseString(pomXml, function (err, result){
+    parseString(pomXml, function (err, result) {
         version = result.project.parent[0].version[0];
     });
     return version;
@@ -25,7 +25,7 @@ var useminAutoprefixer = {
 };
 
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
     require('time-grunt')(grunt);
 
@@ -86,7 +86,7 @@ module.exports = function(grunt) {
         browserSync: {
             dev: {
                 bsFiles: {
-                    src : [
+                    src: [
                         'src/main/resources/static/**/*.html',
                         'src/main/resources/static/**/*.json',
                         'src/main/resources/static/assets/styles/**/*.css',
@@ -154,10 +154,10 @@ module.exports = function(grunt) {
                     expand: true,
                     dot: true,
                     flatten: true,
-                    cwd: 'src/main/resources/stastic',
+                    cwd: 'src/main/resources/static',
                     dest: '<%= mockengerfrontend.dist %>/assets/fonts',
                     src: [
-                        'lib/bootstrap/fonts/*.*'
+                        'libs/bootstrap/fonts/*.*'
                     ]
                 }]
             },
@@ -165,7 +165,7 @@ module.exports = function(grunt) {
                 files: [{
                     expand: true,
                     dot: true,
-                    cwd: 'src/main/resources/stastic',
+                    cwd: 'src/main/resources/static',
                     dest: '<%= mockengerfrontend.dist %>',
                     src: [
                         '*.html',
@@ -179,8 +179,6 @@ module.exports = function(grunt) {
                 ]
             }
         },
-
-
         concat: {
             // src and dest is configured in a subtask called "generated" by usemin
         },
@@ -192,18 +190,6 @@ module.exports = function(grunt) {
         },
         autoprefixer: {
             // src and dest is configured in a subtask called "generated" by usemin
-        },
-        rev: {
-            dist: {
-                files: {
-                    src: [
-                        '<%= mockengerfrontend.dist %>/scripts/**/*.js',
-                        '<%= mockengerfrontend.dist %>/assets/styles/**/*.css',
-                        '<%= mockengerfrontend.dist %>/assets/images/**/*.{png,jpg,jpeg,gif,webp,svg}',
-                        '<%= mockengerfrontend.dist %>/assets/fonts/*'
-                    ]
-                }
-            }
         },
 
         usemin: {
@@ -221,28 +207,55 @@ module.exports = function(grunt) {
             }
         },
 
-        htmlmin: {
+        connect: {
             dist: {
                 options: {
-                    removeCommentsFromCDATA: true,
-                    // https://github.com/yeoman/grunt-usemin/issues/44
-                    collapseWhitespace: true,
-                    collapseBooleanAttributes: true,
-                    conservativeCollapse: true,
-                    removeAttributeQuotes: true,
-                    removeRedundantAttributes: true,
-                    useShortDoctype: true,
-                    removeEmptyAttributes: true,
-                    keepClosingSlash: true
-                },
-                files: [{
-                    expand: true,
-                    cwd: '<%= sandbox.dist %>',
-                    src: ['*.html', '**/*.html'],
-                    dest: '<%= sandbox.dist %>'
-                }]
+                    keepalive: true,
+                    port: 15123,
+                    hostname: 'localhost',
+                    base: '<%= mockengerfrontend.dist %>'
+                }
             }
         }
+
+
+        //,
+        //rev: {
+        //    dist: {
+        //        files: {
+        //            src: [
+        //                '<%= mockengerfrontend.dist %>/scripts/**/*.js',
+        //                '<%= mockengerfrontend.dist %>/assets/styles/**/*.css',
+        //                '<%= mockengerfrontend.dist %>/assets/images/**/*.{png,jpg,jpeg,gif,webp,svg}',
+        //                '<%= mockengerfrontend.dist %>/assets/fonts/*'
+        //            ]
+        //        }
+        //    }
+        //}
+        //,
+        //
+        //htmlmin: {
+        //    dist: {
+        //        options: {
+        //            removeCommentsFromCDATA: true,
+        //            // https://github.com/yeoman/grunt-usemin/issues/44
+        //            collapseWhitespace: true,
+        //            collapseBooleanAttributes: true,
+        //            conservativeCollapse: true,
+        //            removeAttributeQuotes: true,
+        //            removeRedundantAttributes: true,
+        //            useShortDoctype: true,
+        //            removeEmptyAttributes: true,
+        //            keepClosingSlash: true
+        //        },
+        //        files: [{
+        //            expand: true,
+        //            cwd: '<%= sandbox.dist %>',
+        //            src: ['*.html', '**/*.html'],
+        //            dest: '<%= sandbox.dist %>'
+        //        }]
+        //    }
+        //}
 
 
     });
@@ -266,7 +279,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
 
 
-
     // task setup
 
     grunt.registerTask('test', [
@@ -283,18 +295,15 @@ module.exports = function(grunt) {
         'clean:dist',
         'wiredep:app',
         'ngconstant:prod',
-        'useminPrepare'
-        //,
-        //'concat',
-        //
-        //'copy:fonts',
-        //'copy:dist',
-        //
-        //'cssmin',
-        //'autoprefixer',
-        //'uglify',
+        'useminPrepare',
+        'concat',
+        'copy:fonts',
+        'copy:dist',
+        'cssmin',
+        'autoprefixer',
+        'uglify',
         //'rev',
-        //'usemin'
+        'usemin'
         //,
         //'htmlmin'
     ]);
@@ -310,5 +319,10 @@ module.exports = function(grunt) {
         'ngconstant:dev',
         'browserSync',
         'watch'
+    ]);
+
+    grunt.registerTask('serveDist', [
+        'build',
+        'connect:dist'
     ]);
 };
