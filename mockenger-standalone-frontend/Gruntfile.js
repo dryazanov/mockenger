@@ -29,6 +29,8 @@ module.exports = function (grunt) {
 
     require('time-grunt')(grunt);
 
+    var env = grunt.file.readJSON('env.json');
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
 
@@ -97,6 +99,7 @@ module.exports = function (grunt) {
                 }
             },
             options: {
+                port: env.port,
                 watchTask: true,
                 server: {
                     baseDir: 'src/main/resources/static',
@@ -214,8 +217,8 @@ module.exports = function (grunt) {
             dist: {
                 options: {
                     keepalive: true,
-                    port: 15123,
-                    hostname: 'localhost',
+                    port: env.port,
+                    hostname: env.hostname,
                     base: '<%= mockengerfrontend.dist %>'
                 }
             }
