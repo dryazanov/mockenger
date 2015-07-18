@@ -6,16 +6,27 @@ import com.socialstartup.mockenger.core.service.RequestService;
 import com.socialstartup.mockenger.core.web.exception.ObjectNotFoundException;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
-
-//@Controller
+/**
+ *
+ */
 public abstract class AbstractController {
 
 //    private final String APPLICATION_JSONP_REQUEST_VALUE = "application/javascript";
 
 //    private final String APPLICATION_JSONP_RESPONSE_VALUE = "application/javascript;charset=UTF-8";
+
+    protected static final String PROJECTS_ENDPOINT = "/projects";
+    protected static final String PROJECT_ID_ENDPOINT = PROJECTS_ENDPOINT + "/{projectId}";
+    protected static final String GROUPS_ENDPOINT = "/groups";
+    protected static final String GROUP_ID_ENDPOINT = GROUPS_ENDPOINT + "/{groupId}";
+    protected static final String REQUESTS_ENDPOINT = "/requests";
+    protected static final String REQUEST_ID_ENDPOINT = REQUESTS_ENDPOINT + "/{requestId}";
+
 
     private HttpHeaders responseHeaders = new HttpHeaders();
 
@@ -28,6 +39,13 @@ public abstract class AbstractController {
     @Autowired
     private RequestService requestService;
 
+
+    /**
+     * Constructor with default content-type for responses
+     */
+    public AbstractController() {
+        getResponseHeaders().set("Content-Type", MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
+    }
 
     protected HttpHeaders getResponseHeaders() {
         return responseHeaders;
@@ -73,5 +91,20 @@ public abstract class AbstractController {
         }
 
         return group;
+    }
+
+    /**
+     *
+     * @param requestId
+     * @return
+     */
+    protected AbstractRequest findRequestById(String requestId) {
+        AbstractRequest request = getRequestService().findById(requestId);
+
+        if (request == null) {
+            throw new ObjectNotFoundException("MockRequest", requestId);
+        }
+
+        return request;
     }
 }

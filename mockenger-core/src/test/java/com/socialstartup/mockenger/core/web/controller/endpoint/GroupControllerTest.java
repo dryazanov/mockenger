@@ -3,22 +3,16 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialstartup.mockenger.core.config.TestContext;
-import com.socialstartup.mockenger.core.service.GroupService;
-import com.socialstartup.mockenger.core.service.ProjectService;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -38,27 +32,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 @ContextConfiguration(classes = {TestContext.class})
 public class GroupControllerTest extends AbstractControllerTest {
-    @Autowired
-    private WebApplicationContext webApplicationContext;
 
-    @Autowired
-    private ProjectService projectService;
+    private static final String ENDPOINT_TEMPLATE = "/projects/%s/groups/%s";
+    private static final String ENDPOINT_GROUP = String.format(ENDPOINT_TEMPLATE, PROJECT_ID, "");
+    private static final String GROUP_NAME_UPDATED = "ABC group";
 
-    @Autowired
-    private GroupService groupService;
-
-    private MockMvc mockMvc;
-
-//    private static final String ENDPOINT_PROJECT = "/projects/";
-    private static final String ENDPOINT_GROUP = "/projects/" + PROJECT_ID + "/groups/";
-    private static final String GROUP_ID_TEST = "TEST_ID";
-    private static final String GROUP_NAME_TWO = "ABC group";
-    private static final String CONTENT_TYPE = "application/json;charset=UTF-8";
 
     @Before
     public void setup() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+        super.setup();
     }
+
 
     @Test
     public void testGetGroup() throws Exception {
@@ -66,9 +50,9 @@ public class GroupControllerTest extends AbstractControllerTest {
 
         ResultActions resultActions = getGroupRest(group.getId());
         resultActions.andExpect(status().isOk())
-            .andExpect(content().contentType(CONTENT_TYPE))
+            .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
             .andExpect(jsonPath("$.id").value(group.getId()))
-            .andExpect(jsonPath("$.name").value(group.getName()))
+            .andExpect(jsonPath("$.name").value(GROUP_NAME_TEST))
             .andExpect(jsonPath("$.recording").value(true));
 
         deleteGroup(group);
@@ -78,74 +62,108 @@ public class GroupControllerTest extends AbstractControllerTest {
     public void testGetGroupIdIsNull() throws Exception {
         ResultActions resultActions = getGroupRest(null);
         resultActions.andExpect(status().isNotFound())
-                .andExpect(content().contentType(CONTENT_TYPE))
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
                 .andExpect(jsonPath("$.errors[0]").value("Group with ID 'null' not found"));
     }
 
     @Test
-    public void testGetProjectNotFound() throws Exception {
-        ResultActions resultActions = getGroupRest(GROUP_ID_TEST);
+    public void testGetGroupNotFound() throws Exception {
+        ResultActions resultActions = getGroupRest(GROUP_ID);
         resultActions.andExpect(status().isNotFound())
-                .andExpect(content().contentType(CONTENT_TYPE))
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]").value("Group with ID '" + GROUP_ID_TEST + "' not found"));
+                .andExpect(jsonPath("$.errors[0]").value("Group with ID '" + GROUP_ID + "' not found"));
     }
 
     @Test
-    public void testAddProjectWithEmptyName() throws Exception {
+    public void testAddGroupWithEmptyName() throws Exception {
         Group group = getNewGroup();
         group.setName("");
         ResultActions resultActions = createGroupRest(group);
         resultActions.andExpect(status().isBadRequest())
-                .andExpect(content().contentType(CONTENT_TYPE))
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]").value("name: may not be empty"));
+                .andExpect(jsonPath("$.errors[0]").value("name: may not be null or empty"));
     }
 
     @Test
-    public void testAddProjectWithNullName() throws Exception {
+    public void testAddGroupWithNullName() throws Exception {
         Group group = getNewGroup();
         group.setName(null);
         ResultActions resultActions = createGroupRest(group);
         resultActions.andExpect(status().isBadRequest())
-                .andExpect(content().contentType(CONTENT_TYPE))
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]").value("name: may not be empty"));
+                .andExpect(jsonPath("$.errors[0]").value("name: may not be null or empty"));
     }
 
     @Test
-    public void testAddProject() throws Exception {
+    public void testAddGroup() throws Exception {
         ResultActions resultActions = null;
         Group group = getNewGroup();
 
         // Expect response status 200
         resultActions = createGroupRest(group);
-        resultActions.andExpect(status().isCreated()).andExpect(content().contentType(CONTENT_TYPE));
+        resultActions.andExpect(status().isCreated()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
 
         // Expect response status 200
         resultActions = createGroupRest(group);
-        resultActions.andExpect(status().isCreated()).andExpect(content().contentType(CONTENT_TYPE));
+        resultActions.andExpect(status().isCreated()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
 
         deleteAllGroups();
     }
 
     @Test
-    public void testSaveProject() throws Exception {
+    public void testSaveGroup() throws Exception {
         Group group = createGroup();
-        group.setName(GROUP_NAME_TWO);
+        group.setName(GROUP_NAME_UPDATED);
 
         ResultActions resultActions = updateGroupRest(group);
-        resultActions.andExpect(status().isNoContent()).andExpect(content().contentType(CONTENT_TYPE));
+        resultActions.andExpect(status().isNoContent()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
 
-        assertEquals(GROUP_NAME_TWO, getGroup(group.getId()).getName());
+        assertEquals(GROUP_NAME_UPDATED, getGroup(group.getId()).getName());
     }
 
     @Test
-    public void testDeleteProject() throws Exception {
+    public void testSaveGroupWithEmptyName() throws Exception {
+        Group group = getNewGroup();
+        group.setName("");
+        ResultActions resultActions = updateGroupRest(group);
+        resultActions.andExpect(status().isBadRequest())
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors[0]").value("name: may not be null or empty"));
+    }
+
+    @Test
+    public void testSaveGroupWithNullName() throws Exception {
+        Group group = getNewGroup();
+        group.setName(null);
+        ResultActions resultActions = updateGroupRest(group);
+        resultActions.andExpect(status().isBadRequest())
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors[0]").value("name: may not be null or empty"));
+    }
+
+    @Test
+    public void testDeleteGroup() throws Exception {
         Group group = createGroup();
         ResultActions resultActions = deleteGroupRest(group.getId());
-        resultActions.andExpect(status().isOk()).andExpect(content().contentType(CONTENT_TYPE));
+        resultActions.andExpect(status().isOk()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
+    }
+
+    @Test
+    public void testGetNoGroupsByProjectId() throws Exception {
+        deleteAllGroups();
+        Project project = createProject();
+        ResultActions resultActions = getGroupsAllRest(project.getId());
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
+                .andExpect(jsonPath("$", hasSize(0)));
+
+        deleteProject(project);
     }
 
     @Test
@@ -160,7 +178,7 @@ public class GroupControllerTest extends AbstractControllerTest {
 
         ResultActions resultActions = getGroupsAllRest(project.getId());
         resultActions.andExpect(status().isOk())
-                .andExpect(content().contentType(CONTENT_TYPE))
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$.[0].projectId", is(project.getId())))
                 .andExpect(jsonPath("$.[1].projectId", is(project.getId())))
@@ -172,25 +190,28 @@ public class GroupControllerTest extends AbstractControllerTest {
 
 
     private ResultActions getGroupsAllRest(String projectId) throws Exception {
-        String endpoint = ENDPOINT_GROUP.replace(PROJECT_ID, projectId);
-        return this.mockMvc.perform(get(endpoint).accept(MediaType.parseMediaType(CONTENT_TYPE)));
+        String endpoint = String.format(ENDPOINT_TEMPLATE, projectId, "");
+        return this.mockMvc.perform(get(endpoint).accept(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)));
     }
 
     private ResultActions getGroupRest(String groupId) throws Exception {
-        return this.mockMvc.perform(get(ENDPOINT_GROUP + groupId).accept(MediaType.parseMediaType(CONTENT_TYPE)));
+        String endpoint = String.format(ENDPOINT_TEMPLATE, PROJECT_ID, groupId);
+        return this.mockMvc.perform(get(endpoint).accept(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)));
     }
 
     private ResultActions createGroupRest(Group group) throws Exception {
         String groupJson = new ObjectMapper(new JsonFactory()).writeValueAsString(group);
-        return this.mockMvc.perform(post(ENDPOINT_GROUP).contentType(MediaType.parseMediaType(CONTENT_TYPE)).content(groupJson));
+        return this.mockMvc.perform(post(ENDPOINT_GROUP).contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)).content(groupJson));
     }
 
     private ResultActions updateGroupRest(Group group) throws Exception {
         String groupJson = new ObjectMapper(new JsonFactory()).writeValueAsString(group);
-        return this.mockMvc.perform(put(ENDPOINT_GROUP + group.getId()).contentType(MediaType.parseMediaType(CONTENT_TYPE)).content(groupJson));
+        String endpoint = String.format(ENDPOINT_TEMPLATE, PROJECT_ID, group.getId());
+        return this.mockMvc.perform(put(endpoint).contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)).content(groupJson));
     }
 
     private ResultActions deleteGroupRest(String groupId) throws Exception {
-        return this.mockMvc.perform(delete(ENDPOINT_GROUP + groupId).contentType(MediaType.parseMediaType(CONTENT_TYPE)));
+        String endpoint = String.format(ENDPOINT_TEMPLATE, PROJECT_ID, groupId);
+        return this.mockMvc.perform(delete(endpoint).contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)));
     }
 }

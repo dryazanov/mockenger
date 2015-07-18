@@ -3,10 +3,7 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -30,21 +27,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 @Controller
 public class GroupController extends AbstractController {
 
-    /**
-     * Logger
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(GroupController.class);
+    private static final String GROUPS = PROJECT_ID_ENDPOINT + GROUPS_ENDPOINT;
+    private static final String GROUPID = PROJECT_ID_ENDPOINT + GROUP_ID_ENDPOINT;
 
-    private static final String ENDPOINT = "/projects/{projectId}/groups";
-    private static final String ENDPOINT_WITH_GROUPID = ENDPOINT + "/{groupId}";
-
-
-    /**
-     * Constructor
-     */
-    public GroupController() {
-        getResponseHeaders().set("Content-Type", MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
-    }
 
     /**
      *
@@ -52,7 +37,7 @@ public class GroupController extends AbstractController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = ENDPOINT_WITH_GROUPID, method = GET)
+    @RequestMapping(value = GROUPID, method = GET)
     public ResponseEntity getGroup(@PathVariable String groupId) {
         Group group = findGroupById(groupId);
         return new ResponseEntity(group, getResponseHeaders(), HttpStatus.OK);
@@ -62,14 +47,14 @@ public class GroupController extends AbstractController {
     /**
      *
      * @param group
+     * @param result
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = {ENDPOINT, ENDPOINT + "/"}, method = POST)
+    @RequestMapping(value = GROUPS, method = POST)
     public ResponseEntity addGroup(@Valid @RequestBody Group group, BindingResult result) {
         if (result.hasErrors()) {
-            String error = String.format("%s: %s", result.getFieldError().getField(), result.getFieldError().getDefaultMessage());
-            throw new IllegalArgumentException(error);
+            throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
         group.setId(null);
         getGroupService().save(group);
@@ -79,12 +64,16 @@ public class GroupController extends AbstractController {
 
     /**
      *
+     * @param groupId
      * @param group
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = ENDPOINT_WITH_GROUPID, method = PUT)
-    public ResponseEntity saveGroup(@PathVariable String groupId, @Valid @RequestBody Group group) {
+    @RequestMapping(value = GROUPID, method = PUT)
+    public ResponseEntity saveGroup(@PathVariable String groupId, @Valid @RequestBody Group group, BindingResult result) {
+        if (result.hasErrors()) {
+            throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
+        }
         findGroupById(groupId); // Check if group exists
         getGroupService().save(group);
         return new ResponseEntity(getResponseHeaders(), HttpStatus.NO_CONTENT);
@@ -97,7 +86,7 @@ public class GroupController extends AbstractController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = ENDPOINT_WITH_GROUPID, method = DELETE)
+    @RequestMapping(value = GROUPID, method = DELETE)
     public ResponseEntity deleteGroup(@PathVariable String groupId) {
         Group group = findGroupById(groupId);
         getGroupService().remove(group);
@@ -111,7 +100,7 @@ public class GroupController extends AbstractController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = ENDPOINT, method = GET)
+    @RequestMapping(value = GROUPS, method = GET)
     public ResponseEntity getGroupList(@PathVariable String projectId) {
         Project project = findProjectById(projectId);
         List<Group> groupList = getGroupService().findByProjectId(project.getId());

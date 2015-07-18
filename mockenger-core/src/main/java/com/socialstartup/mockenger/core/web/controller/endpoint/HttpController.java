@@ -1,10 +1,14 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
-import com.socialstartup.mockenger.core.service.http.*;
+import com.socialstartup.mockenger.core.service.http.ConnectService;
+import com.socialstartup.mockenger.core.service.http.HeadService;
+import com.socialstartup.mockenger.core.service.http.OptionsService;
+import com.socialstartup.mockenger.core.service.http.PatchService;
+import com.socialstartup.mockenger.core.service.http.PostService;
+import com.socialstartup.mockenger.core.service.http.PutService;
+import com.socialstartup.mockenger.core.service.http.TraceService;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -18,7 +22,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 
 import static com.socialstartup.mockenger.data.model.dict.RequestMethod.CONNECT;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
+import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
+import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.springframework.web.bind.annotation.RequestMethod.TRACE;
 
 /**
  * Created by x079089 on 3/24/2015.
@@ -26,11 +37,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @Controller
 @RequestMapping(value = {"/http/{groupId}"})
 public class HttpController extends ParentController {
-
-    /**
-     * Logger
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(HttpController.class);
 
     @Autowired
     @Qualifier("httpPostService")
