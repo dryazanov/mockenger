@@ -62,8 +62,8 @@
                                     <outputDirectory>${basedir}/target/classes/static</outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>../mockenger-standalone-frontend/target/classes/static</directory>
-                                            <filtering>true</filtering>
+                                            <directory>../mockenger-standalone-frontend/dist</directory>
+                                            <filtering>false</filtering>
                                         </resource>
                                     </resources>
                                     <overwrite>true</overwrite>
