@@ -12,6 +12,17 @@ var parseVersionFromPomXml = function () {
     return version;
 };
 
+var parseBuildDirFromPomXml = function () {
+    var buildDir;
+    var pomXml = fs.readFileSync('pom.xml', 'utf8');
+    parseString(pomXml, function (err, result) {
+        buildDir = result.project.properties[0]['grunt.build.dir'][0];
+    });
+    return buildDir;
+};
+
+
+
 // usemin custom step
 var useminAutoprefixer = {
     name: 'autoprefixer',
@@ -37,7 +48,7 @@ module.exports = function (grunt) {
         mockengerfrontend: {
             // configurable paths
             app: require('./bower.json').appPath || 'app',
-            dist: 'dist'
+            dist: parseBuildDirFromPomXml()
         },
 
         clean: {
@@ -46,8 +57,9 @@ module.exports = function (grunt) {
                     dot: true,
                     src: [
                         '.tmp',
-                        '<%= mockengerfrontend.dist %>/*',
-                        '!<%= mockengerfrontend.dist %>/.git*'
+                        '<%= mockengerfrontend.dist %>'
+                        //'<%= mockengerfrontend.dist %>/*',
+                        //'!<%= mockengerfrontend.dist %>/.git*'
                     ]
                 }]
             },
