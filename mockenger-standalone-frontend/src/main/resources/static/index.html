@@ -22,11 +22,17 @@
 </head>
 
 <body ng-app="mockengerClientMainApp">
-<div ng-include src="'modules/main/views/mainView.html'"></div>
+<div ng-view=""></div>
 <!-- build:js scripts/vendor.js -->
 <!-- bower:js -->
 <script src="libs/jquery/dist/jquery.js"></script>
 <script src="libs/angular/angular.js"></script>
+<script src="libs/angular-cookies/angular-cookies.js"></script>
+<script src="libs/angular-messages/angular-messages.js"></script>
+<script src="libs/angular-resource/angular-resource.js"></script>
+<script src="libs/angular-route/angular-route.js"></script>
+<script src="libs/angular-sanitize/angular-sanitize.js"></script>
+<script src="libs/angular-touch/angular-touch.js"></script>
 <script src="libs/bootstrap/dist/js/bootstrap.js"></script>
 <!-- endbower -->
 <!-- endbuild -->
