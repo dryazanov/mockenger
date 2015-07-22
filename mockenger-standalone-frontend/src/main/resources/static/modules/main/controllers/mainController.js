@@ -1,6 +1,6 @@
 'use strict';
 
 angular.module('mockengerClientMainApp')
-    .controller('mainController',['$scope', 'apiEndpointsService', function ($scope, apiEndpointsService) {
-        $scope.test = apiEndpointsService.doSomethingUseful();
+    .controller('mainController',['$scope', 'projectsService', function ($scope, projectsService) {
+        $scope.projectsList = projectsService.query();
     }]);
