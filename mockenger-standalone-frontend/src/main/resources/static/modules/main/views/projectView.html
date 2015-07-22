@@ -4,9 +4,34 @@ Current project - {{currentProject.name}}
 
 <div>
     <ul ng-repeat="group in groupsList track by $index">
-        <li>{{$index + 1}}. {{group.name}} Recording = {{group.recording}}</li>
+        <li ng-click="loadGroupRequests(group)">{{$index + 1}}. {{group.name}} Recording = {{group.recording}}</li>
     </ul>
 </div>
+
+<hr/>
+
+
+<div ng-if="currentGroup">
+    <h3>{{currentGroup.name}}</h3>
+    <ul ng-repeat="request in requestsList track by $index">
+        <li ng-click="selectRequest(request)">{{$index + 1}}. {{request.name}} {{request.method}} : {{request.path.value}} </li>
+    </ul>
+</div>
+<div ng-if="!currentGroup">
+<h2>Please select a group</h2>
+</div>
+
+<hr/>
+
+<div ng-if="currentRequest">
+Selected request - {{currentRequest.name}} {{currentRequest.method}} : {{currentRequest.path.value}}
+    <br/>
+    {{currentRequest.body}}
+</div>
+<div ng-if="!currentRequest">
+    <h2>Please select a request</h2>
+</div>
+
 
 
 <a href="#/">Back to project list</a>

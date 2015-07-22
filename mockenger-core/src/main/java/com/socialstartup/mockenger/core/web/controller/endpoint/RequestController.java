@@ -141,7 +141,6 @@ public class RequestController extends AbstractController {
         bootGrid.setTotal(requestList.size());
         bootGrid.setRowCount(requestList.size());
         bootGrid.setRows(mapper.map(requestList));
-
-        return new ResponseEntity(bootGrid, getResponseHeaders(), HttpStatus.OK);
+        return new ResponseEntity(requestList, getResponseHeaders(), HttpStatus.OK);
     }
 }
