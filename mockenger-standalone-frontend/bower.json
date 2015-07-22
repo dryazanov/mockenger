@@ -18,6 +18,13 @@
 
   "dependencies": {
     "angular": "~1.4.3",
+    "angular": "^1.4.3",
+    "angular-cookies": "^1.4.3",
+    "angular-messages": "^1.4.3",
+    "angular-resource": "^1.4.3",
+    "angular-route": "^1.4.3",
+    "angular-sanitize": "^1.4.3",
+    "angular-touch": "^1.4.3",
     "bootstrap": "3.3.4"
 
   }

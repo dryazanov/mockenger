@@ -104,7 +104,7 @@ module.exports = function (grunt) {
                         'src/main/resources/static/**/*.html',
                         'src/main/resources/static/**/*.json',
                         'src/main/resources/static/assets/styles/**/*.css',
-                        'src/main/resources/static/scripts/**/*.js',
+                        'src/main/resources/static/modules/**/*.js',
                         'src/main/resources/static/assets/images/**/*.{png,jpg,jpeg,gif,webp,svg}',
                         'tmp/**/*.{css,js}'
                     ]
