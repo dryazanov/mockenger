@@ -1,4 +1,12 @@
 Current project - {{currentProject.name}}
 
 <br/>
+
+<div>
+    <ul ng-repeat="group in groupsList track by $index">
+        <li>{{$index + 1}}. {{group.name}} Recording = {{group.recording}}</li>
+    </ul>
+</div>
+
+
 <a href="#/">Back to project list</a>

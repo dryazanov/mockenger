@@ -4,8 +4,14 @@ angular.module('mockengerClientComponents').factory('apiEndpointsService', ['API
     function getProjectRestUrl() {
         return API_BASE_PATH + '/projects/:projectId';
     }
+
+    function getGroupRestUrl() {
+        return getProjectRestUrl() + '/groups/:groupId';
+    }
     return {
-        getProjectRestUrl : getProjectRestUrl
+        getProjectRestUrl : getProjectRestUrl,
+        getGroupRestUrl: getGroupRestUrl
+
     };
 
 }]);
