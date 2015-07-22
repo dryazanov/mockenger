@@ -8,7 +8,6 @@
     <artifactId>mockenger-parent</artifactId>
     <version>0.1-SNAPSHOT</version>
     <modules>
-        <module>../mockenger-frontend</module>
         <module>../mockenger-commons</module>
         <module>../mockenger-standalone</module>
         <module>../mockenger-data</module>
