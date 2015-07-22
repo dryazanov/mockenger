@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('mockengerClientMainApp', [
+    'mockengerClientComponents',
     'ngCookies',
     'ngMessages',
     'ngResource',
