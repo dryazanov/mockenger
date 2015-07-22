@@ -132,6 +132,7 @@ module.exports = function (grunt) {
                 },
                 constants: {
                     ENV: 'dev',
+                    API_BASE_PATH:'http://localhost:8080',
                     CLIENT_VERSION: parseVersionFromPomXml()
                 }
             },
@@ -141,6 +142,7 @@ module.exports = function (grunt) {
                 },
                 constants: {
                     ENV: 'prod',
+                    API_BASE_PATH:'/',
                     CLIENT_VERSION: parseVersionFromPomXml()
                 }
             }
