@@ -12,13 +12,13 @@ angular.module('mockengerClientMainApp', [
         .when('/', {
             templateUrl: '/modules/main/views/mainView.html',
             controller: 'mainController',
-            controllerAs: 'main'
+            controllerAs: 'mainCtrl'
         })
-        //.when('/about', {
-        //    templateUrl: 'views/about.html',
-        //    controller: 'AboutCtrl',
-        //    controllerAs: 'about'
-        //})
+        .when('/project/:projectId', {
+            templateUrl: '/modules/main/views/projectView.html',
+            controller: 'projectController',
+            controllerAs: 'projectCtrl'
+        })
         .otherwise({
             redirectTo: '/'
         });
