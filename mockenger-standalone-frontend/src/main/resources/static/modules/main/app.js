@@ -7,7 +7,7 @@ angular.module('mockengerClientMainApp', [
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch']).config(function ($routeProvider) {
+    'ngTouch']).config(['$routeProvider', function ($routeProvider) {
     $routeProvider
         .when('/', {
             templateUrl: '/modules/main/views/mainView.html',
@@ -17,11 +17,17 @@ angular.module('mockengerClientMainApp', [
         .when('/project/:projectId', {
             templateUrl: '/modules/main/views/projectView.html',
             controller: 'projectController',
-            controllerAs: 'projectCtrl'
+            controllerAs: 'projectCtrl',
+            resolve: {
+                currentProject: function($route, projectsService) {
+                    var projectId = $route.current.params.projectId;
+                    return projectsService.get({projectId : projectId});
+                }
+            }
         })
         .otherwise({
             redirectTo: '/'
         });
-});
+}]);
 
 
