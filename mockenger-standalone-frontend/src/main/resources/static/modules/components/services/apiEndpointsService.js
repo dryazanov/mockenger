@@ -8,9 +8,14 @@ angular.module('mockengerClientComponents').factory('apiEndpointsService', ['API
     function getGroupRestUrl() {
         return getProjectRestUrl() + '/groups/:groupId';
     }
+
+    function getRequestRestUrl() {
+        return getGroupRestUrl() + '/requests/:requestId';
+    }
     return {
         getProjectRestUrl : getProjectRestUrl,
-        getGroupRestUrl: getGroupRestUrl
+        getGroupRestUrl: getGroupRestUrl,
+        getRequestRestUrl: getRequestRestUrl
 
     };
 
