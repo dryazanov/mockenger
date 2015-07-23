@@ -1,4 +1,4 @@
-package com.socialstartup.mockenger.standalone.web.filters;
+package com.socialstartup.mockenger.core.web.filter;
 
 import org.springframework.stereotype.Component;
 
@@ -7,10 +7,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Created by ydolzhenko on 22.07.15.
+ * Created by ydolzhenko on 23.07.15.
  */
 @Component
-public class CORSFIlter implements Filter {
+public class CORSFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
