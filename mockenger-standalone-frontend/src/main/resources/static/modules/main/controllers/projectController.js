@@ -22,10 +22,10 @@ angular.module('mockengerClientMainApp')
                 $scope.currentRequest = undefined;
             }, function (errorResponse) {
             });
-        }
+        };
 
         $scope.selectRequest = function(request) {
             $scope.currentRequest = request;
-        }
+        };
 
     }]);

@@ -323,6 +323,22 @@ module.exports = function (grunt) {
         'htmlmin'
     ]);
 
+    grunt.registerTask('buildDev', [
+        'clean:dist',
+        'wiredep:app',
+        'ngconstant:dev',
+        'useminPrepare',
+        'concat',
+        'copy:fonts',
+        'copy:dist',
+        'cssmin',
+        'autoprefixer',
+        'uglify',
+        'rev',
+        'usemin',
+        'htmlmin'
+    ]);
+
     grunt.registerTask('default', [
         'test',
         'build'
@@ -337,7 +353,7 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('serveDist', [
-        'build',
+        'buildDev',
         'connect:dist'
     ]);
 };

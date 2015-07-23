@@ -19,10 +19,10 @@ angular.module('mockengerClientMainApp', [
             controller: 'projectController',
             controllerAs: 'projectCtrl',
             resolve: {
-                currentProject: function($route, projectsService) {
+                currentProject: ['$route', 'projectsService', function($route, projectsService) {
                     var projectId = $route.current.params.projectId;
                     return projectsService.get({projectId : projectId});
-                }
+                }]
             }
         })
         .otherwise({
