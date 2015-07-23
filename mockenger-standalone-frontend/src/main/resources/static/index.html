@@ -22,7 +22,16 @@
 </head>
 
 <body ng-app="mockengerClientMainApp">
-<div ng-view=""></div>
+<!--[if lt IE 9]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+<div ng-controller="rootController">
+    <p>You are running {{app.version}} Mockenger version built on {{app.buildDate}}</p>
+    <hr/>
+    <div ng-show="app.env === 'dev'" class="development" ng-cloak=""></div>
+    <div ng-view=""></div>
+</div>
+
 <!-- build:js scripts/vendor.js -->
 <!-- bower:js -->
 <script src="libs/jquery/dist/jquery.js"></script>
@@ -41,6 +50,7 @@
 <script src="modules/components/mockengerClientComponents.js"></script>
 <script src="modules/components/mockengerClient.constants.js"></script>
 <script src="modules/components/services/apiEndpointsService.js"></script>
+<script src="modules/components/controllers/rootController.js"></script>
 <!-- endbuild -->
 
 <!-- build:js /scripts/mockengerClientMain.js -->

@@ -6,6 +6,8 @@ angular.module('mockengerClientComponents')
 
 .constant('API_BASE_PATH', 'http://localhost:8080')
 
-.constant('CLIENT_VERSION', '0.1-SNAPSHOT')
+.constant('APP_VERSION', '0.1-SNAPSHOT')
+
+.constant('BUILD_DATE', '2015-07-23T09:18:46.547Z')
 
 ;
