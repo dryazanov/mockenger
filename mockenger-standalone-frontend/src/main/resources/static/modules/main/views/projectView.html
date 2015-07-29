@@ -13,7 +13,14 @@ Current project - {{data.currentProject.name}}
 
 <div ng-if="data.currentGroup">
     <h3>{{data.currentGroup.name}}</h3>
-    <ul ng-repeat="request in data.requestsList track by $index">
+    Search: <input type="text" ng-model="data.requestQuery">
+    Sort by:
+    <select ng-model="data.orderProp">
+        <option value="name">Name</option>
+        <option value="method">Method</option>
+    </select>
+
+    <ul ng-repeat="request in data.requestsList  | filter:data.requestQuery | orderBy:data.orderProp track by $index ">
         <li ng-click="selectRequest(request)">{{$index + 1}}. {{request.name}} {{request.method}} : {{request.path.value}} </li>
     </ul>
 </div>
