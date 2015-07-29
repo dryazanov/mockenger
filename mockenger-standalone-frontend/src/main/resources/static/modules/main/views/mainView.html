@@ -1,5 +1,5 @@
 <div>
-    <ul ng-repeat="project in data.projectsList track by $index">
+    <ul ng-repeat="project in projectsList track by $index">
         <li><a href="#/project/{{project.id}}">{{$index + 1}}. {{project.name}} ({{project.type}})</a></li>
     </ul>
 </div>
