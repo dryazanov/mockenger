@@ -45,7 +45,7 @@ angular.module('mockengerClientMainApp')
             if ($scope.pageCount() == 0) {
                 return [0];
             }
-            var rangeSize = 2;
+            var rangeSize = $scope.data.itemsPerPage;
             var ret = [];
             var start;
 
