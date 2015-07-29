@@ -7,7 +7,8 @@ angular.module('mockengerClientMainApp', [
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch']).config(['$routeProvider', function ($routeProvider) {
+    'ngTouch']).config(['$locationProvider','$routeProvider', function ($locationProvider, $routeProvider) {
+    $locationProvider.html5Mode(true);
     $routeProvider
         .when('/', {
             templateUrl: '/modules/main/views/mainView.html',
