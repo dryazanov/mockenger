@@ -6,11 +6,14 @@ angular.module('mockengerClientMainApp')
 
         $scope.data.currentProject = currentProject;
 
-        //default order criteria
-        $scope.data.orderProp = 'name';
+        $scope.data.requestsList = {};
+        $scope.data.requestsList.paginator = {};
 
-        $scope.data.itemsPerPage = 2;
-        $scope.data.currentPage = 0;
+        //default order criteria
+        $scope.data.requestsList.orderProp = 'name';
+
+        $scope.data.requestsList.paginator.itemsPerPage = 2;
+        $scope.data.requestsList.paginator.currentPage = 0;
 
         currentProject.$promise.then(function (obj) {
 
@@ -26,10 +29,10 @@ angular.module('mockengerClientMainApp')
                 projectId: currentProject.id,
                 groupId: group.id
             }, function (response, getResponseHeaders) {
-                $scope.data.requestsList = response;
+                $scope.data.requestsList.data = response;
                 $scope.data.currentGroup = group;
                 $scope.data.currentRequest = undefined;
-                $scope.data.requestQuery = undefined;
+                $scope.data.requestsList.requestQuery = undefined;
             }, function (errorResponse) {
             });
         };
@@ -38,20 +41,20 @@ angular.module('mockengerClientMainApp')
             $scope.data.currentRequest = request;
         };
 
-        $scope.range = function () {
-            if ($scope.pageCount() < 0) {
+        $scope.data.requestsList.paginator.range = function () {
+            if ($scope.data.requestsList.paginator.pageCount() < 0) {
                 return [];
             }
-            if ($scope.pageCount() == 0) {
+            if ($scope.data.requestsList.paginator.pageCount() == 0) {
                 return [0];
             }
-            var rangeSize = $scope.data.itemsPerPage;
+            var rangeSize = $scope.data.requestsList.paginator.itemsPerPage;
             var ret = [];
             var start;
 
-            start = $scope.data.currentPage;
-            if (start > $scope.pageCount() - rangeSize) {
-                start = $scope.pageCount() - rangeSize + 1;
+            start = $scope.data.requestsList.paginator.currentPage;
+            if (start > $scope.data.requestsList.paginator.pageCount() - rangeSize) {
+                start = $scope.data.requestsList.paginator.pageCount() - rangeSize + 1;
             }
 
             for (var i = start; i < start + rangeSize; i++) {
@@ -60,33 +63,33 @@ angular.module('mockengerClientMainApp')
             return ret;
         };
 
-        $scope.prevPage = function () {
-            if ($scope.data.currentPage > 0) {
-                $scope.data.currentPage--;
+        $scope.data.requestsList.paginator.prevPage = function () {
+            if ($scope.data.requestsList.paginator.currentPage > 0) {
+                $scope.data.requestsList.paginator.currentPage--;
             }
         };
 
-        $scope.prevPageDisabled = function () {
-            return $scope.data.currentPage === 0 ? "disabled" : "";
+        $scope.data.requestsList.paginator.prevPageDisabled = function () {
+            return $scope.data.requestsList.paginator.currentPage === 0 ? "disabled" : "";
         };
 
-        $scope.pageCount = function () {
-            var filtered = $filter('filter')($scope.data.requestsList, $scope.data.requestQuery);
-            return Math.ceil(filtered.length / $scope.data.itemsPerPage) - 1;
+        $scope.data.requestsList.paginator.pageCount = function () {
+            var filtered = $filter('filter')($scope.data.requestsList.data, $scope.data.requestsList.requestQuery);
+            return Math.ceil(filtered.length / $scope.data.requestsList.paginator.itemsPerPage) - 1;
         };
 
-        $scope.nextPage = function () {
-            if ($scope.data.currentPage < $scope.pageCount()) {
-                $scope.data.currentPage++;
+        $scope.data.requestsList.paginator.nextPage = function () {
+            if ($scope.data.requestsList.paginator.currentPage < $scope.data.requestsList.paginator.pageCount()) {
+                $scope.data.requestsList.paginator.currentPage++;
             }
         };
 
-        $scope.setPage = function (n) {
-            $scope.data.currentPage = n;
+        $scope.data.requestsList.paginator.setPage = function (n) {
+            $scope.data.requestsList.paginator.currentPage = n;
         };
 
-        $scope.nextPageDisabled = function () {
-            return $scope.data.currentPage === $scope.pageCount() ? "disabled" : "";
+        $scope.data.requestsList.paginator.nextPageDisabled = function () {
+            return $scope.data.requestsList.paginator.currentPage === $scope.data.requestsList.paginator.pageCount() ? "disabled" : "";
         };
 
 
