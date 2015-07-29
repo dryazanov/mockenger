@@ -37,9 +37,13 @@ angular.module('mockengerClientMainApp')
             });
         };
 
-        $scope.selectRequest = function (request) {
+        $scope.data.requestsList.selectRequest = function (request) {
             $scope.data.currentRequest = request;
         };
+
+        $scope.$watchGroup(['data.requestsList.orderProp', 'data.requestsList.requestQuery'], function() {
+            $scope.data.requestsList.paginator.setPage(0);
+        });
 
         $scope.data.requestsList.paginator.range = function () {
             if ($scope.data.requestsList.paginator.pageCount() < 0) {
