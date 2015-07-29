@@ -6,6 +6,9 @@ angular.module('mockengerClientMainApp')
 
         $scope.data.currentProject = currentProject;
 
+        //default order criteria
+        $scope.data.orderProp = 'name';
+
         currentProject.$promise.then(function (obj) {
 
             groupsService.query({projectId: obj.id}, function (response, getResponseHeaders) {
