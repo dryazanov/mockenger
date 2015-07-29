@@ -1,9 +1,9 @@
-Current project - {{currentProject.name}}
+Current project - {{data.currentProject.name}}
 
 <br/>
 
 <div>
-    <ul ng-repeat="group in groupsList track by $index">
+    <ul ng-repeat="group in data.groupsList track by $index">
         <li ng-click="loadGroupRequests(group)">{{$index + 1}}. {{group.name}} Recording = {{group.recording}}</li>
     </ul>
 </div>
@@ -11,24 +11,24 @@ Current project - {{currentProject.name}}
 <hr/>
 
 
-<div ng-if="currentGroup">
-    <h3>{{currentGroup.name}}</h3>
-    <ul ng-repeat="request in requestsList track by $index">
+<div ng-if="data.currentGroup">
+    <h3>{{data.currentGroup.name}}</h3>
+    <ul ng-repeat="request in data.requestsList track by $index">
         <li ng-click="selectRequest(request)">{{$index + 1}}. {{request.name}} {{request.method}} : {{request.path.value}} </li>
     </ul>
 </div>
-<div ng-if="!currentGroup">
+<div ng-if="!data.currentGroup">
 <h2>Please select a group</h2>
 </div>
 
 <hr/>
 
-<div ng-if="currentRequest">
-Selected request - {{currentRequest.name}} {{currentRequest.method}} : {{currentRequest.path.value}}
+<div ng-if="data.currentRequest">
+Selected request - {{data.currentRequest.name}} {{data.currentRequest.method}} : {{data.currentRequest.path.value}}
     <br/>
-    {{currentRequest.body}}
+    {{data.currentRequest.body}}
 </div>
-<div ng-if="!currentRequest">
+<div ng-if="!data.currentRequest">
     <h2>Please select a request</h2>
 </div>
 

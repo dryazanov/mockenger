@@ -2,11 +2,14 @@
 
 angular.module('mockengerClientMainApp')
     .controller('projectController', ['$scope', 'groupsService', 'requestsService', 'currentProject', function ($scope, groupsService, requestsService, currentProject) {
-        $scope.currentProject = currentProject;
+        $scope.data = {};
+
+        $scope.data.currentProject = currentProject;
+
         currentProject.$promise.then(function (obj) {
 
             groupsService.query({projectId: obj.id}, function (response, getResponseHeaders) {
-                $scope.groupsList = response;
+                $scope.data.groupsList = response;
             }, function (errorResponse) {
             });
 
@@ -17,15 +20,15 @@ angular.module('mockengerClientMainApp')
                 projectId: currentProject.id,
                 groupId: group.id
             }, function (response, getResponseHeaders) {
-                $scope.requestsList = response;
-                $scope.currentGroup = group;
-                $scope.currentRequest = undefined;
+                $scope.data.requestsList = response;
+                $scope.data.currentGroup = group;
+                $scope.data.currentRequest = undefined;
             }, function (errorResponse) {
             });
         };
 
         $scope.selectRequest = function(request) {
-            $scope.currentRequest = request;
+            $scope.data.currentRequest = request;
         };
 
     }]);
