@@ -1,6 +1,6 @@
 <!doctype html>
 
-<html lang="en">
+<html lang="en" ng-app="mockengerClientMainApp">
 <head>
     <base href="/">
     <meta charset="utf-8">
@@ -10,7 +10,7 @@
     <meta name="author" content="SitePoint">
     <!-- build:css assets/styles/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css"/>
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css assets/styles/main.css -->
@@ -22,17 +22,18 @@
     <![endif]-->
 </head>
 
-<body ng-app="mockengerClientMainApp">
+<body ng-controller="rootController">
 <!--[if lt IE 9]>
-<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+    your browser</a> to improve your experience.</p>
 <![endif]-->
-<div ng-controller="rootController">
-    <p>You are running {{app.version}} Mockenger version built on {{app.buildDate}}</p>
-    <hr/>
-    <div ng-show="app.env === 'dev'" class="development" ng-cloak=""></div>
-    <div ng-view=""></div>
-</div>
-
+<div ng-show="app.env === 'dev'" class="development" ng-cloak=""></div>
+<div ng-view=""></div>
+<footer class="footer">
+    <div class="container">
+        <p class="text-muted">You are running {{app.version}} Mockenger version built on {{app.buildDate}}</p>
+    </div>
+</footer>
 <!-- build:js scripts/vendor.js -->
 <!-- bower:js -->
 <script src="libs/jquery/dist/jquery.js"></script>
