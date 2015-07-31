@@ -1,5 +1,14 @@
-<div>
-    <ul ng-repeat="project in projectsList track by $index">
-        <li><a href="/project/{{project.id}}">{{$index + 1}}. {{project.name}} ({{project.type}})</a></li>
-    </ul>
+<div class="container">
+    <div class="projects-list">
+        <div class="list-group" ng-repeat="project in projectsList track by $index">
+            <a href="/project/{{project.id}}" class="list-group-item">{{project.name}}
+                <span class="badge">{{project.type}}</span>
+            </a>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm btn-block">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            Create project
+        </button>
+    </div>
+
 </div>
