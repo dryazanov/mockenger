@@ -1,7 +1,7 @@
 <div class="container">
     <div class="projects-list">
         <div class="list-group" ng-repeat="project in projectsList track by $index">
-            <a href="/project/{{project.id}}" class="list-group-item">{{project.name}}
+            <a href="#/project/{{project.id}}" class="list-group-item">{{project.name}}
                 <span class="badge">{{project.type}}</span>
             </a>
         </div>

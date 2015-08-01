@@ -1,72 +1,72 @@
-Current project - {{currentProject.name}}
+<ng-include src="'/modules/components/views/navbar.html'"></ng-include>
+<div class="container-fluid">
 
-<br/>
-
-<div>
-    <ul ng-repeat="group in groupsList track by $index">
-        <li ng-click="loadGroupRequests(group)">{{$index + 1}}. {{group.name}} Recording = {{group.recording}}</li>
-    </ul>
-</div>
-
-<hr/>
-
-
-<div ng-if="currentGroup">
-    <h3>{{currentGroup.name}}</h3>
-    Search: <input type="text" ng-model="requestsList.requestQuery">
-    Sort by:
-    <select ng-model="requestsList.orderProp">
-        <option value="name">Name</option>
-        <option value="method">Method</option>
-    </select>
-
-    Current page: {{requestsList.paginator.currentPage + 1}} Total pages: {{requestsList.paginator.pageCount()
-    + 1}}
-    <div ng-if="requestsList.paginator.pageCount() >=0">
-        <ul ng-repeat="request in requestsList.data  | filter:requestsList.requestQuery | orderBy:requestsList.orderProp | offset: requestsList.paginator.currentPage * requestsList.paginator.itemsPerPage |
-        limitTo: requestsList.paginator.itemsPerPage track by $index ">
-            <li ng-click="requestsList.selectRequest(request)">{{requestsList.paginator.currentPage === 0 ?
-                $index + 1 : requestsList.paginator.currentPage *
-                requestsList.paginator.itemsPerPage + $index + 1}}. {{request.name}} {{request.method}} :
-                {{request.path.value}}
-            </li>
+    <div>
+        <ul ng-repeat="group in groupsList track by $index">
+            <li ng-click="loadGroupRequests(group)">{{$index + 1}}. {{group.name}} Recording = {{group.recording}}</li>
         </ul>
     </div>
-    <div ng-if="requestsList.paginator.pageCount() < 0">
-        <h4>No results.</h4>
-    </div>
+
     <hr/>
-    <div class="pagination">
-        <ul>
-            <li ng-class="requestsList.paginator.prevPageDisabled()">
-                <a href ng-click="requestsList.paginator.prevPage()">« Prev</a>
-            </li>
-            <li ng-repeat="n in requestsList.paginator.range()"
-                ng-class="{active: n == requestsList.paginator.currentPage}"
-                ng-click="requestsList.paginator.setPage(n)">
-                {{n+1}}
-            </li>
-            <li ng-class="requestsList.paginator.nextPageDisabled()">
-                <a href ng-click="requestsList.paginator.nextPage()">Next »</a>
-            </li>
-        </ul>
+
+
+    <div ng-if="currentGroup">
+        <h3>{{currentGroup.name}}</h3>
+        Search: <input type="text" ng-model="requestsList.requestQuery">
+        Sort by:
+        <select ng-model="requestsList.orderProp">
+            <option value="name">Name</option>
+            <option value="method">Method</option>
+        </select>
+
+        Current page: {{requestsList.paginator.currentPage + 1}} Total pages: {{requestsList.paginator.pageCount()
+        + 1}}
+        <div ng-if="requestsList.paginator.pageCount() >=0">
+            <ul ng-repeat="request in requestsList.data  | filter:requestsList.requestQuery | orderBy:requestsList.orderProp | offset: requestsList.paginator.currentPage * requestsList.paginator.itemsPerPage |
+        limitTo: requestsList.paginator.itemsPerPage track by $index ">
+                <li ng-click="requestsList.selectRequest(request)">{{requestsList.paginator.currentPage === 0 ?
+                    $index + 1 : requestsList.paginator.currentPage *
+                    requestsList.paginator.itemsPerPage + $index + 1}}. {{request.name}} {{request.method}} :
+                    {{request.path.value}}
+                </li>
+            </ul>
+        </div>
+        <div ng-if="requestsList.paginator.pageCount() < 0">
+            <h4>No results.</h4>
+        </div>
+        <hr/>
+        <div class="pagination">
+            <ul>
+                <li ng-class="requestsList.paginator.prevPageDisabled()">
+                    <a href ng-click="requestsList.paginator.prevPage()">« Prev</a>
+                </li>
+                <li ng-repeat="n in requestsList.paginator.range()"
+                    ng-class="{active: n == requestsList.paginator.currentPage}"
+                    ng-click="requestsList.paginator.setPage(n)">
+                    {{n+1}}
+                </li>
+                <li ng-class="requestsList.paginator.nextPageDisabled()">
+                    <a href ng-click="requestsList.paginator.nextPage()">Next »</a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+    <div ng-if="!currentGroup">
+        <h2>Please select a group</h2>
     </div>
 
-</div>
-<div ng-if="!currentGroup">
-    <h2>Please select a group</h2>
-</div>
+    <hr/>
 
-<hr/>
-
-<div ng-if="currentRequest">
-    Selected request - {{currentRequest.name}} {{currentRequest.method}} : {{currentRequest.path.value}}
-    <br/>
-    {{currentRequest.body}}
-</div>
-<div ng-if="!currentRequest">
-    <h2>Please select a request</h2>
-</div>
+    <div ng-if="currentRequest">
+        Selected request - {{currentRequest.name}} {{currentRequest.method}} : {{currentRequest.path.value}}
+        <br/>
+        {{currentRequest.body}}
+    </div>
+    <div ng-if="!currentRequest">
+        <h2>Please select a request</h2>
+    </div>
 
 
-<a href="/">Back to project list</a>
+    <a href="/">Back to project list</a>
+</div>
