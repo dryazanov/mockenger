@@ -43,11 +43,15 @@ Browser Upgrade Prompt
 }
 
 
-.projects-list {
+#projects-list {
     max-width: 400px;
     /*padding: 15px;*/
     margin: 0 auto;
     padding-top: 120px;
+}
+
+#group-list {
+
 }
 
 .footer {
