@@ -46,7 +46,7 @@
 
                 </div>
 
-                <table class="table" ng-if="requestsList.paginator.pageCount() >=0">
+                <table class="table table-striped table-hover" ng-if="requestsList.paginator.pageCount() >=0">
                     <thead>
                     <tr>
                         <th>Name</th>
@@ -56,7 +56,7 @@
                     </thead>
                     <tbody>
 
-                    <tr ng-repeat="request in requestsList.data  | filter:requestsList.requestQuery | orderBy:requestsList.orderProp | offset: requestsList.paginator.currentPage * requestsList.paginator.itemsPerPage |
+                    <tr ng-class="{info: request.id == currentRequest.id}" ng-repeat="request in requestsList.data  | filter:requestsList.requestQuery | orderBy:requestsList.orderProp | offset: requestsList.paginator.currentPage * requestsList.paginator.itemsPerPage |
         limitTo: requestsList.paginator.itemsPerPage track by $index " ng-click="requestsList.selectRequest(request)">
                         <td>{{request.name}}</td>
                         <td>{{request.method}}</td>
@@ -97,20 +97,26 @@
             <div ng-if="!currentGroup" class="alert alert-info" role="alert">
                 Please select a group
             </div>
-
         </div>
     </div>
-</div>
 
+    <div class="row" ng-show="currentGroup">
+        <div class="col-md-12">
 
-<hr/>
+            <div ng-if="currentRequest" class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{currentRequest.name}}</h3>
+                </div>
 
-<div ng-if="currentRequest">
-    Selected request - {{currentRequest.name}} {{currentRequest.method}} : {{currentRequest.path.value}}
-    <br/>
-    {{currentRequest.body}}
-</div>
-<div ng-if="!currentRequest">
-    <h2>Please select a request</h2>
+                <div class="panel-body">
+                    {{currentRequest.body}}
+                </div>
+            </div>
+
+            <div ng-if="!currentRequest" class="alert alert-info" role="alert">
+                Please select a request
+            </div>
+        </div>
+    </div>
 </div>
 
