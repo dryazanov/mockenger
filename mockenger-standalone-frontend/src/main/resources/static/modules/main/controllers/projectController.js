@@ -36,9 +36,8 @@ angular.module('mockengerClientMainApp')
             });
         };
 
-        $scope.showRequest = function(request) {
+        $scope.requestsList.editCurrentRequest = function() {
             $('#requestModal').modal({});
-            $scope.requestsList.selectRequest(request);
         };
 
         $scope.requestsList.selectRequest = function (request) {

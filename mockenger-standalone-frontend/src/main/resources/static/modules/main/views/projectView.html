@@ -14,7 +14,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-5">
 
             <div ng-if="currentGroup" class="panel panel-primary">
                 <div class="panel-body">
@@ -48,17 +48,15 @@
                         <th>Name</th>
                         <th>Path</th>
                         <th>Method</th>
-                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
 
-                    <tr ng-repeat="request in requestsList.data  | filter:requestsList.requestQuery | orderBy:requestsList.orderProp | offset: requestsList.paginator.currentPage * requestsList.paginator.itemsPerPage |
-        limitTo: requestsList.paginator.itemsPerPage track by $index">
+                    <tr ng-class="{info: request.id == currentRequest.id}" ng-repeat="request in requestsList.data  | filter:requestsList.requestQuery | orderBy:requestsList.orderProp | offset: requestsList.paginator.currentPage * requestsList.paginator.itemsPerPage |
+        limitTo: requestsList.paginator.itemsPerPage track by $index" ng-click="requestsList.selectRequest(request)">
                         <td>{{request.name}}</td>
                         <td>{{request.method}}</td>
                         <td>@{{request.path.value}}</td>
-                        <td><a href ng-click="showRequest(request)">Edit</a></td>
                     </tr>
 
                     </tbody>
@@ -96,16 +94,37 @@
                 Please select a group
             </div>
         </div>
-    </div>
+        <div class="col-md-4">
 
+            <div ng-if="currentRequest" class="panel panel-info">
+                <div class="panel-heading">{{currentRequest.name}}</div>
+                <div class="panel-body">
+                    <div class="btn-group" role="group" aria-label="...">
+                        <button type="button" class="btn btn-default" ng-click="requestsList.editCurrentRequest()">
+                            Edit
+                        </button>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="requestModal" tabindex="-1" role="dialog" aria-labelledby="requestModalLabel" ng-controller="requestController">
+<div class="modal fade" id="requestModal" tabindex="-1" role="dialog" aria-labelledby="requestModalLabel"
+     ng-controller="requestController">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="requestModalLabel">{{currentRequest.name}}</h4>
             </div>
             <div class="modal-body">
