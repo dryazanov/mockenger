@@ -8,6 +8,8 @@ angular.module('mockengerClientComponents')
 
 .constant('APP_VERSION', '0.1-SNAPSHOT')
 
-.constant('BUILD_DATE', '2015-07-23T09:18:46.547Z')
+.constant('REQUESTS_PER_PAGE', 2)
+
+.constant('BUILD_DATE', '2015-08-02T19:52:37.522Z')
 
 ;

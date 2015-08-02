@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('mockengerClientMainApp')
-    .controller('projectController', ['$scope', '$filter', 'groupsService', 'requestsService', 'currentProject', function ($scope, $filter, groupsService, requestsService, currentProject) {
+    .controller('projectController', ['$scope', '$filter', 'groupsService', 'requestsService', 'currentProject', 'REQUESTS_PER_PAGE', function ($scope, $filter, groupsService, requestsService, currentProject, REQUESTS_PER_PAGE) {
 
         $scope.currentProject = currentProject;
 
@@ -11,7 +11,7 @@ angular.module('mockengerClientMainApp')
         //default order criteria
         $scope.requestsList.orderProp = 'name';
 
-        $scope.requestsList.paginator.itemsPerPage = 2;
+        $scope.requestsList.paginator.itemsPerPage = REQUESTS_PER_PAGE;
         $scope.requestsList.paginator.currentPage = 0;
 
         currentProject.$promise.then(function (obj) {
