@@ -48,15 +48,17 @@
                         <th>Name</th>
                         <th>Path</th>
                         <th>Method</th>
+                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
 
-                    <tr ng-class="{info: request.id == currentRequest.id}" ng-repeat="request in requestsList.data  | filter:requestsList.requestQuery | orderBy:requestsList.orderProp | offset: requestsList.paginator.currentPage * requestsList.paginator.itemsPerPage |
-        limitTo: requestsList.paginator.itemsPerPage track by $index " ng-click="requestsList.selectRequest(request)">
+                    <tr ng-repeat="request in requestsList.data  | filter:requestsList.requestQuery | orderBy:requestsList.orderProp | offset: requestsList.paginator.currentPage * requestsList.paginator.itemsPerPage |
+        limitTo: requestsList.paginator.itemsPerPage track by $index">
                         <td>{{request.name}}</td>
                         <td>{{request.method}}</td>
                         <td>@{{request.path.value}}</td>
+                        <td><a href ng-click="showRequest(request)">Edit</a></td>
                     </tr>
 
                     </tbody>
@@ -96,23 +98,23 @@
         </div>
     </div>
 
-    <div class="row" ng-show="currentGroup">
-        <div class="col-md-12">
+</div>
 
-            <div ng-if="currentRequest" class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">{{currentRequest.name}}</h3>
-                </div>
-
-                <div class="panel-body">
-                    {{currentRequest.body}}
-                </div>
+<!-- Modal -->
+<div class="modal fade" id="requestModal" tabindex="-1" role="dialog" aria-labelledby="requestModalLabel" ng-controller="requestController">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="requestModalLabel">{{currentRequest.name}}</h4>
             </div>
-
-            <div ng-if="!currentRequest" class="alert alert-info" role="alert">
-                Please select a request
+            <div class="modal-body">
+                {{currentRequest.body}}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>
 </div>
-
