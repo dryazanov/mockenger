@@ -6,8 +6,10 @@ import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.core.web.exception.MockObjectNotCreatedException;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 
@@ -57,7 +59,7 @@ public class ParentController extends AbstractController {
      */
     protected ResponseEntity findMockedEntities(AbstractRequest mockRequest, boolean recordRequests) {
         if (mockRequest == null) {
-            throw new MockObjectNotCreatedException("mockRequest is null");
+            throw new MockObjectNotCreatedException("Provided mock-request is null or empty");
         }
         AbstractRequest mockResult = getRequestService().findMockedEntities(mockRequest);
         return generateResponse(mockRequest, mockResult, recordRequests);
@@ -72,14 +74,27 @@ public class ParentController extends AbstractController {
      */
     protected ResponseEntity generateResponse(AbstractRequest mockRequest, AbstractRequest mockResult, boolean recordRequests) {
         if (mockResult != null) {
-            // TODO: Check mockResult.getMockResponse().getBody() for null values
-            int httpStatusCode = mockResult.getMockResponse().getHttpStatus();
-            if (!CollectionUtils.isEmpty(mockResult.getMockResponse().getHeaders())) {
-                for (Map.Entry<String, String> header : mockResult.getMockResponse().getHeaders().entrySet()) {
+            MockResponse mockResponse;
+            if (mockResult.getMockResponse() == null) {
+                mockResponse = new MockResponse();
+                mockResponse.setHttpStatus(HttpStatus.FOUND.value());
+                mockResponse.setBody("The mock you are looking for does exist but the response object is null");
+            } else {
+                mockResponse = mockResult.getMockResponse();
+            }
+            if (!CollectionUtils.isEmpty(mockResponse.getHeaders())) {
+                for (Map.Entry<String, String> header : mockResponse.getHeaders().entrySet()) {
                     getResponseHeaders().set(header.getKey(), header.getValue());
                 }
+            } else if (mockRequest.getHeaders() != null) {
+                Map<String, String> headerValues = mockRequest.getHeaders().getValues();
+                if (!CollectionUtils.isEmpty(headerValues) && headerValues.containsKey(CONTENT_TYPE_KEY)) {
+                    if (headerValues.get(CONTENT_TYPE_KEY).contains(MediaType.APPLICATION_XML_VALUE)) {
+                        getResponseHeaders().set(CONTENT_TYPE_KEY, MEDIA_TYPE_XML);
+                    }
+                }
             }
-            return new ResponseEntity(mockResult.getMockResponse().getBody(), getResponseHeaders(), HttpStatus.valueOf(httpStatusCode));
+            return new ResponseEntity(mockResponse.getBody(), getResponseHeaders(), HttpStatus.valueOf(mockResponse.getHttpStatus()));
         } else {
             HttpStatus status = HttpStatus.NOT_FOUND;
             if (recordRequests) {

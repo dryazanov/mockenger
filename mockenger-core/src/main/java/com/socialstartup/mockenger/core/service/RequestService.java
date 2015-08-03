@@ -151,10 +151,13 @@ public class RequestService {
         Map<String, String> usersParameters;
         Map<String, String> mockedParameters;
 
-        if (abstractRequestFromUser.getParameters() != null && mockedAbstractRequest.getParameters() != null) {
+        Parameters abstractParams = abstractRequestFromUser.getParameters();
+        Parameters mockedParams = mockedAbstractRequest.getParameters();
+
+        if (abstractParams != null && mockedParams != null) {
             // Transform and check query parameters
-            usersParameters = new HashMap<>(abstractRequestFromUser.getParameters().getValues());
-            mockedParameters = new HashMap<>(mockedAbstractRequest.getParameters().getValues());
+            usersParameters = (abstractParams.getValues() != null ? abstractParams.getValues() : new HashMap<>());
+            mockedParameters = (mockedParams.getValues() != null ? mockedParams.getValues() : new HashMap<>());
 
             if (CommonUtils.allNotEmpty(usersParameters, mockedParameters)) {
                 transformers = mockedAbstractRequest.getParameters().getTransformers();

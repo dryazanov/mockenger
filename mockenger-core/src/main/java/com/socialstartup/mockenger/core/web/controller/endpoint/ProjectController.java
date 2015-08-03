@@ -68,6 +68,9 @@ public class ProjectController extends AbstractController {
         }
         project.setId(null);
         getProjectService().save(project);
+        // TODO: Think about better response!
+        // TODO: For POST and HttpStatus.OK - the response must contain an entity describing or containing the result of the action.
+        // TODO: For POST and HttpStatus.CREATED - The "Location" header will contain the Lookup URL for the newly created object.
         return new ResponseEntity(getResponseHeaders(), HttpStatus.CREATED);
     }
 
@@ -87,7 +90,7 @@ public class ProjectController extends AbstractController {
         }
         findProjectById(projectId); // Check if project exists
         getProjectService().save(project);
-        return new ResponseEntity(getResponseHeaders(), HttpStatus.NO_CONTENT);
+        return new ResponseEntity(getResponseHeaders(), HttpStatus.OK);
     }
 
 
@@ -101,6 +104,6 @@ public class ProjectController extends AbstractController {
     public ResponseEntity deleteProject(@PathVariable String projectId) {
         Project project = findProjectById(projectId);
         getProjectService().remove(project);
-        return new ResponseEntity(getResponseHeaders(), HttpStatus.OK);
+        return new ResponseEntity(getResponseHeaders(), HttpStatus.NO_CONTENT);
     }
 }

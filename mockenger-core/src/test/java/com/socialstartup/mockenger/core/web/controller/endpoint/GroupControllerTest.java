@@ -120,7 +120,7 @@ public class GroupControllerTest extends AbstractControllerTest {
         group.setName(GROUP_NAME_UPDATED);
 
         ResultActions resultActions = updateGroupRest(group);
-        resultActions.andExpect(status().isNoContent()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
+        resultActions.andExpect(status().isOk()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
 
         assertEquals(GROUP_NAME_UPDATED, getGroup(group.getId()).getName());
     }
@@ -151,7 +151,7 @@ public class GroupControllerTest extends AbstractControllerTest {
     public void testDeleteGroup() throws Exception {
         Group group = createGroup();
         ResultActions resultActions = deleteGroupRest(group.getId());
-        resultActions.andExpect(status().isOk()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
+        resultActions.andExpect(status().isNoContent()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
     }
 
     @Test

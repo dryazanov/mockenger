@@ -20,6 +20,10 @@ public abstract class AbstractController {
 
 //    private final String APPLICATION_JSONP_RESPONSE_VALUE = "application/javascript;charset=UTF-8";
 
+    protected static final String CONTENT_TYPE_KEY = "content-type";
+    protected static final String MEDIA_TYPE_JSON = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8";
+    protected static final String MEDIA_TYPE_XML = MediaType.APPLICATION_XML_VALUE + ";charset=UTF-8";
+
     protected static final String PROJECTS_ENDPOINT = "/projects";
     protected static final String PROJECT_ID_ENDPOINT = PROJECTS_ENDPOINT + "/{projectId}";
     protected static final String GROUPS_ENDPOINT = "/groups";
@@ -44,7 +48,7 @@ public abstract class AbstractController {
      * Constructor with default content-type for responses
      */
     public AbstractController() {
-        getResponseHeaders().set("Content-Type", MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
+        getResponseHeaders().set(CONTENT_TYPE_KEY, MEDIA_TYPE_JSON);
     }
 
     protected HttpHeaders getResponseHeaders() {
