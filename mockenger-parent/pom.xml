@@ -21,7 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <spring.framework.version>4.1.6.RELEASE</spring.framework.version>
+        <spring.framework.version>4.2.0.RELEASE</spring.framework.version>
         <spring.data.mongodb.version>1.6.2.RELEASE</spring.data.mongodb.version>
         <spring.boot.version>1.2.4.RELEASE</spring.boot.version>
         <fasterxml.jackson.version>2.2.2</fasterxml.jackson.version>
@@ -110,11 +110,6 @@
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjtools</artifactId>
-                <version>${aspectj.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjrt</artifactId>
                 <version>${aspectj.version}</version>
             </dependency>
             <dependency>

@@ -1,8 +1,17 @@
 package com.socialstartup.mockenger.core.web.filter;
 
+import com.socialstartup.mockenger.data.model.dict.RequestMethod;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -11,23 +20,32 @@ import java.io.IOException;
  */
 @Component
 public class CORSFilter implements Filter {
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
 
-    }
+    @Value("${mockenger.cors.filter.allow.origin}")
+    private String ALLOW_ORIGIN;
+
+    @Value("${mockenger.cors.filter.max.age}")
+    private String MAX_AGE;
+
+    @Value("${mockenger.cors.filter.allow.headers}")
+    private String ALLOW_HEADERS;
+
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {}
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE, TRACE");
-        response.setHeader("Access-Control-Max-Age", "3600");
-        response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, ALLOW_ORIGIN);
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, StringUtils.arrayToCommaDelimitedString(RequestMethod.values()));
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE, MAX_AGE);
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, ALLOW_HEADERS);
+
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
     @Override
-    public void destroy() {
-
-    }
+    public void destroy() {}
 }
