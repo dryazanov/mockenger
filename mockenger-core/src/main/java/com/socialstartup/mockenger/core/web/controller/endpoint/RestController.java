@@ -70,7 +70,7 @@ public class RestController extends ParentController {
     @ResponseBody
     @RequestMapping(value = "/**", method = {POST, PUT})
     public void processPosRequest() {
-        throw new BadContentTypeException("Invalid header 'Content-type': application/json or application/xml are only allowed in REST requests.");
+        throw new BadContentTypeException("Invalid header 'Content-type': application/json or application/xml are only allowed in REST requests");
     }
 
     /**
@@ -83,14 +83,13 @@ public class RestController extends ParentController {
     @ResponseBody
     @RequestMapping(value = "/**", method = POST, consumes = "application/json")
     public ResponseEntity processPostJsonRequest(@PathVariable String groupId, @RequestBody String jsonBody, HttpServletRequest request) {
-        AbstractRequest mockRequest = null;
         Group group = findGroupById(groupId);
         try {
-            mockRequest = postService.createMockRequestFromJson(group.getId(), jsonBody, request);
+            AbstractRequest mockRequest = postService.createMockRequestFromJson(group.getId(), jsonBody, request);
+            return findMockedEntities(mockRequest, group.isRecording());
         } catch (IOException e) {
             throw new MockObjectNotCreatedException("Cannot read json from the provided source", e);
         }
-        return findMockedEntities(mockRequest, group.isRecording());
     }
 
     /**
@@ -103,15 +102,13 @@ public class RestController extends ParentController {
     @ResponseBody
     @RequestMapping(value = "/**", method = POST, consumes = "application/xml")
     public ResponseEntity processPostXmlRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
-        AbstractRequest mockRequest = null;
         Group group = findGroupById(groupId);
-
         try {
-            mockRequest = postService.createMockRequestFromXml(group.getId(), requestBody, request, true);
+            AbstractRequest mockRequest = postService.createMockRequestFromXml(group.getId(), requestBody, request, true);
+            return findMockedEntities(mockRequest, group.isRecording());
         } catch (TransformerException e) {
-            throw new MockObjectNotCreatedException("Cannot read xml from the provided source", e);
+            throw new MockObjectNotCreatedException("Cannot transform provided xml", e);
         }
-        return findMockedEntities(mockRequest, group.isRecording());
     }
 
     /**
@@ -124,14 +121,13 @@ public class RestController extends ParentController {
     @ResponseBody
     @RequestMapping(value = "/**", method = PUT, consumes = "application/json")
     public ResponseEntity processPutJsonRequest(@PathVariable String groupId, @RequestBody String jsonBody, HttpServletRequest request) {
-        AbstractRequest mockRequest = null;
         Group group = findGroupById(groupId);
         try {
-            mockRequest = putService.createMockRequestFromJson(group.getId(), jsonBody, request);
+            AbstractRequest mockRequest = putService.createMockRequestFromJson(group.getId(), jsonBody, request);
+            return findMockedEntities(mockRequest, group.isRecording());
         } catch (IOException e) {
             throw new MockObjectNotCreatedException("Cannot read json from the provided source", e);
         }
-        return findMockedEntities(mockRequest, group.isRecording());
     }
 
     /**
@@ -144,14 +140,12 @@ public class RestController extends ParentController {
     @ResponseBody
     @RequestMapping(value = "/**", method = PUT, consumes = "application/xml")
     public ResponseEntity processPutXmlRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
-        AbstractRequest mockRequest = null;
         Group group = findGroupById(groupId);
-
         try {
-            mockRequest = putService.createMockRequestFromXml(group.getId(), requestBody, request, true);
+            AbstractRequest mockRequest = putService.createMockRequestFromXml(group.getId(), requestBody, request, true);
+            return findMockedEntities(mockRequest, group.isRecording());
         } catch (TransformerException e) {
-            throw new MockObjectNotCreatedException("Cannot read xml from the provided source", e);
+            throw new MockObjectNotCreatedException("Cannot transform provided xml", e);
         }
-        return findMockedEntities(mockRequest, group.isRecording());
     }
 }

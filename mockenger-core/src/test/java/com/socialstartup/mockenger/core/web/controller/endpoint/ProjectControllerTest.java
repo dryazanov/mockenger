@@ -139,7 +139,7 @@ public class ProjectControllerTest extends AbstractControllerTest {
         project.setName(PROJECT_NAME_UPDATED);
 
         ResultActions resultActions = updateProjectRest(project);
-        resultActions.andExpect(status().isNoContent()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
+        resultActions.andExpect(status().isOk()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
 
         assertEquals(PROJECT_NAME_UPDATED, getProject(project.getId()).getName());
     }
@@ -181,7 +181,7 @@ public class ProjectControllerTest extends AbstractControllerTest {
     public void testDeleteProject() throws Exception {
         Project project = createProject();
         ResultActions resultActions = deleteProjectRest(project.getId());
-        resultActions.andExpect(status().isOk()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
+        resultActions.andExpect(status().isNoContent()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
     }
 
     @Test

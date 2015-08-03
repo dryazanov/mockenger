@@ -68,6 +68,7 @@ public class AbstractControllerTest {
     protected static final String CONTENT_TYPE_JSON_UTF8 = "application/json;charset=UTF-8";
     protected static final String CONTENT_TYPE_SOAP_UTF8 = "application/soap+xml;charset=UTF-8";
     protected static final String CONTENT_TYPE_XML_UTF8 = "application/xml;charset=UTF-8";
+
     protected static final String MOCK_REQUEST_BODY = "{\"name\":\"NAME\",\"type\":\"TYPE\"}";
     protected static final String MOCK_RESPONSE_BODY = "{\"result\":\"OK\"}";
 
@@ -121,15 +122,15 @@ public class AbstractControllerTest {
     // GROUP HELPERS
     // ===============
 
-    protected Group getGroup(String groupId) throws Exception {
+    protected Group getGroup(String groupId) {
         return this.groupService.findById(groupId);
     }
 
-    protected Iterable<Group> getAllGroups() throws Exception {
+    protected Iterable<Group> getAllGroups() {
         return this.groupService.findAll();
     }
 
-    protected void deleteAllGroups() throws Exception {
+    protected void deleteAllGroups() {
         Iterator<Group> iterator = getAllGroups().iterator();
         while (iterator.hasNext()) {
             deleteGroup(iterator.next());
@@ -141,13 +142,21 @@ public class AbstractControllerTest {
     }
 
     protected Group createGroup() {
-        Group group = getNewGroup();
+        return createGroup(true);
+    }
+
+    protected Group createGroup(boolean recording) {
+        Group group = getNewGroup(recording);
         this.groupService.save(group);
         return group;
     }
 
     protected Group getNewGroup() {
-        Group group = new Group(PROJECT_ID, GROUP_NAME_TEST, true);
+        return getNewGroup(true);
+    }
+
+    protected Group getNewGroup(boolean recording) {
+        Group group = new Group(PROJECT_ID, GROUP_NAME_TEST, recording);
         group.setId(CommonUtils.generateUniqueId());
         return group;
     }

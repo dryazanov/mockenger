@@ -68,7 +68,7 @@ public class HttpUtils {
             parameterMap.put(name, servletRequest.getParameter(name));
         }
 
-        return parameterMap;
+        return (parameterMap.size() > 0 ? parameterMap : null);
     }
 
     /**

@@ -69,6 +69,9 @@ public class RequestController extends AbstractController {
         findGroupById(groupId);
         request.setId(null);
         getRequestService().save(request);
+        // TODO: Think about better response!
+        // TODO: For POST and HttpStatus.OK - the response must contain an entity describing or containing the result of the action.
+        // TODO: For POST and HttpStatus.CREATED - The "Location" header will contain the Lookup URL for the newly created object.
         return new ResponseEntity(getResponseHeaders(), HttpStatus.CREATED);
     }
 
@@ -93,7 +96,7 @@ public class RequestController extends AbstractController {
         findGroupById(groupId);
         findRequestById(requestId);
         getRequestService().save(request);
-        return new ResponseEntity(getResponseHeaders(), HttpStatus.NO_CONTENT);
+        return new ResponseEntity(getResponseHeaders(), HttpStatus.OK);
     }
 
 
@@ -112,7 +115,7 @@ public class RequestController extends AbstractController {
         findGroupById(groupId);
         AbstractRequest request = findRequestById(requestId);
         getRequestService().remove(request);
-        return new ResponseEntity(getResponseHeaders(), HttpStatus.OK);
+        return new ResponseEntity(getResponseHeaders(), HttpStatus.NO_CONTENT);
     }
 
 

@@ -1,7 +1,6 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.socialstartup.mockenger.core.config.TestContext;
-import com.socialstartup.mockenger.core.service.soap.PostService;
 import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
@@ -16,13 +15,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -44,8 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class SoapControllerTest extends AbstractControllerTest {
 
     private static final String ENDPOINT_TEMPLATE = "/soap/%s/%s";
-    private static final String CONTENT_TYPE_TEXT_HTML = "text/html";
-    private static final String REQUEST_PATH = "test/soap/mock/request";
+    private static final String REQUEST_PATH = "test/rest/mock/request";
     private static final String ID1 = "200000000001";
     private static final String ID2 = "100000000002";
 
@@ -79,13 +74,8 @@ public class SoapControllerTest extends AbstractControllerTest {
             .append("</S:Envelope>")
             .toString();
 
-    @Autowired
-    @Qualifier("soapPostService")
-    private PostService postService;
-
     private Project project;
     private Group group;
-    private PostRequest request;
     private String endpoint;
 
     @Before
@@ -94,8 +84,7 @@ public class SoapControllerTest extends AbstractControllerTest {
 
         project = createProject();
         group = createGroup();
-        request = createSoapMockRequest(group.getId());
-        createRequest(request);
+        createRequest(createSoapMockRequest(group.getId()));
 
         endpoint = String.format(ENDPOINT_TEMPLATE, group.getId(), REQUEST_PATH);
     }
@@ -103,37 +92,42 @@ public class SoapControllerTest extends AbstractControllerTest {
     @After
     public void cleanup() {
         deleteProject(project);
-        deleteGroup(group);
-        deleteRequest(request);
+        deleteAllGroups();
+        deleteAllRequests();
     }
 
     @Test
     public void testProcessPosRequestOk() throws Exception {
-        ResultActions resultActions = this.mockMvc.perform(
-                post(endpoint).contentType(MediaType.parseMediaType(CONTENT_TYPE_SOAP_UTF8)).content(SOAP_XML_REQUEST.replace(ID1, ID2)));
+        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_SOAP_UTF8);
+        String content = SOAP_XML_REQUEST.replace(ID1, ID2);
 
-        resultActions.andExpect(status().isOk())
+        this.mockMvc.perform(post(endpoint).contentType(mediaType).content(content))
+                .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_SOAP_UTF8.toLowerCase()))
                 .andExpect(xpath("//result").string("OK"));
     }
 
-
     @Test
     public void testProcessPosRequestInvalidContentType() throws Exception {
-        ResultActions resultActions = this.mockMvc.perform(
-                post(endpoint).contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)).content(SOAP_XML_REQUEST.replace(ID1, ID2)));
+        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
+        String content = SOAP_XML_REQUEST.replace(ID1, ID2);
 
-        resultActions.andExpect(status().isBadRequest());
+        this.mockMvc.perform(post(endpoint).contentType(mediaType).content(content))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors[0]").value("Invalid header 'Content-type': application/soap+xml is only allowed in SOAP requests"));
     }
 
     @Test
     public void testProcessPosRequestInvalidBody() throws Exception {
-        ResultActions resultActions = this.mockMvc.perform(
-                post(endpoint).contentType(MediaType.parseMediaType(CONTENT_TYPE_SOAP_UTF8)).content(SOAP_XML_REQUEST + "<invalidTag>"));
+        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_SOAP_UTF8);
+        String content = SOAP_XML_REQUEST + "<invalidTag>";
 
-        resultActions.andExpect(status().isBadRequest())
+        this.mockMvc.perform(post(endpoint).contentType(mediaType).content(content))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors[0]").value("Failed to create an instance of the mock-object: Cannot create SOAP message"));
     }
+
+
 
     private PostRequest createSoapMockRequest(String groupId) {
         Map<String, String> headersMap = new TreeMap<>();

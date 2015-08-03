@@ -47,7 +47,7 @@ public class SoapController extends ParentController {
     @ResponseBody
     @RequestMapping(value = "/**", method = POST)
     public void processPosRequest() {
-        throw new BadContentTypeException("Invalid header 'Content-type': application/soap+xml is only allowed in SOAP requests.");
+        throw new BadContentTypeException("Invalid header 'Content-type': application/soap+xml is only allowed in SOAP requests");
     }
 
     /**
