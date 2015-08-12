@@ -146,9 +146,11 @@ public class RequestControllerTest extends AbstractControllerTest {
     public void testSaveRequest() throws Exception {
         request.setName(REQUEST_NAME_UPDATED);
 
-        // Expect response status 204
+        // Expect response status 200
         ResultActions resultActions = updateRequestRest(project.getId(), group.getId(), request);
-        resultActions.andExpect(status().isOk()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
+                .andExpect(jsonPath("$.id").value(request.getId()));
 
         assertEquals(REQUEST_NAME_UPDATED, getRequest(request.getId()).getName());
     }

@@ -125,7 +125,9 @@ public class GroupControllerTest extends AbstractControllerTest {
         group.setName(GROUP_NAME_UPDATED);
 
         ResultActions resultActions = updateGroupRest(group);
-        resultActions.andExpect(status().isOk()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
+                .andExpect(jsonPath("$.id").value(group.getId()));
 
         assertEquals(GROUP_NAME_UPDATED, getGroup(group.getId()).getName());
     }
