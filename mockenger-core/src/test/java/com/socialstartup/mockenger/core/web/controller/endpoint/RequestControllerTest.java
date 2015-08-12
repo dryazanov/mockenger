@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -121,11 +122,15 @@ public class RequestControllerTest extends AbstractControllerTest {
 
         // Expect response status 200
         resultActions = createRequestRest(project.getId(), group.getId(), request);
-        resultActions.andExpect(status().isCreated()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
+                .andExpect(jsonPath("$.id").value(not(request.getId())));
 
         // Expect response status 200
         resultActions = createRequestRest(project.getId(), group.getId(), request);
-        resultActions.andExpect(status().isCreated()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
+                .andExpect(jsonPath("$.id").value(not(request.getId())));
     }
 
     @Test
