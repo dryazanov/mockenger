@@ -57,7 +57,7 @@ public class RequestController extends AbstractController {
      * @param groupId
      * @param request
      * @param result
-     * @return
+     * @return HttpStatus.OK with created object in the response body
      */
     @ResponseBody
     @RequestMapping(value = REQUESTS, method = POST)
@@ -65,14 +65,12 @@ public class RequestController extends AbstractController {
         if (result.hasErrors()) {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
+        // TODO: create validation with chain: check request -> check group -> check project
         findProjectById(projectId);
         findGroupById(groupId);
         request.setId(null);
         getRequestService().save(request);
-        // TODO: Think about better response!
-        // TODO: For POST and HttpStatus.OK - the response must contain an entity describing or containing the result of the action.
-        // TODO: For POST and HttpStatus.CREATED - The "Location" header will contain the Lookup URL for the newly created object.
-        return new ResponseEntity(getResponseHeaders(), HttpStatus.CREATED);
+        return new ResponseEntity(request, getResponseHeaders(), HttpStatus.OK);
     }
 
 
@@ -96,7 +94,7 @@ public class RequestController extends AbstractController {
         findGroupById(groupId);
         findRequestById(requestId);
         getRequestService().save(request);
-        return new ResponseEntity(getResponseHeaders(), HttpStatus.OK);
+        return new ResponseEntity(request, getResponseHeaders(), HttpStatus.OK);
     }
 
 
