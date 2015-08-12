@@ -144,7 +144,9 @@ public class ProjectControllerTest extends AbstractControllerTest {
         project.setName(PROJECT_NAME_UPDATED);
 
         ResultActions resultActions = updateProjectRest(project);
-        resultActions.andExpect(status().isOk()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
+                .andExpect(jsonPath("$.id").value(project.getId()));
 
         assertEquals(PROJECT_NAME_UPDATED, getProject(project.getId()).getName());
     }
