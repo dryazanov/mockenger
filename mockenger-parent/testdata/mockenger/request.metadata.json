@@ -1,1 +1,1 @@
-{"indexes":[{"v":1,"key":{"_id":1},"name":"_id_","ns":"mockenger.request"}]}
+{"indexes":[{"v":1,"key":{"_id":1},"name":"_id_","ns":"mockenger.request"},{"v":1,"unique":true,"key":{"uniqueCode":1},"name":"unique_code_1","ns":"mockenger.request"}]}
