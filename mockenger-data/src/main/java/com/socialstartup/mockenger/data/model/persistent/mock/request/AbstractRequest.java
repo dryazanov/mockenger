@@ -23,6 +23,8 @@ public class AbstractRequest extends AbstractPersistentEntity<String> {
     @NotNull(message = "groupId: may not be null")
     private String groupId;
 
+    private String uniqueCode;
+
     @NotBlank(message = "name: may not be null or empty")
     private String name;
 
@@ -59,6 +61,14 @@ public class AbstractRequest extends AbstractPersistentEntity<String> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUniqueCode() {
+        return uniqueCode;
+    }
+
+    public void setUniqueCode(String uniqueCode) {
+        this.uniqueCode = uniqueCode;
     }
 
     public Date getCreationDate() {

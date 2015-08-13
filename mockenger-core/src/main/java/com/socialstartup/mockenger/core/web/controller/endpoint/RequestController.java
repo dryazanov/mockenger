@@ -4,6 +4,7 @@ import com.socialstartup.mockenger.core.mapper.request.GridRowMapper;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.dto.Grid;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
+import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,11 +66,14 @@ public class RequestController extends AbstractController {
         if (result.hasErrors()) {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
-        // TODO: create validation with chain: check request -> check group -> check project
-        findProjectById(projectId);
+        // TODO: Maybe we can create validation with the chain: check request -> check group -> check project
+        Project project = findProjectById(projectId);
         findGroupById(groupId);
+
         request.setId(null);
+        request.setUniqueCode(String.format("%s-%d", project.getCode(), getProjectService().getNextSequenceValue(projectId)));
         getRequestService().save(request);
+
         return new ResponseEntity(request, getResponseHeaders(), HttpStatus.OK);
     }
 
@@ -92,8 +96,10 @@ public class RequestController extends AbstractController {
         }
         findProjectById(projectId);
         findGroupById(groupId);
-        findRequestById(requestId);
+
+        findRequestByIdAndUniqueCode(requestId, request.getUniqueCode());
         getRequestService().save(request);
+
         return new ResponseEntity(request, getResponseHeaders(), HttpStatus.OK);
     }
 

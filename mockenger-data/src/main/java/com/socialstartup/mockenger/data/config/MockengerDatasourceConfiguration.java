@@ -6,11 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.authentication.UserCredentials;
-import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.MongoFactoryBean;
-import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.util.StringUtils;
 
@@ -38,22 +35,13 @@ public class MockengerDatasourceConfiguration extends AbstractMongoConfiguration
         MongoFactoryBean mongoFactoryBean = new MongoFactoryBean();
         mongoFactoryBean.setHost(params.getHostname());
         mongoFactoryBean.setPort(params.getPort());
+        mongoFactoryBean.setWriteConcern(com.mongodb.WriteConcern.SAFE);
         return mongoFactoryBean;
     }
-
-//    @Override
-//    public CustomConversions customConversions() {
-//        return new CustomConversions(Arrays.asList());
-//    }
 
     @Bean
     public Mongo mongo() throws Exception {
         return mongoFactoryBean.getObject();
-    }
-
-    @Bean
-    public GridFsTemplate gridFsTemplate(MongoDbFactory mongoDbFactory, MappingMongoConverter mappingMongoConverter) {
-        return new GridFsTemplate(mongoDbFactory, mappingMongoConverter);
     }
 
     @Override

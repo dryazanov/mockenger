@@ -19,6 +19,12 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
@@ -52,7 +58,7 @@ public class RequestControllerTest extends AbstractControllerTest {
     public void setup() {
         super.setup();
 
-        project = createProject();
+        project = createProject(true);
         group = createGroup();
         request = createRequest(group.getId());
     }
@@ -143,6 +149,37 @@ public class RequestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void testAddAndSequenceGenerator() throws Exception {
+        deleteAllRequests();
+
+        final int numOfMocks = 100;
+        final int numOfThreadToRun = numOfMocks / 5;
+        final ExecutorService taskExecutor = Executors.newFixedThreadPool(numOfThreadToRun);
+
+        for (int i = 0; i < numOfMocks; i++) {
+            taskExecutor.execute(new RestRequestSender(project.getId(), getNewRequest(group.getId())));
+        }
+
+        // Disable new tasks from being submitted
+        taskExecutor.shutdown();
+
+        try {
+            // Wait a while for existing tasks to terminate
+            taskExecutor.awaitTermination(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            System.out.println("Task has been interrupted: " + e.getMessage());
+            taskExecutor.shutdownNow();
+        }
+
+        Set<String> uniqueCodesSet = new HashSet<>(numOfMocks);
+        for (AbstractRequest abstractRequest : getAllRequests()) {
+            uniqueCodesSet.add(abstractRequest.getUniqueCode());
+        }
+
+        assertEquals(numOfMocks, uniqueCodesSet.size());
+    }
+
+    @Test
     public void testSaveRequest() throws Exception {
         request.setName(REQUEST_NAME_UPDATED);
 
@@ -158,7 +195,7 @@ public class RequestControllerTest extends AbstractControllerTest {
     @Test
     public void testSaveRequestWithInvalidData() throws Exception {
         AbstractRequest request = getNewRequest(group.getId());
-        Helper.help(this.mockMvc, project, group, request, new SaveRunner());
+        ExtendedHelper.help(this.mockMvc, project, group, request, new SaveRunner());
 
         // Cleanup
         deleteRequest(request);
@@ -282,10 +319,49 @@ public class RequestControllerTest extends AbstractControllerTest {
             request.setCheckSum(null);
             runner.run(mockMvc, project.getId(), group.getId(), request, "checkSum: may not be null or empty");
 
-            // httpStatus is zero
+            // httpStatus in the response is zero
             request = getNewRequest(group.getId());
             request.getMockResponse().setHttpStatus(0);
             runner.run(mockMvc, project.getId(), group.getId(), request, "httpStatus: must be number greater than zero");
+        }
+    }
+
+    private static class ExtendedHelper {
+        static void help(MockMvc mockMvc, Project project, Group group, AbstractRequest request, Runner runner) throws Exception {
+            Helper.help(mockMvc, project, group, request, runner);
+
+            // Wrong unique code (for save request only)
+            String uniqueWrongCode = "WRONG-1";
+            request = getNewRequest(group.getId());
+            request.setUniqueCode(uniqueWrongCode);
+            runner.run(mockMvc, project.getId(), group.getId(), request, String.format("Cannot find MockRequest with ID '%s' and unique code '%s'", request.getId(), uniqueWrongCode));
+        }
+    }
+
+    private class RestRequestSender implements Runnable {
+
+        private String projectId;
+
+        private AbstractRequest requestToSend;
+
+        public RestRequestSender(String projectId, AbstractRequest request) {
+            this.projectId = projectId;
+            this.requestToSend = request;
+        }
+
+        @Override
+        public void run() {
+            try {
+                ResultActions resultActions = createRequestRest(this.projectId, requestToSend.getGroupId(), requestToSend);
+                resultActions.andExpect(status().isOk());
+
+                // Use lines below for debug
+//                String responseJson = resultActions.andReturn().getResponse().getContentAsString();
+//                AbstractRequest mock = new ObjectMapper(new JsonFactory()).readValue(responseJson, AbstractRequest.class);
+//                System.out.println("REQUEST UNIQUE CODE ID :: " + mock.getUniqueCode());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
