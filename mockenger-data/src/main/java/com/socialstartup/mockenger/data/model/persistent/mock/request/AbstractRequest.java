@@ -9,6 +9,7 @@ import com.socialstartup.mockenger.data.model.persistent.mock.response.MockRespo
 import com.socialstartup.mockenger.data.model.persistent.base.AbstractPersistentEntity;
 import com.socialstartup.mockenger.data.validator.MockResponseValidation;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
@@ -23,10 +24,11 @@ public class AbstractRequest extends AbstractPersistentEntity<String> {
     @NotNull(message = "groupId: may not be null")
     private String groupId;
 
-    private String uniqueCode;
-
     @NotBlank(message = "name: may not be null or empty")
     private String name;
+
+    @Indexed(name = "unique_code_1", unique = true, collection = "request")
+    private String uniqueCode;
 
     private Date creationDate;
 
