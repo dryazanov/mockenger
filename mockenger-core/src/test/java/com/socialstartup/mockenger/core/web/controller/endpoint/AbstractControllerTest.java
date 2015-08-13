@@ -229,8 +229,10 @@ public class AbstractControllerTest {
         KeyValueTransformer keyValueTransformer = new KeyValueTransformer();
         AbstractRequest request = new AbstractRequest();
 
-        request.setId(CommonUtils.generateUniqueId());
+        String id = CommonUtils.generateUniqueId();
+        request.setId(id);
         request.setGroupId(groupId);
+        request.setUniqueCode(PROJECT_CODE_TEST + id);
         request.setName(REQUEST_NAME_TEST);
         request.setMethod(RequestMethod.POST);
         request.setCreationDate(new Date());
