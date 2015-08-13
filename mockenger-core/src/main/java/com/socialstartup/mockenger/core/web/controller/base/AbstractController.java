@@ -111,4 +111,19 @@ public abstract class AbstractController {
 
         return request;
     }
+
+    /**
+     *
+     * @param requestId
+     * @return
+     */
+    protected AbstractRequest findRequestByIdAndUniqueCode(String requestId, String uniqueCode) {
+        AbstractRequest request = getRequestService().findByIdAndUniqueCode(requestId, uniqueCode);
+
+        if (request == null) {
+            throw new IllegalArgumentException(String.format("Cannot find MockRequest with ID '%s' and unique code '%s'", requestId, uniqueCode));
+        }
+
+        return request;
+    }
 }

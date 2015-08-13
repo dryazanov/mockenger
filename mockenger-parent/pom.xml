@@ -22,7 +22,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <spring.framework.version>4.2.0.RELEASE</spring.framework.version>
-        <spring.data.mongodb.version>1.6.2.RELEASE</spring.data.mongodb.version>
+        <spring.data.mongodb.version>1.7.2.RELEASE</spring.data.mongodb.version>
         <spring.boot.version>1.2.4.RELEASE</spring.boot.version>
         <fasterxml.jackson.version>2.2.2</fasterxml.jackson.version>
         <jstl.version>1.2</jstl.version>

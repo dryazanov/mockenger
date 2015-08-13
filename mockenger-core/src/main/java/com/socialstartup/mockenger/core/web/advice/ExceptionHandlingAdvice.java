@@ -2,7 +2,6 @@ package com.socialstartup.mockenger.core.web.advice;
 
 import com.socialstartup.mockenger.core.web.exception.BadContentTypeException;
 import com.socialstartup.mockenger.core.web.exception.MockObjectNotCreatedException;
-import com.socialstartup.mockenger.core.web.exception.ObjectAlreadyExistsException;
 import com.socialstartup.mockenger.core.web.exception.ObjectNotFoundException;
 import com.socialstartup.mockenger.data.model.dto.ErrorMessage;
 import org.slf4j.Logger;
@@ -39,20 +38,6 @@ public class ExceptionHandlingAdvice {
     }
 
     /**
-     * Handle errors about bad content-type in the header
-     *
-     * @param ex
-     * @return error message
-     */
-    @ResponseBody
-    @ExceptionHandler(ObjectAlreadyExistsException.class)
-    @ResponseStatus(HttpStatus.CONFLICT) // 409
-    public ErrorMessage handleObjectAlreadyExistsException(ObjectAlreadyExistsException ex) {
-        LOG.debug("ObjectAlreadyExistsException has occurred", ex);
-        return new ErrorMessage("Object already exists");
-    }
-
-    /**
      * Handle errors when a record of project, group or request not found
      *
      * @param ex
@@ -63,13 +48,12 @@ public class ExceptionHandlingAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND) // 404
     public ErrorMessage handleObjectNotFoundException(ObjectNotFoundException ex) {
         String className = "";
-        String template = "%s with ID '%s' not found";
         if (ex.getClassName() != null) {
             className = ex.getClassName();
         } else {
             className = "Item";
         }
-        String message = String.format(template, className, ex.getItemId());
+        String message = String.format("%s with ID '%s' not found", className, ex.getItemId());
         LOG.debug(message, ex);
         return new ErrorMessage(message);
     }

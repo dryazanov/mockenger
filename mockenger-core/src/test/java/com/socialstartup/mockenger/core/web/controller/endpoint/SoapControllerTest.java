@@ -128,7 +128,6 @@ public class SoapControllerTest extends AbstractControllerTest {
     }
 
 
-
     private PostRequest createSoapMockRequest(String groupId) {
         Map<String, String> headersMap = new TreeMap<>();
         headersMap.put("content-type", CONTENT_TYPE_SOAP_UTF8.toLowerCase());

@@ -42,6 +42,8 @@ public class ProjectControllerTest extends AbstractControllerTest {
     @Before
     public void setup() {
         super.setup();
+
+        deleteAllProjects();
     }
 
 
@@ -129,7 +131,14 @@ public class ProjectControllerTest extends AbstractControllerTest {
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.id").value(not(project.getId())));
 
+        // Expect response status 500
+        resultActions = createProjectRest(project);
+        resultActions.andExpect(status().isInternalServerError())
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
+                .andExpect(jsonPath("$.errors[0]").value("Unable to process request. Internal server error: duplicate code '" + project.getCode() + "' error"));
+
         // Expect response status 200
+        project.setCode(PROJECT_CODE_TEST + "-1");
         resultActions = createProjectRest(project);
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
@@ -193,9 +202,9 @@ public class ProjectControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetProjectList() throws Exception {
-        createProject();
-        createProject();
-        createProject();
+        createProject(true);
+        createProject(true);
+        createProject(true);
 
         ResultActions resultActions = getProjectAllRest();
         resultActions.andExpect(status().isOk())

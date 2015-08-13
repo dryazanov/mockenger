@@ -41,4 +41,12 @@ public class ProjectService {
         groupService.findByProjectId(project.getId()).forEach(groupService::remove);
         projectEntityRepository.delete(project);
     }
+
+    public synchronized long getNextSequenceValue(String projectId) {
+        Project project = projectEntityRepository.findOne(projectId);
+        long sequenceValue = project.getSequence();
+        project.setSequence(++sequenceValue);
+        projectEntityRepository.save(project);
+        return sequenceValue;
+    }
 }
