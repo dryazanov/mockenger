@@ -14,7 +14,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-9">
 
             <div ng-if="currentGroup" class="panel panel-primary">
                 <div class="panel-body">
@@ -55,8 +55,8 @@
                     <tr ng-class="{info: request.id == currentRequest.id}" ng-repeat="request in requestsList.data  | filter:requestsList.requestQuery | orderBy:requestsList.orderProp | offset: requestsList.paginator.currentPage * requestsList.paginator.itemsPerPage |
         limitTo: requestsList.paginator.itemsPerPage track by $index" ng-click="requestsList.selectRequest(request)">
                         <td>{{request.name}}</td>
-                        <td>{{request.method}}</td>
                         <td>@{{request.path.value}}</td>
+                        <td>{{request.method}}</td>
                     </tr>
 
                     </tbody>
@@ -94,26 +94,47 @@
                 Please select a group
             </div>
         </div>
-        <div class="col-md-4">
 
+    </div>
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-9">
             <div ng-if="currentRequest" class="panel panel-info">
                 <div class="panel-heading">{{currentRequest.name}}</div>
                 <div class="panel-body">
-                    <div class="btn-group" role="group" aria-label="...">
-                        <button type="button" class="btn btn-default" ng-click="requestsList.editCurrentRequest()">
-                            Edit
-                        </button>
-                        <br/>
-                        <br/>
-                        <br/>
-                        <br/>
-                        <br/>
+
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon" id="sizing-addon1">{{currentRequest.method}}</span>
+                                    <input type="text" class="form-control" aria-describedby="sizing-addon1" ng-value="currentRequest.path.value" readonly="readonly" />
+                                </div>
+                                <br/>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+
+
+                                <ul class="nav nav-tabs nav-justified">
+                                    <li role="presentation" ng-class="{active : isHeadersRequestViewActive()}"><a href ng-click="setHeadersRequestView()">Headers</a></li>
+                                    <li role="presentation" ng-class="{active : isParamsRequestViewActive()}"><a href ng-click="setParamsRequestView()">Parameters</a></li>
+                                    <li role="presentation" ng-class="{active : isBodyRequestViewActive()}"><a href ng-click="setBodyRequestView()">Body</a></li>
+                                </ul>
+
+                                {{currentRequestView}}
+                            </div>
+                        </div>
                     </div>
 
-                </div>
-            </div>
-        </div>
 
+                </div>
+
+            </div>
+
+        </div>
     </div>
 </div>
 

@@ -3,6 +3,12 @@
 angular.module('mockengerClientMainApp')
     .controller('projectController', ['$scope', '$filter', 'groupsService', 'requestsService', 'currentProject', 'REQUESTS_PER_PAGE', function ($scope, $filter, groupsService, requestsService, currentProject, REQUESTS_PER_PAGE) {
 
+        var REQUEST_VIEW = {
+            HEADERS: 'HEADERS',
+            PARAMETERS: 'PARAMETERS',
+            BODY: 'BODY'
+        };
+
         $scope.currentProject = currentProject;
 
         $scope.requestsList = {};
@@ -23,6 +29,30 @@ angular.module('mockengerClientMainApp')
 
         });
 
+        $scope.setHeadersRequestView = function() {
+            $scope.currentRequestView = REQUEST_VIEW.HEADERS;
+        };
+
+        $scope.setParamsRequestView = function() {
+            $scope.currentRequestView = REQUEST_VIEW.PARAMETERS;
+        };
+
+        $scope.setBodyRequestView = function() {
+            $scope.currentRequestView = REQUEST_VIEW.BODY;
+        };
+
+        $scope.isHeadersRequestViewActive = function() {
+          return $scope.currentRequestView === REQUEST_VIEW.HEADERS;
+        };
+
+        $scope.isBodyRequestViewActive = function() {
+            return $scope.currentRequestView === REQUEST_VIEW.BODY;
+        };
+
+        $scope.isParamsRequestViewActive = function() {
+            return $scope.currentRequestView === REQUEST_VIEW.PARAMETERS;
+        };
+
         $scope.loadGroupRequests = function (group) {
             requestsService.query({
                 projectId: currentProject.id,
@@ -31,6 +61,7 @@ angular.module('mockengerClientMainApp')
                 $scope.requestsList.data = response;
                 $scope.currentGroup = group;
                 $scope.currentRequest = undefined;
+                $scope.setHeadersRequestView();
                 $scope.requestsList.requestQuery = undefined;
             }, function (errorResponse) {
             });
