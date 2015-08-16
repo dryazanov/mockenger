@@ -67,6 +67,14 @@ angular.module('mockengerClientMainApp')
             });
         };
 
+        $scope.deselectCurrentGroup = function() {
+            $scope.currentGroup = undefined;
+            $scope.currentRequest = undefined;
+            $scope.setHeadersRequestView();
+            $scope.requestsList.requestQuery = undefined;
+
+        };
+
         $scope.requestsList.editCurrentRequest = function() {
             $('#requestModal').modal({});
         };

@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col-md-3">
 
-            <div id="group-list" ng-show="!currentGroup">
+            <div id="group-list" ng-if="!currentGroup">
                 <div class="list-group">
                     <a href ng-repeat="group in groupsList track by $index" class="list-group-item"
                        ng-class="{active: group.name === currentGroup.name}"
@@ -14,9 +14,14 @@
                 </div>
             </div>
 
-            <div id="requests-panel" ng-show="currentGroup" class="panel panel-primary">
+            <div id="requests-panel" ng-if="currentGroup" class="panel panel-primary">
                 <div class="panel-body">
+                    <h4>{{currentGroup.name}}
+                        <span ng-show="!currentGroup.recording" class="label label-info">Not recording</span>
+                        <span ng-show="currentGroup.recording" class="label label-danger">Recording</span>
 
+                        <small><a href ng-click="deselectCurrentGroup()">(Change)</a></small></h4>
+                    <hr/>
                     <form class="form-inline">
                         <div class="form-group">
                             <label for="searchRequests">Search</label>
@@ -84,6 +89,43 @@
 
         </div>
 
+        <div class="col-md-9">
+            <div ng-if="currentRequest" class="panel panel-info">
+                <div class="panel-heading">{{currentRequest.name}}</div>
+                <div class="panel-body">
+
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon" id="sizing-addon1">{{currentRequest.method}}</span>
+                                    <input type="text" class="form-control" aria-describedby="sizing-addon1" ng-value="currentRequest.path.value" readonly="readonly" />
+                                </div>
+                                <br/>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+
+
+                                <ul class="nav nav-tabs nav-justified">
+                                    <li role="presentation" ng-class="{active : isHeadersRequestViewActive()}"><a href ng-click="setHeadersRequestView()">Headers</a></li>
+                                    <li role="presentation" ng-class="{active : isParamsRequestViewActive()}"><a href ng-click="setParamsRequestView()">Parameters</a></li>
+                                    <li role="presentation" ng-class="{active : isBodyRequestViewActive()}"><a href ng-click="setBodyRequestView()">Body</a></li>
+                                </ul>
+
+                                {{currentRequestView}}
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
     </div>
 </div>
 
