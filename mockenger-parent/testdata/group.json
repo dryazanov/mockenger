@@ -1,3 +1,0 @@
-{"_class":"com.socialstartup.mockenger.data.model.persistent.mock.group.Group","_id":{"$oid":"557050015a672b9af6cfcb41"},"name":"Get customer by gin","recording":false,"projectId":"557050015a672b9af6cfcb49"}
-{"_class":"com.socialstartup.mockenger.data.model.persistent.mock.group.Group","_id":{"$oid":"5571f383ab6b8c9a859507a7"},"name":"TEST GROUP RENAMED","recording":false,"projectId":"557050015a672b9af6cfcb49"}
-{"_class":"com.socialstartup.mockenger.data.model.persistent.mock.group.Group","_id":{"$oid":"5573106205fb3b98bf747cfc"},"name":"SOAP GROUP","recording":false,"projectId":"557050015a672b9af6cfcb49"}

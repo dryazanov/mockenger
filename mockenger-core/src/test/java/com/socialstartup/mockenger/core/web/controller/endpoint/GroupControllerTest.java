@@ -164,7 +164,7 @@ public class GroupControllerTest extends AbstractControllerTest {
     @Test
     public void testGetNoGroupsByProjectId() throws Exception {
         deleteAllGroups();
-        Project project = createProject();
+        Project project = createProject(true);
         ResultActions resultActions = getGroupsAllRest(project.getId());
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
@@ -175,7 +175,7 @@ public class GroupControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetGroupsByProjectId() throws Exception {
-        Project project = createProject();
+        Project project = createProject(true);
 
         Group group = createGroup();
         group.setProjectId(project.getId());

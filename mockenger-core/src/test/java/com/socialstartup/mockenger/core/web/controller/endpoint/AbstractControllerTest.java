@@ -61,6 +61,7 @@ public class AbstractControllerTest {
     protected static final String GROUP_ID = "GROUP_ID";
     protected static final String REQUEST_ID = "REQUEST_ID";
     protected static final String PROJECT_NAME_TEST = "Unit-test project";
+    protected static final String PROJECT_CODE_TEST = "UTCODE";
     protected static final String GROUP_NAME_TEST = "Unit-test group";
     protected static final String REQUEST_NAME_TEST = "Unit-test mock-request";
     protected static final String REQUEST_PATH = "/unit/test/mock/request";
@@ -68,6 +69,7 @@ public class AbstractControllerTest {
     protected static final String CONTENT_TYPE_JSON_UTF8 = "application/json;charset=UTF-8";
     protected static final String CONTENT_TYPE_SOAP_UTF8 = "application/soap+xml;charset=UTF-8";
     protected static final String CONTENT_TYPE_XML_UTF8 = "application/xml;charset=UTF-8";
+    protected static final String CONTENT_TYPE_HTML_UTF8 = "text/html;charset=UTF-8";
 
     protected static final String MOCK_REQUEST_BODY = "{\"name\":\"NAME\",\"type\":\"TYPE\"}";
     protected static final String MOCK_RESPONSE_BODY = "{\"result\":\"OK\"}";
@@ -107,14 +109,24 @@ public class AbstractControllerTest {
     }
 
     protected Project createProject() {
-        Project project = getNewProject();
+        return createProject(false);
+    }
+
+    protected Project createProject(boolean generateRandomProjectCode) {
+        Project project = getNewProject(generateRandomProjectCode);
         this.projectService.save(project);
         return project;
     }
 
     protected Project getNewProject() {
-        Project project = new Project(PROJECT_NAME_TEST, ProjectType.SIMPLE);
-        project.setId(CommonUtils.generateUniqueId());
+        return getNewProject(false);
+    }
+
+    protected Project getNewProject(boolean generateRandomProjectCode) {
+        String id = CommonUtils.generateUniqueId();
+        String code = PROJECT_CODE_TEST + (generateRandomProjectCode ? "-" + id  : "");
+        Project project = new Project(PROJECT_NAME_TEST, code, ProjectType.SIMPLE);
+        project.setId(id);
         return project;
     }
 
@@ -217,8 +229,10 @@ public class AbstractControllerTest {
         KeyValueTransformer keyValueTransformer = new KeyValueTransformer();
         AbstractRequest request = new AbstractRequest();
 
-        request.setId(CommonUtils.generateUniqueId());
+        String id = CommonUtils.generateUniqueId();
+        request.setId(id);
         request.setGroupId(groupId);
+        request.setUniqueCode(PROJECT_CODE_TEST + id);
         request.setName(REQUEST_NAME_TEST);
         request.setMethod(RequestMethod.POST);
         request.setCreationDate(new Date());

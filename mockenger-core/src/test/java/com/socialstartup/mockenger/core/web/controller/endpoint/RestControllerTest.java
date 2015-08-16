@@ -28,9 +28,9 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -84,7 +84,7 @@ public class RestControllerTest extends AbstractControllerTest {
     public void setup() {
         super.setup();
 
-        project = createProject();
+        project = createProject(true);
         group = createGroup(false);
         groupWithRecording = createGroup();
 
@@ -238,19 +238,43 @@ public class RestControllerTest extends AbstractControllerTest {
                 .andExpect(xpath("/note/result").string(EXPECTED_RESULT_OK));
     }
 
+    //========== DELETE =================//
 
     @Test
-    public void testDeleteJsonRequestOk() throws Exception {
+    public void testDeleteRequestOk() throws Exception {
         createRequest(createMockRequestForDelete(group.getId()));
 
         this.mockMvc.perform(delete(endpoint)).andExpect(status().isNoContent());
     }
 
     @Test
-    public void testDeleteJsonRequestNotFound() throws Exception {
+    public void testDeleteRequestNotFound() throws Exception {
         this.mockMvc.perform(delete(endpoint)).andExpect(status().isNotFound());
     }
 
+    //========== POST BAD REQUEST WITH HTML =================//
+
+    @Test
+    public void testPostHtmlRequestNotOk() throws Exception {
+        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_HTML_UTF8);
+
+        this.mockMvc.perform(post(endpoint).contentType(mediaType).content(""))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
+                .andExpect(jsonPath("$.errors[0]").value("Invalid header 'Content-type': application/json or application/xml are only allowed in REST requests"));
+    }
+
+    //========== PUT BAD REQUEST WITH HTML =================//
+
+    @Test
+    public void testPutHtmlRequestNotOk() throws Exception {
+        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_HTML_UTF8);
+
+        this.mockMvc.perform(put(endpoint).contentType(mediaType).content(""))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
+                .andExpect(jsonPath("$.errors[0]").value("Invalid header 'Content-type': application/json or application/xml are only allowed in REST requests"));
+    }
 
     private void createMockRequest(AbstractRequest request, String groupId, String contentType, String requestBody, String responseBody) {
         Map<String, String> headersMap = new TreeMap<>();
