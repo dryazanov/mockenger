@@ -23,8 +23,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
         "com.socialstartup.mockenger.core.service",
         "com.socialstartup.mockenger.core.web"
 })
-@PropertySource("classpath:mongodb.properties")
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:mongodb-test.properties")
+@PropertySource("classpath:application-test.properties")
 public class TestContext extends WebMvcConfigurerAdapter {
 
     @Bean

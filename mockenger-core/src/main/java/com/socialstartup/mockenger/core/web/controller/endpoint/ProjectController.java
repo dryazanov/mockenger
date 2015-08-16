@@ -2,6 +2,7 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -67,7 +68,11 @@ public class ProjectController extends AbstractController {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
         project.setId(null);
-        getProjectService().save(project);
+        try {
+            getProjectService().save(project);
+        } catch (DuplicateKeyException ex) {
+            throw new RuntimeException("duplicate code '" + project.getCode() + "' error");
+        }
         return new ResponseEntity(project, getResponseHeaders(), HttpStatus.OK);
     }
 

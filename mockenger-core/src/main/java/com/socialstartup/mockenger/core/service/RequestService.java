@@ -43,6 +43,10 @@ public class RequestService {
         return requestEntityRepository.findOne(id);
     }
 
+    public AbstractRequest findByIdAndUniqueCode(String id, String code) {
+        return requestEntityRepository.findByIdAndUniqueCode(id, code);
+    }
+
     public Iterable<AbstractRequest> findAll() {
         return requestEntityRepository.findAll();
     }

@@ -9,6 +9,7 @@ import com.socialstartup.mockenger.data.model.persistent.mock.response.MockRespo
 import com.socialstartup.mockenger.data.model.persistent.base.AbstractPersistentEntity;
 import com.socialstartup.mockenger.data.validator.MockResponseValidation;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
@@ -25,6 +26,9 @@ public class AbstractRequest extends AbstractPersistentEntity<String> {
 
     @NotBlank(message = "name: may not be null or empty")
     private String name;
+
+    @Indexed(name = "unique_code_1", unique = true, collection = "request")
+    private String uniqueCode;
 
     private Date creationDate;
 
@@ -59,6 +63,14 @@ public class AbstractRequest extends AbstractPersistentEntity<String> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUniqueCode() {
+        return uniqueCode;
+    }
+
+    public void setUniqueCode(String uniqueCode) {
+        this.uniqueCode = uniqueCode;
     }
 
     public Date getCreationDate() {
