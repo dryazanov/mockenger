@@ -5,6 +5,7 @@ angular.module('mockengerClientMainApp', [
     'ngCookies',
     'ngMessages',
     'ngResource',
+    'ngAnimate',
     'ngRoute',
     'ngSanitize',
     'ngTouch']).config(['$locationProvider','$routeProvider', function ($locationProvider, $routeProvider) {
