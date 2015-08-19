@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('mockengerClientMainApp').controller('mainController', ['$scope', 'projectsService', function ($scope, projectsService) {
+angular.module('mockengerClientMainApp').controller('mainController', ['$scope', '$filter', 'projectsService', function ($scope, $filter, projectsService) {
 
     $scope.alerts = [];
 
@@ -27,6 +27,12 @@ angular.module('mockengerClientMainApp').controller('mainController', ['$scope',
     $scope.projectsList = {};
     var projectModal = $('#projectModal');
 
+    $scope.$watch('currentProject.code', function(value) {
+        if (value != null) {
+            $scope.currentProject.code = $filter('uppercase')(value);
+        }
+    });
+
     $scope.getProjects = function() {
         projectsService.query(function(response, getResponseHeaders) {
             $scope.projectsList = response;
@@ -37,14 +43,20 @@ angular.module('mockengerClientMainApp').controller('mainController', ['$scope',
 
     $scope.createProject = function() {
         $scope.modalTitle = "Create project";
-        $scope.currentProject = null;
+        $scope.currentProject = {};
+        $scope.projectForm.$setPristine();
         projectModal.modal({});
     };
 
     $scope.editProject = function(project) {
         $scope.modalTitle = "Edit project";
-        $scope.currentProject = project;
-        projectModal.modal({});
+
+        projectsService.get({projectId: project.id}, function(response, getResponseHeaders) {
+            $scope.currentProject = response;
+            projectModal.modal({});
+        }, function(errorResponse) {
+            showErrors(errorResponse);
+        });
     };
 
     $scope.deleteProject = function(project) {
@@ -56,15 +68,16 @@ angular.module('mockengerClientMainApp').controller('mainController', ['$scope',
     };
 
     $scope.saveProject = function(currentProject) {
-        projectModal.modal('hide');
         if (currentProject.id != null) {
             projectsService.update({projectId: currentProject.id}, currentProject, function(response, getResponseHeaders) {
+                projectModal.modal('hide');
                 $scope.getProjects();
             }, function(errorResponse) {
                 showErrors(errorResponse);
             });
         } else {
             projectsService.save(currentProject, function() {
+                projectModal.modal('hide');
                 $scope.getProjects();
             }, function(errorResponse) {
                 showErrors(errorResponse);
