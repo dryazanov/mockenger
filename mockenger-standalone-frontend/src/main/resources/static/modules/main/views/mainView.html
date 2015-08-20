@@ -49,9 +49,7 @@
                         <div class="form-group">
                             <label for="type">Type</label>
                             <select name="type" id="type" ng-model="currentProject.type" required ng-disabled="currentProject.id != null" class="form-control">
-                                <option value="REST">REST</option>
-                                <option value="SOAP">SOAP</option>
-                                <option value="SIMPLE">Simple</option>
+                                <option ng-repeat="(key, value) in availableProjectTypes track by $index" value="{{key}}">{{value}}</option>
                             </select>
                             <p ng-show="projectForm.type.$invalid && !projectForm.type.$pristine" class="help-block">You name is required.</p>
                         </div>

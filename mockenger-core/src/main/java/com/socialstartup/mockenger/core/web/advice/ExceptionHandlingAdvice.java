@@ -2,6 +2,7 @@ package com.socialstartup.mockenger.core.web.advice;
 
 import com.socialstartup.mockenger.core.web.exception.BadContentTypeException;
 import com.socialstartup.mockenger.core.web.exception.MockObjectNotCreatedException;
+import com.socialstartup.mockenger.core.web.exception.NotUniqueValueException;
 import com.socialstartup.mockenger.core.web.exception.ObjectNotFoundException;
 import com.socialstartup.mockenger.data.model.dto.ErrorMessage;
 import org.slf4j.Logger;
@@ -38,6 +39,20 @@ public class ExceptionHandlingAdvice {
     }
 
     /**
+     * Handle errors about not unique value
+     *
+     * @param ex
+     * @return error message
+     */
+    @ResponseBody
+    @ExceptionHandler(NotUniqueValueException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
+    public ErrorMessage handleNotUniqueKeyException(NotUniqueValueException ex) {
+        LOG.debug("NotUniqueValueException has occurred", ex);
+        return new ErrorMessage(ex.getMessage());
+    }
+
+    /**
      * Handle errors when a record of project, group or request not found
      *
      * @param ex
@@ -62,7 +77,7 @@ public class ExceptionHandlingAdvice {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400
     public ErrorMessage handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        LOG.error("JSON is not readable", ex);
+        LOG.error("JSON object is not readable", ex);
         return new ErrorMessage("Unable to process request: json is not readable");
     }
 
@@ -70,7 +85,7 @@ public class ExceptionHandlingAdvice {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400
     public ErrorMessage handleMockObjectNotCreatedException(MockObjectNotCreatedException ex) {
-        String msg = "Failed to create an instance of the mock-object";
+        String msg = "Failed to create instance of the mock-object";
         LOG.error(msg, ex);
         return new ErrorMessage(String.format("%s: %s", msg, ex.getMessage()));
     }

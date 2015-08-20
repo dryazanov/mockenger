@@ -1,22 +1,20 @@
 'use strict';
+
 angular.module('mockengerClientComponents').factory('apiEndpointsService', ['API_BASE_PATH', function (API_BASE_PATH) {
-
-    function getProjectRestUrl() {
-        return API_BASE_PATH + '/projects/:projectId';
-    }
-
-    function getGroupRestUrl() {
-        return getProjectRestUrl() + '/groups/:groupId';
-    }
-
-    function getRequestRestUrl() {
-        return getGroupRestUrl() + '/requests/:requestId';
-    }
-    return {
-        getProjectRestUrl : getProjectRestUrl,
-        getGroupRestUrl: getGroupRestUrl,
-        getRequestRestUrl: getRequestRestUrl
-
+    var restUrls = {
+        getValuesetRestUrl: function() {
+            return API_BASE_PATH + '/valueset';
+        },
+        getProjectRestUrl: function() {
+            return API_BASE_PATH + '/projects/:projectId';
+        },
+        getGroupRestUrl: function() {
+            return restUrls.getProjectRestUrl() + '/groups/:groupId';
+        },
+        getRequestRestUrl: function getRequestRestUrl() {
+            return restUrls.getGroupRestUrl() + '/requests/:requestId';
+        }
     };
 
+    return restUrls;
 }]);

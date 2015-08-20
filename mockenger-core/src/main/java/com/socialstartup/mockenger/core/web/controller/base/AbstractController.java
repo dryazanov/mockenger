@@ -24,6 +24,7 @@ public abstract class AbstractController {
     protected static final String MEDIA_TYPE_JSON = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8";
     protected static final String MEDIA_TYPE_XML = MediaType.APPLICATION_XML_VALUE + ";charset=UTF-8";
 
+    protected static final String VALUESET_ENDPOINT = "/valueset";
     protected static final String PROJECTS_ENDPOINT = "/projects";
     protected static final String PROJECT_ID_ENDPOINT = PROJECTS_ENDPOINT + "/{projectId}";
     protected static final String GROUPS_ENDPOINT = "/groups";
