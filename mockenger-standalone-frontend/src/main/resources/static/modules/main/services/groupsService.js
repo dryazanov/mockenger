@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('mockengerClientMainApp').factory('groupsService', ['$resource', 'apiEndpointsService', function ($resource, apiEndpointsService) {
+module.factory('groupsService', ['$resource', 'apiEndpointsService', function ($resource, apiEndpointsService) {
     var Group = $resource(apiEndpointsService.getGroupRestUrl(),
         {
             groupId: '@groupId',
@@ -9,6 +9,4 @@ angular.module('mockengerClientMainApp').factory('groupsService', ['$resource', 
     );
 
     return Group;
-
-}])
-;
+}]);

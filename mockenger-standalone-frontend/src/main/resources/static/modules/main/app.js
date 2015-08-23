@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('mockengerClientMainApp', [
+var module = angular.module('mockengerClientMainApp', [
     'mockengerClientComponents',
     'ngCookies',
     'ngMessages',
@@ -8,7 +8,9 @@ angular.module('mockengerClientMainApp', [
     'ngAnimate',
     'ngRoute',
     'ngSanitize',
-    'ngTouch']).config(['$locationProvider','$routeProvider', function ($locationProvider, $routeProvider) {
+    'ngTouch']);
+
+module.config(['$locationProvider','$routeProvider', function ($locationProvider, $routeProvider) {
     //$locationProvider.html5Mode(true);
     $routeProvider
         .when('/', {
@@ -23,6 +25,7 @@ angular.module('mockengerClientMainApp', [
             resolve: {
                 currentProject: ['$route', 'projectsService', function($route, projectsService) {
                     var projectId = $route.current.params.projectId;
+                    projectsService.projectId = projectId;
                     return projectsService.get({projectId : projectId});
                 }]
             }
@@ -37,7 +40,7 @@ angular.module('mockengerClientMainApp', [
  * A generic confirmation for risky actions.
  * Usage: Add attributes: ng-really-message="Are you sure"? ng-really-click="takeAction()" function
  */
-angular.module('mockengerClientMainApp').directive('ngReallyClick', [function() {
+module.directive('ngReallyClick', [function() {
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
