@@ -1,36 +1,47 @@
 <mkngr-navbar></mkngr-navbar>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-3" ng-controller="GroupListController">
             <button type="button" class="btn btn-primary btn-sm btn-block" ng-click="createGroup()">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                 Create group
             </button>
 
             <div id="group-list">
-                <div class="list-group" ng-controller="groupController">
-                    <a href ng-repeat="group in groupsList track by $index" class="list-group-item"
-                       ng-class="{active: group.name === $root.currentGroup.name}"
-                       ng-click="loadGroupRequests(group)">{{group.name}}
-
+                <ul class="list-group">
+                    <li class="list-group-item" ng-class="isActive(group)" ng-repeat="group in groupsService.getData() track by $index">
+                        <a href ng-click="loadGroupRequests(group)">
+                            {{group.name}}
+                        </a>
+                        &nbsp;
                         <span ng-show="!group.recording" class="label label-info">Not recording</span>
                         <span ng-show="group.recording" class="label label-danger">Recording</span>
-                    </a>
-                </div>
+
+                        <span class="pull-right">
+                            <button class="btn btn-xs" ng-click="editGroup(group)">
+                                <span class="glyphicon glyphicon-cog"></span>
+                            </button>
+                            <button class="btn btn-xs" ng-really-click="deleteGroup($index, group)"
+                                    ng-really-message="Do you really want to delete group '{{project.name}}' with all its mocks?">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                        </span>
+                    </li>
+                </ul>
             </div>
         </div>
 
-        <div class="col-md-9" ng-controller="requestController">
-            <div ng-if="$root.currentGroup" class="panel panel-primary">
+        <div class="col-md-9" ng-controller="RequestListController">
+            <div ng-if="requestsService.getData() != null" class="panel panel-primary">
                 <div class="panel-body">
                     <form class="form-inline">
                         <div class="form-group">
                             <label for="searchRequests">Search</label>
-                            <input type="search" ng-model="service.requestsList.requestQuery" class="form-control" id="searchRequests">
+                            <input type="search" ng-model="requestsService.filters.search.query" class="form-control" id="searchRequests">
                         </div>
                         <div class="form-group">
                             <label for="orderRequests">Order by</label>
-                            <select ng-model="service.requestsList.orderProp" id="orderRequests" class="form-control">
+                            <select ng-model="requestsService.filters.order" id="orderRequests" class="form-control">
                                 <option value="name">Name</option>
                                 <option value="method">Method</option>
                             </select>
@@ -52,16 +63,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-class="{info: request.id == currentRequest.id}"
-                            ng-repeat="request in getRequestList() | filter: getRequestQuery() | orderBy: getOrderProp()
-                                    | offset: getCurrentPage() * getItemsPerPage() | limitTo: getItemsPerPage() track by $index"
-                            ng-click="selectRequest(request)">
+                        <tr ng-class="{info: request.id == requestsService.getCurrent().id}"
+                            ng-click="requestsService.setCurrent(request)"
+                            ng-repeat="request in requestsService.getData()
+                                | filter:requestsService.getSearchQuery()
+                                | orderBy:requestsService.getListOrder()
+                                | offset:getOffset()
+                                | limitTo:requestsService.getLimit() track by $index">
 
                             <td>{{request.name}}</td>
                             <td>@{{request.path.value}}</td>
                             <td>{{request.method}}</td>
                         </tr>
-
                     </tbody>
                 </table>
 
@@ -76,8 +89,8 @@
                                     </a>
                                 </li>
 
-                                <li ng-repeat="n in range()" ng-class="{active: n == getCurrentPage()}">
-                                    <a href ng-click="setPage(n)">{{n+1}}</a>
+                                <li ng-repeat="n in range()" ng-class="isActive(n)">
+                                    <a href ng-click="requestsService.setCurrentPage(n)">{{n+1}}</a>
                                 </li>
 
                                 <li ng-class="nextPageDisabled()">
@@ -90,22 +103,22 @@
                     </div>
                 </div>
             </div>
-
-            <div ng-if="!$root.currentGroup" class="alert alert-info" role="alert">
+            <div ng-if="requestsService.getData() == null" class="alert alert-info" role="alert">
                 Please select a group
             </div>
 
             <div class="row">
-                <div class="col-md-12">
-                    <div ng-if="getSelectRequest()" class="panel panel-info">
+                <div class="col-md-12" ng-controller="RequestController">
+                    <div ng-if="requestsService.getCurrent()" class="panel panel-info">
                         <div class="panel-heading">{{currentRequest.name}}</div>
                         <div class="panel-body">
                             <div class="container-fluid">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="input-group input-group-lg">
-                                            <span class="input-group-addon" id="sizing-addon1">{{getSelectRequest().method}}</span>
-                                            <input type="text" class="form-control" aria-describedby="sizing-addon1" ng-value="getSelectRequest().path.value" readonly="readonly" />
+                                            <span class="input-group-addon" id="sizing-addon1">{{requestsService.getCurrent().method}}</span>
+                                            <input type="text" class="form-control" aria-describedby="sizing-addon1"
+                                                   ng-value="requestsService.getCurrent().path.value" readonly="readonly" ng-click="updateCurrent()" />
                                         </div>
                                         <br/>
 
@@ -126,6 +139,45 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Group -->
+<div class="modal fade" id="groupModal" tabindex="-1" role="dialog" aria-labelledby="groupModalLabel" ng-controller="GroupController">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form name="groupForm" novalidate>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="requestModalLabel">{{groupToSave.id == null ? 'Create group' : 'Edit group'}}</h4>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)" dismiss-on-timeout="true">{{alert.msg}}</alert>
+                    </div>
+                    <input type="hidden" ng-model="groupToSave.projectId">
+                    <input type="hidden" ng-model="groupToSave.id">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" name="name" id="name" ng-model="groupToSave.name" class="form-control" required>
+                        <p ng-show="groupForm.name.$invalid && !groupForm.name.$pristine" class="help-block">Group name is required.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="recording">Record incoming requests</label>
+                        <div class="form-group">
+                            <div class="btn-group" id="recording">
+                                <label class="btn btn-primary" ng-model="groupToSave.recording" btn-radio="true">Yes</label>
+                                <label class="btn btn-primary" ng-model="groupToSave.recording" btn-radio="false">&nbsp;No&nbsp;</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" ng-disabled="groupForm.$invalid" ng-click="saveGroup(groupToSave)">Save</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

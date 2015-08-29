@@ -8,25 +8,24 @@ var module = angular.module('mockengerClientMainApp', [
     'ngAnimate',
     'ngRoute',
     'ngSanitize',
-    'ngTouch']);
+    'ngTouch',
+    'ui.bootstrap']);
 
 module.config(['$locationProvider','$routeProvider', function ($locationProvider, $routeProvider) {
     //$locationProvider.html5Mode(true);
     $routeProvider
         .when('/', {
-            templateUrl: '/modules/main/views/mainView.html',
-            controller: 'mainController',
-            controllerAs: 'mainCtrl'
+            templateUrl: '/modules/main/views/indexView.html',
+            controller: 'IndexPageController'
         })
         .when('/project/:projectId', {
             templateUrl: '/modules/main/views/projectView.html',
-            controller: 'projectController',
-            controllerAs: 'projectCtrl',
+            controller: 'ProjectPageController',
             resolve: {
                 currentProject: ['$route', 'projectsService', function($route, projectsService) {
                     var projectId = $route.current.params.projectId;
                     projectsService.projectId = projectId;
-                    return projectsService.get({projectId : projectId});
+                    return projectsService.ajax.get({projectId : projectId});
                 }]
             }
         })

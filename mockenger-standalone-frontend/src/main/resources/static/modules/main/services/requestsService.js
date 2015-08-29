@@ -1,49 +1,78 @@
 'use strict';
 
-module.factory('requestsService', ['$q', '$filter', '$resource', 'apiEndpointsService', function ($q, $filter, $resource, apiEndpointsService) {
-    var RequestService = {
-        selectedRequest: null,
+angular.module('mockengerClientMainApp').factory('requestsService', ['$resource', 'apiEndpointsService', function ($resource, apiEndpointsService) {
 
-        requestsList: {
-            data: [],
-            requestQuery: undefined,
-            orderProp: 'name',
-            paginator: {
-                itemsPerPage: 10,
-                currentPage: 0
+    var RequestService = {
+        data: null,
+        current: null,
+        filters: {
+            order: 'name',
+            search: {
+                query: undefined
+            },
+            paging: {
+                limit: 10,
+                current: 0
             }
         },
 
-        ajax: $resource(apiEndpointsService.getRequestRestUrl(),
-            {
+        getListOrder: function() {
+            return RequestService.filters.order;
+        },
+
+        setListOrder: function(field) {
+            RequestService.filters.order = field;
+        },
+
+        getSearchQuery: function() {
+            return RequestService.filters.search.query;
+        },
+
+        setSearchQuery: function(query) {
+            RequestService.filters.search.query = query;
+        },
+
+        getLimit: function() {
+            return RequestService.filters.paging.limit;
+        },
+
+        setLimit: function(limit) {
+            return RequestService.filters.paging.limit = limit;
+        },
+
+        getCurrentPage: function() {
+            return RequestService.filters.paging.current;
+        },
+
+        setCurrentPage: function(n) {
+            RequestService.filters.paging.current = n;
+        },
+
+        getCurrent: function() {
+            return RequestService.current;
+        },
+
+        setCurrent: function(currentToSet) {
+            RequestService.current = currentToSet;
+        },
+
+        setData: function(data) {
+            RequestService.data = data;
+            RequestService.setCurrentPage(0);
+            RequestService.setListOrder('name');
+            RequestService.setSearchQuery(undefined);
+        },
+
+        getData: function() {
+            return RequestService.data;
+        },
+
+        ajax: $resource(apiEndpointsService.getRequestRestUrl(), {
                 groupId: '@groupId',
                 projectId: '@projectId',
                 requestId: '@requestId'
             }, {}
-        ),
-
-        refreshData: function(response) {
-            var deferred = $q.defer();
-
-            this.setData(response);
-            this.setCurrentPage(0);
-            this.selectedRequest = null;
-
-            deferred.resolve(this.requestsList);
-            return deferred.promise;
-        },
-        setData: function(data) {
-            this.requestsList.data = data;
-        },
-        getData: function() {
-            return this.requestsList.data;
-        },
-        getCurrentPage: function() {
-            return this.requestsList.paginator.currentPage;
-        },
-        setCurrentPage: function(n) {
-            this.requestsList.paginator.currentPage = n;
-        }
+        )
     };
 
     return RequestService;
