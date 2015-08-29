@@ -26,6 +26,7 @@
     "angular-sanitize": "^1.4.4",
     "angular-touch": "^1.4.4",
     "angular-animate": "^1.4.4",
+    "angular-bootstrap": "^0.13.3",
     "bootstrap": "3.3.4"
 
   }
