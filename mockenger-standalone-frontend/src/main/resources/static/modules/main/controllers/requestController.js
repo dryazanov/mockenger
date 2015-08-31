@@ -1,38 +1,63 @@
 'use strict';
 
-angular.module('mockengerClientMainApp').controller('RequestController',['$scope', 'requestsService', function ($scope, requestsService) {
+angular.module('mockengerClientMainApp').controller('RequestController',['$scope', 'requestService', 'requestsService', 'valuesetService',
+    function ($scope, requestService, requestsService, valuesetService) {
 
-    $scope.updateCurrent = function() {
-        requestsService.getCurrent().path.value = 'newvalue';
+    $scope.requestMethods = {};
+    $scope.transformerTypes = {};
+
+    $scope.getRequestMethods = function() {
+        valuesetService.get({id: "request-method"}, function(response, getResponseHeaders) {
+            $scope.requestMethods = response;
+        }, function(errorResponse) {
+            //showErrors(errorResponse);
+        });
     }
 
-    var REQUEST_VIEW = {
-        HEADERS: 'HEADERS',
-        PARAMETERS: 'PARAMETERS',
-        BODY: 'BODY'
-    };
+    $scope.getTransformerTypes = function() {
+        valuesetService.get({id: "transformer-type"}, function(response, getResponseHeaders) {
+            $scope.transformerTypes = response;
+        }, function(errorResponse) {
+            //showErrors(errorResponse);
+        });
+    }
 
-    $scope.setHeadersRequestView = function() {
-        $scope.currentRequestView = REQUEST_VIEW.HEADERS;
-    };
+    $scope.selectMethod = function(method) {
+        requestsService.getCurrent().method = method;
+    }
 
-    $scope.setParamsRequestView = function() {
-        $scope.currentRequestView = REQUEST_VIEW.PARAMETERS;
-    };
+    $scope.selectTransformerType = function(type, transformer) {
+        transformer.type = type;
+    }
 
-    $scope.setBodyRequestView = function() {
-        $scope.currentRequestView = REQUEST_VIEW.BODY;
-    };
+    /*$scope.addParameter = function() {
+        var length = 1;
+        var source = requestsService.getCurrent().parameters.values;
+        if (source == null) {
+            source = {};
+        } else {
+            length = Object.keys(source).length;
+        }
+        source['param' + (length + 1)] = "";
+    }*/
 
-    $scope.isHeadersRequestViewActive = function() {
-      return $scope.currentRequestView === REQUEST_VIEW.HEADERS;
-    };
+    $scope.addTransformer = function(source) {
+        if (source == null) {
+            source = [];
+        }
+        source.push({
+            type: 'REGEXP',
+            pattern: null,
+            replacement: null
+        });
+    }
 
-    $scope.isBodyRequestViewActive = function() {
-        return $scope.currentRequestView === REQUEST_VIEW.BODY;
-    };
+    $scope.deleteTransformer = function(index, source) {
+        if (source != null && source[index] != null) {
+            source.splice(index, 1);
+        }
+    }
 
-    $scope.isParamsRequestViewActive = function() {
-        return $scope.currentRequestView === REQUEST_VIEW.PARAMETERS;
-    };
+    $scope.getRequestMethods();
+    $scope.getTransformerTypes();
 }]);
