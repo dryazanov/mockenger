@@ -1,4 +1,4 @@
-<div ng-controller="mainController">
+<div ng-controller="IndexPageController">
     <div class="container">
         <div id="projects-list">
             <button type="button" class="btn btn-primary btn-sm btn-block" ng-click="createProject()">
@@ -6,7 +6,23 @@
                 Create project
             </button>
             <br/>
-            <div class="list-group" ng-repeat="project in projectsList track by $index">
+            <ul class="list-group">
+                <li class="list-group-item"  ng-repeat="project in projectsService.getData() track by $index">
+                    <a href="#/project/{{project.id}}">{{project.name}}</a>
+                    &nbsp;
+                    <span class="label label-info">{{project.type}}</span>
+                    <span class="pull-right">
+                        <button class="btn btn-xs" ng-click="editProject(project)">
+                            <span class="glyphicon glyphicon-cog"></span>
+                        </button>
+                        <button class="btn btn-xs" ng-really-click="deleteProject(project)"
+                                ng-really-message="Do you really want to delete project '{{project.name}}' with all its groups and mocks?">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </span>
+                </li>
+            </ul>
+            <!--<div class="list-group">
                 <a href="#/project/{{project.id}}" class="list-group-item">{{project.name}}
                     <span class="badge">{{project.type}}</span>
                 </a>
@@ -17,7 +33,7 @@
                         ng-really-click="deleteProject(project)" ng-really-message="Do you really want to delete project '{{project.name}}' with all its groups and mocks?">
                     Delete project
                 </button>
-            </div>
+            </div>-->
         </div>
     </div>
 
@@ -28,11 +44,11 @@
                 <form name="projectForm" novalidate>
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="requestModalLabel">{{modalTitle}}</h4>
+                        <h4 class="modal-title" id="requestModalLabel">{{currentProject.id == null ? 'Create project' : 'Edit project'}}</h4>
                     </div>
                     <div class="modal-body">
                         <div>
-                            <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)" dismiss-on-timeout="true">{{alert.msg}}</alert>
+                            <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
                         </div>
                         <input type="hidden" ng-model="currentProject.id">
                         <div class="form-group">
@@ -51,11 +67,11 @@
                             <select name="type" id="type" ng-model="currentProject.type" required ng-disabled="currentProject.id != null" class="form-control">
                                 <option ng-repeat="(key, value) in availableProjectTypes track by $index" value="{{key}}">{{value}}</option>
                             </select>
-                            <p ng-show="projectForm.type.$invalid && !projectForm.type.$pristine" class="help-block">You name is required.</p>
+                            <p ng-show="projectForm.type.$invalid && !projectForm.type.$pristine" class="help-block">Type is required.</p>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                         <button type="button" class="btn btn-primary" ng-disabled="projectForm.$invalid" ng-click="saveProject(currentProject)">Save</button>
                     </div>
                 </form>
