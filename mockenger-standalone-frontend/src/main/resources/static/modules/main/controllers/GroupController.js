@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('mockengerClientMainApp').controller('GroupController',['$scope', 'projectsService', 'groupService', 'groupsService',
-    function ($scope, projectsService, groupService, groupsService) {
+angular.module('mockengerClientMainApp').controller('GroupController',['$scope', 'projectsService', 'groupService', 'groupListService',
+    function ($scope, projectsService, groupService, groupListService) {
 
         var groupModal = $('#groupModal');
         $scope.groupToSave = {};
@@ -21,9 +21,9 @@ angular.module('mockengerClientMainApp').controller('GroupController',['$scope',
             if (group.id != null) {
                 groupService.ajax.update({groupId: group.id}, group, function(response, getResponseHeaders) {
                     groupModal.modal('hide');
-                    for (var i = 0, l = groupsService.getData().length; i < l; i++) {
-                        if (groupsService.getData()[i].id == response.id) {
-                            groupsService.getData()[i] = response;
+                    for (var i = 0, l = groupListService.getData().length; i < l; i++) {
+                        if (groupListService.getData()[i].id == response.id) {
+                            groupListService.getData()[i] = response;
                             break;
                         }
                     }
@@ -33,7 +33,7 @@ angular.module('mockengerClientMainApp').controller('GroupController',['$scope',
             } else {
                 groupService.ajax.save(group, function(response) {
                     groupModal.modal('hide');
-                    groupsService.addGroupToList(response);
+                    groupListService.addGroupToList(response);
                 }, function(errorResponse) {
                     showErrors(errorResponse);
                 });
