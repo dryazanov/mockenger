@@ -1,6 +1,8 @@
 package com.socialstartup.mockenger.data.model.persistent.mock.response;
 
-import java.util.Map;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
+
+import java.util.Set;
 
 /**
  * Created by x079089 on 3/12/2015.
@@ -9,7 +11,7 @@ public class MockResponse {
 
     private int httpStatus;
 
-    private Map<String, String> headers;
+    private Set<Pair> headers;
 
     private String body;
 
@@ -22,11 +24,11 @@ public class MockResponse {
         this.httpStatus = httpStatus;
     }
 
-    public Map<String, String> getHeaders() {
+    public Set<Pair> getHeaders() {
         return headers;
     }
 
-    public void setHeaders(Map<String, String> headers) {
+    public void setHeaders(Set<Pair> headers) {
         this.headers = headers;
     }
 

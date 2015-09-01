@@ -175,7 +175,7 @@
                                                         </tr>
                                                         <tr>
                                                             <td colspan="4">
-                                                                <a href ng-click="addTransformer(requestsService.getCurrent().path.transformers)">Add transformer</a>
+                                                                <a href ng-click="addPathTransformer()">Add transformer</a>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -188,12 +188,12 @@
                                                 <div class="form-group">
                                                     <label for="url">Parameters</label>
                                                     <table class="table">
-                                                        <tr ng-repeat="(paramKey, paramValue) in requestsService.getCurrent().parameters.values track by $index">
+                                                        <tr ng-repeat="parameter in requestsService.getCurrent().parameters.values track by $index">
                                                             <td class="col-lg-6">
-                                                                <input type="text" ng-model="paramKey" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" ng-model="parameter.key" class="form-control" aria-describedby="sizing-addon1">
                                                             </td>
                                                             <td class="col-lg-6">
-                                                                <input type="text" ng-model="paramValue" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" ng-model="parameter.value" class="form-control" aria-describedby="sizing-addon1">
                                                             </td>
                                                             <td>
                                                                 <button class="btn btn-x" ng-really-click="deleteParameter($index)"
@@ -202,11 +202,11 @@
                                                                 </button>
                                                             </td>
                                                         </tr>
-                                                        <!--<tr>
+                                                        <tr>
                                                             <td colspan="3">
                                                                 <a href ng-click="addParameter()">Add parameter</a>
                                                             </td>
-                                                        </tr>-->
+                                                        </tr>
                                                     </table>
                                                 </div>
 
@@ -234,7 +234,7 @@
                                                         </tr>
                                                         <tr>
                                                             <td colspan="4">
-                                                                <a href ng-click="addTransformer(requestsService.getCurrent().parameters.transformers)">Add transformer</a>
+                                                                <a href ng-click="addParamTransformer()">Add transformer</a>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -245,27 +245,27 @@
                                                 <!--<pre>?{{requestsService.getCurrent().headers.values}}</pre>-->
 
                                                 <div class="form-group">
-                                                    <label for="url">Parameters</label>
+                                                    <label for="url">Headers</label>
                                                     <table class="table">
-                                                        <tr ng-repeat="(headerKey, headerValue) in requestsService.getCurrent().headers.values track by $index">
+                                                        <tr ng-repeat="requestHeader in requestsService.getCurrent().headers.values track by $index">
                                                             <td class="col-lg-6">
-                                                                <input type="text" ng-model="headerKey" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" ng-model="requestHeader.key" class="form-control" aria-describedby="sizing-addon1">
                                                             </td>
                                                             <td class="col-lg-6">
-                                                                <input type="text" ng-model="headerValue" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" ng-model="requestHeader.value" class="form-control" aria-describedby="sizing-addon1">
                                                             </td>
                                                             <td>
-                                                                <button class="btn btn-x" ng-really-click="deleteHeader($index)"
+                                                                <button class="btn btn-x" ng-really-click="deleteHeader($index, requestsService.getCurrent().headers.values)"
                                                                         ng-really-message="Do you really want to delete this header?">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
                                                             </td>
                                                         </tr>
-                                                        <!--<tr>
+                                                        <tr>
                                                             <td colspan="3">
-                                                                <a href ng-click="addHeader()">Add header</a>
+                                                                <a href ng-click="addRequestHeader()">Add header</a>
                                                             </td>
-                                                        </tr>-->
+                                                        </tr>
                                                     </table>
                                                 </div>
 
@@ -293,17 +293,74 @@
                                                         </tr>
                                                         <tr>
                                                             <td colspan="4">
-                                                                <a href ng-click="addTransformer(requestsService.getCurrent().headers.transformers)">Add transformer</a>
+                                                                <a href ng-click="addHeaderTransformer()">Add transformer</a>
                                                             </td>
                                                         </tr>
                                                     </table>
                                                 </div>
                                             </tab>
                                             <tab heading="Request">
+                                                <br/>
                                                 <pre>{{requestsService.getCurrent().body.value}}</pre>
+
+                                                <div class="form-group">
+                                                    <label>Transformers</label>
+                                                    <table class="table">
+                                                        <tr ng-repeat="bodyTransformer in requestsService.getCurrent().body.transformers">
+                                                            <td class="col-lg-2">
+                                                                <select ng-model="bodyTransformer.type" required class="form-control">
+                                                                    <option ng-repeat="typeName in transformerTypes">{{typeName}}</option>
+                                                                </select>
+                                                            </td>
+                                                            <td class="col-lg-5">
+                                                                <input type="text" ng-model="bodyTransformer.pattern" class="form-control" aria-describedby="sizing-addon1">
+                                                            </td>
+                                                            <td class="col-lg-6">
+                                                                <input type="text" ng-model="bodyTransformer.replacement" class="form-control" aria-describedby="sizing-addon1">
+                                                            </td>
+                                                            <td>
+                                                                <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestsService.getCurrent().body.transformers)"
+                                                                        ng-really-message="Do you really want to delete this transformer?">
+                                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="4">
+                                                                <a href ng-click="addRequestBodyTransformer()">Add transformer</a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
                                             </tab>
                                             <tab heading="Response">
+                                                <br/>
                                                 <pre>{{requestsService.getCurrent().mockResponse.body}}</pre>
+
+                                                <div class="form-group">
+                                                    <label for="url">Headers</label>
+                                                    <table class="table">
+                                                        <tr ng-repeat="responseHeader in requestsService.getCurrent().mockResponse.headers track by $index">
+                                                            <td class="col-lg-6">
+                                                                <input type="text" ng-model="responseHeader.key" class="form-control" aria-describedby="sizing-addon1">
+                                                            </td>
+                                                            <td class="col-lg-6">
+                                                                <input type="text" ng-model="responseHeader.value" class="form-control" aria-describedby="sizing-addon1">
+                                                            </td>
+                                                            <td>
+                                                                <button class="btn btn-x" ng-really-click="deleteHeader($index, requestsService.getCurrent().mockResponse.headers)"
+                                                                        ng-really-message="Do you really want to delete this header?">
+                                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="3">
+                                                                <a href ng-click="addResponseHeader()">Add header</a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
                                             </tab>
                                         </tabset>
                                     </div>

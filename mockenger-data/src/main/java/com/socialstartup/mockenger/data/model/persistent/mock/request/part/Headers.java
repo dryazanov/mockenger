@@ -3,32 +3,32 @@ package com.socialstartup.mockenger.data.model.persistent.mock.request.part;
 import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by x079089 on 3/31/2015.
  */
 public class Headers extends AbstractPart<AbstractMapTransformer> {
 
-    private Map<String, String> values;
+    private Set<Pair> values;
 
 
     public Headers() {}
 
-    public Headers(Map<String, String> values) {
+    public Headers(Set<Pair> values) {
         this.values = values;
     }
 
-    public Headers(List<AbstractMapTransformer> transformers, Map<String, String> values) {
+    public Headers(List<AbstractMapTransformer> transformers, Set<Pair> values) {
         this.transformers = transformers;
         this.values = values;
     }
 
-    public Map<String, String> getValues() {
+    public Set<Pair> getValues() {
         return values;
     }
 
-    public void setValues(Map<String, String> values) {
+    public void setValues(Set<Pair> values) {
         this.values = values;
     }
 }

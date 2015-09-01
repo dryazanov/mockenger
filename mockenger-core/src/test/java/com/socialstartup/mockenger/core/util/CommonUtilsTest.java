@@ -2,6 +2,7 @@ package com.socialstartup.mockenger.core.util;
 
 import com.socialstartup.mockenger.data.model.persistent.mock.request.PostRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Body;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Parameters;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
 import org.junit.Before;
@@ -10,7 +11,8 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -27,19 +29,19 @@ public class CommonUtilsTest {
 
     private static final String URL1 = "/service/test/1";
 
-    private final Map<String, String> goodParameters = new TreeMap<>();
+    private final SortedSet<Pair> goodParameters = new TreeSet<>();
     private static final String PARAM_NAME1 = "a";
     private static final String PARAM_NAME2 = "b";
     private static final String PARAM_VALUE1 = "1";
     private static final String PARAM_VALUE2 = "2";
 
-    private final static String RESULT1 = "a478cee21e14c6561de47885eecf7059";
+    private final static String RESULT1 = "eeb4b7ef4faf4572e7138306a6a742b1";
 
 
     @Before
     public void init() {
-        goodParameters.put(PARAM_NAME1, PARAM_VALUE1);
-        goodParameters.put(PARAM_NAME2, PARAM_VALUE2);
+        goodParameters.add(new Pair(PARAM_NAME1, PARAM_VALUE1));
+        goodParameters.add(new Pair(PARAM_NAME2, PARAM_VALUE2));
 
         // Simulate request from user
         postTestRequest.setPath(new Path(URL1));
@@ -65,6 +67,15 @@ public class CommonUtilsTest {
     }
 
     @Test
+    public void testGetCheckSumBodyEmptyParamsWithDifferentOrder() {
+        goodParameters.add(new Pair(PARAM_NAME2, PARAM_VALUE2));
+        goodParameters.add(new Pair(PARAM_NAME1, PARAM_VALUE1));
+        postTestRequest.setParameters(new Parameters(goodParameters));
+        postTestRequest.setBody(new Body(""));
+        assertEquals(RESULT1, CommonUtils.getCheckSum(postTestRequest));
+    }
+
+    @Test
     public void testGenerateGetCheckSumOk() {
         assertEquals(RESULT1, CommonUtils.generateCheckSum(postTestRequest));
     }
@@ -72,7 +83,7 @@ public class CommonUtilsTest {
     @Test
     public void testGenerateGetCheckSumPathNull() {
         postTestRequest.setPath(new Path(null));
-        assertEquals("2ef59de59f02b13902b697f08d9159af", CommonUtils.generateCheckSum(postTestRequest));
+        assertEquals("2bdfee688d37ba44d7fd300719161c6d", CommonUtils.generateCheckSum(postTestRequest));
     }
 
     @Test
@@ -83,10 +94,13 @@ public class CommonUtilsTest {
 
     @Test
     public void testGenerateGetCheckSumArgs() {
+        StringBuilder sb = new StringBuilder();
+        for (Pair pair : postTestRequest.getParameters().getValues()) {
+            sb.append(pair.getKey()).append(pair.getValue());
+        }
         String path = postTestRequest.getPath().getValue();
-        String params = postTestRequest.getParameters().getValues().toString();
         String method = postTestRequest.getMethod().toString();
-        assertEquals(RESULT1, CommonUtils.generateCheckSum(path, params, method));
+        assertEquals(RESULT1, CommonUtils.generateCheckSum(path, sb.toString(), method));
     }
 
     @Test

@@ -1,13 +1,15 @@
 package com.socialstartup.mockenger.core.util;
 
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Created by x079089 on 3/20/2015.
@@ -32,10 +34,10 @@ public class HttpUtils {
      * @param strictMatch true if you want to use headers as they are, false will set everything to lower case
      * @return
      */
-    public static Map<String, String> getHeaders(HttpServletRequest servletRequest, boolean strictMatch) {
+    public static Set<Pair> getHeaders(HttpServletRequest servletRequest, boolean strictMatch) {
         String headerName;
         String headerValue;
-        Map<String, String> requestHeaders = new HashMap<>();
+        Set<Pair> requestHeaders = new HashSet<>();
         Enumeration<String> headerNames = servletRequest.getHeaderNames();
 
         while (headerNames.hasMoreElements()) {
@@ -47,7 +49,7 @@ public class HttpUtils {
                 headerValue = servletRequest.getHeader(headerName).toLowerCase();
             }
             headerValue = headerValue.replaceAll(DELIMITER_PATTERN, "");
-            requestHeaders.put(headerName, headerValue);
+            requestHeaders.add(new Pair(headerName, headerValue));
         }
 
         return requestHeaders;
@@ -59,16 +61,16 @@ public class HttpUtils {
      * @param servletRequest
      * @return
      */
-    public static Map<String, String> getParameterMap(HttpServletRequest servletRequest) {
-        Map<String, String> parameterMap = new TreeMap<>();
+    public static SortedSet<Pair> getParameterMap(HttpServletRequest servletRequest) {
+        SortedSet<Pair> parameters = new TreeSet<>();
         Enumeration<String> parameterNames = servletRequest.getParameterNames();
 
         while (parameterNames.hasMoreElements()) {
             String name = parameterNames.nextElement();
-            parameterMap.put(name, servletRequest.getParameter(name));
+            parameters.add(new Pair(name, servletRequest.getParameter(name)));
         }
 
-        return (parameterMap.size() > 0 ? parameterMap : null);
+        return (parameters.size() > 0 ? parameters : null);
     }
 
     /**

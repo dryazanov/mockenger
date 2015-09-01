@@ -96,7 +96,7 @@ public class ProjectControllerTest extends AbstractControllerTest {
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]").value("name: may not be null or empty"));
+                .andExpect(jsonPath("$.errors[0]").value("Name: may not be null or empty"));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class ProjectControllerTest extends AbstractControllerTest {
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]").value("type: may not be null"));
+                .andExpect(jsonPath("$.errors[0]").value("Type: may not be null"));
     }
 
     @Test
@@ -133,12 +133,12 @@ public class ProjectControllerTest extends AbstractControllerTest {
 
         // Expect response status 500
         resultActions = createProjectRest(project);
-        resultActions.andExpect(status().isInternalServerError())
+        resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
-                .andExpect(jsonPath("$.errors[0]").value("Unable to process request. Internal server error: duplicate code '" + project.getCode() + "' error"));
+                .andExpect(jsonPath("$.errors[0]").value(String.format("Project with the code '%s' already exist", project.getCode())));
 
         // Expect response status 200
-        project.setCode(PROJECT_CODE_TEST + "-1");
+        project.setCode(PROJECT_CODE_TEST + "1");
         resultActions = createProjectRest(project);
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
@@ -178,7 +178,7 @@ public class ProjectControllerTest extends AbstractControllerTest {
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]").value("name: may not be null or empty"));
+                .andExpect(jsonPath("$.errors[0]").value("Name: may not be null or empty"));
     }
 
     @Test
@@ -190,7 +190,7 @@ public class ProjectControllerTest extends AbstractControllerTest {
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]").value("type: may not be null"));
+                .andExpect(jsonPath("$.errors[0]").value("Type: may not be null"));
     }
 
     @Test

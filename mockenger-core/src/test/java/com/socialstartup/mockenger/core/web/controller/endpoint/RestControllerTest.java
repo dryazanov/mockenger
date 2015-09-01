@@ -11,6 +11,7 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.PostReques
 import com.socialstartup.mockenger.data.model.persistent.mock.request.PutRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Body;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Headers;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
 import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
 import com.socialstartup.mockenger.data.model.persistent.transformer.RegexpTransformer;
@@ -25,8 +26,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -119,7 +120,7 @@ public class RestControllerTest extends AbstractControllerTest {
 
         this.mockMvc.perform(post(endpoint).contentType(mediaType).content(REST_BAD_JSON_REQUEST))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors[0]").value("Failed to create an instance of the mock-object: Cannot read json from the provided source"));
+                .andExpect(jsonPath("$.errors[0]").value("Failed to create instance of the mock-object: Cannot read json from the provided source"));
     }
 
     @Test
@@ -185,7 +186,7 @@ public class RestControllerTest extends AbstractControllerTest {
 
         this.mockMvc.perform(put(endpoint).contentType(mediaType).content(REST_BAD_JSON_REQUEST))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors[0]").value("Failed to create an instance of the mock-object: Cannot read json from the provided source"));
+                .andExpect(jsonPath("$.errors[0]").value("Failed to create instance of the mock-object: Cannot read json from the provided source"));
     }
 
 
@@ -277,8 +278,8 @@ public class RestControllerTest extends AbstractControllerTest {
     }
 
     private void createMockRequest(AbstractRequest request, String groupId, String contentType, String requestBody, String responseBody) {
-        Map<String, String> headersMap = new TreeMap<>();
-        headersMap.put("content-type", contentType);
+        Set<Pair> headersMap = new HashSet<>();
+        headersMap.add(new Pair("content-type", contentType));
 
         RegexpTransformer regexpTransformer = new RegexpTransformer(ID2, ID1);
 

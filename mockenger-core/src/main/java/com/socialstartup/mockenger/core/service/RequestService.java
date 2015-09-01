@@ -5,6 +5,7 @@ import com.socialstartup.mockenger.core.util.HttpUtils;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Headers;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Parameters;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
 import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
@@ -20,9 +21,11 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Created by x079089 on 3/24/2015.
@@ -152,25 +155,30 @@ public class RequestService {
      */
     private boolean parametersEqual(AbstractRequest abstractRequestFromUser, AbstractRequest mockedAbstractRequest) {
         List<AbstractMapTransformer> transformers;
-        Map<String, String> usersParameters;
-        Map<String, String> mockedParameters;
+        SortedSet<Pair> usersParameters;
+        SortedSet<Pair> mockedParameters;
 
         Parameters abstractParams = abstractRequestFromUser.getParameters();
         Parameters mockedParams = mockedAbstractRequest.getParameters();
 
         if (abstractParams != null && mockedParams != null) {
             // Transform and check query parameters
-            usersParameters = (abstractParams.getValues() != null ? abstractParams.getValues() : new HashMap<>());
-            mockedParameters = (mockedParams.getValues() != null ? mockedParams.getValues() : new HashMap<>());
+            usersParameters = (abstractParams.getValues() != null ? abstractParams.getValues() : new TreeSet<>());
+            mockedParameters = (mockedParams.getValues() != null ? mockedParams.getValues() : new TreeSet<>());
 
             if (CommonUtils.allNotEmpty(usersParameters, mockedParameters)) {
                 transformers = mockedAbstractRequest.getParameters().getTransformers();
                 if (!CollectionUtils.isEmpty(transformers)) {
                     for (AbstractMapTransformer transformer : transformers) {
-                        String value = usersParameters.get(transformer.getKey());
-                        if (!StringUtils.isEmpty(value)) {
-                            usersParameters.put(transformer.getKey(), transformer.transform(value));
+                        SortedSet<Pair> paramsTemp = new TreeSet<>();
+                        for (Pair pair : usersParameters) {
+                            if (pair.getKey().equals(transformer.getKey()) && !StringUtils.isEmpty(pair.getValue())) {
+                                paramsTemp.add(new Pair(pair.getKey(), transformer.transform(pair.getValue())));
+                            } else {
+                                paramsTemp.add(pair);
+                            }
                         }
+                        usersParameters = paramsTemp;
                     }
                 }
 
@@ -196,22 +204,27 @@ public class RequestService {
      */
     private boolean headersEqual(AbstractRequest abstractRequestFromUser, AbstractRequest mockedAbstractRequest) {
         List<AbstractMapTransformer> transformers;
-        Map<String, String> usersHeaders;
-        Map<String, String> mockedHeaders;
+        Set<Pair> usersHeaders;
+        Set<Pair> mockedHeaders;
 
         if (abstractRequestFromUser.getHeaders() != null && mockedAbstractRequest.getHeaders() != null) {
             // Transform and check headers
-            usersHeaders = new HashMap<>(abstractRequestFromUser.getHeaders().getValues());
-            mockedHeaders = new HashMap<>(mockedAbstractRequest.getHeaders().getValues());
+            usersHeaders = new HashSet<>(abstractRequestFromUser.getHeaders().getValues());
+            mockedHeaders = new HashSet<>(mockedAbstractRequest.getHeaders().getValues());
 
             if (CommonUtils.allNotEmpty(usersHeaders, mockedHeaders)) {
                 transformers = mockedAbstractRequest.getHeaders().getTransformers();
                 if (!CollectionUtils.isEmpty(transformers)) {
                     for (AbstractMapTransformer transformer : transformers) {
-                        String value = usersHeaders.get(transformer.getKey());
-                        if (!StringUtils.isEmpty(value)) {
-                            usersHeaders.put(transformer.getKey(), transformer.transform(value));
+                        Set<Pair> paramsTemp = new HashSet<>();
+                        for (Pair pair : usersHeaders) {
+                            if (pair.getKey().equals(transformer.getKey()) && !StringUtils.isEmpty(pair.getValue())) {
+                                paramsTemp.add(new Pair(pair.getKey(), transformer.transform(pair.getValue())));
+                            } else {
+                                paramsTemp.add(pair);
+                            }
                         }
+                        usersHeaders = paramsTemp;
                     }
                 }
 
