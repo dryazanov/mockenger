@@ -6,6 +6,7 @@ import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.core.web.exception.MockObjectNotCreatedException;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -83,16 +84,19 @@ public class ParentController extends AbstractController {
                 mockResponse = mockResult.getMockResponse();
             }
             if (!CollectionUtils.isEmpty(mockResponse.getHeaders())) {
-                for (Map.Entry<String, String> header : mockResponse.getHeaders().entrySet()) {
+                for (Pair header : mockResponse.getHeaders()) {
                     getResponseHeaders().set(header.getKey(), header.getValue());
                 }
             } else if (mockRequest.getHeaders() != null) {
-                Map<String, String> headerValues = mockRequest.getHeaders().getValues();
-                if (!CollectionUtils.isEmpty(headerValues) && headerValues.containsKey(CONTENT_TYPE_KEY)) {
-                    if (headerValues.get(CONTENT_TYPE_KEY).contains(MediaType.APPLICATION_XML_VALUE)) {
-                        getResponseHeaders().set(CONTENT_TYPE_KEY, MEDIA_TYPE_XML);
+                Set<Pair> headerValues = mockRequest.getHeaders().getValues();
+                if (!CollectionUtils.isEmpty(headerValues)) {
+                    for (Pair pair : headerValues) {
+                        if (pair.getKey().equals(CONTENT_TYPE_KEY) && pair.getValue().contains(MediaType.APPLICATION_XML_VALUE)) {
+                            getResponseHeaders().set(CONTENT_TYPE_KEY, MEDIA_TYPE_XML);
+                        }
                     }
                 }
+
             }
             return new ResponseEntity(mockResponse.getBody(), getResponseHeaders(), HttpStatus.valueOf(mockResponse.getHttpStatus()));
         } else {

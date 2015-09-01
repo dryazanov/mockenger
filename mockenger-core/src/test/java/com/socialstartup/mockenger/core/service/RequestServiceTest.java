@@ -7,6 +7,7 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.GetRequest
 import com.socialstartup.mockenger.data.model.persistent.mock.request.PostRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Body;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Headers;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Parameters;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
 import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
@@ -25,10 +26,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -69,9 +71,9 @@ public class RequestServiceTest {
     private static final String ACCEPT = "accept";
     private static final String ACCEPT_VALUE1 = "*/*";
 
-    private final Map<String, String> goodHeaders = new HashMap<>();
-    private final Map<String, String> badHeaders = new HashMap<>();
-    private final Map<String, String> moreHeaders = new HashMap<>();
+    private final Set<Pair> goodHeaders = new HashSet<>();
+    private final Set<Pair> badHeaders = new HashSet<>();
+    private final Set<Pair> moreHeaders = new HashSet<>();
 
     private static final String PARAM_NAME1 = "a";
     private static final String PARAM_NAME2 = "b";
@@ -81,9 +83,9 @@ public class RequestServiceTest {
     private static final String PARAM_VALUE3 = "3";
     private static final String PARAM_VALUE4 = "111";
 
-    private final Map<String, String> goodParameters = new TreeMap<>();
-    private final Map<String, String> badParameters = new TreeMap<>();
-    private final Map<String, String> moreParameters = new TreeMap<>();
+    private final SortedSet<Pair> goodParameters = new TreeSet<>();
+    private final SortedSet<Pair> badParameters = new TreeSet<>();
+    private final SortedSet<Pair> moreParameters = new TreeSet<>();
 
     private final PostRequest postTestRequest = new PostRequest();
     private final PostRequest postRequest1 = new PostRequest();
@@ -116,25 +118,25 @@ public class RequestServiceTest {
     public void init() {
         initMocks(this);
 
-        goodHeaders.put(CONTENT_TYPE, CONTENT_TYPE_VALUE1);
-        goodHeaders.put(HOST, HOST_VALUE1);
+        goodHeaders.add(new Pair(CONTENT_TYPE, CONTENT_TYPE_VALUE1));
+        goodHeaders.add(new Pair(HOST, HOST_VALUE1));
 
-        badHeaders.put(CONTENT_TYPE, CONTENT_TYPE_VALUE2);
-        badHeaders.put(HOST, HOST_VALUE2);
+        badHeaders.add(new Pair(CONTENT_TYPE, CONTENT_TYPE_VALUE2));
+        badHeaders.add(new Pair(HOST, HOST_VALUE2));
 
-        moreHeaders.put(CONTENT_TYPE, CONTENT_TYPE_VALUE1);
-        moreHeaders.put(HOST, HOST_VALUE1);
-        moreHeaders.put(ACCEPT, ACCEPT_VALUE1);
+        moreHeaders.add(new Pair(CONTENT_TYPE, CONTENT_TYPE_VALUE1));
+        moreHeaders.add(new Pair(HOST, HOST_VALUE1));
+        moreHeaders.add(new Pair(ACCEPT, ACCEPT_VALUE1));
 
-        goodParameters.put(PARAM_NAME1, PARAM_VALUE1);
-        goodParameters.put(PARAM_NAME2, PARAM_VALUE2);
+        goodParameters.add(new Pair(PARAM_NAME1, PARAM_VALUE1));
+        goodParameters.add(new Pair(PARAM_NAME2, PARAM_VALUE2));
 
-        badParameters.put(PARAM_NAME1, PARAM_VALUE2);
-        badParameters.put(PARAM_NAME2, PARAM_VALUE1);
+        badParameters.add(new Pair(PARAM_NAME1, PARAM_VALUE2));
+        badParameters.add(new Pair(PARAM_NAME2, PARAM_VALUE1));
 
-        moreParameters.put(PARAM_NAME1, PARAM_VALUE2);
-        moreParameters.put(PARAM_NAME2, PARAM_VALUE1);
-        moreParameters.put(PARAM_NAME3, PARAM_VALUE3);
+        moreParameters.add(new Pair(PARAM_NAME1, PARAM_VALUE2));
+        moreParameters.add(new Pair(PARAM_NAME2, PARAM_VALUE1));
+        moreParameters.add(new Pair(PARAM_NAME3, PARAM_VALUE3));
     }
 
     @Test
@@ -166,9 +168,9 @@ public class RequestServiceTest {
     public void testDoFilterForPostParametersWithTransformer() {
         createPostRequests();
         List<AbstractMapTransformer> transformers = new ArrayList<>(Arrays.asList(keyValueTransformerParam));
-        Map<String, String> parameters = new TreeMap<>();
-        parameters.put(PARAM_NAME2, PARAM_VALUE2);
-        parameters.put(PARAM_NAME1, PARAM_VALUE4);
+        SortedSet<Pair> parameters = new TreeSet<>();
+        parameters.add(new Pair(PARAM_NAME2, PARAM_VALUE2));
+        parameters.add(new Pair(PARAM_NAME1, PARAM_VALUE4));
 
         postTestRequest.setParameters(new Parameters(parameters));
         postRequest1.setParameters(new Parameters(transformers, goodParameters));
@@ -187,9 +189,9 @@ public class RequestServiceTest {
     public void testDoFilterForPostHeadersWithTransformer() {
         createPostRequests();
         List<AbstractMapTransformer> transformers = new ArrayList<>(Arrays.asList(keyValueTransformerHeader));
-        Map<String, String> headers = new TreeMap<>();
-        headers.put(CONTENT_TYPE, CONTENT_TYPE_VALUE3);
-        headers.put(HOST, HOST_VALUE1);
+        Set<Pair> headers = new HashSet<>();
+        headers.add(new Pair(CONTENT_TYPE, CONTENT_TYPE_VALUE3));
+        headers.add(new Pair(HOST, HOST_VALUE1));
 
         postTestRequest.setHeaders(new Headers(headers));
         postRequest1.setHeaders(new Headers(transformers, goodHeaders));

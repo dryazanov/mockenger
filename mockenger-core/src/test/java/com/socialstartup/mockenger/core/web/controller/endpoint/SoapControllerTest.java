@@ -8,6 +8,7 @@ import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.PostRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Body;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Headers;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
 import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
 import com.socialstartup.mockenger.data.model.persistent.transformer.RegexpTransformer;
@@ -22,8 +23,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -124,13 +125,13 @@ public class SoapControllerTest extends AbstractControllerTest {
 
         this.mockMvc.perform(post(endpoint).contentType(mediaType).content(content))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors[0]").value("Failed to create an instance of the mock-object: Cannot create SOAP message"));
+                .andExpect(jsonPath("$.errors[0]").value("Failed to create instance of the mock-object: Cannot create SOAP message"));
     }
 
 
     private PostRequest createSoapMockRequest(String groupId) {
-        Map<String, String> headersMap = new TreeMap<>();
-        headersMap.put("content-type", CONTENT_TYPE_SOAP_UTF8.toLowerCase());
+        Set<Pair> headersMap = new HashSet<>();
+        headersMap.add(new Pair("content-type", CONTENT_TYPE_SOAP_UTF8.toLowerCase()));
 
         RegexpTransformer regexpTransformer = new RegexpTransformer(ID2, ID1);
 

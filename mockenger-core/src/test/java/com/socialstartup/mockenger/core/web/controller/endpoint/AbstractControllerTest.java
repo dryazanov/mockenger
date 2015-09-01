@@ -12,6 +12,7 @@ import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Body;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Headers;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Parameters;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
 import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
@@ -31,9 +32,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Created by x079089 on 6/29/2015.
@@ -207,8 +210,8 @@ public class AbstractControllerTest {
     }
 
     protected static AbstractRequest getNewRequest(String groupId) {
-        Map<String, String> paramsMap = new TreeMap<>();
-        Map<String, String> headersMap = new TreeMap<>();
+        SortedSet<Pair> paramsMap = new TreeSet<>();
+        Set<Pair> headersMap = new HashSet<>();
         String PARAM_NAME1 = "A";
         String PARAM_NAME2 = "b";
         String PARAM_VALUE1 = "1";
@@ -218,11 +221,11 @@ public class AbstractControllerTest {
         String HEADER_VALUE1 = "H1";
         String HEADER_VALUE2 = "h2";
 
-        paramsMap.put(PARAM_NAME1, PARAM_VALUE1);
-        paramsMap.put(PARAM_NAME2, PARAM_VALUE2);
+        paramsMap.add(new Pair(PARAM_NAME1, PARAM_VALUE1));
+        paramsMap.add(new Pair(PARAM_NAME2, PARAM_VALUE2));
 
-        headersMap.put(HEADER_NAME1, HEADER_VALUE1);
-        headersMap.put(HEADER_NAME2, HEADER_VALUE2);
+        headersMap.add(new Pair(HEADER_NAME1, HEADER_VALUE1));
+        headersMap.add(new Pair(HEADER_NAME2, HEADER_VALUE2));
 
         RegexpTransformer regexpTransformer = new RegexpTransformer();
         XPathTransformer xPathTransformer = new XPathTransformer();

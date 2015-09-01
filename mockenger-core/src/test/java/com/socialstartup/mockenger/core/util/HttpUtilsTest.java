@@ -1,5 +1,6 @@
 package com.socialstartup.mockenger.core.util;
 
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -8,9 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -62,28 +65,30 @@ public class HttpUtilsTest {
 
     @Test
     public void testGetHeaders() {
-        Map<String, String> resultMap = HttpUtils.getHeaders(httpServletRequestMock, false);
-        assertEquals(3, resultMap.size());
-        assertEquals(CONTENT_TYPE_VALUE2, resultMap.get(CONTENT_TYPE));
-        assertEquals(HOST_VALUE2, resultMap.get(HOST));
-        assertEquals(ACCEPT_VALUE, resultMap.get(ACCEPT));
+        Set<Pair> result = HttpUtils.getHeaders(httpServletRequestMock, false);
+        assertEquals(3, result.size());
+
+        assertTrue(result.contains(new Pair(CONTENT_TYPE, CONTENT_TYPE_VALUE2)));
+        assertTrue(result.contains(new Pair(HOST, HOST_VALUE2)));
+        assertTrue(result.contains(new Pair(ACCEPT, ACCEPT_VALUE)));
     }
 
     @Test
     public void testGetHeadersStrict() {
-        Map<String, String> resultMap = HttpUtils.getHeaders(httpServletRequestMock, true);
-        assertEquals(3, resultMap.size());
-        assertEquals(CONTENT_TYPE_VALUE3, resultMap.get(CONTENT_TYPE));
-        assertEquals(HOST_VALUE1, resultMap.get(HOST));
-        assertEquals(ACCEPT_VALUE, resultMap.get(ACCEPT));
+        Set<Pair> result = HttpUtils.getHeaders(httpServletRequestMock, true);
+        assertEquals(3, result.size());
+
+        assertTrue(result.contains(new Pair(CONTENT_TYPE, CONTENT_TYPE_VALUE3)));
+        assertTrue(result.contains(new Pair(HOST, HOST_VALUE1)));
+        assertTrue(result.contains(new Pair(ACCEPT, ACCEPT_VALUE)));
     }
 
     @Test
     public void testGetParameterMap() {
-        Map<String, String> resultMap = HttpUtils.getParameterMap(httpServletRequestMock);
+        SortedSet<Pair> resultMap = HttpUtils.getParameterMap(httpServletRequestMock);
         assertEquals(3, resultMap.size());
-        assertEquals(PARAM_VALUE1, resultMap.get(PARAM_NAME1));
-        assertEquals(PARAM_VALUE2, resultMap.get(PARAM_NAME2));
-        assertEquals(PARAM_VALUE3, resultMap.get(PARAM_NAME3));
+        assertTrue(resultMap.contains(new Pair(PARAM_NAME1, PARAM_VALUE1)));
+        assertTrue(resultMap.contains(new Pair(PARAM_NAME2, PARAM_VALUE2)));
+        assertTrue(resultMap.contains(new Pair(PARAM_NAME3, PARAM_VALUE3)));
     }
 }
