@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
@@ -155,32 +154,19 @@ public class RequestService {
      */
     private boolean parametersEqual(AbstractRequest abstractRequestFromUser, AbstractRequest mockedAbstractRequest) {
         List<AbstractMapTransformer> transformers;
-        SortedSet<Pair> usersParameters;
-        SortedSet<Pair> mockedParameters;
+        Set<Pair> usersParameters;
+        Set<Pair> mockedParameters;
 
         Parameters abstractParams = abstractRequestFromUser.getParameters();
         Parameters mockedParams = mockedAbstractRequest.getParameters();
 
         if (abstractParams != null && mockedParams != null) {
             // Transform and check query parameters
-            usersParameters = (abstractParams.getValues() != null ? abstractParams.getValues() : new TreeSet<>());
-            mockedParameters = (mockedParams.getValues() != null ? mockedParams.getValues() : new TreeSet<>());
+            usersParameters = (abstractParams.getValues() != null ? abstractParams.getValues() : new HashSet<>());
+            mockedParameters = (mockedParams.getValues() != null ? mockedParams.getValues() : new HashSet<>());
 
             if (CommonUtils.allNotEmpty(usersParameters, mockedParameters)) {
-                transformers = mockedAbstractRequest.getParameters().getTransformers();
-                if (!CollectionUtils.isEmpty(transformers)) {
-                    for (AbstractMapTransformer transformer : transformers) {
-                        SortedSet<Pair> paramsTemp = new TreeSet<>();
-                        for (Pair pair : usersParameters) {
-                            if (pair.getKey().equals(transformer.getKey()) && !StringUtils.isEmpty(pair.getValue())) {
-                                paramsTemp.add(new Pair(pair.getKey(), transformer.transform(pair.getValue())));
-                            } else {
-                                paramsTemp.add(pair);
-                            }
-                        }
-                        usersParameters = paramsTemp;
-                    }
-                }
+                usersParameters = applyTransformers(usersParameters, mockedAbstractRequest.getParameters().getTransformers());
 
                 LOG.debug("PARAMETERS");
                 LOG.debug(usersParameters.toString());
@@ -213,20 +199,7 @@ public class RequestService {
             mockedHeaders = new HashSet<>(mockedAbstractRequest.getHeaders().getValues());
 
             if (CommonUtils.allNotEmpty(usersHeaders, mockedHeaders)) {
-                transformers = mockedAbstractRequest.getHeaders().getTransformers();
-                if (!CollectionUtils.isEmpty(transformers)) {
-                    for (AbstractMapTransformer transformer : transformers) {
-                        Set<Pair> paramsTemp = new HashSet<>();
-                        for (Pair pair : usersHeaders) {
-                            if (pair.getKey().equals(transformer.getKey()) && !StringUtils.isEmpty(pair.getValue())) {
-                                paramsTemp.add(new Pair(pair.getKey(), transformer.transform(pair.getValue())));
-                            } else {
-                                paramsTemp.add(pair);
-                            }
-                        }
-                        usersHeaders = paramsTemp;
-                    }
-                }
+                usersHeaders = applyTransformers(usersHeaders, mockedAbstractRequest.getHeaders().getTransformers());
 
                 LOG.debug("HEADERS");
                 LOG.debug(usersHeaders.toString());
@@ -239,6 +212,23 @@ public class RequestService {
         }
 
         return true;
+    }
+
+    private Set<Pair> applyTransformers(Set<Pair> source, List<AbstractMapTransformer> transformers) {
+        if (!CollectionUtils.isEmpty(transformers)) {
+            for (AbstractMapTransformer transformer : transformers) {
+                Set<Pair> paramsTemp = new TreeSet<>();
+                for (Pair pair : source) {
+                    if (pair.getKey().equals(transformer.getKey()) && !StringUtils.isEmpty(pair.getValue())) {
+                        paramsTemp.add(new Pair(pair.getKey(), transformer.transform(pair.getValue())));
+                    } else {
+                        paramsTemp.add(pair);
+                    }
+                }
+                source = paramsTemp;
+            }
+        }
+        return source;
     }
 
     /**
