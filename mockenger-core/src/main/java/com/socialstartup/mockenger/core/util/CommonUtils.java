@@ -8,7 +8,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.UUID;
 
 /**
@@ -158,7 +157,7 @@ public class CommonUtils {
      * @param set2
      * @return
      */
-    public static boolean containsEqualEntries(SortedSet<Pair> set1, SortedSet<Pair> set2) {
+    public static boolean containsEqualEntries(Set<Pair> set1, Set<Pair> set2) {
         if (set1 == null && set2 == null) {
             return true;
         }

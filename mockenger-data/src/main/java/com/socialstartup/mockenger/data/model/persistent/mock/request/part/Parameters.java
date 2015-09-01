@@ -3,31 +3,31 @@ package com.socialstartup.mockenger.data.model.persistent.mock.request.part;
 import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
 
 import java.util.List;
-import java.util.SortedSet;
+import java.util.Set;
 
 /**
  * Created by x079089 on 3/31/2015.
  */
 public class Parameters extends AbstractPart<AbstractMapTransformer> {
 
-    private SortedSet<Pair> values;
+    private Set<Pair> values;
 
     public Parameters() {}
 
-    public Parameters(SortedSet<Pair> values) {
+    public Parameters(Set<Pair> values) {
         setValues(values);
     }
 
-    public Parameters(List<AbstractMapTransformer> transformers, SortedSet<Pair> values) {
+    public Parameters(List<AbstractMapTransformer> transformers, Set<Pair> values) {
         this.transformers = transformers;
         setValues(values);
     }
 
-    public SortedSet<Pair> getValues() {
+    public Set<Pair> getValues() {
         return values;
     }
 
-    public void setValues(SortedSet<Pair> values) {
+    public void setValues(Set<Pair> values) {
         this.values = values;
     }
 }

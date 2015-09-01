@@ -29,8 +29,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -83,9 +81,9 @@ public class RequestServiceTest {
     private static final String PARAM_VALUE3 = "3";
     private static final String PARAM_VALUE4 = "111";
 
-    private final SortedSet<Pair> goodParameters = new TreeSet<>();
-    private final SortedSet<Pair> badParameters = new TreeSet<>();
-    private final SortedSet<Pair> moreParameters = new TreeSet<>();
+    private final Set<Pair> goodParameters = new HashSet<>();
+    private final Set<Pair> badParameters = new HashSet<>();
+    private final Set<Pair> moreParameters = new HashSet<>();
 
     private final PostRequest postTestRequest = new PostRequest();
     private final PostRequest postRequest1 = new PostRequest();
@@ -168,7 +166,7 @@ public class RequestServiceTest {
     public void testDoFilterForPostParametersWithTransformer() {
         createPostRequests();
         List<AbstractMapTransformer> transformers = new ArrayList<>(Arrays.asList(keyValueTransformerParam));
-        SortedSet<Pair> parameters = new TreeSet<>();
+        Set<Pair> parameters = new HashSet<>();
         parameters.add(new Pair(PARAM_NAME2, PARAM_VALUE2));
         parameters.add(new Pair(PARAM_NAME1, PARAM_VALUE4));
 

@@ -35,8 +35,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * Created by x079089 on 6/29/2015.
@@ -210,7 +208,7 @@ public class AbstractControllerTest {
     }
 
     protected static AbstractRequest getNewRequest(String groupId) {
-        SortedSet<Pair> paramsMap = new TreeSet<>();
+        Set<Pair> paramsMap = new HashSet<>();
         Set<Pair> headersMap = new HashSet<>();
         String PARAM_NAME1 = "A";
         String PARAM_NAME2 = "b";

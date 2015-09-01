@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * Created by x079089 on 3/20/2015.
@@ -61,8 +59,8 @@ public class HttpUtils {
      * @param servletRequest
      * @return
      */
-    public static SortedSet<Pair> getParameterMap(HttpServletRequest servletRequest) {
-        SortedSet<Pair> parameters = new TreeSet<>();
+    public static Set<Pair> getParameterMap(HttpServletRequest servletRequest) {
+        Set<Pair> parameters = new HashSet<>();
         Enumeration<String> parameterNames = servletRequest.getParameterNames();
 
         while (parameterNames.hasMoreElements()) {
