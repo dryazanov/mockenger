@@ -1,9 +1,12 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
+import com.socialstartup.mockenger.core.service.ProjectService;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.dict.TransformerType;
+import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -11,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -21,26 +25,42 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @Controller
 public class ValueSetController extends AbstractController {
 
-    private final String PROJECT_TYPE = "project-type";
-    private final String REQUEST_METHOD = "request-method";
-    private final String TRANSFORMER_TYPE = "transformer-type";
+    private final String PROJECT_TYPES_VALUESET = VALUESET_ENDPOINT + "/projectTypes";
+    private final String REQUEST_METHOD_VALUESET = VALUESET_ENDPOINT + "/requestMethods";
+    private final String TRANSFORMER_TYPE_VALUESET = VALUESET_ENDPOINT + "/transformerTypes";
+
+    @Autowired
+    private ProjectService projectService;
 
     /**
-     * Returns valueset by provided id
+     * Returns all the values for ProjectType
      *
-     * @param id valueset id
      * @return 200 OK or 404 NOT FOUND
      */
     @ResponseBody
-    @RequestMapping(value = VALUESET_ENDPOINT, method = GET)
-    public ResponseEntity getValueSet(@RequestParam(value = "id", required = true) String id) {
-        Map<String, String> valueset = null;
-        if (PROJECT_TYPE.equals(id)) {
-            valueset = ProjectType.getValueSet();
-        } else if (REQUEST_METHOD.equals(id)) {
-            valueset = RequestMethod.getValueSet();
-        } else if (TRANSFORMER_TYPE.equals(id)) {
-            valueset = TransformerType.getValueSet();
+    @RequestMapping(value = PROJECT_TYPES_VALUESET, method = GET)
+    public ResponseEntity getProjectTypes() {
+        return new ResponseEntity(Arrays.asList(ProjectType.values()), getResponseHeaders(), HttpStatus.OK);
+    }
+
+    /**
+     * Returns list of all the request methods or filtered list by provided projectId
+     *
+     * @param projectId projectId
+     * @return 200 OK or 404 NOT FOUND
+     */
+    @ResponseBody
+    @RequestMapping(value = REQUEST_METHOD_VALUESET, method = GET)
+    public ResponseEntity getRequestMethods(@RequestParam(value = "projectId", required = false) String projectId) {
+        List valueset = null;
+
+        if (projectId == null) {
+            valueset = Arrays.asList(RequestMethod.values());
+        } else {
+            Project project = projectService.findById(projectId);
+            if (project != null && project.getType() != null) {
+                valueset = project.getType().getAllowedMethods();
+            }
         }
 
         if (valueset != null) {
@@ -48,5 +68,17 @@ public class ValueSetController extends AbstractController {
         } else {
             return new ResponseEntity(getResponseHeaders(), HttpStatus.NOT_FOUND);
         }
+    }
+
+
+    /**
+     * Returns all the values for TransformerType
+     *
+     * @return 200 OK
+     */
+    @ResponseBody
+    @RequestMapping(value = TRANSFORMER_TYPE_VALUESET, method = GET)
+    public ResponseEntity getTransformerTypes() {
+        return new ResponseEntity(Arrays.asList(TransformerType.values()), getResponseHeaders(), HttpStatus.OK);
     }
 }

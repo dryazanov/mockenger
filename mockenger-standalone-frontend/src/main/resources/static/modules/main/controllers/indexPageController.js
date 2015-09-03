@@ -39,7 +39,7 @@ angular.module('mockengerClientMainApp').controller('IndexPageController', ['$sc
         });
 
         $scope.getProjectTypes = function() {
-            valuesetService.get({id: "project-type"}, function(response, getResponseHeaders) {
+            valuesetService.projectTypes.get(function(response, getResponseHeaders) {
                 $scope.availableProjectTypes = response;
             }, function(errorResponse) {
                 //showErrors(errorResponse);

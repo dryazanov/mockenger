@@ -5,6 +5,7 @@
   "testPath": "src/test/resources/javascript/spec",
   "homepage": "https://github.com/yuridolzhenko/mockenger",
   "authors": [
+    "Dmitry Ryazanov <dmitry@ryazanov.info>",
     "Yuri Dolzhenko <yuri.dolzhenko@gmail.com>"
   ],
   "private": true,
