@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {TestContext.class})
 public class RestControllerTest extends AbstractControllerTest {
 
-    private static final String ENDPOINT_TEMPLATE = "/rest/%s/%s";
+    private static final String ENDPOINT_TEMPLATE = "/REST/%s/%s";
     private static final String REQUEST_PATH = "test/rest/mock/request";
     private static final String ID1 = "200000000001";
     private static final String ID2 = "100000000002";

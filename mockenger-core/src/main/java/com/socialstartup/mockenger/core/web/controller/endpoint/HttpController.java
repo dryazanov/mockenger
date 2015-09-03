@@ -35,7 +35,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.TRACE;
  * Created by x079089 on 3/24/2015.
  */
 @Controller
-@RequestMapping(value = {"/http/{groupId}"})
+@RequestMapping(value = {"/HTTP/{groupId}"})
 public class HttpController extends ParentController {
 
     @Autowired

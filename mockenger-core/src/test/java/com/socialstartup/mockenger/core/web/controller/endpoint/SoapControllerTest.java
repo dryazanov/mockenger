@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {TestContext.class})
 public class SoapControllerTest extends AbstractControllerTest {
 
-    private static final String ENDPOINT_TEMPLATE = "/soap/%s/%s";
+    private static final String ENDPOINT_TEMPLATE = "/SOAP/%s/%s";
     private static final String REQUEST_PATH = "test/rest/mock/request";
     private static final String ID1 = "200000000001";
     private static final String ID2 = "100000000002";

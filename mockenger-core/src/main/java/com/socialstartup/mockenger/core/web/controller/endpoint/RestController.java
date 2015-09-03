@@ -28,7 +28,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
  * Created by x079089 on 3/24/2015.
  */
 @Controller
-@RequestMapping(value = {"/rest/{groupId}"})
+@RequestMapping(value = {"/REST/{groupId}"})
 public class RestController extends ParentController {
 
     @Autowired
