@@ -167,12 +167,22 @@ public class AbstractControllerTest {
         return group;
     }
 
+    protected Group createGroup(String projectId, boolean recording) {
+        Group group = getNewGroup(projectId, recording);
+        this.groupService.save(group);
+        return group;
+    }
+
     protected Group getNewGroup() {
         return getNewGroup(true);
     }
 
     protected Group getNewGroup(boolean recording) {
-        Group group = new Group(PROJECT_ID, GROUP_NAME_TEST, recording);
+        return getNewGroup(PROJECT_ID, recording);
+    }
+
+    protected Group getNewGroup(String projectId, boolean recording) {
+        Group group = new Group(projectId, GROUP_NAME_TEST, recording);
         group.setId(CommonUtils.generateUniqueId());
         return group;
     }

@@ -86,7 +86,7 @@ public class RestController extends ParentController {
         Group group = findGroupById(groupId);
         try {
             AbstractRequest mockRequest = postService.createMockRequestFromJson(group.getId(), jsonBody, request);
-            return findMockedEntities(mockRequest, group.isRecording());
+            return findMockedEntities(mockRequest, group);
         } catch (IOException e) {
             throw new MockObjectNotCreatedException("Cannot read json from the provided source", e);
         }
@@ -105,7 +105,7 @@ public class RestController extends ParentController {
         Group group = findGroupById(groupId);
         try {
             AbstractRequest mockRequest = postService.createMockRequestFromXml(group.getId(), requestBody, request, true);
-            return findMockedEntities(mockRequest, group.isRecording());
+            return findMockedEntities(mockRequest, group);
         } catch (TransformerException e) {
             throw new MockObjectNotCreatedException("Cannot transform provided xml", e);
         }
@@ -124,7 +124,7 @@ public class RestController extends ParentController {
         Group group = findGroupById(groupId);
         try {
             AbstractRequest mockRequest = putService.createMockRequestFromJson(group.getId(), jsonBody, request);
-            return findMockedEntities(mockRequest, group.isRecording());
+            return findMockedEntities(mockRequest, group);
         } catch (IOException e) {
             throw new MockObjectNotCreatedException("Cannot read json from the provided source", e);
         }
@@ -143,7 +143,7 @@ public class RestController extends ParentController {
         Group group = findGroupById(groupId);
         try {
             AbstractRequest mockRequest = putService.createMockRequestFromXml(group.getId(), requestBody, request, true);
-            return findMockedEntities(mockRequest, group.isRecording());
+            return findMockedEntities(mockRequest, group);
         } catch (TransformerException e) {
             throw new MockObjectNotCreatedException("Cannot transform provided xml", e);
         }

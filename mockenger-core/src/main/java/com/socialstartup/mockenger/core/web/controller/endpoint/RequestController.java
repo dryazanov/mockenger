@@ -1,8 +1,6 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
-import com.socialstartup.mockenger.core.mapper.request.GridRowMapper;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
-import com.socialstartup.mockenger.data.model.dto.Grid;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
@@ -142,12 +140,12 @@ public class RequestController extends AbstractController {
             requestList = new ArrayList<>();
         }
 
-        GridRowMapper mapper = new GridRowMapper();
-        Grid bootGrid = new Grid();
-        bootGrid.setCurrent(1);
-        bootGrid.setTotal(requestList.size());
-        bootGrid.setRowCount(requestList.size());
-        bootGrid.setRows(mapper.map(requestList));
+//        GridRowMapper mapper = new GridRowMapper();
+//        Grid bootGrid = new Grid();
+//        bootGrid.setCurrent(1);
+//        bootGrid.setTotal(requestList.size());
+//        bootGrid.setRowCount(requestList.size());
+//        bootGrid.setRows(mapper.map(requestList));
         return new ResponseEntity(requestList, getResponseHeaders(), HttpStatus.OK);
     }
 }

@@ -5,6 +5,7 @@ import com.socialstartup.mockenger.core.service.common.GetService;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.core.web.exception.MockObjectNotCreatedException;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
+import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
@@ -37,7 +39,7 @@ public class ParentController extends AbstractController {
     protected ResponseEntity doGetRequest(String groupId, HttpServletRequest request) {
         Group group = findGroupById(groupId);
         AbstractRequest mockRequest = getService.createMockRequest(group.getId(), request);
-        return findMockedEntities(mockRequest, group.isRecording());
+        return findMockedEntities(mockRequest, group);
     }
 
     /**
@@ -49,31 +51,31 @@ public class ParentController extends AbstractController {
     protected ResponseEntity doDeleteRequest(String groupId, HttpServletRequest request) {
         Group group = findGroupById(groupId);
         AbstractRequest mockRequest = deleteService.createMockRequest(group.getId(), request);
-        return findMockedEntities(mockRequest, group.isRecording());
+        return findMockedEntities(mockRequest, group);
     }
 
     /**
      *
      * @param mockRequest
-     * @param recordRequests
+     * @param group
      * @return
      */
-    protected ResponseEntity findMockedEntities(AbstractRequest mockRequest, boolean recordRequests) {
+    protected ResponseEntity findMockedEntities(AbstractRequest mockRequest, Group group) {
         if (mockRequest == null) {
             throw new MockObjectNotCreatedException("Provided mock-request is null or empty");
         }
         AbstractRequest mockResult = getRequestService().findMockedEntities(mockRequest);
-        return generateResponse(mockRequest, mockResult, recordRequests);
+        return generateResponse(mockRequest, mockResult, group);
     }
 
     /**
      *
      * @param mockRequest
      * @param mockResult
-     * @param recordRequests
+     * @param group
      * @return
      */
-    protected ResponseEntity generateResponse(AbstractRequest mockRequest, AbstractRequest mockResult, boolean recordRequests) {
+    protected ResponseEntity generateResponse(AbstractRequest mockRequest, AbstractRequest mockResult, Group group) {
         if (mockResult != null) {
             MockResponse mockResponse;
             if (mockResult.getMockResponse() == null) {
@@ -96,12 +98,16 @@ public class ParentController extends AbstractController {
                         }
                     }
                 }
-
             }
             return new ResponseEntity(mockResponse.getBody(), getResponseHeaders(), HttpStatus.valueOf(mockResponse.getHttpStatus()));
         } else {
             HttpStatus status = HttpStatus.NOT_FOUND;
-            if (recordRequests) {
+            if (group.isRecording()) {
+                Project project = findProjectById(group.getProjectId());
+                if (StringUtils.isEmpty(mockRequest.getName())) {
+                    mockRequest.setName(String.valueOf(mockRequest.getCreationDate().getTime()));
+                }
+                mockRequest.setUniqueCode(String.format("%s-%d", project.getCode(), getProjectService().getNextSequenceValue(group.getProjectId())));
                 getRequestService().save(mockRequest);
                 status = HttpStatus.CREATED;
             }

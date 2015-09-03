@@ -75,6 +75,6 @@ public class SoapController extends ParentController {
             throw new MockObjectNotCreatedException("Cannot read xml from the provided source", e);
         }
         AbstractRequest mockRequest = postService.createMockRequest(group.getId(), soapBody, request);
-        return findMockedEntities(mockRequest, group.isRecording());
+        return findMockedEntities(mockRequest, group);
     }
 }
