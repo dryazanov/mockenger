@@ -22,10 +22,10 @@ module.config(['$locationProvider','$routeProvider', function ($locationProvider
             templateUrl: '/modules/main/views/projectView.html',
             controller: 'ProjectPageController',
             resolve: {
-                currentProject: ['$route', 'projectsService', function($route, projectsService) {
+                currentProject: ['$route', 'projectListService', function($route, projectListService) {
                     var projectId = $route.current.params.projectId;
-                    projectsService.projectId = projectId;
-                    return projectsService.ajax.get({projectId : projectId});
+                    projectListService.projectId = projectId;
+                    return projectListService.ajax.get({projectId : projectId});
                 }]
             }
         })

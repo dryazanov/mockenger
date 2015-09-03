@@ -7,7 +7,7 @@
             </button>
             <br/>
             <ul class="list-group">
-                <li class="list-group-item"  ng-repeat="project in projectsService.getData() track by $index">
+                <li class="list-group-item"  ng-repeat="project in projectListService.getData() track by $index">
                     <a href="#/project/{{project.id}}">{{project.name}}</a>
                     &nbsp;
                     <span class="label label-info">{{project.type}}</span>

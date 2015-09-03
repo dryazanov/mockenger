@@ -10,6 +10,6 @@ angular.module('mockengerClientComponents')
 
 .constant('REQUESTS_PER_PAGE', 2)
 
-.constant('BUILD_DATE', '2015-08-02T19:52:37.522Z')
+.constant('BUILD_DATE', '2015-09-03T06:27:05.021Z')
 
 ;
