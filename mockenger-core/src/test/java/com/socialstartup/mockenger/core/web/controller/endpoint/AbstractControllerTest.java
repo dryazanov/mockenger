@@ -114,7 +114,10 @@ public class AbstractControllerTest {
     }
 
     protected Project createProject(boolean generateRandomProjectCode) {
-        Project project = getNewProject(generateRandomProjectCode);
+        return createProject(getNewProject(generateRandomProjectCode));
+    }
+
+    protected Project createProject(Project project) {
         this.projectService.save(project);
         return project;
     }

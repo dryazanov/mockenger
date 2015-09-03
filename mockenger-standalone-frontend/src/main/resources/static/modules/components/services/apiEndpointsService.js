@@ -2,8 +2,16 @@
 
 angular.module('mockengerClientComponents').factory('apiEndpointsService', ['API_BASE_PATH', function(API_BASE_PATH) {
     var restUrls = {
-        getValuesetRestUrl: function() {
-            return API_BASE_PATH + '/valueset';
+        getValuesetRestUrl: {
+            projectTypes: function() {
+                return API_BASE_PATH + '/valueset/projectTypes';
+            },
+            requestMethods: function() {
+                return API_BASE_PATH + '/valueset/requestMethods';
+            },
+            transformerTypes: function() {
+                return API_BASE_PATH + '/valueset/transformerTypes';
+            }
         },
         getProjectRestUrl: function() {
             return API_BASE_PATH + '/projects/:projectId';

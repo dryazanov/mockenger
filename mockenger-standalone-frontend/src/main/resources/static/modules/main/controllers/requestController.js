@@ -1,26 +1,7 @@
 'use strict';
 
-angular.module('mockengerClientMainApp').controller('RequestController',['$scope', 'requestService', 'requestsService', 'valuesetService',
-    function ($scope, requestService, requestsService, valuesetService) {
-
-    $scope.requestMethods = {};
-    $scope.transformerTypes = {};
-
-    $scope.getRequestMethods = function() {
-        valuesetService.get({id: "request-method"}, function(response, getResponseHeaders) {
-            $scope.requestMethods = response;
-        }, function(errorResponse) {
-            //showErrors(errorResponse);
-        });
-    }
-
-    $scope.getTransformerTypes = function() {
-        valuesetService.get({id: "transformer-type"}, function(response, getResponseHeaders) {
-            $scope.transformerTypes = response;
-        }, function(errorResponse) {
-            //showErrors(errorResponse);
-        });
-    }
+angular.module('mockengerClientMainApp').controller('RequestController',['$scope', 'projectsService', 'groupService', 'requestService', 'requestsService', 'valuesetService',
+    function ($scope, projectsService, groupService, requestService, requestsService, valuesetService) {
 
     $scope.selectMethod = function(method) {
         requestsService.getCurrent().method = method;
@@ -120,7 +101,4 @@ angular.module('mockengerClientMainApp').controller('RequestController',['$scope
             source.splice(index, 1);
         }
     }
-
-    $scope.getRequestMethods();
-    $scope.getTransformerTypes();
 }]);

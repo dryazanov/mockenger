@@ -2,9 +2,7 @@ package com.socialstartup.mockenger.data.model.dict;
 
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by x079089 on 3/12/2015.
@@ -38,13 +36,5 @@ public enum ProjectType {
             }
         }
         return false;
-    }
-
-    public static Map<String, String> getValueSet() {
-        Map<String, String> valueset = new HashMap<>(ProjectType.values().length);
-        for (ProjectType type : ProjectType.values()) {
-            valueset.put(type.name(), type.getType());
-        }
-        return valueset;
     }
 }

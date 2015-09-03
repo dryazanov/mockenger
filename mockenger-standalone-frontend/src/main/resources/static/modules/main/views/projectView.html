@@ -8,26 +8,29 @@
             </button>
 
             <div id="group-list">
-                <ul class="list-group">
-                    <li class="list-group-item" ng-class="{active: isActive(group)}" ng-repeat="group in groupListService.getData() track by $index">
-                        <a href ng-click="loadGroupRequests(group)">
-                            {{group.name}}
-                        </a>
-                        &nbsp;
-                        <span ng-show="!group.recording" class="label label-info">Not recording</span>
-                        <span ng-show="group.recording" class="label label-danger">Recording</span>
-
-                        <span class="pull-right">
+                <table class="table">
+                    <tr ng-class="{active: isActive(group)}" ng-repeat="group in groupListService.getData() track by $index">
+                        <td class="col-md-10">
+                            <a href ng-click="loadGroupRequests(group)">
+                                {{group.name}}
+                            </a>
+                            &nbsp;
+                            <span ng-show="!group.recording" class="label label-info">Not recording</span>
+                            <span ng-show="group.recording" class="label label-danger">Recording</span>
+                        </td>
+                        <td class="col-md-1">
                             <button class="btn btn-xs" ng-click="editGroup(group)">
                                 <span class="glyphicon glyphicon-cog"></span>
                             </button>
+                        </td>
+                        <td class="col-md-1">
                             <button class="btn btn-xs" ng-really-click="deleteGroup($index, group)"
                                     ng-really-message="Do you really want to delete group '{{project.name}}' with all its mocks?">
                                 <span class="glyphicon glyphicon-trash"></span>
                             </button>
-                        </span>
-                    </li>
-                </ul>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
 
@@ -36,11 +39,9 @@
                 <div class="panel-heading">
                     <form class="form-inline">
                         <div class="form-group">
-                            <!--<label for="searchRequests">Search</label>-->
                             <input type="search" ng-model="requestsService.filters.search.query" class="form-control" id="searchRequests" placeholder="Search">
                         </div>
                         <div class="form-group">
-                            <!--<label for="orderRequests">Order by</label>-->
                             <select ng-model="requestsService.filters.order" id="orderRequests" class="form-control">
                                 <optgroup label="Order by">
                                     <option value="name">Name</option>
@@ -80,7 +81,7 @@
                                     | limitTo:requestsService.getLimit() track by $index">
 
                                 <td>{{request.name}}</td>
-                                <td>{{request.creationDate}}</td>
+                                <td>{{request.creationDate | date:'dd-MM-yyyy HH:mm:ss'}}</td>
                                 <td>@{{request.path.value}}</td>
                                 <td>{{request.method}}</td>
                                 <td>
@@ -124,31 +125,74 @@
             <div class="row">
                 <div class="col-md-12" ng-controller="RequestController">
                     <div ng-if="requestsService.getCurrent()" class="panel panel-primary">
-                        <div class="panel-heading">{{requestsService.getCurrent().name}}</div>
+                        <div class="panel-heading">
+                            {{requestsService.getCurrent().name}}
+                        </div>
                         <div class="panel-body">
                             <div class="container-fluid">
                                 <div class="row">
+
                                     <div class="col-md-12">
                                         <tabset>
+                                            <tab heading="Main">
+                                                <br/>
+                                                <div class="form-group">
+                                                    <label for="url">Name</label>
+                                                    <table class="table">
+                                                        <tr>
+                                                            <td>
+                                                                <input type="text" name="requestName" id="requestName" ng-model="requestsService.getCurrent().name" class="form-control" aria-describedby="sizing-addon1">
+                                                                <p ng-show="groupForm.requestName.$invalid && !groupForm.requestName.$pristine" class="help-block">Name is required.</p>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <div class="form-group">
+                                                    <table class="table">
+                                                        <tr>
+                                                            <td class="col-lg-2">
+                                                                <label>Creation date</label>
+                                                            </td>
+                                                            <td>
+                                                                {{requestsService.getCurrent().creationDate | date:'dd-MM-yyyy HH:mm:ss'}}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="col-lg-2">
+                                                                <label>Request unique code</label>
+                                                            </td>
+                                                            <td>
+                                                                {{requestsService.getCurrent().uniqueCode}}
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </tab>
                                             <tab heading="Path">
                                                 <br/>
-                                                <pre>http://localhost/rest/group1234567890/{{requestsService.getCurrent().path.value}}</pre>
+                                                <!--<pre>http://localhost/rest/group1234567890/{{requestsService.getCurrent().path.value}}</pre>-->
 
                                                 <div class="form-group">
                                                     <label for="url">Path</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-btn">
-                                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-                                                                    aria-haspopup="true" aria-expanded="false">{{requestsService.getCurrent().method}} <span class="caret"></span></button>
-                                                            <ul class="dropdown-menu">
-                                                                <li ng-repeat="method in requestMethods">
-                                                                    <a href ng-click="selectMethod(method)">{{method}}</a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                        <input type="text" name="url" id="url" ng-model="requestsService.getCurrent().path.value" class="form-control" aria-describedby="sizing-addon1">
-                                                    </div>
-                                                    <p ng-show="groupForm.path.$invalid && !groupForm.path.$pristine" class="help-block">Path is required.</p>
+                                                    <table class="table">
+                                                        <tr>
+                                                            <td>
+                                                                <div class="input-group">
+                                                                    <div class="input-group-btn">
+                                                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                                                                aria-haspopup="true" aria-expanded="false">{{requestsService.getCurrent().method}} <span class="caret"></span></button>
+                                                                        <ul class="dropdown-menu">
+                                                                            <li ng-repeat="method in requestMethods">
+                                                                                <a href ng-click="selectMethod(method)">{{method}}</a>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <input type="text" name="url" id="url" ng-model="requestsService.getCurrent().path.value" class="form-control" aria-describedby="sizing-addon1">
+                                                                </div>
+                                                                <p ng-show="groupForm.path.$invalid && !groupForm.path.$pristine" class="help-block">Path is required.</p>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
                                                 </div>
 
                                                 <div class="form-group">
@@ -301,7 +345,7 @@
                                             </tab>
                                             <tab heading="Request">
                                                 <br/>
-                                                <pre>{{requestsService.getCurrent().body.value}}</pre>
+                                                <!--<pre>{{requestsService.getCurrent().body.value}}</pre>-->
 
                                                 <div class="form-group">
                                                     <label>Transformers</label>
@@ -332,10 +376,22 @@
                                                         </tr>
                                                     </table>
                                                 </div>
+
+                                                <div class="form-group">
+                                                    <label for="requestBody">Request body</label>
+                                                    <table class="table">
+                                                        <tr>
+                                                            <td>
+                                                                <textarea ng-model="requestsService.getCurrent().body.value" name="requestBody" id="requestBody"
+                                                                          class="form-control" aria-describedby="sizing-addon1" rows="10"></textarea>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
                                             </tab>
                                             <tab heading="Response">
                                                 <br/>
-                                                <pre>{{requestsService.getCurrent().mockResponse.body}}</pre>
+                                                <!--<pre>{{requestsService.getCurrent().mockResponse.body}}</pre>-->
 
                                                 <div class="form-group">
                                                     <label for="url">Headers</label>
@@ -357,6 +413,31 @@
                                                         <tr>
                                                             <td colspan="3">
                                                                 <a href ng-click="addResponseHeader()">Add header</a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="httpStatus">HTTP status code</label>
+                                                    <table class="table">
+                                                        <tr>
+                                                            <td>
+                                                                <input type="text" name="httpStatus" id="httpStatus" ng-model="requestsService.getCurrent().mockResponse.httpStatus"
+                                                                       class="form-control" aria-describedby="sizing-addon1">
+                                                                <p ng-show="groupForm.httpStatus.$invalid && !groupForm.httpStatus.$pristine" class="help-block">HTTP status code is required.</p>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="responseBody">Response body</label>
+                                                    <table class="table">
+                                                        <tr>
+                                                            <td>
+                                                                <textarea ng-model="requestsService.getCurrent().mockResponse.body" name="responseBody" id="responseBody"
+                                                                          class="form-control" aria-describedby="sizing-addon1" rows="10"></textarea>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -416,23 +497,3 @@
         </div>
     </div>
 </div>
-
-<!-- Modal -->
-<!--<div class="modal fade" id="requestModal" tabindex="-1" role="dialog" aria-labelledby="requestModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="requestModalLabel">{{currentRequest.name}}</h4>
-            </div>
-            <div class="modal-body">
-                {{currentRequest.body}}
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>-->

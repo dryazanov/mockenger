@@ -22,18 +22,6 @@
                     </span>
                 </li>
             </ul>
-            <!--<div class="list-group">
-                <a href="#/project/{{project.id}}" class="list-group-item">{{project.name}}
-                    <span class="badge">{{project.type}}</span>
-                </a>
-                <button type="button" class="btn btn-primary btn-sm btn-block" ng-click="editProject(project)">
-                    Edit project
-                </button>
-                <button type="button" class="btn btn-primary btn-sm btn-block"
-                        ng-really-click="deleteProject(project)" ng-really-message="Do you really want to delete project '{{project.name}}' with all its groups and mocks?">
-                    Delete project
-                </button>
-            </div>-->
         </div>
     </div>
 
@@ -65,7 +53,7 @@
                         <div class="form-group">
                             <label for="type">Type</label>
                             <select name="type" id="type" ng-model="currentProject.type" required ng-disabled="currentProject.id != null" class="form-control">
-                                <option ng-repeat="(key, value) in availableProjectTypes track by $index" value="{{key}}">{{value}}</option>
+                                <option ng-repeat="type in availableProjectTypes track by $index">{{type}}</option>
                             </select>
                             <p ng-show="projectForm.type.$invalid && !projectForm.type.$pristine" class="help-block">Type is required.</p>
                         </div>
