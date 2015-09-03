@@ -87,7 +87,7 @@ public class RestControllerTest extends AbstractControllerTest {
 
         project = createProject(true);
         group = createGroup(false);
-        groupWithRecording = createGroup();
+        groupWithRecording = createGroup(project.getId(), true);
 
         endpoint = String.format(ENDPOINT_TEMPLATE, group.getId(), REQUEST_PATH);
     }
