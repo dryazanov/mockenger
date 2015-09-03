@@ -35,14 +35,14 @@
         </div>
 
         <div class="col-md-9" ng-controller="RequestListController">
-            <div ng-if="requestsService.getData() != null" class="panel panel-primary">
+            <div ng-if="requestListService.getData() != null" class="panel panel-primary">
                 <div class="panel-heading">
                     <form class="form-inline">
                         <div class="form-group">
-                            <input type="search" ng-model="requestsService.filters.search.query" class="form-control" id="searchRequests" placeholder="Search">
+                            <input type="search" ng-model="requestListService.filters.search.query" class="form-control" id="searchRequests" placeholder="Search">
                         </div>
                         <div class="form-group">
-                            <select ng-model="requestsService.filters.order" id="orderRequests" class="form-control">
+                            <select ng-model="requestListService.filters.order" id="orderRequests" class="form-control">
                                 <optgroup label="Order by">
                                     <option value="name">Name</option>
                                     <option value="creationDate">Date</option>
@@ -72,13 +72,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-class="{info: request.id == requestsService.getCurrent().id}"
-                                ng-click="requestsService.setCurrent(request)"
-                                ng-repeat="request in requestsService.getData()
-                                    | filter:requestsService.getSearchQuery()
-                                    | orderBy:requestsService.getListOrder()
+                            <tr ng-class="{info: request.id == requestListService.getCurrent().id}"
+                                ng-click="requestListService.setCurrent(request)"
+                                ng-repeat="request in requestListService.getData()
+                                    | filter:requestListService.getSearchQuery()
+                                    | orderBy:requestListService.getListOrder()
                                     | offset:getOffset()
-                                    | limitTo:requestsService.getLimit() track by $index">
+                                    | limitTo:requestListService.getLimit() track by $index">
 
                                 <td>{{request.name}}</td>
                                 <td>{{request.creationDate | date:'dd-MM-yyyy HH:mm:ss'}}</td>
@@ -106,7 +106,7 @@
                             </li>
 
                             <li ng-repeat="n in range()" ng-class="isActive(n)">
-                                <a href ng-click="requestsService.setCurrentPage(n)">{{n+1}}</a>
+                                <a href ng-click="requestListService.setCurrentPage(n)">{{n+1}}</a>
                             </li>
 
                             <li ng-class="nextPageDisabled()">
@@ -118,15 +118,15 @@
                     </nav>
                 </div>
             </div>
-            <div ng-if="requestsService.getData() == null" class="alert alert-info" role="alert">
+            <div ng-if="requestListService.getData() == null" class="alert alert-info" role="alert">
                 <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Please select a group
             </div>
 
             <div class="row">
                 <div class="col-md-12" ng-controller="RequestController">
-                    <div ng-if="requestsService.getCurrent()" class="panel panel-primary">
+                    <div ng-if="requestListService.getCurrent()" class="panel panel-primary">
                         <div class="panel-heading">
-                            {{requestsService.getCurrent().name}}
+                            {{requestListService.getCurrent().name}}
                         </div>
                         <div class="panel-body">
                             <div class="container-fluid">
@@ -141,7 +141,7 @@
                                                     <table class="table">
                                                         <tr>
                                                             <td>
-                                                                <input type="text" name="requestName" id="requestName" ng-model="requestsService.getCurrent().name" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" name="requestName" id="requestName" ng-model="requestListService.getCurrent().name" class="form-control" aria-describedby="sizing-addon1">
                                                                 <p ng-show="groupForm.requestName.$invalid && !groupForm.requestName.$pristine" class="help-block">Name is required.</p>
                                                             </td>
                                                         </tr>
@@ -154,7 +154,7 @@
                                                                 <label>Creation date</label>
                                                             </td>
                                                             <td>
-                                                                {{requestsService.getCurrent().creationDate | date:'dd-MM-yyyy HH:mm:ss'}}
+                                                                {{requestListService.getCurrent().creationDate | date:'dd-MM-yyyy HH:mm:ss'}}
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -162,7 +162,7 @@
                                                                 <label>Request unique code</label>
                                                             </td>
                                                             <td>
-                                                                {{requestsService.getCurrent().uniqueCode}}
+                                                                {{requestListService.getCurrent().uniqueCode}}
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -170,7 +170,7 @@
                                             </tab>
                                             <tab heading="Path">
                                                 <br/>
-                                                <!--<pre>http://localhost/rest/group1234567890/{{requestsService.getCurrent().path.value}}</pre>-->
+                                                <!--<pre>http://localhost/rest/group1234567890/{{requestListService.getCurrent().path.value}}</pre>-->
 
                                                 <div class="form-group">
                                                     <label for="url">Path</label>
@@ -180,14 +180,14 @@
                                                                 <div class="input-group">
                                                                     <div class="input-group-btn">
                                                                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-                                                                                aria-haspopup="true" aria-expanded="false">{{requestsService.getCurrent().method}} <span class="caret"></span></button>
+                                                                                aria-haspopup="true" aria-expanded="false">{{requestListService.getCurrent().method}} <span class="caret"></span></button>
                                                                         <ul class="dropdown-menu">
                                                                             <li ng-repeat="method in requestMethods">
                                                                                 <a href ng-click="selectMethod(method)">{{method}}</a>
                                                                             </li>
                                                                         </ul>
                                                                     </div>
-                                                                    <input type="text" name="url" id="url" ng-model="requestsService.getCurrent().path.value" class="form-control" aria-describedby="sizing-addon1">
+                                                                    <input type="text" name="url" id="url" ng-model="requestListService.getCurrent().path.value" class="form-control" aria-describedby="sizing-addon1">
                                                                 </div>
                                                                 <p ng-show="groupForm.path.$invalid && !groupForm.path.$pristine" class="help-block">Path is required.</p>
                                                             </td>
@@ -198,7 +198,7 @@
                                                 <div class="form-group">
                                                     <label>Transformers</label>
                                                     <table class="table">
-                                                        <tr ng-repeat="pathTransformer in requestsService.getCurrent().path.transformers">
+                                                        <tr ng-repeat="pathTransformer in requestListService.getCurrent().path.transformers">
                                                             <td class="col-lg-2">
                                                                 <select ng-model="pathTransformer.type" class="form-control">
                                                                     <option ng-repeat="typeName in transformerTypes">{{typeName}}</option>
@@ -211,7 +211,7 @@
                                                                 <input type="text" ng-model="pathTransformer.replacement" class="form-control" aria-describedby="sizing-addon1">
                                                             </td>
                                                             <td>
-                                                                <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestsService.getCurrent().path.transformers)"
+                                                                <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestListService.getCurrent().path.transformers)"
                                                                         ng-really-message="Do you really want to delete this transformer?">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
@@ -227,12 +227,12 @@
                                             </tab>
                                             <tab heading="Parameters">
                                                 <br/>
-                                                <!--<pre>?{{requestsService.getCurrent().parameters.values}}</pre>-->
+                                                <!--<pre>?{{requestListService.getCurrent().parameters.values}}</pre>-->
 
                                                 <div class="form-group">
                                                     <label for="url">Parameters</label>
                                                     <table class="table">
-                                                        <tr ng-repeat="parameter in requestsService.getCurrent().parameters.values track by $index">
+                                                        <tr ng-repeat="parameter in requestListService.getCurrent().parameters.values track by $index">
                                                             <td class="col-lg-6">
                                                                 <input type="text" ng-model="parameter.key" class="form-control" aria-describedby="sizing-addon1">
                                                             </td>
@@ -257,7 +257,7 @@
                                                 <div class="form-group">
                                                     <label>Transformers</label>
                                                     <table class="table">
-                                                        <tr ng-repeat="paramTransformer in requestsService.getCurrent().parameters.transformers">
+                                                        <tr ng-repeat="paramTransformer in requestListService.getCurrent().parameters.transformers">
                                                             <td class="col-lg-2">
                                                                 <select ng-model="paramTransformer.type" required class="form-control">
                                                                     <option ng-repeat="typeName in transformerTypes">{{typeName}}</option>
@@ -270,7 +270,7 @@
                                                                 <input type="text" ng-model="paramTransformer.replacement" class="form-control" aria-describedby="sizing-addon1">
                                                             </td>
                                                             <td>
-                                                                <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestsService.getCurrent().parameters.transformers)"
+                                                                <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestListService.getCurrent().parameters.transformers)"
                                                                         ng-really-message="Do you really want to delete this transformer?">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
@@ -286,12 +286,12 @@
                                             </tab>
                                             <tab heading="Headers">
                                                 <br/>
-                                                <!--<pre>?{{requestsService.getCurrent().headers.values}}</pre>-->
+                                                <!--<pre>?{{requestListService.getCurrent().headers.values}}</pre>-->
 
                                                 <div class="form-group">
                                                     <label for="url">Headers</label>
                                                     <table class="table">
-                                                        <tr ng-repeat="requestHeader in requestsService.getCurrent().headers.values track by $index">
+                                                        <tr ng-repeat="requestHeader in requestListService.getCurrent().headers.values track by $index">
                                                             <td class="col-lg-6">
                                                                 <input type="text" ng-model="requestHeader.key" class="form-control" aria-describedby="sizing-addon1">
                                                             </td>
@@ -299,7 +299,7 @@
                                                                 <input type="text" ng-model="requestHeader.value" class="form-control" aria-describedby="sizing-addon1">
                                                             </td>
                                                             <td>
-                                                                <button class="btn btn-x" ng-really-click="deleteHeader($index, requestsService.getCurrent().headers.values)"
+                                                                <button class="btn btn-x" ng-really-click="deleteHeader($index, requestListService.getCurrent().headers.values)"
                                                                         ng-really-message="Do you really want to delete this header?">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
@@ -316,7 +316,7 @@
                                                 <div class="form-group">
                                                     <label>Transformers</label>
                                                     <table class="table">
-                                                        <tr ng-repeat="headerTransformer in requestsService.getCurrent().headers.transformers">
+                                                        <tr ng-repeat="headerTransformer in requestListService.getCurrent().headers.transformers">
                                                             <td class="col-lg-2">
                                                                 <select ng-model="headerTransformer.type" required class="form-control">
                                                                     <option ng-repeat="typeName in transformerTypes">{{typeName}}</option>
@@ -329,7 +329,7 @@
                                                                 <input type="text" ng-model="headerTransformer.replacement" class="form-control" aria-describedby="sizing-addon1">
                                                             </td>
                                                             <td>
-                                                                <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestsService.getCurrent().headers.transformers)"
+                                                                <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestListService.getCurrent().headers.transformers)"
                                                                         ng-really-message="Do you really want to delete this transformer?">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
@@ -345,12 +345,12 @@
                                             </tab>
                                             <tab heading="Request">
                                                 <br/>
-                                                <!--<pre>{{requestsService.getCurrent().body.value}}</pre>-->
+                                                <!--<pre>{{requestListService.getCurrent().body.value}}</pre>-->
 
                                                 <div class="form-group">
                                                     <label>Transformers</label>
                                                     <table class="table">
-                                                        <tr ng-repeat="bodyTransformer in requestsService.getCurrent().body.transformers">
+                                                        <tr ng-repeat="bodyTransformer in requestListService.getCurrent().body.transformers">
                                                             <td class="col-lg-2">
                                                                 <select ng-model="bodyTransformer.type" required class="form-control">
                                                                     <option ng-repeat="typeName in transformerTypes">{{typeName}}</option>
@@ -363,7 +363,7 @@
                                                                 <input type="text" ng-model="bodyTransformer.replacement" class="form-control" aria-describedby="sizing-addon1">
                                                             </td>
                                                             <td>
-                                                                <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestsService.getCurrent().body.transformers)"
+                                                                <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestListService.getCurrent().body.transformers)"
                                                                         ng-really-message="Do you really want to delete this transformer?">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
@@ -382,7 +382,7 @@
                                                     <table class="table">
                                                         <tr>
                                                             <td>
-                                                                <textarea ng-model="requestsService.getCurrent().body.value" name="requestBody" id="requestBody"
+                                                                <textarea ng-model="requestListService.getCurrent().body.value" name="requestBody" id="requestBody"
                                                                           class="form-control" aria-describedby="sizing-addon1" rows="10"></textarea>
                                                             </td>
                                                         </tr>
@@ -391,12 +391,12 @@
                                             </tab>
                                             <tab heading="Response">
                                                 <br/>
-                                                <!--<pre>{{requestsService.getCurrent().mockResponse.body}}</pre>-->
+                                                <!--<pre>{{requestListService.getCurrent().mockResponse.body}}</pre>-->
 
                                                 <div class="form-group">
                                                     <label for="url">Headers</label>
                                                     <table class="table">
-                                                        <tr ng-repeat="responseHeader in requestsService.getCurrent().mockResponse.headers track by $index">
+                                                        <tr ng-repeat="responseHeader in requestListService.getCurrent().mockResponse.headers track by $index">
                                                             <td class="col-lg-6">
                                                                 <input type="text" ng-model="responseHeader.key" class="form-control" aria-describedby="sizing-addon1">
                                                             </td>
@@ -404,7 +404,7 @@
                                                                 <input type="text" ng-model="responseHeader.value" class="form-control" aria-describedby="sizing-addon1">
                                                             </td>
                                                             <td>
-                                                                <button class="btn btn-x" ng-really-click="deleteHeader($index, requestsService.getCurrent().mockResponse.headers)"
+                                                                <button class="btn btn-x" ng-really-click="deleteHeader($index, requestListService.getCurrent().mockResponse.headers)"
                                                                         ng-really-message="Do you really want to delete this header?">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
@@ -423,7 +423,7 @@
                                                     <table class="table">
                                                         <tr>
                                                             <td>
-                                                                <input type="text" name="httpStatus" id="httpStatus" ng-model="requestsService.getCurrent().mockResponse.httpStatus"
+                                                                <input type="text" name="httpStatus" id="httpStatus" ng-model="requestListService.getCurrent().mockResponse.httpStatus"
                                                                        class="form-control" aria-describedby="sizing-addon1">
                                                                 <p ng-show="groupForm.httpStatus.$invalid && !groupForm.httpStatus.$pristine" class="help-block">HTTP status code is required.</p>
                                                             </td>
@@ -436,7 +436,7 @@
                                                     <table class="table">
                                                         <tr>
                                                             <td>
-                                                                <textarea ng-model="requestsService.getCurrent().mockResponse.body" name="responseBody" id="responseBody"
+                                                                <textarea ng-model="requestListService.getCurrent().mockResponse.body" name="responseBody" id="responseBody"
                                                                           class="form-control" aria-describedby="sizing-addon1" rows="10"></textarea>
                                                             </td>
                                                         </tr>
@@ -450,7 +450,7 @@
                         </div>
                         <div class="panel-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-primary" ng-disabled="projectForm.$invalid" ng-click="saveRequest(requestsService.getCurrent())">Save</button>
+                            <button type="button" class="btn btn-primary" ng-disabled="projectForm.$invalid" ng-click="saveRequest(requestListService.getCurrent())">Save</button>
                         </div>
                     </div>
                 </div>

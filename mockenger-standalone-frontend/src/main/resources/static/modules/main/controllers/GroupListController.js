@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('mockengerClientMainApp').controller('GroupListController', ['$scope', 'projectsService', 'groupService', 'groupListService', 'requestsService',
-    function($scope, projectsService, groupService, groupListService, requestsService) {
+angular.module('mockengerClientMainApp').controller('GroupListController', ['$scope', 'projectListService', 'groupService', 'groupListService', 'requestListService',
+    function($scope, projectListService, groupService, groupListService, requestListService) {
 
-    requestsService.setCurrent(null);
-    requestsService.setData(null);
+    requestListService.setCurrent(null);
+    requestListService.setData(null);
 
     $scope.isActive = function(group) {
         return (group === groupListService.getCurrent() ? true : false);
@@ -12,10 +12,10 @@ angular.module('mockengerClientMainApp').controller('GroupListController', ['$sc
 
     $scope.loadGroupRequests = function(group) {
         if (groupListService.getCurrent() == null || group.id !== groupListService.getCurrent().id) {
-            requestsService.setCurrent(null);
+            requestListService.setCurrent(null);
             groupListService.setCurrent(group);
-            requestsService.ajax.query({projectId: projectsService.getCurrent().id, groupId: groupListService.getCurrent().id}, function(response, getResponseHeaders) {
-                requestsService.setData(response);
+            requestListService.ajax.query({projectId: projectListService.getCurrent().id, groupId: groupListService.getCurrent().id}, function(response, getResponseHeaders) {
+                requestListService.setData(response);
             }, function (errorResponse) {
 
             });
@@ -23,20 +23,20 @@ angular.module('mockengerClientMainApp').controller('GroupListController', ['$sc
     }
 
     $scope.createGroup = function() {
-        groupService.openGroupModal(projectsService.getCurrent(), null);
+        groupService.openGroupModal(projectListService.getCurrent(), null);
     }
 
     $scope.editGroup = function(group, index) {
-        groupService.openGroupModal(projectsService.getCurrent(), group);
+        groupService.openGroupModal(projectListService.getCurrent(), group);
     }
 
     $scope.deleteGroup = function(index, group) {
         if (groupListService.getData() != null && groupListService.getData()[index] != null) {
-            groupService.ajax.delete({projectId: projectsService.getCurrent(), groupId: group.id}, function(response, getResponseHeaders) {
+            groupService.ajax.delete({projectId: projectListService.getCurrent(), groupId: group.id}, function(response, getResponseHeaders) {
                 if (group == groupListService.getCurrent()) {
                     groupListService.setCurrent(null);
-                    requestsService.setData(null);
-                    requestsService.setCurrent(null);
+                    requestListService.setData(null);
+                    requestListService.setCurrent(null);
                 }
                 groupListService.removeFromGroupList(index);
             }, function(errorResponse) {

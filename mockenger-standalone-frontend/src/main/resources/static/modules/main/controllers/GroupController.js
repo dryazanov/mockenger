@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('mockengerClientMainApp').controller('GroupController',['$scope', 'projectsService', 'groupService', 'groupListService',
-    function ($scope, projectsService, groupService, groupListService) {
+angular.module('mockengerClientMainApp').controller('GroupController',['$scope', 'projectListService', 'groupService', 'groupListService',
+    function ($scope, projectListService, groupService, groupListService) {
 
         var groupModal = $('#groupModal');
         $scope.groupToSave = {};

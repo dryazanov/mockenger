@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('mockengerClientMainApp').factory('projectsService', ['$resource', 'apiEndpointsService', function ($resource, apiEndpointsService) {
+angular.module('mockengerClientMainApp').factory('projectListService', ['$resource', 'apiEndpointsService', function ($resource, apiEndpointsService) {
 
     var ProjectService = {
         data: null,

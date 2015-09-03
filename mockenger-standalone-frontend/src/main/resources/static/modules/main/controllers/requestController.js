@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('mockengerClientMainApp').controller('RequestController',['$scope', 'projectsService', 'groupService', 'requestService', 'requestsService', 'valuesetService',
-    function ($scope, projectsService, groupService, requestService, requestsService, valuesetService) {
+angular.module('mockengerClientMainApp').controller('RequestController',['$scope', 'projectListService', 'groupService', 'requestService', 'requestListService', 'valuesetService',
+    function ($scope, projectListService, groupService, requestService, requestListService, valuesetService) {
 
     $scope.selectMethod = function(method) {
-        requestsService.getCurrent().method = method;
+        requestListService.getCurrent().method = method;
     }
 
     $scope.selectTransformerType = function(type, transformer) {
@@ -12,7 +12,7 @@ angular.module('mockengerClientMainApp').controller('RequestController',['$scope
     }
 
     $scope.addParameter = function() {
-        var source = requestsService.getCurrent().parameters.values;
+        var source = requestListService.getCurrent().parameters.values;
         if (source == null) {
             source = [];
         }
@@ -23,24 +23,24 @@ angular.module('mockengerClientMainApp').controller('RequestController',['$scope
     }
 
     $scope.deleteParameter = function(index) {
-        var source = requestsService.getCurrent().parameters.values;
+        var source = requestListService.getCurrent().parameters.values;
         if (source != null && source[index] != null) {
             source.splice(index, 1);
         }
     }
 
     $scope.addRequestHeader = function() {
-        if (requestsService.getCurrent().headers.values == null) {
-            requestsService.getCurrent().headers.values = [];
+        if (requestListService.getCurrent().headers.values == null) {
+            requestListService.getCurrent().headers.values = [];
         }
-        addHeader(requestsService.getCurrent().headers.values);
+        addHeader(requestListService.getCurrent().headers.values);
     }
 
     $scope.addResponseHeader = function() {
-        if (requestsService.getCurrent().mockResponse.headers == null) {
-            requestsService.getCurrent().mockResponse.headers = [];
+        if (requestListService.getCurrent().mockResponse.headers == null) {
+            requestListService.getCurrent().mockResponse.headers = [];
         }
-        addHeader(requestsService.getCurrent().mockResponse.headers);
+        addHeader(requestListService.getCurrent().mockResponse.headers);
     }
 
     var addHeader = function(source) {
@@ -58,34 +58,34 @@ angular.module('mockengerClientMainApp').controller('RequestController',['$scope
 
     // Add transformer for Path
     $scope.addPathTransformer = function() {
-        if (requestsService.getCurrent().path.transformers == null) {
-            requestsService.getCurrent().path.transformers = [];
+        if (requestListService.getCurrent().path.transformers == null) {
+            requestListService.getCurrent().path.transformers = [];
         }
-        addTransformer(requestsService.getCurrent().path.transformers);
+        addTransformer(requestListService.getCurrent().path.transformers);
     }
 
     // Add transformer for Parameters
     $scope.addParamTransformer = function() {
-        if (requestsService.getCurrent().parameters.transformers == null) {
-            requestsService.getCurrent().parameters.transformers = [];
+        if (requestListService.getCurrent().parameters.transformers == null) {
+            requestListService.getCurrent().parameters.transformers = [];
         }
-        addTransformer(requestsService.getCurrent().parameters.transformers);
+        addTransformer(requestListService.getCurrent().parameters.transformers);
     }
 
     // Add transformer for Headers
     $scope.addHeaderTransformer = function() {
-        if (requestsService.getCurrent().headers.transformers == null) {
-            requestsService.getCurrent().headers.transformers = [];
+        if (requestListService.getCurrent().headers.transformers == null) {
+            requestListService.getCurrent().headers.transformers = [];
         }
-        addTransformer(requestsService.getCurrent().headers.transformers);
+        addTransformer(requestListService.getCurrent().headers.transformers);
     }
 
     // Add transformer for Request Body
     $scope.addRequestBodyTransformer = function() {
-        if (requestsService.getCurrent().body.transformers == null) {
-            requestsService.getCurrent().body.transformers = [];
+        if (requestListService.getCurrent().body.transformers == null) {
+            requestListService.getCurrent().body.transformers = [];
         }
-        addTransformer(requestsService.getCurrent().body.transformers);
+        addTransformer(requestListService.getCurrent().body.transformers);
     }
 
     var addTransformer = function(source) {

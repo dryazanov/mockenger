@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('mockengerClientMainApp').factory('requestsService', ['$resource', 'apiEndpointsService', function ($resource, apiEndpointsService) {
+angular.module('mockengerClientMainApp').factory('requestListService', ['$resource', 'apiEndpointsService', function ($resource, apiEndpointsService) {
 
     var RequestService = {
         data: null,

@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('mockengerClientMainApp').controller('ProjectPageController', ['$scope', 'currentProject', 'projectsService', 'groupListService', 'requestsService', 'valuesetService',
-        function($scope, currentProject, projectsService, groupListService, requestsService, valuesetService) {
+angular.module('mockengerClientMainApp').controller('ProjectPageController', ['$scope', 'currentProject', 'projectListService', 'groupListService', 'requestListService', 'valuesetService',
+        function($scope, currentProject, projectListService, groupListService, requestListService, valuesetService) {
 
     $scope.currentProject = currentProject;
     $scope.groupListService = groupListService;
-    $scope.requestsService = requestsService;
+    $scope.requestListService = requestListService;
 
     // ValueSets
     $scope.requestMethods = [];
@@ -16,7 +16,7 @@ angular.module('mockengerClientMainApp').controller('ProjectPageController', ['$
     groupListService.setData(null);
 
     currentProject.$promise.then(function (obj) {
-        projectsService.setCurrent(obj);
+        projectListService.setCurrent(obj);
         $scope.getRequestMethods(obj.id);
         $scope.getTransformerTypes();
 
