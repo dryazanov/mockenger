@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('mockengerClientMainApp').controller('IndexPageController', ['$scope', '$filter', 'projectsService', 'valuesetService',
-    function ($scope, $filter, projectsService, valuesetService) {
+angular.module('mockengerClientMainApp').controller('IndexPageController', ['$scope', '$filter', 'projectListService', 'valuesetService',
+    function ($scope, $filter, projectListService, valuesetService) {
 
         // Show alerts in case of error
         $scope.alerts = [];
@@ -26,7 +26,7 @@ angular.module('mockengerClientMainApp').controller('IndexPageController', ['$sc
 
 
 
-        $scope.projectsService = projectsService;
+        $scope.projectListService = projectListService;
 
         $scope.projectsList = {};
         $scope.availableProjectTypes = {};
@@ -47,8 +47,8 @@ angular.module('mockengerClientMainApp').controller('IndexPageController', ['$sc
         }
 
         $scope.getProjects = function() {
-            projectsService.ajax.query(function(response, getResponseHeaders) {
-                projectsService.setData(response);
+            projectListService.ajax.query(function(response, getResponseHeaders) {
+                projectListService.setData(response);
             }, function(errorResponse) {
                 showErrors(errorResponse);
             });
@@ -67,7 +67,7 @@ angular.module('mockengerClientMainApp').controller('IndexPageController', ['$sc
         };
 
         $scope.deleteProject = function(project) {
-            projectsService.ajax.delete({projectId: project.id}, function(response, getResponseHeaders) {
+            projectListService.ajax.delete({projectId: project.id}, function(response, getResponseHeaders) {
                 $scope.getProjects();
             }, function(errorResponse) {
                 showErrors(errorResponse);
@@ -76,14 +76,14 @@ angular.module('mockengerClientMainApp').controller('IndexPageController', ['$sc
 
         $scope.saveProject = function(currentProject) {
             if (currentProject.id != null) {
-                projectsService.ajax.update({projectId: currentProject.id}, currentProject, function(response, getResponseHeaders) {
+                projectListService.ajax.update({projectId: currentProject.id}, currentProject, function(response, getResponseHeaders) {
                     projectModal.modal('hide');
                     $scope.getProjects();
                 }, function(errorResponse) {
                     showErrors(errorResponse);
                 });
             } else {
-                projectsService.ajax.save(currentProject, function() {
+                projectListService.ajax.save(currentProject, function() {
                     projectModal.modal('hide');
                     $scope.getProjects();
                 }, function(errorResponse) {
