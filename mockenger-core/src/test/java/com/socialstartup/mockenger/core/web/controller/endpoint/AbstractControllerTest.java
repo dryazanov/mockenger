@@ -129,7 +129,7 @@ public class AbstractControllerTest {
     protected Project getNewProject(boolean generateRandomProjectCode) {
         String id = CommonUtils.generateUniqueId();
         String code = PROJECT_CODE_TEST + (generateRandomProjectCode ? "-" + id  : "");
-        Project project = new Project(PROJECT_NAME_TEST, code, ProjectType.SIMPLE);
+        Project project = new Project(PROJECT_NAME_TEST, code, ProjectType.HTTP);
         project.setId(id);
         return project;
     }

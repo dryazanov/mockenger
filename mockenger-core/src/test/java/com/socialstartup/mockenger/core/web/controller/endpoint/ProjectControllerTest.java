@@ -56,7 +56,7 @@ public class ProjectControllerTest extends AbstractControllerTest {
             .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
             .andExpect(jsonPath("$.id").value(project.getId()))
             .andExpect(jsonPath("$.name").value(PROJECT_NAME_TEST))
-            .andExpect(jsonPath("$.type").value(ProjectType.SIMPLE.name()));
+            .andExpect(jsonPath("$.type").value(ProjectType.HTTP.name()));
 
         deleteProject(project);
     }

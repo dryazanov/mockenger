@@ -464,6 +464,9 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form name="groupForm" novalidate>
+                <input type="hidden" ng-model="groupToSave.projectId">
+                <input type="hidden" ng-model="groupToSave.id">
+
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="requestModalLabel">{{groupToSave.id == null ? 'Create group' : 'Edit group'}}</h4>
@@ -472,8 +475,10 @@
                     <div>
                         <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)" dismiss-on-timeout="true">{{alert.msg}}</alert>
                     </div>
-                    <input type="hidden" ng-model="groupToSave.projectId">
-                    <input type="hidden" ng-model="groupToSave.id">
+                    <div class="form-group" ng-if="urlToSendRequests != null">
+                        <label>URL for requests</label>
+                        <pre>{{urlToSendRequests}}</pre>
+                    </div>
                     <div class="form-group">
                         <label for="name">Name</label>
                         <input type="text" name="name" id="name" ng-model="groupToSave.name" class="form-control" required>

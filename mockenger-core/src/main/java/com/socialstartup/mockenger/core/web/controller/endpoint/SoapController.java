@@ -26,7 +26,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * Created by x079089 on 3/24/2015.
  */
 @Controller
-@RequestMapping(value = {"/soap/{groupId}"})
+@RequestMapping(value = {"/SOAP/{groupId}"})
 public class SoapController extends ParentController {
 
     @Autowired
