@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('mockengerClientMainApp').controller('RequestController',['$scope', 'projectListService', 'groupService', 'requestService', 'requestListService', 'valuesetService',
-    function ($scope, projectListService, groupService, requestService, requestListService, valuesetService) {
+angular.module('mockengerClientMainApp').controller('RequestController',['$scope', 'ngToast', 'projectListService', 'groupListService', 'requestService', 'requestListService', 'valuesetService',
+    function ($scope, ngToast, projectListService, groupListService, requestService, requestListService, valuesetService) {
 
     $scope.selectMethod = function(method) {
         requestListService.getCurrent().method = method;
@@ -12,11 +12,10 @@ angular.module('mockengerClientMainApp').controller('RequestController',['$scope
     }
 
     $scope.addParameter = function() {
-        var source = requestListService.getCurrent().parameters.values;
-        if (source == null) {
-            source = [];
+        if (requestListService.getCurrent().parameters.values == null) {
+            requestListService.getCurrent().parameters.values = [];
         }
-        source.push({
+        requestListService.getCurrent().parameters.values.push({
             "key": "",
             "value": ""
         });
@@ -37,8 +36,16 @@ angular.module('mockengerClientMainApp').controller('RequestController',['$scope
     }
 
     $scope.addResponseHeader = function() {
-        if (requestListService.getCurrent().mockResponse.headers == null) {
-            requestListService.getCurrent().mockResponse.headers = [];
+        if (requestListService.getCurrent().mockResponse == null) {
+            requestListService.getCurrent().mockResponse = {
+                headers: [],
+                httpStatus: null,
+                body: null
+            }
+        } else {
+            if (requestListService.getCurrent().mockResponse.headers == null) {
+                requestListService.getCurrent().mockResponse.headers = [];
+            }
         }
         addHeader(requestListService.getCurrent().mockResponse.headers);
     }
@@ -99,6 +106,27 @@ angular.module('mockengerClientMainApp').controller('RequestController',['$scope
     $scope.deleteTransformer = function(index, source) {
         if (source != null && source[index] != null) {
             source.splice(index, 1);
+        }
+    }
+
+    $scope.saveRequest = function(currentRequest) {
+        var requestParams = {
+            projectId: projectListService.getCurrent().id,
+            groupId: groupListService.getCurrent().id
+        }
+        if (currentRequest.id != null) {
+            requestParams.requestId = currentRequest.id;
+            requestService.ajax.update(requestParams, currentRequest, function(response) {
+                ngToast.create('Request <b>' + currentRequest.name + '</b> has been saved');
+            }, function(errorResponse) {
+                showErrors(errorResponse);
+            });
+        } else {
+            requestService.ajax.save(requestParams, currentRequest, function() {
+                ngToast.create('New request has been created');
+            }, function(errorResponse) {
+                showErrors(errorResponse);
+            });
         }
     }
 }]);

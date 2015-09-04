@@ -6,7 +6,7 @@ angular.module('mockengerClientMainApp').factory('requestListService', ['$resour
         data: null,
         current: null,
         filters: {
-            order: 'name',
+            order: 'creationDate',
             search: {
                 query: undefined
             },
@@ -59,7 +59,7 @@ angular.module('mockengerClientMainApp').factory('requestListService', ['$resour
         setData: function(data) {
             RequestService.data = data;
             RequestService.setCurrentPage(0);
-            RequestService.setListOrder('name');
+            RequestService.setListOrder('creationDate');
             RequestService.setSearchQuery(undefined);
         },
 

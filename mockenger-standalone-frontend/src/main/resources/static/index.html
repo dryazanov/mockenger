@@ -11,6 +11,7 @@
     <!-- build:css assets/styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="libs/ngtoast/dist/ngToast.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css assets/styles/main.css -->
@@ -27,13 +28,15 @@
 <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
     your browser</a> to improve your experience.</p>
 <![endif]-->
+<toast></toast>
 <div ng-show="app.env === 'dev'" class="development" ng-cloak=""></div>
 <div ng-view=""></div>
-<footer class="footer">
+
+<!--<footer class="footer">
     <div class="container">
         <p class="text-muted">You are running {{app.version}} Mockenger version built on {{app.buildDate}}</p>
     </div>
-</footer>
+</footer>-->
 <!-- build:js scripts/vendor.js -->
 <!-- bower:js -->
 <script src="libs/jquery/dist/jquery.js"></script>
@@ -47,6 +50,7 @@
 <script src="libs/angular-animate/angular-animate.js"></script>
 <script src="libs/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 <script src="libs/bootstrap/dist/js/bootstrap.js"></script>
+<script src="libs/ngtoast/dist/ngToast.js"></script>
 <!-- endbower -->
 <!-- endbuild -->
 

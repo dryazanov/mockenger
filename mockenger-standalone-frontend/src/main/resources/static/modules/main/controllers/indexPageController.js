@@ -55,12 +55,14 @@ angular.module('mockengerClientMainApp').controller('IndexPageController', ['$sc
         }
 
         $scope.createProject = function() {
+            $scope.alerts = [];
             $scope.currentProject = {};
             $scope.projectForm.$setPristine();
             projectModal.modal({});
         };
 
         $scope.editProject = function(project) {
+            $scope.alerts = [];
             $scope.currentProject = {};
             angular.copy(project, $scope.currentProject);
             projectModal.modal({});

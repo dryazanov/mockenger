@@ -16,9 +16,7 @@
     "test",
     "tests"
   ],
-
   "dependencies": {
-    "angular": "~1.4.4",
     "angular": "^1.4.4",
     "angular-cookies": "^1.4.4",
     "angular-messages": "^1.4.4",
@@ -28,7 +26,7 @@
     "angular-touch": "^1.4.4",
     "angular-animate": "^1.4.4",
     "angular-bootstrap": "^0.13.3",
-    "bootstrap": "3.3.4"
-
+    "bootstrap": "3.3.4",
+    "ngtoast": "^1.5.5"
   }
 }
