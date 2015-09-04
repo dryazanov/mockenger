@@ -111,7 +111,7 @@ public class ParentController extends AbstractController {
                 getRequestService().save(mockRequest);
                 status = HttpStatus.CREATED;
             }
-            return new ResponseEntity(getResponseHeaders(), status);
+            return new ResponseEntity(mockRequest, getResponseHeaders(), status);
         }
     }
 }

@@ -9,29 +9,36 @@ var module = angular.module('mockengerClientMainApp', [
     'ngRoute',
     'ngSanitize',
     'ngTouch',
-    'ui.bootstrap']);
+    'ui.bootstrap',
+    'ngToast']);
 
-module.config(['$locationProvider','$routeProvider', function ($locationProvider, $routeProvider) {
+module.config(['$locationProvider', '$routeProvider', 'ngToastProvider', function ($locationProvider, $routeProvider, ngToastProvider) {
     //$locationProvider.html5Mode(true);
-    $routeProvider
-        .when('/', {
-            templateUrl: '/modules/main/views/indexView.html',
-            controller: 'IndexPageController'
-        })
-        .when('/project/:projectId', {
-            templateUrl: '/modules/main/views/projectView.html',
-            controller: 'ProjectPageController',
-            resolve: {
-                currentProject: ['$route', 'projectListService', function($route, projectListService) {
-                    var projectId = $route.current.params.projectId;
-                    projectListService.projectId = projectId;
-                    return projectListService.ajax.get({projectId : projectId});
-                }]
-            }
-        })
-        .otherwise({
-            redirectTo: '/'
-        });
+    $routeProvider.when('/', {
+        templateUrl: '/modules/main/views/indexView.html',
+        controller: 'IndexPageController'
+    })
+    .when('/project/:projectId', {
+        templateUrl: '/modules/main/views/projectView.html',
+        controller: 'ProjectPageController',
+        resolve: {
+            currentProject: ['$route', 'projectListService', function($route, projectListService) {
+                var projectId = $route.current.params.projectId;
+                projectListService.projectId = projectId;
+                return projectListService.ajax.get({projectId : projectId});
+            }]
+        }
+    })
+    .otherwise({
+        redirectTo: '/'
+    });
+
+    ngToastProvider.configure({
+        animation: 'slide', // or 'fade'
+        horizontalPosition: 'center',
+        dismissButton: true,
+        timeout: 5000
+    });
 }]);
 
 

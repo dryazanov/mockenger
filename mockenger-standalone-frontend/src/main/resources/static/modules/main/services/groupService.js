@@ -7,7 +7,7 @@ angular.module('mockengerClientMainApp').factory('groupService', ['$rootScope', 
                 groupId: '@groupId',
                 projectId: '@projectId'
             }, {
-                'update': {
+                update: {
                     method:'PUT'
                 }
             }
