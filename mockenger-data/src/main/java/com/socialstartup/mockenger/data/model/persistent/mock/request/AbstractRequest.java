@@ -42,7 +42,6 @@ public class AbstractRequest extends AbstractPersistentEntity<String> {
 
     protected Body body;
 
-    @NotBlank(message = "checkSum: may not be null or empty")
     private String checkSum;
 
     @MockResponseValidation

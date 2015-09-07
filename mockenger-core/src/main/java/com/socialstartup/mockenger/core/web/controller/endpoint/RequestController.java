@@ -1,5 +1,6 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
+import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -68,8 +70,15 @@ public class RequestController extends AbstractController {
         Project project = findProjectById(projectId);
         findGroupById(groupId);
 
+        // Set id to null to create new mock
         request.setId(null);
+        // Set creation date
+        request.setCreationDate(new Date());
+        // Generate new unique code
         request.setUniqueCode(String.format("%s-%d", project.getCode(), getProjectService().getNextSequenceValue(projectId)));
+        // Generate checksum
+        request.setCheckSum(CommonUtils.getCheckSum(request));
+        // Save
         getRequestService().save(request);
 
         return new ResponseEntity(request, getResponseHeaders(), HttpStatus.OK);
@@ -95,7 +104,13 @@ public class RequestController extends AbstractController {
         findProjectById(projectId);
         findGroupById(groupId);
 
-        findRequestByIdAndUniqueCode(requestId, request.getUniqueCode());
+        // If mock found that means that id and unique code were not changed
+        AbstractRequest fountRequest = findRequestByIdAndUniqueCode(requestId, request.getUniqueCode());
+        // Creation date can't be changed by user
+        request.setCreationDate(fountRequest.getCreationDate());
+        // Re-generate checksum because values could be updated
+        request.setCheckSum(CommonUtils.getCheckSum(request));
+        // Save
         getRequestService().save(request);
 
         return new ResponseEntity(request, getResponseHeaders(), HttpStatus.OK);
@@ -115,8 +130,9 @@ public class RequestController extends AbstractController {
     public ResponseEntity deleteRequest(@PathVariable String projectId, @PathVariable String groupId, @PathVariable String requestId) {
         findProjectById(projectId);
         findGroupById(groupId);
-        AbstractRequest request = findRequestById(requestId);
-        getRequestService().remove(request);
+
+        getRequestService().remove(findRequestById(requestId));
+
         return new ResponseEntity(getResponseHeaders(), HttpStatus.NO_CONTENT);
     }
 

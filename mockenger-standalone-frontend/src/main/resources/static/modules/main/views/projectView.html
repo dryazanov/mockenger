@@ -2,11 +2,6 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-3" ng-controller="GroupListController">
-            <!--<button type="button" class="btn btn-primary btn-sm btn-block" ng-click="createGroup()">
-                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                Create group
-            </button>-->
-
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="pull-right">
@@ -29,8 +24,8 @@
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </button>
                                 </div>
-                                <div ng-click="loadGroupRequests(group)">
-                                    {{group.name}}
+                                <div>
+                                    <a href ng-click="loadGroupRequests(group)">{{group.name}}</a>
                                     &nbsp;
                                     <span ng-show="!group.recording" class="label label-info">Not recording</span>
                                     <span ng-show="group.recording" class="label label-danger">Recording</span>
@@ -81,10 +76,11 @@
                 </div>
 
                 <div class="panel-body">
-                    <div ng-if="pageCount() < 0">
+                    <div ng-if="pageCount() <= 0">
                         <h4>No results found</h4>
                     </div>
-                    <table class="table table-striped table-hover" ng-if="pageCount() >= 0">
+                    {{filteredRequest}}
+                    <table class="table table-striped table-hover" ng-if="pageCount() > 0">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -95,19 +91,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-click="requestListService.setCurrent(request)"
-                                ng-repeat="request in requestListService.getData()
+                            <tr ng-repeat="request in requestListService.getData()
                                     | filter:requestListService.getSearchQuery()
                                     | orderBy:requestListService.getListOrder()
                                     | offset:getOffset()
                                     | limitTo:requestListService.getLimit() track by $index">
 
-                                <td class="col-md-2">{{request.name}}</td>
+                                <td class="col-md-2"><a href ng-click="selectRequest($index, request)">{{request.name}}</a></td>
                                 <td class="col-md-2">{{request.creationDate | date:'dd-MM-yyyy HH:mm:ss'}}</td>
                                 <td class="col-md-5">@{{request.path.value}}</td>
                                 <td class="col-md-2">{{request.method}}</td>
                                 <td class="col-md-1">
-                                    <button class="btn btn-xs" ng-really-click="deleteRequest($index)"
+                                    <button class="btn btn-xs" ng-really-click="deleteRequest(request)"
                                             ng-really-message="Do you really want to delete this request?">
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </button>
@@ -118,19 +113,19 @@
                 </div>
 
                 <div class="panel-footer" ng-show="pageCount() > 0">
-                    <!--Current page: {{getCurrentPage() + 1}} Total pages: {{pageCount() + 1}}-->
+                    <!--Current page: {{requestListService.getCurrentPage()}} Total pages: {{pageCount()}}-->
                     <ul class="pagination pull-right">
-                        <li ng-class="prevPageDisabled()">
+                        <li ng-class="{disabled: isPrevPageDisabled()}">
                             <a href ng-click="prevPage()" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
 
-                        <li ng-repeat="n in range()" ng-class="isActive(n)">
+                        <li ng-repeat="n in range()" ng-class="{active: isActive(n)}">
                             <a href ng-click="requestListService.setCurrentPage(n)">{{n+1}}</a>
                         </li>
 
-                        <li ng-class="nextPageDisabled()">
+                        <li ng-class="{disabled: isNextPageDisabled()}">
                             <a href ng-click="nextPage()" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
@@ -150,10 +145,10 @@
                                         <button class="btn btn-sm btn-primary" ng-click="requestListService.setCurrent(null)">
                                             <span class="glyphicon glyphicon-list"></span>
                                         </button>
-                                        <button class="btn btn-sm btn-primary" ng-click="">
+                                        <button class="btn btn-sm btn-primary" ng-class="{disabled: isPrevRequestDisabled()}" ng-click="prevRequest()">
                                             <span class="glyphicon glyphicon-chevron-left"></span>
                                         </button>
-                                        <button class="btn btn-sm btn-primary" ng-click="">
+                                        <button class="btn btn-sm btn-primary" ng-class="{disabled: isNextRequestDisabled()}" ng-click="nextRequest()">
                                             <span class="glyphicon glyphicon-chevron-right"></span>
                                         </button>
                                     </div>
@@ -162,22 +157,23 @@
                             </div>
                         </div>
                         <div class="panel-body">
-                            <div class="container-fluid">
+                            <form name="mockRequestForm" novalidate>
+                                <div class="container-fluid">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <tabset>
                                             <tab heading="#">
                                                 <br/>
-                                                <div class="form-group">
+                                                <div class="form-group" ng-class="hasError(mockRequestForm.requestName)">
                                                     <label for="url">Name</label>
                                                     <table class="table">
                                                         <tr>
                                                             <td>
                                                                 <input type="text" name="requestName" id="requestName"
                                                                        ng-model="requestListService.getCurrent().name"
-                                                                       class="form-control"
+                                                                       class="form-control" required
                                                                        aria-describedby="sizing-addon1">
-                                                                <p ng-show="groupForm.requestName.$invalid && !groupForm.requestName.$pristine"
+                                                                <p ng-show="mockRequestForm.requestName.$invalid && !mockRequestForm.requestName.$pristine"
                                                                    class="help-block">Name is required.</p>
                                                             </td>
                                                         </tr>
@@ -223,9 +219,9 @@
                                                                             </li>
                                                                         </ul>
                                                                     </div>
-                                                                    <input type="text" name="url" id="url" ng-model="requestListService.getCurrent().path.value" class="form-control" aria-describedby="sizing-addon1">
+                                                                    <input type="text" name="url" id="url" ng-model="requestListService.getCurrent().path.value"
+                                                                           class="form-control" aria-describedby="sizing-addon1" placeholder="Path">
                                                                 </div>
-                                                                <p ng-show="groupForm.path.$invalid && !groupForm.path.$pristine" class="help-block">Path is required.</p>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -241,10 +237,12 @@
                                                                 </select>
                                                             </td>
                                                             <td class="col-lg-5">
-                                                                    <input type="text" ng-model="pathTransformer.pattern" class="form-control" aria-describedby="sizing-addon1">
+                                                                    <input type="text" ng-model="pathTransformer.pattern" class="form-control"
+                                                                           aria-describedby="sizing-addon1" placeholder="Pattern">
                                                             </td>
                                                             <td class="col-lg-5">
-                                                                <input type="text" ng-model="pathTransformer.replacement" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" ng-model="pathTransformer.replacement" class="form-control"
+                                                                       aria-describedby="sizing-addon1" placeholder="Replacement">
                                                             </td>
                                                             <td>
                                                                 <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestListService.getCurrent().path.transformers)"
@@ -270,10 +268,12 @@
                                                     <table class="table">
                                                         <tr ng-repeat="parameter in requestListService.getCurrent().parameters.values track by $index">
                                                             <td class="col-lg-6">
-                                                                <input type="text" ng-model="parameter.key" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" ng-model="parameter.key" class="form-control"
+                                                                       aria-describedby="sizing-addon1" placeholder="Name">
                                                             </td>
                                                             <td class="col-lg-6">
-                                                                <input type="text" ng-model="parameter.value" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" ng-model="parameter.value" class="form-control"
+                                                                       aria-describedby="sizing-addon1" placeholder="Value">
                                                             </td>
                                                             <td>
                                                                 <button class="btn btn-x" ng-really-click="deleteParameter($index)"
@@ -300,10 +300,12 @@
                                                                 </select>
                                                             </td>
                                                             <td class="col-lg-5">
-                                                                <input type="text" ng-model="paramTransformer.pattern" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" ng-model="paramTransformer.pattern" class="form-control"
+                                                                       aria-describedby="sizing-addon1" placeholder="Pattern">
                                                             </td>
                                                             <td class="col-lg-5">
-                                                                <input type="text" ng-model="paramTransformer.replacement" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" ng-model="paramTransformer.replacement" class="form-control"
+                                                                       aria-describedby="sizing-addon1" placeholder="Replacement">
                                                             </td>
                                                             <td>
                                                                 <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestListService.getCurrent().parameters.transformers)"
@@ -329,10 +331,12 @@
                                                     <table class="table">
                                                         <tr ng-repeat="requestHeader in requestListService.getCurrent().headers.values track by $index">
                                                             <td class="col-lg-6">
-                                                                <input type="text" ng-model="requestHeader.key" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" ng-model="requestHeader.key" class="form-control"
+                                                                       aria-describedby="sizing-addon1" placeholder="Name">
                                                             </td>
                                                             <td class="col-lg-6">
-                                                                <input type="text" ng-model="requestHeader.value" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" ng-model="requestHeader.value" class="form-control"
+                                                                       aria-describedby="sizing-addon1" placeholder="Value">
                                                             </td>
                                                             <td>
                                                                 <button class="btn btn-x" ng-really-click="deleteHeader($index, requestListService.getCurrent().headers.values)"
@@ -359,10 +363,12 @@
                                                                 </select>
                                                             </td>
                                                             <td class="col-lg-5">
-                                                                <input type="text" ng-model="headerTransformer.pattern" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" ng-model="headerTransformer.pattern" class="form-control"
+                                                                       aria-describedby="sizing-addon1" placeholder="Pattern">
                                                             </td>
                                                             <td class="col-lg-5">
-                                                                <input type="text" ng-model="headerTransformer.replacement" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" ng-model="headerTransformer.replacement" class="form-control"
+                                                                       aria-describedby="sizing-addon1" placeholder="Replacement">
                                                             </td>
                                                             <td>
                                                                 <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestListService.getCurrent().headers.transformers)"
@@ -393,10 +399,12 @@
                                                                 </select>
                                                             </td>
                                                             <td class="col-lg-5">
-                                                                <input type="text" ng-model="bodyTransformer.pattern" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" ng-model="bodyTransformer.pattern" class="form-control"
+                                                                       aria-describedby="sizing-addon1" placeholder="Pattern">
                                                             </td>
                                                             <td class="col-lg-5">
-                                                                <input type="text" ng-model="bodyTransformer.replacement" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" ng-model="bodyTransformer.replacement" class="form-control"
+                                                                       aria-describedby="sizing-addon1" placeholder="Replacement">
                                                             </td>
                                                             <td>
                                                                 <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestListService.getCurrent().body.transformers)"
@@ -434,10 +442,12 @@
                                                     <table class="table">
                                                         <tr ng-repeat="responseHeader in requestListService.getCurrent().mockResponse.headers track by $index">
                                                             <td class="col-lg-6">
-                                                                <input type="text" ng-model="responseHeader.key" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" ng-model="responseHeader.key" class="form-control"
+                                                                       aria-describedby="sizing-addon1" placeholder="Name">
                                                             </td>
                                                             <td class="col-lg-6">
-                                                                <input type="text" ng-model="responseHeader.value" class="form-control" aria-describedby="sizing-addon1">
+                                                                <input type="text" ng-model="responseHeader.value" class="form-control"
+                                                                       aria-describedby="sizing-addon1" placeholder="Value">
                                                             </td>
                                                             <td>
                                                                 <button class="btn btn-x" ng-really-click="deleteHeader($index, requestListService.getCurrent().mockResponse.headers)"
@@ -454,14 +464,27 @@
                                                     </table>
                                                 </div>
 
-                                                <div class="form-group">
+                                                <div class="form-group" ng-class="hasError(mockRequestForm.httpStatus)">
                                                     <label for="httpStatus">HTTP status code</label>
                                                     <table class="table">
                                                         <tr>
                                                             <td>
-                                                                <input type="text" name="httpStatus" id="httpStatus" ng-model="requestListService.getCurrent().mockResponse.httpStatus"
-                                                                       class="form-control" aria-describedby="sizing-addon1">
-                                                                <p ng-show="groupForm.httpStatus.$invalid && !groupForm.httpStatus.$pristine" class="help-block">HTTP status code is required.</p>
+                                                                <!--<div class="input-group-btn">
+                                                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                                                            aria-haspopup="true" aria-expanded="false">{{requestListService.getCurrent().method}} <span class="caret"></span></button>
+                                                                    <ul class="dropdown-menu">
+                                                                        <li ng-repeat="method in requestMethods">
+                                                                            <a href ng-click="selectMethod(method)">{{method}}</a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>-->
+                                                                <input type="text" name="httpStatus" id="httpStatus" class="form-control"
+                                                                       ng-model="requestListService.getCurrent().mockResponse.httpStatus"
+                                                                       aria-describedby="sizing-addon1" ng-pattern="/^[0-9]{3}$/" required>
+                                                                <div ng-show="mockRequestForm.httpStatus.$invalid && !mockRequestForm.httpStatus.$pristine">
+                                                                    <p ng-show="mockRequestForm.httpStatus.$error.required" class="help-block">HTTP status code is required</p>
+                                                                    <p ng-show="mockRequestForm.httpStatus.$error.pattern" class="help-block">Must be 3 digits long</p>
+                                                                </div>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -483,6 +506,7 @@
                                     </div>
                                 </div>
                             </div>
+                            </form>
                         </div>
                         <div class="panel-footer">
                             <div class="pull-right">
@@ -518,10 +542,10 @@
                         <label>URL for requests</label>
                         <pre>{{urlToSendRequests}}</pre>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" ng-class="hasError(groupForm.name)">
                         <label for="name">Name</label>
                         <input type="text" name="name" id="name" ng-model="groupToSave.name" class="form-control" required>
-                        <p ng-show="groupForm.name.$invalid && !groupForm.name.$pristine" class="help-block">Group name is required.</p>
+                        <p ng-show="groupForm.name.$invalid && !groupForm.name.$pristine" class="help-block">Group name is required</p>
                     </div>
                     <div class="form-group">
                         <label for="recording">Record incoming requests</label>

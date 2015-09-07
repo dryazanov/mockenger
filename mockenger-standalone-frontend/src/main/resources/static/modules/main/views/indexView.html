@@ -47,23 +47,26 @@
                             <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
                         </div>
                         <input type="hidden" ng-model="currentProject.id">
-                        <div class="form-group">
+                        <div class="form-group" ng-class="hasError(projectForm.name)">
                             <label for="name">Name</label>
                             <input type="text" name="name" id="name" ng-model="currentProject.name" class="form-control" required>
-                            <p ng-show="projectForm.name.$invalid && !projectForm.name.$pristine" class="help-block">Project name is required.</p>
+                            <p ng-show="projectForm.name.$invalid && !projectForm.name.$pristine" class="help-block">Project name is required</p>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" ng-class="hasError(projectForm.code)">
                             <label for="code">Code</label>
                             <input type="text" name="code" id="code" ng-model="currentProject.code"
                                    ng-pattern="/^[a-zA-Z0-9]+$/" ng-disabled="currentProject.id != null" class="form-control" required>
-                            <p ng-show="projectForm.code.$invalid && !projectForm.code.$pristine" class="help-block">Code is required. Only letters and numbers allowed.</p>
+                            <div ng-show="projectForm.code.$invalid && !projectForm.code.$pristine">
+                                <p ng-show="projectForm.code.$error.required" class="help-block">Code is required</p>
+                                <p ng-show="projectForm.code.$error.pattern" class="help-block">Only letters and numbers allowed</p>
+                            </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" ng-class="hasError(projectForm.type)">
                             <label for="type">Type</label>
                             <select name="type" id="type" ng-model="currentProject.type" required ng-disabled="currentProject.id != null" class="form-control">
                                 <option ng-repeat="type in availableProjectTypes track by $index">{{type}}</option>
                             </select>
-                            <p ng-show="projectForm.type.$invalid && !projectForm.type.$pristine" class="help-block">Type is required.</p>
+                            <p ng-show="projectForm.type.$invalid && !projectForm.type.$pristine" class="help-block">Type is required</p>
                         </div>
                     </div>
                     <div class="modal-footer">
