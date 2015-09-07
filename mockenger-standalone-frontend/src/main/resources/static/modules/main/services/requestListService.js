@@ -2,11 +2,19 @@
 
 angular.module('mockengerClientMainApp').factory('requestListService', ['$resource', 'apiEndpointsService', function ($resource, apiEndpointsService) {
 
-    var RequestService = {
+    var RequestListService = {
         data: null,
+
+        filteredData: null,
+
+        filteredDataCurrentIndex: 0,
+
         current: null,
+
+        defaultOrderField: 'creationDate',
+
         filters: {
-            order: 'creationDate',
+            order: this.defaultOrderField,
             search: {
                 query: undefined
             },
@@ -17,63 +25,85 @@ angular.module('mockengerClientMainApp').factory('requestListService', ['$resour
         },
 
         getListOrder: function() {
-            return RequestService.filters.order;
+            return RequestListService.filters.order;
         },
 
         setListOrder: function(field) {
-            RequestService.filters.order = field;
+            RequestListService.filters.order = field;
         },
 
         getSearchQuery: function() {
-            return RequestService.filters.search.query;
+            return RequestListService.filters.search.query;
         },
 
         setSearchQuery: function(query) {
-            RequestService.filters.search.query = query;
+            RequestListService.filters.search.query = query;
         },
 
         getLimit: function() {
-            return RequestService.filters.paging.limit;
+            return RequestListService.filters.paging.limit;
         },
 
         setLimit: function(limit) {
-            return RequestService.filters.paging.limit = limit;
+            return RequestListService.filters.paging.limit = limit;
         },
 
         getCurrentPage: function() {
-            return RequestService.filters.paging.current;
+            return RequestListService.filters.paging.current;
         },
 
         setCurrentPage: function(n) {
-            RequestService.filters.paging.current = n;
+            RequestListService.filters.paging.current = n;
         },
 
         getCurrent: function() {
-            return RequestService.current;
+            return RequestListService.current;
         },
 
         setCurrent: function(currentToSet) {
-            RequestService.current = currentToSet;
+            RequestListService.current = currentToSet;
         },
 
         setData: function(data) {
-            RequestService.data = data;
-            RequestService.setCurrentPage(0);
-            RequestService.setListOrder('creationDate');
-            RequestService.setSearchQuery(undefined);
+            RequestListService.data = data;
+            RequestListService.setCurrentPage(0);
+            RequestListService.setListOrder(RequestListService.defaultOrderField);
+            RequestListService.setSearchQuery(undefined);
         },
 
         getData: function() {
-            return RequestService.data;
+            return RequestListService.data;
+        },
+
+        setFilteredData: function(data) {
+            RequestListService.filteredData = data;
+        },
+
+        getFilteredData: function() {
+            return RequestListService.filteredData;
         },
 
         ajax: $resource(apiEndpointsService.getRequestRestUrl(), {
                 groupId: '@groupId',
-                projectId: '@projectId',
-                requestId: '@requestId'
+                projectId: '@projectId'
             }, {}
-        )
+        ),
+
+        getRequestIndex: function(id) {
+            if (RequestListService.getData() != null) {
+                for (var index = 0, l = RequestListService.getData().length; index < l; index++) {
+                    if (id == RequestListService.getData()[index].id) {
+                        return index;
+                    }
+                }
+            }
+            return -1;
+        },
+        
+        removeFromRequestList: function(index) {
+            RequestListService.data.splice(index, 1);
+        }
     };
 
-    return RequestService;
+    return RequestListService;
 }]);

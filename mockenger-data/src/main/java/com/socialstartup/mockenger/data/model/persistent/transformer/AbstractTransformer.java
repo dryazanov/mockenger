@@ -9,9 +9,9 @@ import com.socialstartup.mockenger.data.model.dict.TransformerType;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = RegexpTransformer.class, name = "RegexpTransformer"),
-    @JsonSubTypes.Type(value = XPathTransformer.class, name = "XPathTransformer"),
-    @JsonSubTypes.Type(value = KeyValueTransformer.class, name = "KeyValueTransformer")
+    @JsonSubTypes.Type(value = RegexpTransformer.class, name = "REGEXP"),
+    @JsonSubTypes.Type(value = XPathTransformer.class, name = "XPATH"),
+    @JsonSubTypes.Type(value = KeyValueTransformer.class, name = "KEY_VALUE")
 })
 public abstract class AbstractTransformer implements Transformer {
 

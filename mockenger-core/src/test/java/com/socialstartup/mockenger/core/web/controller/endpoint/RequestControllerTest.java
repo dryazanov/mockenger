@@ -314,11 +314,6 @@ public class RequestControllerTest extends AbstractControllerTest {
             request.setGroupId(null);
             runner.run(mockMvc, project.getId(), group.getId(), request, "groupId: may not be null");
 
-            // Empty checksum
-            request = getNewRequest(group.getId());
-            request.setCheckSum(null);
-            runner.run(mockMvc, project.getId(), group.getId(), request, "checkSum: may not be null or empty");
-
             // httpStatus in the response is zero
             request = getNewRequest(group.getId());
             request.getMockResponse().setHttpStatus(0);

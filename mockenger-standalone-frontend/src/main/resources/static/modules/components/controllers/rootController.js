@@ -39,5 +39,9 @@ angular.module('mockengerClientComponents')
             return status === STATUS.ERROR;
         };
 
+        $scope.hasError = function(input) {
+            return (input.$invalid && !input.$pristine ? 'has-error' : '');
+        }
+
 
     }]);
