@@ -4,20 +4,15 @@ angular.module('mockengerClientMainApp')
     .controller('RequestListController', [
         '$scope',
         '$filter',
-        'ngToast',
         'projectListService',
         'groupListService',
         'requestService',
         'requestListService',
         'REQUESTS_PER_PAGE',
 
-        function($scope, $filter, ngToast, projectListService, groupListService, requestService, requestListService, REQUESTS_PER_PAGE) {
-//            $scope.searchQuery = requestListService.getSearchQuery();
-//            $scope.listOrder = requestListService.getListOrder();
-
-            requestListService.setLimit(REQUESTS_PER_PAGE);
-
+        function($scope, $filter, projectListService, groupListService, requestService, requestListService, REQUESTS_PER_PAGE) {
             $scope.filteredData = {};
+            requestListService.setLimit(REQUESTS_PER_PAGE);
 
             $scope.createRequest = function() {
                 requestListService.setCurrent({
@@ -48,27 +43,22 @@ angular.module('mockengerClientMainApp')
             $scope.deleteRequest = function(requestToDelete) {
                 var index = requestListService.getRequestIndex(requestToDelete.id);
                 if (index < 0) {
-                    ngToast.create({
-                        className: 'danger',
-                        dismissOnTimeout: false,
-                        content: 'Delete process aborted. Cannot find request in the list.'
-                    });
+                    $scope.showRedMessage({data: {errors: new Array('Delete process aborted. Cannot find request in the list')}});
                 } else {
-                    var name = requestToDelete.name;
-                    var requestParams = {
+                    var paramsToSend = {
                         projectId: projectListService.getCurrent().id,
                         groupId: groupListService.getCurrent().id,
                         requestId: requestToDelete.id
                     };
-                    requestService.ajax.delete(requestParams, function(response, getResponseHeaders) {
+                    requestService.ajax.delete(paramsToSend, function(response, getResponseHeaders) {
+                        $scope.showGreenMessage('Mock-request <b>' + requestToDelete.name + '</b> deleted');
                         requestListService.removeFromRequestList(index);
-                        ngToast.create('Mock-request <b>' + name + '</b> has been deleted');
 
                         if ((requestListService.getCurrentPage() + 1) > $scope.pageCount()) {
                             $scope.prevPage();
                         }
                     }, function(errorResponse) {
-                        showErrors(errorResponse);
+                        $scope.showRedMessage(errorResponse);
                     });
                 }
             };

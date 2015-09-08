@@ -12,7 +12,10 @@
                     <h5>{{currentProject.name}} <span class="label label-primary">{{currentProject.type}}</span></h5>
                 </div>
                 <div class="panel-body">
-                    <table class="table table-hover">
+                    <div ng-if="groupListService.getData().length == 0">
+                        <h4>No groups here</h4>
+                    </div>
+                    <table class="table table-hover" ng-if="groupListService.getData().length > 0">
                         <tr ng-class="{active: isActive(group)}" ng-repeat="group in groupListService.getData() track by $index">
                             <td>
                                 <div class="pull-right">
@@ -78,8 +81,10 @@
                 <div class="panel-body">
                     <div ng-if="pageCount() <= 0">
                         <h4>No results found</h4>
+                        <br/>
+                        <h6>Please use <b>Create request</b> button to add new request</h6>
+                        <h6>Alternatively, you can switch on <b>Recording</b> on the group level and send your requests to <b>{{groupListService.getUrlForNewRequests()}}</b></h6>
                     </div>
-                    {{filteredRequest}}
                     <table class="table table-striped table-hover" ng-if="pageCount() > 0">
                         <thead>
                             <tr>

@@ -23,7 +23,7 @@ angular.module('mockengerClientMainApp').controller('ProjectPageController', ['$
         groupListService.ajax.query({projectId: currentProject.id}, function(response, getResponseHeaders) {
             groupListService.setData(response);
         }, function (errorResponse) {
-
+            $scope.showRedMessage(errorResponse);
         });
     });
 
@@ -31,7 +31,7 @@ angular.module('mockengerClientMainApp').controller('ProjectPageController', ['$
         valuesetService.requestMethods.get({projectId: projectId}, function(response, getResponseHeaders) {
             $scope.requestMethods = response;
         }, function(errorResponse) {
-            //showErrors(errorResponse);
+            $scope.showRedMessage(errorResponse);
         });
     }
 
@@ -39,7 +39,7 @@ angular.module('mockengerClientMainApp').controller('ProjectPageController', ['$
         valuesetService.transformerTypes.get(function(response, getResponseHeaders) {
             $scope.transformerTypes = response;
         }, function(errorResponse) {
-            //showErrors(errorResponse);
+            $scope.showRedMessage(errorResponse);
         });
     }
 }]);

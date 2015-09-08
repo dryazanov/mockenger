@@ -3,14 +3,13 @@
 angular.module('mockengerClientMainApp')
     .controller('RequestController',[
         '$scope',
-        'ngToast',
         'projectListService',
         'groupListService',
         'requestService',
         'requestListService',
         'valuesetService',
 
-        function ($scope, ngToast, projectListService, groupListService, requestService, requestListService, valuesetService) {
+        function ($scope, projectListService, groupListService, requestService, requestListService, valuesetService) {
             var pushKeyValuePair = function(source) {
                 source.push({
                     key: "",
@@ -114,21 +113,13 @@ angular.module('mockengerClientMainApp')
                 }
             }
 
-            $scope.saveRequest = function(currentRequest) {
-                if (currentRequest.name == null || currentRequest.name == '') {
-                    ngToast.create({
-                        className: 'danger',
-                        dismissOnTimeout: false,
-                        content: 'Field <b>Name</b> is required'
-                    });
+            $scope.saveRequest = function(request) {
+                if (request.name == null || request.name == '') {
+                    $scope.showRedMessage({data: {errors: new Array('Field <b>Name</b> is required')}});
                     return;
                 }
-                if (currentRequest.mockResponse == null || currentRequest.mockResponse.httpStatus == null || currentRequest.mockResponse.httpStatus == '') {
-                    ngToast.create({
-                        className: 'danger',
-                        dismissOnTimeout: false,
-                        content: 'Field <b>HTTP status code</b> is required'
-                    });
+                if (request.mockResponse == null || request.mockResponse.httpStatus == null || request.mockResponse.httpStatus == '') {
+                    $scope.showRedMessage({data: {errors: new Array('Field <b>HTTP status code</b> is required')}});
                     return;
                 }
 
@@ -136,27 +127,19 @@ angular.module('mockengerClientMainApp')
                     projectId: projectListService.getCurrent().id,
                     groupId: groupListService.getCurrent().id
                 }
-                if (currentRequest.id != null) {
-                    requestParams.requestId = currentRequest.id;
-                    requestService.ajax.update(requestParams, currentRequest, function(response) {
-                        ngToast.create('Mock-request <b>' + currentRequest.name + '</b> has been saved');
+                if (request.id != null) {
+                    requestParams['requestId'] = request.id;
+                    requestService.ajax.update(requestParams, request, function(response) {
+                        $scope.showGreenMessage('Mock-request <b>' + request.name + '</b> successfully updated');
                     }, function(errorResponse) {
-                        ngToast.create({
-                            className: 'danger',
-                            dismissOnTimeout: false,
-                            content: errorResponse.data.errors[0]
-                        });
+                        $scope.showRedMessage(errorResponse);
                     });
                 } else {
-                    requestService.ajax.save(requestParams, currentRequest, function() {
-                        requestListService.getData().push(currentRequest);
-                        ngToast.create('New mock-request has been created');
+                    requestService.ajax.save(requestParams, request, function(response) {
+                        requestListService.getData().push(response);
+                        $scope.showGreenMessage('Mock-request <b>' + response.name + '</b> has been created');
                     }, function(errorResponse) {
-                        ngToast.create({
-                            className: 'danger',
-                            dismissOnTimeout: false,
-                            content: errorResponse.data.errors[0]
-                        });
+                        $scope.showRedMessage(errorResponse);
                     });
                 }
             }
