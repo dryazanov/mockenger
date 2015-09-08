@@ -11,31 +11,27 @@
                     </div>
                     <h5>{{currentProject.name}} <span class="label label-primary">{{currentProject.type}}</span></h5>
                 </div>
-                <div class="panel-body">
-                    <div ng-if="groupListService.getData().length == 0">
-                        <h4>No groups here</h4>
-                    </div>
-                    <table class="table table-hover" ng-if="groupListService.getData().length > 0">
-                        <tr ng-class="{active: isActive(group)}" ng-repeat="group in groupListService.getData() track by $index">
-                            <td>
-                                <div class="pull-right">
-                                    <button class="btn btn-xs" ng-click="editGroup(group)">
-                                        <span class="glyphicon glyphicon-cog"></span>
-                                    </button>
-                                    <button class="btn btn-xs" ng-really-click="deleteGroup($index, group)"
-                                            ng-really-message="Do you really want to delete group '{{project.name}}' with all its mocks?">
-                                        <span class="glyphicon glyphicon-trash"></span>
-                                    </button>
-                                </div>
-                                <div>
-                                    <a href ng-click="loadGroupRequests(group)">{{group.name}}</a>
-                                    &nbsp;
-                                    <span ng-show="!group.recording" class="label label-info">Not recording</span>
-                                    <span ng-show="group.recording" class="label label-danger">Recording</span>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
+                <div class="list-group" ng-if="groupListService.getData().length == 0">
+                    <div class="list-group-item"><h4>No groups here</h4></div>
+                </div>
+                <div class="list-group" ng-if="groupListService.getData().length > 0">
+                    <a href class="list-group-item" ng-class="{active: isActive(group)}" ng-repeat="group in groupListService.getData() track by $index">
+                        <div class="pull-right">
+                            <button class="btn btn-xs" ng-click="editGroup(group)">
+                                <span class="glyphicon glyphicon-cog"></span>
+                            </button>
+                            <button class="btn btn-xs" ng-really-click="deleteGroup($index, group)"
+                                    ng-really-message="Do you really want to delete group '{{project.name}}' with all its mocks?">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                        </div>
+                        <div ng-click="loadGroupRequests(group)">
+                            {{group.name}}
+                            &nbsp;
+                            <span ng-show="!group.recording" class="label label-info">Not recording</span>
+                            <span ng-show="group.recording" class="label label-danger">Recording</span>
+                        </div>
+                    </a>
                 </div>
                 <div class="panel-footer">
                     <div class="pull-right">
@@ -88,10 +84,10 @@
                     <table class="table table-striped table-hover" ng-if="pageCount() > 0">
                         <thead>
                             <tr>
+                                <th>Creation&nbsp;date</th>
                                 <th>Name</th>
-                                <th>Creation date</th>
-                                <th>Path</th>
                                 <th>Method</th>
+                                <th>Path</th>
                                 <th>Delete</th>
                             </tr>
                         </thead>
@@ -102,10 +98,10 @@
                                     | offset:getOffset()
                                     | limitTo:requestListService.getLimit() track by $index">
 
-                                <td class="col-md-2"><a href ng-click="selectRequest($index, request)">{{request.name}}</a></td>
-                                <td class="col-md-2">{{request.creationDate | date:'dd-MM-yyyy HH:mm:ss'}}</td>
-                                <td class="col-md-5">@{{request.path.value}}</td>
+                                <td class="col-md-2"><a href ng-click="selectRequest($index, request)">{{request.creationDate | date:'dd-MM-yyyy HH:mm:ss'}}</a></td>
+                                <td class="col-md-2">{{request.name}}</td>
                                 <td class="col-md-2">{{request.method}}</td>
+                                <td class="col-md-8">@{{request.path.value}}</td>
                                 <td class="col-md-1">
                                     <button class="btn btn-xs" ng-really-click="deleteRequest(request)"
                                             ng-really-message="Do you really want to delete this request?">
@@ -118,7 +114,6 @@
                 </div>
 
                 <div class="panel-footer" ng-show="pageCount() > 0">
-                    <!--Current page: {{requestListService.getCurrentPage()}} Total pages: {{pageCount()}}-->
                     <ul class="pagination pull-right">
                         <li ng-class="{disabled: isPrevPageDisabled()}">
                             <a href ng-click="prevPage()" aria-label="Previous">
@@ -207,8 +202,6 @@
                                             </tab>
                                             <tab heading="Path">
                                                 <br/>
-                                                <!--<pre>http://localhost/rest/group1234567890/{{requestListService.getCurrent().path.value}}</pre>-->
-
                                                 <div class="form-group">
                                                     <label for="url">Path</label>
                                                     <table class="table">
@@ -266,8 +259,6 @@
                                             </tab>
                                             <tab heading="Parameters">
                                                 <br/>
-                                                <!--<pre>?{{requestListService.getCurrent().parameters.values}}</pre>-->
-
                                                 <div class="form-group">
                                                     <label for="url">Parameters</label>
                                                     <table class="table">
@@ -329,8 +320,6 @@
                                             </tab>
                                             <tab heading="Headers">
                                                 <br/>
-                                                <!--<pre>?{{requestListService.getCurrent().headers.values}}</pre>-->
-
                                                 <div class="form-group">
                                                     <label for="url">Headers</label>
                                                     <table class="table">
@@ -392,8 +381,6 @@
                                             </tab>
                                             <tab heading="Request">
                                                 <br/>
-                                                <!--<pre>{{requestListService.getCurrent().body.value}}</pre>-->
-
                                                 <div class="form-group">
                                                     <label>Transformers</label>
                                                     <table class="table">
@@ -440,8 +427,6 @@
                                             </tab>
                                             <tab heading="Response">
                                                 <br/>
-                                                <!--<pre>{{requestListService.getCurrent().mockResponse.body}}</pre>-->
-
                                                 <div class="form-group">
                                                     <label for="url">Headers</label>
                                                     <table class="table">

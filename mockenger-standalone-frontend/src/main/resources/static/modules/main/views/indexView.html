@@ -4,30 +4,24 @@
             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
             Create project
         </button>
-        <table class="table table-hover">
-            <tr ng-repeat="project in projectListService.getData()">
-                <td>
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="pull-right">
-                                <button class="btn btn-xs" ng-click="editProject(project)">
-                                    <span class="glyphicon glyphicon-cog"></span>
-                                </button>
-                                <button class="btn btn-xs" ng-really-click="deleteProject(project)"
-                                        ng-really-message="Do you really want to delete project '{{project.name}}' with all its groups and mocks?">
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </button>
-                            </div>
-                            <div>
-                                <a href="#/project/{{project.id}}">{{project.name}}</a>
-                                &nbsp;
-                                <span class="label label-info">{{project.type}}</span>
-                            </div>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
+        <div class="list-group" >
+            <li class="list-group-item" ng-repeat="project in projectListService.getData()">
+                <div class="pull-right">
+                    <button class="btn btn-xs" ng-click="editProject(project)">
+                        <span class="glyphicon glyphicon-cog"></span>
+                    </button>
+                    <button class="btn btn-xs" ng-really-click="deleteProject(project)"
+                            ng-really-message="Do you really want to delete project '{{project.name}}' with all its groups and mocks?">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </div>
+                <div>
+                    <a href="#/project/{{project.id}}">{{project.name}}</a>
+                    &nbsp;
+                    <span class="label label-info">{{project.type}}</span>
+                </div>
+            </li>
+        </div>
     </div>
 </div>
 
