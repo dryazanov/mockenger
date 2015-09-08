@@ -1,6 +1,6 @@
 'use strict';
 
-var module = angular.module('mockengerClientMainApp', [
+angular.module('mockengerClientMainApp', [
     'mockengerClientComponents',
     'ngCookies',
     'ngMessages',
@@ -10,13 +10,16 @@ var module = angular.module('mockengerClientMainApp', [
     'ngSanitize',
     'ngTouch',
     'ui.bootstrap',
-    'ngToast']);
-
-module.config(['$locationProvider', '$routeProvider', 'ngToastProvider', function ($locationProvider, $routeProvider, ngToastProvider) {
+    'ngToast']).config(['$locationProvider', '$routeProvider', 'ngToastProvider', function ($locationProvider, $routeProvider, ngToastProvider) {
     //$locationProvider.html5Mode(true);
     $routeProvider.when('/', {
         templateUrl: '/modules/main/views/indexView.html',
-        controller: 'IndexPageController'
+        controller: 'IndexPageController',
+        resolve: {
+            projectList: ['$route', 'projectListService', function($route, projectListService) {
+                return projectListService.ajax.query();
+            }]
+        }
     })
     .when('/project/:projectId', {
         templateUrl: '/modules/main/views/projectView.html',
@@ -34,10 +37,10 @@ module.config(['$locationProvider', '$routeProvider', 'ngToastProvider', functio
     });
 
     ngToastProvider.configure({
-        animation: 'slide', // or 'fade'
+        animation: 'fade', // or 'fade'
         horizontalPosition: 'center',
         dismissButton: true,
-        timeout: 5000
+        timeout: 4000
     });
 }]);
 
@@ -46,7 +49,7 @@ module.config(['$locationProvider', '$routeProvider', 'ngToastProvider', functio
  * A generic confirmation for risky actions.
  * Usage: Add attributes: ng-really-message="Are you sure"? ng-really-click="takeAction()" function
  */
-module.directive('ngReallyClick', [function() {
+angular.module('mockengerClientMainApp').directive('ngReallyClick', [function() {
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {

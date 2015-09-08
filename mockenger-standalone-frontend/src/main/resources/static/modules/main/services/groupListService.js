@@ -4,7 +4,11 @@ angular.module('mockengerClientMainApp').factory('groupListService', ['$resource
 
     var GroupListService = {
         data: null,
+
         current: null,
+
+        urlForNewRequests: null,
+
 
         getData: function() {
             return GroupListService.data;
@@ -22,11 +26,7 @@ angular.module('mockengerClientMainApp').factory('groupListService', ['$resource
             GroupListService.current = currentToSet;
         },
 
-        ajax: $resource(apiEndpointsService.getGroupRestUrl(), {
-                groupId: '@groupId',
-                projectId: '@projectId'
-            }, {}
-        ),
+        ajax: $resource(apiEndpointsService.getGroupRestUrl(), {groupId: '@groupId'}, {}),
 
         addGroupToList: function(group) {
             if (GroupListService.data == null) {
@@ -37,6 +37,14 @@ angular.module('mockengerClientMainApp').factory('groupListService', ['$resource
 
         removeFromGroupList: function(index) {
             GroupListService.data.splice(index, 1);
+        },
+
+        setUrlForNewRequests: function(url) {
+            GroupListService.urlForNewRequests = url;
+        },
+
+        getUrlForNewRequests: function() {
+            return GroupListService.urlForNewRequests;
         }
     };
 

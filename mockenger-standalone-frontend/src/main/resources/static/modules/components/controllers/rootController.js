@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('mockengerClientComponents')
-    .controller('rootController', ['$scope', 'ENV', 'APP_VERSION', 'BUILD_DATE', function ($scope, ENV, APP_VERSION, BUILD_DATE) {
+    .controller('rootController', ['$scope', 'ngToast', 'ENV', 'APP_VERSION', 'BUILD_DATE', function ($scope, ngToast, ENV, APP_VERSION, BUILD_DATE) {
 
         $scope.app = {
             env: ENV,
@@ -43,5 +43,19 @@ angular.module('mockengerClientComponents')
             return (input.$invalid && !input.$pristine ? 'has-error' : '');
         }
 
+        $scope.showGreenMessage = function(text) {
+            ngToast.create(text);
+        }
 
-    }]);
+        $scope.showRedMessage = function(error) {
+            if (error != null && error.data != null && error.data.errors.length > 0) {
+                for (var i = 0, l = error.data.errors.length; i < l; i++) {
+                    ngToast.create({
+                        className: 'danger',
+                        dismissOnTimeout: false,
+                        content: error.data.errors[i]
+                    });
+                }
+            }
+        }
+}]);
