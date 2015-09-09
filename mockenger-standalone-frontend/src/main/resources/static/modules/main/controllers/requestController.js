@@ -10,6 +10,12 @@ angular.module('mockengerClientMainApp')
         'valuesetService',
 
         function ($scope, projectListService, groupListService, requestService, requestListService, valuesetService) {
+            var REGEXP = 'REGEXP';
+            var KEY_VALUE = 'KEY_VALUE';
+            var XPATH = 'XPATH';
+
+            $scope.bodyTransformerTypes = new Array(REGEXP, XPATH);
+
             var pushKeyValuePair = function(source) {
                 source.push({
                     key: "",
@@ -17,9 +23,9 @@ angular.module('mockengerClientMainApp')
                 });
             }
 
-            var addTransformer = function(source) {
+            var addTransformer = function(source, transformerType) {
                 source.push({
-                    type: 'REGEXP',
+                    type: transformerType,
                     pattern: null,
                     replacement: null
                 });
@@ -80,7 +86,7 @@ angular.module('mockengerClientMainApp')
                 if (requestListService.getCurrent().path.transformers == null) {
                     requestListService.getCurrent().path.transformers = [];
                 }
-                addTransformer(requestListService.getCurrent().path.transformers);
+                addTransformer(requestListService.getCurrent().path.transformers, REGEXP);
             }
 
             // Add transformer for Parameters
@@ -88,7 +94,7 @@ angular.module('mockengerClientMainApp')
                 if (requestListService.getCurrent().parameters.transformers == null) {
                     requestListService.getCurrent().parameters.transformers = [];
                 }
-                addTransformer(requestListService.getCurrent().parameters.transformers);
+                addTransformer(requestListService.getCurrent().parameters.transformers, KEY_VALUE);
             }
 
             // Add transformer for Headers
@@ -96,7 +102,7 @@ angular.module('mockengerClientMainApp')
                 if (requestListService.getCurrent().headers.transformers == null) {
                     requestListService.getCurrent().headers.transformers = [];
                 }
-                addTransformer(requestListService.getCurrent().headers.transformers);
+                addTransformer(requestListService.getCurrent().headers.transformers, KEY_VALUE);
             }
 
             // Add transformer for Request Body
@@ -104,7 +110,7 @@ angular.module('mockengerClientMainApp')
                 if (requestListService.getCurrent().body.transformers == null) {
                     requestListService.getCurrent().body.transformers = [];
                 }
-                addTransformer(requestListService.getCurrent().body.transformers);
+                addTransformer(requestListService.getCurrent().body.transformers, REGEXP);
             }
 
             $scope.deleteTransformer = function(index, source) {

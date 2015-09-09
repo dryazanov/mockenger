@@ -1,5 +1,6 @@
 package com.socialstartup.mockenger.core.web.controller.base;
 
+import com.socialstartup.mockenger.commons.utils.JsonHelper;
 import com.socialstartup.mockenger.core.service.GroupService;
 import com.socialstartup.mockenger.core.service.ProjectService;
 import com.socialstartup.mockenger.core.service.RequestService;
@@ -10,6 +11,8 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRe
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+
+import java.io.IOException;
 
 /**
  *
@@ -126,5 +129,20 @@ public abstract class AbstractController {
         }
 
         return request;
+    }
+
+    /**
+     *
+     * @param mockRequest
+     */
+    protected void cleanUpBody(AbstractRequest mockRequest) {
+        if (mockRequest.getBody() != null && mockRequest.getBody().getValue() != null) {
+            try {
+                String newBody = JsonHelper.removeWhitespaces(mockRequest.getBody().getValue());
+                mockRequest.getBody().setValue(newBody);
+            } catch (IOException e) {
+                throw new RuntimeException("Cannot remove whitespaces from JSON", e);
+            }
+        }
     }
 }

@@ -62,10 +62,13 @@ public class RequestController extends AbstractController {
      */
     @ResponseBody
     @RequestMapping(value = REQUESTS, method = POST)
-    public ResponseEntity addRequest(@PathVariable String projectId, @PathVariable String groupId, @Valid @RequestBody AbstractRequest request, BindingResult result) {
+    public ResponseEntity addRequest(@PathVariable String projectId, @PathVariable String groupId,
+                                     @Valid @RequestBody AbstractRequest request, BindingResult result) {
+
         if (result.hasErrors()) {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
+
         // TODO: Maybe we can create validation with the chain: check request -> check group -> check project
         Project project = findProjectById(projectId);
         findGroupById(groupId);
@@ -76,6 +79,8 @@ public class RequestController extends AbstractController {
         request.setCreationDate(new Date());
         // Generate new unique code
         request.setUniqueCode(String.format("%s-%d", project.getCode(), getProjectService().getNextSequenceValue(projectId)));
+        // Remove whitespaces
+        cleanUpBody(request);
         // Generate checksum
         request.setCheckSum(CommonUtils.getCheckSum(request));
         // Save
@@ -83,7 +88,6 @@ public class RequestController extends AbstractController {
 
         return new ResponseEntity(request, getResponseHeaders(), HttpStatus.OK);
     }
-
 
     /**
      * Updates existing mock-request
@@ -98,9 +102,11 @@ public class RequestController extends AbstractController {
     @RequestMapping(value = REQUESTID, method = PUT)
     public ResponseEntity saveRequest(@PathVariable String projectId, @PathVariable String groupId, @PathVariable String requestId,
                                       @Valid @RequestBody AbstractRequest request, BindingResult result) {
+
         if (result.hasErrors()) {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
+
         findProjectById(projectId);
         findGroupById(groupId);
 
@@ -108,6 +114,8 @@ public class RequestController extends AbstractController {
         AbstractRequest fountRequest = findRequestByIdAndUniqueCode(requestId, request.getUniqueCode());
         // Creation date can't be changed by user
         request.setCreationDate(fountRequest.getCreationDate());
+        // Remove whitespaces
+        cleanUpBody(request);
         // Re-generate checksum because values could be updated
         request.setCheckSum(CommonUtils.getCheckSum(request));
         // Save
