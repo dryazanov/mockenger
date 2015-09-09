@@ -1,12 +1,16 @@
 package com.socialstartup.mockenger.core.util;
 
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
+import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -51,6 +55,29 @@ public class HttpUtils {
         }
 
         return requestHeaders;
+    }
+
+
+
+    public static Header[] getHeadersAsArray(HttpServletRequest servletRequest, boolean strictMatch) {
+        String headerName;
+        String headerValue;
+        List<Header> requestHeaders = new ArrayList<>();
+        Enumeration<String> headerNames = servletRequest.getHeaderNames();
+
+        while (headerNames.hasMoreElements()) {
+            headerName = headerNames.nextElement();
+            if (strictMatch) {
+                headerValue = servletRequest.getHeader(headerName);
+            } else {
+                headerName = headerName.toLowerCase();
+                headerValue = servletRequest.getHeader(headerName).toLowerCase();
+            }
+            headerValue = headerValue.replaceAll(DELIMITER_PATTERN, "");
+            requestHeaders.add(new BasicHeader(headerName, headerValue));
+        }
+
+        return (Header[]) requestHeaders.toArray();
     }
 
     /**

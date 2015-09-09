@@ -1,7 +1,5 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
-import com.socialstartup.mockenger.core.web.exception.NotUniqueValueException;
-import org.springframework.dao.DuplicateKeyException;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import org.springframework.http.HttpStatus;
@@ -69,11 +67,8 @@ public class ProjectController extends AbstractController {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
         project.setId(null);
-        try {
-            getProjectService().save(project);
-        } catch (DuplicateKeyException ex) {
-            throw new NotUniqueValueException(String.format("Project with the code '%s' already exist", project.getCode()));
-        }
+        getProjectService().save(project);
+
         return new ResponseEntity(project, getResponseHeaders(), HttpStatus.OK);
     }
 

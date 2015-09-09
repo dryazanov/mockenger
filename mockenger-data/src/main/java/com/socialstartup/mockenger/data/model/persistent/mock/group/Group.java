@@ -17,6 +17,10 @@ public class Group extends AbstractPersistentEntity<String> {
 
     private boolean recording;
 
+    private boolean forwarding;
+
+    private String forwardTo;
+
 
     public Group() {}
 
@@ -48,5 +52,21 @@ public class Group extends AbstractPersistentEntity<String> {
 
     public void setRecording(boolean recording) {
         this.recording = recording;
+    }
+
+    public boolean isForwarding() {
+        return forwarding;
+    }
+
+    public void setForwarding(boolean forwarding) {
+        this.forwarding = forwarding;
+    }
+
+    public String getForwardTo() {
+        return forwardTo;
+    }
+
+    public void setForwardTo(String forwardTo) {
+        this.forwardTo = forwardTo;
     }
 }

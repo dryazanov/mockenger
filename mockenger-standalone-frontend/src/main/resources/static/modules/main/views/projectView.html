@@ -229,20 +229,15 @@
                                                     <label>Transformers</label>
                                                     <table class="table">
                                                         <tr ng-repeat="pathTransformer in requestListService.getCurrent().path.transformers">
-                                                            <td class="col-lg-2">
-                                                                <select ng-model="pathTransformer.type" class="form-control">
-                                                                    <option ng-repeat="typeName in transformerTypes">{{typeName}}</option>
-                                                                </select>
+                                                            <td class="col-lg-6">
+                                                                <input type="text" ng-model="pathTransformer.pattern" class="form-control"
+                                                                       aria-describedby="sizing-addon1" placeholder="Pattern, regular expressions allowed">
                                                             </td>
-                                                            <td class="col-lg-5">
-                                                                    <input type="text" ng-model="pathTransformer.pattern" class="form-control"
-                                                                           aria-describedby="sizing-addon1" placeholder="Pattern">
-                                                            </td>
-                                                            <td class="col-lg-5">
+                                                            <td class="col-lg-6">
                                                                 <input type="text" ng-model="pathTransformer.replacement" class="form-control"
                                                                        aria-describedby="sizing-addon1" placeholder="Replacement">
                                                             </td>
-                                                            <td>
+                                                            <td class="col-lg-1">
                                                                 <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestListService.getCurrent().path.transformers)"
                                                                         ng-really-message="Do you really want to delete this transformer?">
                                                                     <span class="glyphicon glyphicon-trash"></span>
@@ -290,20 +285,19 @@
                                                     <label>Transformers</label>
                                                     <table class="table">
                                                         <tr ng-repeat="paramTransformer in requestListService.getCurrent().parameters.transformers">
-                                                            <td class="col-lg-2">
-                                                                <select ng-model="paramTransformer.type" required class="form-control">
-                                                                    <option ng-repeat="typeName in transformerTypes">{{typeName}}</option>
-                                                                </select>
+                                                            <td class="col-lg-4">
+                                                                <input type="text" ng-model="paramTransformer.key" class="form-control"
+                                                                       aria-describedby="sizing-addon1" placeholder="Key">
                                                             </td>
-                                                            <td class="col-lg-5">
+                                                            <td class="col-lg-4">
                                                                 <input type="text" ng-model="paramTransformer.pattern" class="form-control"
                                                                        aria-describedby="sizing-addon1" placeholder="Pattern">
                                                             </td>
-                                                            <td class="col-lg-5">
+                                                            <td class="col-lg-4">
                                                                 <input type="text" ng-model="paramTransformer.replacement" class="form-control"
                                                                        aria-describedby="sizing-addon1" placeholder="Replacement">
                                                             </td>
-                                                            <td>
+                                                            <td class="col-lg-1">
                                                                 <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestListService.getCurrent().parameters.transformers)"
                                                                         ng-really-message="Do you really want to delete this transformer?">
                                                                     <span class="glyphicon glyphicon-trash"></span>
@@ -351,20 +345,19 @@
                                                     <label>Transformers</label>
                                                     <table class="table">
                                                         <tr ng-repeat="headerTransformer in requestListService.getCurrent().headers.transformers">
-                                                            <td class="col-lg-2">
-                                                                <select ng-model="headerTransformer.type" required class="form-control">
-                                                                    <option ng-repeat="typeName in transformerTypes">{{typeName}}</option>
-                                                                </select>
+                                                            <td class="col-lg-4">
+                                                                <input type="text" ng-model="headerTransformer.key" class="form-control"
+                                                                       aria-describedby="sizing-addon1" placeholder="Key">
                                                             </td>
-                                                            <td class="col-lg-5">
+                                                            <td class="col-lg-4">
                                                                 <input type="text" ng-model="headerTransformer.pattern" class="form-control"
                                                                        aria-describedby="sizing-addon1" placeholder="Pattern">
                                                             </td>
-                                                            <td class="col-lg-5">
+                                                            <td class="col-lg-4">
                                                                 <input type="text" ng-model="headerTransformer.replacement" class="form-control"
                                                                        aria-describedby="sizing-addon1" placeholder="Replacement">
                                                             </td>
-                                                            <td>
+                                                            <td class="col-lg-1">
                                                                 <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestListService.getCurrent().headers.transformers)"
                                                                         ng-really-message="Do you really want to delete this transformer?">
                                                                     <span class="glyphicon glyphicon-trash"></span>
@@ -387,7 +380,7 @@
                                                         <tr ng-repeat="bodyTransformer in requestListService.getCurrent().body.transformers">
                                                             <td class="col-lg-2">
                                                                 <select ng-model="bodyTransformer.type" required class="form-control">
-                                                                    <option ng-repeat="typeName in transformerTypes">{{typeName}}</option>
+                                                                    <option ng-repeat="typeName in bodyTransformerTypes">{{typeName}}</option>
                                                                 </select>
                                                             </td>
                                                             <td class="col-lg-5">

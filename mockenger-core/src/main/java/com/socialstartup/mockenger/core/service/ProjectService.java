@@ -1,9 +1,11 @@
 package com.socialstartup.mockenger.core.service;
 
+import com.socialstartup.mockenger.core.web.exception.NotUniqueValueException;
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.repository.ProjectEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -34,7 +36,11 @@ public class ProjectService {
     }
 
     public void save(Project entity) {
-        projectEntityRepository.save(entity);
+        try {
+            projectEntityRepository.save(entity);
+        } catch (DuplicateKeyException ex) {
+            throw new NotUniqueValueException(String.format("Project with the code '%s' already exist", entity.getCode()));
+        }
     }
 
     public void remove(Project project) {

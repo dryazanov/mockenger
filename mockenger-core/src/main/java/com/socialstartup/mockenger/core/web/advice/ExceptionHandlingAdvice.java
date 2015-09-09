@@ -92,17 +92,17 @@ public class ExceptionHandlingAdvice {
 
     @ResponseBody
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)  // 500
-    public ErrorMessage handleError500(HttpServletRequest req, RuntimeException ex) {
-        LOG.error("RuntimeException has occurred", ex);
-        return new ErrorMessage(String.format("Unable to process request. Internal server error: %s", ex.getMessage()));
-    }
-
-    @ResponseBody
-    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
     public ErrorMessage handleIllegalArgumentException(HttpServletRequest req, IllegalArgumentException ex) {
         LOG.error("IllegalArgumentException has occurred", ex);
         return new ErrorMessage((ex == null || ex.getMessage() == null) ? "Unable to process request" : ex.getMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)  // 500
+    public ErrorMessage handleError500(HttpServletRequest req, RuntimeException ex) {
+        LOG.error("RuntimeException has occurred", ex);
+        return new ErrorMessage(String.format("Internal server error: unable to process request"));
     }
 }

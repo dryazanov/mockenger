@@ -2,6 +2,7 @@ package com.socialstartup.mockenger.core.service;
 
 import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.core.util.HttpUtils;
+import com.socialstartup.mockenger.core.web.exception.NotUniqueValueException;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Headers;
@@ -15,6 +16,7 @@ import com.socialstartup.mockenger.data.repository.RequestEntityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -58,7 +60,11 @@ public class RequestService {
     }
 
     public void save(AbstractRequest entity) {
-        requestEntityRepository.save(entity);
+        try {
+            requestEntityRepository.save(entity);
+        } catch (DuplicateKeyException ex) {
+            throw new NotUniqueValueException(String.format("Request with the code '%s' already exist", entity.getUniqueCode()));
+        }
     }
 
     public void remove(AbstractRequest entity) {

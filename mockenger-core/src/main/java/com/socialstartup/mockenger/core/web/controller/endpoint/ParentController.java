@@ -1,5 +1,6 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
+import com.socialstartup.mockenger.core.service.ProxyService;
 import com.socialstartup.mockenger.core.service.common.DeleteService;
 import com.socialstartup.mockenger.core.service.common.GetService;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
@@ -104,12 +105,22 @@ public class ParentController extends AbstractController {
             HttpStatus status = HttpStatus.NOT_FOUND;
             if (group.isRecording()) {
                 Project project = findProjectById(group.getProjectId());
+
                 if (StringUtils.isEmpty(mockRequest.getName())) {
                     mockRequest.setName(String.valueOf(mockRequest.getCreationDate().getTime()));
                 }
+
                 mockRequest.setUniqueCode(String.format("%s-%d", project.getCode(), getProjectService().getNextSequenceValue(group.getProjectId())));
+                cleanUpBody(mockRequest);
+
+                if (group.isForwarding()) {
+                    mockRequest = (new ProxyService(mockRequest, group.getForwardTo())).forwardRequest();
+                }
+
                 getRequestService().save(mockRequest);
                 status = HttpStatus.CREATED;
+            } else {
+                mockRequest = null;
             }
             return new ResponseEntity(mockRequest, getResponseHeaders(), status);
         }

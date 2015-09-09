@@ -14,6 +14,7 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Heade
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
 import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
+import com.socialstartup.mockenger.data.model.persistent.transformer.KeyValueTransformer;
 import com.socialstartup.mockenger.data.model.persistent.transformer.RegexpTransformer;
 import org.junit.After;
 import org.junit.Before;
@@ -281,6 +282,7 @@ public class RestControllerTest extends AbstractControllerTest {
         Set<Pair> headersMap = new HashSet<>();
         headersMap.add(new Pair("content-type", contentType));
 
+        KeyValueTransformer keyValueTransformer = new KeyValueTransformer("key", ID2, ID1);
         RegexpTransformer regexpTransformer = new RegexpTransformer(ID2, ID1);
 
         request.setGroupId(groupId);
@@ -291,7 +293,7 @@ public class RestControllerTest extends AbstractControllerTest {
         request.setPath(new Path(REQUEST_PATH));
         request.setParameters(null);
         if (contentType != null) {
-            request.setHeaders(new Headers(headersMap));
+            request.setHeaders(new Headers(Arrays.asList(keyValueTransformer), headersMap));
         }
         if (requestBody != null) {
             request.setBody(new Body(Arrays.asList(regexpTransformer), requestBody));
