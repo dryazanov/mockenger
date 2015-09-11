@@ -19,7 +19,9 @@ angular.module('mockengerClientMainApp').factory('groupService', ['$rootScope', 
                     groupId: null,
                     projectId: project.id,
                     name: null,
-                    recording: true
+                    recording: true,
+                    forwarding: false,
+                    recordTo: null
                 };
             }
             $rootScope.$broadcast('openGroupModal', group);

@@ -539,6 +539,21 @@
                             </div>
                         </div>
                     </div>
+                    <hr/>
+                    <div class="form-group">
+                        <label for="recording">Forward incoming requests</label>
+                        <div class="form-group">
+                            <div class="btn-group" id="forwarding">
+                                <label class="btn btn-primary" ng-model="groupToSave.forwarding" btn-radio="true">Yes</label>
+                                <label class="btn btn-primary" ng-model="groupToSave.forwarding" btn-radio="false">&nbsp;No&nbsp;</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-class="hasError(groupForm.forwardTo)" ng-show="groupToSave.forwarding">
+                        <label for="forwardTo">Base URL for forwarding</label>
+                        <input type="text" name="forwardTo" id="forwardTo" ng-model="groupToSave.forwardTo" class="form-control" required>
+                        <p ng-show="groupForm.forwardTo.$invalid && !groupForm.forwardTo.$pristine" class="help-block">Base URL cannot be empty</p>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
