@@ -128,6 +128,13 @@ angular.module('mockengerClientMainApp')
                     $scope.showRedMessage({data: {errors: new Array('Field <b>HTTP status code</b> is required')}});
                     return;
                 }
+                if (request.method == null || request.method == undefined) {
+                    $scope.showRedMessage({data: {errors: new Array('<b>Method</b> may not be null or empty')}});
+                    return;
+                }
+                if (!isMethodWithBody(request.method)) {
+                    request.body = null;
+                }
 
                 var requestParams = {
                     projectId: projectListService.getCurrent().id,
@@ -176,5 +183,13 @@ angular.module('mockengerClientMainApp')
             $scope.prevRequest = function() {
                 requestListService.filteredDataCurrentIndex--;
                 requestListService.setCurrent(requestListService.getFilteredData()[requestListService.filteredDataCurrentIndex])
+            }
+
+            $scope.isRequestTabDisabled = function() {
+                return (requestListService.getCurrent().method != null && isMethodWithBody(requestListService.getCurrent().method) ? false : true);
+            }
+
+            var isMethodWithBody = function(method) {
+                return ((method == 'POST' || method == 'PUT' || method == 'PATCH') ? true : false);
             }
 }]);
