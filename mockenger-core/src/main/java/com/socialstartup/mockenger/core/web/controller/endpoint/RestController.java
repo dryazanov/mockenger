@@ -25,7 +25,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 /**
- * Created by x079089 on 3/24/2015.
+ * Created by Dmitry Ryazanov on 3/24/2015.
  */
 @Controller
 @RequestMapping(value = {"/REST/{groupId}"})

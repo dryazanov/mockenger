@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 /**
- * Created by x079089 on 3/23/2015.
+ * Created by Dmitry Ryazanov on 3/23/2015.
  */
 public class XPathTransformer extends AbstractTransformer {
 

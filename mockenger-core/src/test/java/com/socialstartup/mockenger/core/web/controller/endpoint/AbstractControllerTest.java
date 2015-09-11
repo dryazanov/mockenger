@@ -37,7 +37,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * Created by x079089 on 6/29/2015.
+ * Created by Dmitry Ryazanov on 6/29/2015.
  */
 @Ignore
 @RunWith(SpringJUnit4ClassRunner.class)

@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
- * Created by x079089 on 3/12/2015.
+ * Created by Dmitry Ryazanov on 3/12/2015.
  */
 @Document(collection = "request")
 public class AbstractRequest extends AbstractPersistentEntity<String> {

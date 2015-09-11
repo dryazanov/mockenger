@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by x079089 on 7/6/2015.
+ * Created by Dmitry Ryazanov on 7/6/2015.
  */
 @Constraint(validatedBy = MockResponseValidator.class)
 @Target({ElementType.FIELD})

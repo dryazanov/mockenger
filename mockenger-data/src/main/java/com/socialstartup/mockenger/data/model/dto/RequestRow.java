@@ -1,7 +1,7 @@
 package com.socialstartup.mockenger.data.model.dto;
 
 /**
- * Created by x079089 on 3/12/2015.
+ * Created by Dmitry Ryazanov on 3/12/2015.
  */
 public class RequestRow {
 

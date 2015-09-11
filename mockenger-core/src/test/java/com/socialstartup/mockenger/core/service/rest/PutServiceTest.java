@@ -10,7 +10,7 @@ import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
 /**
- * Created by x079089 on 6/18/2015.
+ * Created by Dmitry Ryazanov on 6/18/2015.
  */
 public class PutServiceTest extends AbstractServiceTest {
 

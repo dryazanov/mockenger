@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 
 /**
- * Created by x079089 on 09-Sep-15.
+ * Created by Dmitry Ryazanov on 09-Sep-15.
  */
 public class JsonHelper {
 

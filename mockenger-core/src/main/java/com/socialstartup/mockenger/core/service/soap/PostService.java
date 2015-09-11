@@ -14,7 +14,7 @@ import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
 /**
- * Created by x079089 on 3/24/2015.
+ * Created by Dmitry Ryazanov on 3/24/2015.
  */
 @Component(value = "soapPostService")
 public class PostService extends RequestService {

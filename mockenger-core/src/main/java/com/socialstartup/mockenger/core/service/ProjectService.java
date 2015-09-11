@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * Created by x079089 on 3/20/2015.
+ * Created by Dmitry Ryazanov on 3/20/2015.
  */
 @Component
 public class ProjectService {

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by x079089 on 3/22/2015.
+ * Created by Dmitry Ryazanov on 3/22/2015.
  */
 public enum TransformerType {
     KEY_VALUE,

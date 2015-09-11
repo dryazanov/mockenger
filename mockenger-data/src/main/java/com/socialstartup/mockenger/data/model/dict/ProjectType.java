@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by x079089 on 3/12/2015.
+ * Created by Dmitry Ryazanov on 3/12/2015.
  */
 public enum ProjectType {
     REST(Arrays.asList(RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE)),

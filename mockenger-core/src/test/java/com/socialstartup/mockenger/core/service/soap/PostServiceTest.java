@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Created by x079089 on 6/18/2015.
+ * Created by Dmitry Ryazanov on 6/18/2015.
  */
 public class PostServiceTest extends AbstractServiceTest {
 
