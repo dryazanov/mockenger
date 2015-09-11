@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 /**
- * Created by x079089 on 6/15/2015.
+ * Created by Dmitry Ryazanov on 6/15/2015.
  */
 @Document(collection = "project")
 public class Project extends AbstractPersistentEntity<String> {

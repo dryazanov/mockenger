@@ -5,7 +5,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
- * Created by x079089 on 3/12/2015.
+ * Created by Dmitry Ryazanov on 3/12/2015.
  */
 @Document(collection = "group")
 public class Group extends AbstractPersistentEntity<String> {

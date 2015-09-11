@@ -27,7 +27,7 @@ import java.io.StringWriter;
 import java.nio.charset.Charset;
 
 /**
- * Created by x079089 on 3/20/2015.
+ * Created by Dmitry Ryazanov on 3/20/2015.
  */
 public class XmlHelper {
 

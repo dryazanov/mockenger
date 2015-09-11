@@ -5,7 +5,7 @@ import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractTra
 import java.util.List;
 
 /**
- * Created by x079089 on 3/31/2015.
+ * Created by Dmitry Ryazanov on 3/31/2015.
  */
 public class Body extends AbstractPart<AbstractTransformer> {
 

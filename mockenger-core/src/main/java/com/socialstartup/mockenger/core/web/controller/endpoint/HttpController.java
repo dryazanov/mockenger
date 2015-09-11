@@ -32,7 +32,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.springframework.web.bind.annotation.RequestMethod.TRACE;
 
 /**
- * Created by x079089 on 3/24/2015.
+ * Created by Dmitry Ryazanov on 3/24/2015.
  */
 @Controller
 @RequestMapping(value = {"/HTTP/{groupId}"})

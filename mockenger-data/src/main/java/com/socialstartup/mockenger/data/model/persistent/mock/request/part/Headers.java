@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by x079089 on 3/31/2015.
+ * Created by Dmitry Ryazanov on 3/31/2015.
  */
 public class Headers extends AbstractPart<AbstractMapTransformer> {
 

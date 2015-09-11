@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
- * Created by x079089 on 6/18/2015.
+ * Created by Dmitry Ryazanov on 6/18/2015.
  */
 public class RequestServiceTest {
 

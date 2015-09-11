@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.socialstartup.mockenger.data.model.dict.TransformerType;
 
 /**
- * Created by x079089 on 3/22/2015.
+ * Created by Dmitry Ryazanov on 3/22/2015.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({

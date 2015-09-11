@@ -5,7 +5,7 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import java.util.Set;
 
 /**
- * Created by x079089 on 3/12/2015.
+ * Created by Dmitry Ryazanov on 3/12/2015.
  */
 public class MockResponse {
 

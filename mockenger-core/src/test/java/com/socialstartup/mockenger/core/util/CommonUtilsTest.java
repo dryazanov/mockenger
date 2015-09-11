@@ -19,7 +19,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by x079089 on 6/18/2015.
+ * Created by Dmitry Ryazanov on 6/18/2015.
  */
 public class CommonUtilsTest {
 
