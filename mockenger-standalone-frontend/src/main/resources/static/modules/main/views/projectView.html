@@ -319,8 +319,9 @@
                                                     <table class="table">
                                                         <tr ng-repeat="requestHeader in requestListService.getCurrent().headers.values track by $index">
                                                             <td class="col-lg-6">
-                                                                <input type="text" ng-model="requestHeader.key" class="form-control"
-                                                                       aria-describedby="sizing-addon1" placeholder="Name">
+                                                                <input type="text" ng-model="requestHeader.key"
+                                                                       typeahead="header for header in headerList | filter:$viewValue | limitTo:10"
+                                                                       class="form-control" aria-describedby="sizing-addon1" placeholder="Header name">
                                                             </td>
                                                             <td class="col-lg-6">
                                                                 <input type="text" ng-model="requestHeader.value" class="form-control"
@@ -425,8 +426,9 @@
                                                     <table class="table">
                                                         <tr ng-repeat="responseHeader in requestListService.getCurrent().mockResponse.headers track by $index">
                                                             <td class="col-lg-6">
-                                                                <input type="text" ng-model="responseHeader.key" class="form-control"
-                                                                       aria-describedby="sizing-addon1" placeholder="Name">
+                                                                <input type="text" ng-model="responseHeader.key"
+                                                                       typeahead="header for header in headerList | filter:$viewValue | limitTo:10"
+                                                                       class="form-control" aria-describedby="sizing-addon1" placeholder="Header name">
                                                             </td>
                                                             <td class="col-lg-6">
                                                                 <input type="text" ng-model="responseHeader.value" class="form-control"

@@ -10,6 +10,7 @@ angular.module('mockengerClientMainApp').controller('ProjectPageController', ['$
     // ValueSets
     $scope.requestMethods = [];
     $scope.transformerTypes = [];
+    $scope.headerList = [];
 
     // Reset current group
     groupListService.setCurrent(null);
@@ -38,6 +39,14 @@ angular.module('mockengerClientMainApp').controller('ProjectPageController', ['$
     $scope.getTransformerTypes = function() {
         valuesetService.transformerTypes.get(function(response, getResponseHeaders) {
             $scope.transformerTypes = response;
+        }, function(errorResponse) {
+            $scope.showRedMessage(errorResponse);
+        });
+    }
+
+    $scope.getTransformerTypes = function() {
+        valuesetService.headers.get(function(response, getResponseHeaders) {
+            $scope.headerList = response;
         }, function(errorResponse) {
             $scope.showRedMessage(errorResponse);
         });

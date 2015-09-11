@@ -11,6 +11,9 @@ angular.module('mockengerClientComponents').factory('apiEndpointsService', ['API
             },
             transformerTypes: function() {
                 return API_BASE_PATH + '/valueset/transformerTypes';
+            },
+            headers: function() {
+                return API_BASE_PATH + '/valueset/headers';
             }
         },
         getProjectRestUrl: function() {
