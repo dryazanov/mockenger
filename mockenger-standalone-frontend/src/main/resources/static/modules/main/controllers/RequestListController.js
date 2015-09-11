@@ -19,7 +19,7 @@ angular.module('mockengerClientMainApp')
                     id: null,
                     groupId: groupListService.getCurrent().id,
                     name: null,
-                    method: null,
+                    method: 'POST',
                     path: {
                         transformers: null,
                         value: null

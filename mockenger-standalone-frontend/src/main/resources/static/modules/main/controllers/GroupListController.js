@@ -10,21 +10,19 @@ angular.module('mockengerClientMainApp').controller('GroupListController', ['$sc
         }
 
         $scope.loadGroupRequests = function(group) {
-            if (groupListService.getCurrent() == null || group.id !== groupListService.getCurrent().id) {
-                requestListService.setCurrent(null);
-                groupListService.setCurrent(group);
-                groupListService.setUrlForNewRequests(API_BASE_PATH + "/" + projectListService.getCurrent().type + "/" + group.id);
+            requestListService.setCurrent(null);
+            groupListService.setCurrent(group);
+            groupListService.setUrlForNewRequests(API_BASE_PATH + "/" + projectListService.getCurrent().type + "/" + group.id);
 
-                var paramsToSend = {
-                    projectId: projectListService.getCurrent().id,
-                    groupId: groupListService.getCurrent().id
-                };
-                requestListService.ajax.query(paramsToSend, function(response, getResponseHeaders) {
-                    requestListService.setData(response);
-                }, function (errorResponse) {
-                    $scope.showRedMessage(errorResponse);
-                });
-            }
+            var paramsToSend = {
+                projectId: projectListService.getCurrent().id,
+                groupId: groupListService.getCurrent().id
+            };
+            requestListService.ajax.query(paramsToSend, function(response, getResponseHeaders) {
+                requestListService.setData(response);
+            }, function (errorResponse) {
+                $scope.showRedMessage(errorResponse);
+            });
         }
 
         $scope.createGroup = function() {
