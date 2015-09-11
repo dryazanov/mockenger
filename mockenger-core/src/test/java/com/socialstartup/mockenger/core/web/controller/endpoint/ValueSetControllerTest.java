@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -25,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Created by x079089 on 6/29/2015.
+ * Created by Dmitry Ryazanov on 6/29/2015.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -36,6 +37,7 @@ public class ValueSetControllerTest extends AbstractControllerTest {
     private static final String PROJECT_TYPES_VALUESET = ENDPOINT_VALUESET + "/projectTypes";
     private static final String REQUEST_METHODS_VALUESET = ENDPOINT_VALUESET + "/requestMethods";
     private static final String TRANSFORMER_TYPES_VALUESET = ENDPOINT_VALUESET + "/transformerTypes";
+    private static final String HEADERS_VALUESET = ENDPOINT_VALUESET + "/headers";
     protected static final String CONTENT_TYPE_JSON_UTF8 = "application/json;charset=UTF-8";
 
 
@@ -102,6 +104,14 @@ public class ValueSetControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.[0]").value(TransformerType.KEY_VALUE.name()))
                 .andExpect(jsonPath("$.[1]").value(TransformerType.REGEXP.name()))
                 .andExpect(jsonPath("$.[2]").value(TransformerType.XPATH.name()));
+    }
+
+    @Test
+    public void testGetValuesetHeadersOk() throws Exception {
+        ResultActions resultActions = this.mockMvc.perform(get(HEADERS_VALUESET));
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
+                .andExpect(jsonPath("$", hasSize(52)));
     }
 
     @Test

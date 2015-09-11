@@ -20,6 +20,9 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
+import static com.socialstartup.mockenger.core.service.HttpHeadersService.CONTENT_TYPE_KEY;
+import static com.socialstartup.mockenger.core.service.HttpHeadersService.MEDIA_TYPE_XML;
+
 /**
  *
  */
@@ -30,6 +33,9 @@ public class ParentController extends AbstractController {
 
     @Autowired
     private DeleteService deleteService;
+
+    @Autowired
+    private ProxyService proxyService;
 
     /**
      *
@@ -79,6 +85,7 @@ public class ParentController extends AbstractController {
     protected ResponseEntity generateResponse(AbstractRequest mockRequest, AbstractRequest mockResult, Group group) {
         if (mockResult != null) {
             MockResponse mockResponse;
+            org.springframework.http.HttpHeaders headers = httpHeadersService.getDefaultHeaders();
             if (mockResult.getMockResponse() == null) {
                 mockResponse = new MockResponse();
                 mockResponse.setHttpStatus(HttpStatus.FOUND.value());
@@ -87,20 +94,18 @@ public class ParentController extends AbstractController {
                 mockResponse = mockResult.getMockResponse();
             }
             if (!CollectionUtils.isEmpty(mockResponse.getHeaders())) {
-                for (Pair header : mockResponse.getHeaders()) {
-                    getResponseHeaders().set(header.getKey(), header.getValue());
-                }
+                headers = httpHeadersService.createHeaders(mockResponse.getHeaders());
             } else if (mockRequest.getHeaders() != null) {
                 Set<Pair> headerValues = mockRequest.getHeaders().getValues();
                 if (!CollectionUtils.isEmpty(headerValues)) {
                     for (Pair pair : headerValues) {
                         if (pair.getKey().equals(CONTENT_TYPE_KEY) && pair.getValue().contains(MediaType.APPLICATION_XML_VALUE)) {
-                            getResponseHeaders().set(CONTENT_TYPE_KEY, MEDIA_TYPE_XML);
+                            headers.set(CONTENT_TYPE_KEY, MEDIA_TYPE_XML);
                         }
                     }
                 }
             }
-            return new ResponseEntity(mockResponse.getBody(), getResponseHeaders(), HttpStatus.valueOf(mockResponse.getHttpStatus()));
+            return new ResponseEntity(mockResponse.getBody(), headers, HttpStatus.valueOf(mockResponse.getHttpStatus()));
         } else {
             HttpStatus status = HttpStatus.NOT_FOUND;
             if (group.isRecording()) {
@@ -111,10 +116,10 @@ public class ParentController extends AbstractController {
                 }
 
                 mockRequest.setUniqueCode(String.format("%s-%d", project.getCode(), getProjectService().getNextSequenceValue(group.getProjectId())));
-                cleanUpBody(mockRequest);
+                cleanUpRequestBody(mockRequest);
 
                 if (group.isForwarding()) {
-                    mockRequest = (new ProxyService(mockRequest, group.getForwardTo())).forwardRequest();
+                    mockRequest = proxyService.forwardRequest(mockRequest, group.getForwardTo());
                 }
 
                 getRequestService().save(mockRequest);

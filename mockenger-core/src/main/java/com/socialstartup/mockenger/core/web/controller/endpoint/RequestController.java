@@ -25,7 +25,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 /**
- * Created by x079089 on 7/3/2015.
+ * Created by Dmitry Ryazanov on 7/3/2015.
  */
 @Controller
 public class RequestController extends AbstractController {
@@ -80,7 +80,7 @@ public class RequestController extends AbstractController {
         // Generate new unique code
         request.setUniqueCode(String.format("%s-%d", project.getCode(), getProjectService().getNextSequenceValue(projectId)));
         // Remove whitespaces
-        cleanUpBody(request);
+        cleanUpRequestBody(request);
         // Generate checksum
         request.setCheckSum(CommonUtils.getCheckSum(request));
         // Save
@@ -115,7 +115,7 @@ public class RequestController extends AbstractController {
         // Creation date can't be changed by user
         request.setCreationDate(fountRequest.getCreationDate());
         // Remove whitespaces
-        cleanUpBody(request);
+        cleanUpRequestBody(request);
         // Re-generate checksum because values could be updated
         request.setCheckSum(CommonUtils.getCheckSum(request));
         // Save
@@ -164,12 +164,6 @@ public class RequestController extends AbstractController {
             requestList = new ArrayList<>();
         }
 
-//        GridRowMapper mapper = new GridRowMapper();
-//        Grid bootGrid = new Grid();
-//        bootGrid.setCurrent(1);
-//        bootGrid.setTotal(requestList.size());
-//        bootGrid.setRowCount(requestList.size());
-//        bootGrid.setRows(mapper.map(requestList));
         return new ResponseEntity(requestList, getResponseHeaders(), HttpStatus.OK);
     }
 }

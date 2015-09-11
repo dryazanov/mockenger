@@ -8,13 +8,16 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.springframework.http.HttpHeaders.*;
+
 /**
- * Created by x079089 on 3/20/2015.
+ * Created by Dmitry Ryazanov on 3/20/2015.
  */
 public class HttpUtils {
 
@@ -108,5 +111,65 @@ public class HttpUtils {
         return antPathMatcher.extractPathWithinPattern(
                 (String) servletRequest.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE),
                 (String) servletRequest.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE));
+    }
+
+    /**
+     *
+     * @return list of headers (excluding ACCESS_CONTROL_*)
+     */
+    public static List<String> getListOfHeaders() {
+        return new ArrayList<>(Arrays.asList(
+                ACCEPT,
+                ACCEPT_CHARSET,
+                ACCEPT_ENCODING,
+                ACCEPT_LANGUAGE,
+                ACCEPT_RANGES,
+                AGE,
+                ALLOW,
+                AUTHORIZATION,
+                CACHE_CONTROL,
+                CONNECTION,
+                CONTENT_ENCODING,
+                CONTENT_DISPOSITION,
+                CONTENT_LANGUAGE,
+                CONTENT_LENGTH,
+                CONTENT_LOCATION,
+                CONTENT_RANGE,
+                CONTENT_TYPE,
+                COOKIE,
+                DATE,
+                ETAG,
+                EXPECT,
+                EXPIRES,
+                FROM,
+                HOST,
+                IF_MATCH,
+                IF_MODIFIED_SINCE,
+                IF_NONE_MATCH,
+                IF_RANGE,
+                IF_UNMODIFIED_SINCE,
+                LAST_MODIFIED,
+                LINK,
+                LOCATION,
+                MAX_FORWARDS,
+                ORIGIN,
+                PRAGMA,
+                PROXY_AUTHENTICATE,
+                PROXY_AUTHORIZATION,
+                RANGE,
+                REFERER,
+                RETRY_AFTER,
+                SERVER,
+                SET_COOKIE,
+                SET_COOKIE2,
+                TE,
+                TRAILER,
+                TRANSFER_ENCODING,
+                UPGRADE,
+                USER_AGENT,
+                VARY,
+                VIA,
+                WARNING,
+                WWW_AUTHENTICATE));
     }
 }

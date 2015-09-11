@@ -3,7 +3,7 @@ package com.socialstartup.mockenger.data.model.persistent.transformer;
 import com.socialstartup.mockenger.data.model.dict.TransformerType;
 
 /**
- * Created by x079089 on 3/22/2015.
+ * Created by Dmitry Ryazanov on 3/22/2015.
  */
 public class KeyValueTransformer extends AbstractMapTransformer {
 
@@ -38,7 +38,7 @@ public class KeyValueTransformer extends AbstractMapTransformer {
     @Override
     public String transform(String value) {
         validate();
-        return value.replaceAll(this.pattern, this.replacement);
+        return value.replaceFirst(this.pattern, this.replacement);
     }
 
 }

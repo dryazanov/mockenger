@@ -1,5 +1,6 @@
 package com.socialstartup.mockenger.core.service;
 
+import com.socialstartup.mockenger.core.config.MockengerHeadersStopListConfigParam;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
@@ -12,49 +13,35 @@ import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 
 /**
  * Created by Dmitry Ryazanov
  */
+@Component
 public class ProxyService {
 
-    Logger LOG = LoggerFactory.getLogger(ProxyService.class);
+    private Logger LOG = LoggerFactory.getLogger(ProxyService.class);
 
     public final int DEFAULT_RESPONSE_HTTP_STATUS = 500;
 
-    public final List<String> HEADERS_TO_IGNORE = new ArrayList<>(Arrays.asList("host"));
-
-    // Mock-request to forward
-    private AbstractRequest mockRequest;
-
-    // Host name where request will be forwarded
-    private String forwardTo;
+    @Autowired
+    private MockengerHeadersStopListConfigParam stopListConfigParam;
 
 
     /**
-     * Constructor
      *
-     * @param mockRequest
-     * @param forwardTo
-     */
-    public ProxyService(AbstractRequest mockRequest, String forwardTo) {
-        this.mockRequest = mockRequest;
-        this.forwardTo = forwardTo;
-    }
-
-    /**
-     *
+     * @param mockRequest Mock-request to forward
+     * @param forwardTo Host name where request will be forwarded
      * @return
      */
-    public AbstractRequest forwardRequest() {
+    public AbstractRequest forwardRequest(AbstractRequest mockRequest, String forwardTo) {
         HttpClient client = HttpClientBuilder.create().build();
-        HttpUriRequest httpUriRequest = createHttpRequest();
+        HttpUriRequest httpUriRequest = createHttpRequest(mockRequest, forwardTo);
 
         try {
             // SEND REQUEST
@@ -87,7 +74,7 @@ public class ProxyService {
      *
      * @return
      */
-    private HttpUriRequest createHttpRequest() {
+    private HttpUriRequest createHttpRequest(AbstractRequest mockRequest, String forwardTo) {
         if (mockRequest == null || forwardTo == null) {
             throw new IllegalArgumentException();
         }
@@ -109,7 +96,7 @@ public class ProxyService {
 
         if (mockRequest.getHeaders() != null && mockRequest.getHeaders().getValues() != null) {
             for (Pair pair : mockRequest.getHeaders().getValues()) {
-                if (HEADERS_TO_IGNORE.contains(pair.getKey())) {
+                if (stopListConfigParam.getRequestHeaders().contains(pair.getKey())) {
                     continue;
                 }
                 requestBuilder.addHeader(pair.getKey(), pair.getValue());
