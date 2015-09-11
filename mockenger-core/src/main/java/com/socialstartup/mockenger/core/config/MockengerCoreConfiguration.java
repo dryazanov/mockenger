@@ -10,7 +10,8 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @Import(value = MockengerDatasourceConfiguration.class)
-@ComponentScan(basePackages = {"com.socialstartup.mockenger.core.service"})
-public class MockengerCoreConfiguration {
-
-}
+@ComponentScan(
+        basePackages = {"com.socialstartup.mockenger.core.service"},
+        basePackageClasses = {MockengerDatasourceConfiguration.class, MockengerHeadersStopListConfigParam.class}
+)
+public class MockengerCoreConfiguration {}

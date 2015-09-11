@@ -14,14 +14,14 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
- * Created by x079089 on 6/29/2015.
+ * Created by Dmitry Ryazanov on 6/29/2015.
  */
 @Configuration
 @EnableWebMvc
 @Import(value = MockengerDatasourceConfiguration.class)
-@ComponentScan(basePackages = {
-        "com.socialstartup.mockenger.core.service",
-        "com.socialstartup.mockenger.core.web"
+@ComponentScan(
+        basePackages = {"com.socialstartup.mockenger.core.service", "com.socialstartup.mockenger.core.web"},
+        basePackageClasses = {MockengerHeadersStopListConfigParam.class
 })
 @PropertySource("classpath:mongodb-test.properties")
 @PropertySource("classpath:application-test.properties")

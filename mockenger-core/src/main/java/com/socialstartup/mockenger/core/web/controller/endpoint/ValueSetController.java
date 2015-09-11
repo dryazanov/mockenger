@@ -1,6 +1,7 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.socialstartup.mockenger.core.service.ProjectService;
+import com.socialstartup.mockenger.core.util.HttpUtils;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
@@ -20,7 +21,7 @@ import java.util.List;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 /**
- * Created by x079089 on 3/24/2015.
+ * Created by Dmitry Ryazanov on 3/24/2015.
  */
 @Controller
 public class ValueSetController extends AbstractController {
@@ -28,6 +29,7 @@ public class ValueSetController extends AbstractController {
     private final String PROJECT_TYPES_VALUESET = VALUESET_ENDPOINT + "/projectTypes";
     private final String REQUEST_METHOD_VALUESET = VALUESET_ENDPOINT + "/requestMethods";
     private final String TRANSFORMER_TYPE_VALUESET = VALUESET_ENDPOINT + "/transformerTypes";
+    private final String HEADERS_VALUESET = VALUESET_ENDPOINT + "/headers";
 
     @Autowired
     private ProjectService projectService;
@@ -63,11 +65,7 @@ public class ValueSetController extends AbstractController {
             }
         }
 
-        if (valueset != null) {
-            return new ResponseEntity(valueset, getResponseHeaders(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity(getResponseHeaders(), HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity(valueset, getResponseHeaders(), (valueset != null ? HttpStatus.OK : HttpStatus.NOT_FOUND));
     }
 
 
@@ -80,5 +78,17 @@ public class ValueSetController extends AbstractController {
     @RequestMapping(value = TRANSFORMER_TYPE_VALUESET, method = GET)
     public ResponseEntity getTransformerTypes() {
         return new ResponseEntity(Arrays.asList(TransformerType.values()), getResponseHeaders(), HttpStatus.OK);
+    }
+
+
+    /**
+     * Returns all the values for TransformerType
+     *
+     * @return 200 OK
+     */
+    @ResponseBody
+    @RequestMapping(value = HEADERS_VALUESET, method = GET)
+    public ResponseEntity getHeaders() {
+        return new ResponseEntity(HttpUtils.getListOfHeaders(), getResponseHeaders(), HttpStatus.OK);
     }
 }

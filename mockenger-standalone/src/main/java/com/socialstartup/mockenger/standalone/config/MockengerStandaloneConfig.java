@@ -11,10 +11,7 @@ import org.springframework.context.annotation.PropertySource;
  */
 @Configuration
 @Import(value = MockengerCoreConfiguration.class)
-@ComponentScan(basePackages = {
-        "com.socialstartup.mockenger.core.web"
-})
+@ComponentScan(basePackages = {"com.socialstartup.mockenger.core.web"})
 @PropertySource("classpath:mongodb.properties")
 @PropertySource("classpath:application.properties")
-public class MockengerStandaloneConfig {
-}
+public class MockengerStandaloneConfig {}

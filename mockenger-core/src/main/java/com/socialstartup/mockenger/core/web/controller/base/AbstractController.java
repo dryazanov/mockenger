@@ -2,15 +2,18 @@ package com.socialstartup.mockenger.core.web.controller.base;
 
 import com.socialstartup.mockenger.commons.utils.JsonHelper;
 import com.socialstartup.mockenger.core.service.GroupService;
+import com.socialstartup.mockenger.core.service.HttpHeadersService;
 import com.socialstartup.mockenger.core.service.ProjectService;
 import com.socialstartup.mockenger.core.service.RequestService;
 import com.socialstartup.mockenger.core.web.exception.ObjectNotFoundException;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 
 import java.io.IOException;
 
@@ -19,13 +22,7 @@ import java.io.IOException;
  */
 public abstract class AbstractController {
 
-//    private final String APPLICATION_JSONP_REQUEST_VALUE = "application/javascript";
-
-//    private final String APPLICATION_JSONP_RESPONSE_VALUE = "application/javascript;charset=UTF-8";
-
-    protected static final String CONTENT_TYPE_KEY = "content-type";
-    protected static final String MEDIA_TYPE_JSON = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8";
-    protected static final String MEDIA_TYPE_XML = MediaType.APPLICATION_XML_VALUE + ";charset=UTF-8";
+    private Logger LOG = LoggerFactory.getLogger(AbstractController.class);
 
     protected static final String VALUESET_ENDPOINT = "/valueset";
     protected static final String PROJECTS_ENDPOINT = "/projects";
@@ -34,9 +31,6 @@ public abstract class AbstractController {
     protected static final String GROUP_ID_ENDPOINT = GROUPS_ENDPOINT + "/{groupId}";
     protected static final String REQUESTS_ENDPOINT = "/requests";
     protected static final String REQUEST_ID_ENDPOINT = REQUESTS_ENDPOINT + "/{requestId}";
-
-
-    private HttpHeaders responseHeaders = new HttpHeaders();
 
     @Autowired
     private ProjectService projectService;
@@ -47,16 +41,12 @@ public abstract class AbstractController {
     @Autowired
     private RequestService requestService;
 
+    @Autowired
+    protected HttpHeadersService httpHeadersService;
 
-    /**
-     * Constructor with default content-type for responses
-     */
-    public AbstractController() {
-        getResponseHeaders().set(CONTENT_TYPE_KEY, MEDIA_TYPE_JSON);
-    }
 
     protected HttpHeaders getResponseHeaders() {
-        return responseHeaders;
+        return httpHeadersService.getDefaultHeaders();
     }
 
     protected ProjectService getProjectService() {
@@ -135,13 +125,28 @@ public abstract class AbstractController {
      *
      * @param mockRequest
      */
-    protected void cleanUpBody(AbstractRequest mockRequest) {
+    protected void cleanUpRequestBody(AbstractRequest mockRequest) {
         if (mockRequest.getBody() != null && mockRequest.getBody().getValue() != null) {
             try {
                 String newBody = JsonHelper.removeWhitespaces(mockRequest.getBody().getValue());
                 mockRequest.getBody().setValue(newBody);
             } catch (IOException e) {
                 throw new RuntimeException("Cannot remove whitespaces from JSON", e);
+            }
+        }
+    }
+
+    /**
+     *
+     * @param mockResponse
+     */
+    protected void cleanUpResponseBody(MockResponse mockResponse) {
+        if (mockResponse != null && mockResponse.getBody() != null) {
+            try {
+                String newBody = JsonHelper.removeWhitespaces(mockResponse.getBody());
+                mockResponse.setBody(newBody);
+            } catch (IOException e) {
+                LOG.warn("Cannot remove whitespaces from response body (JSON)", e);
             }
         }
     }

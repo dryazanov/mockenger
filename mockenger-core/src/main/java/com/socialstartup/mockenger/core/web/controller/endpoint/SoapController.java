@@ -23,7 +23,7 @@ import java.io.IOException;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
- * Created by x079089 on 3/24/2015.
+ * Created by Dmitry Ryazanov on 3/24/2015.
  */
 @Controller
 @RequestMapping(value = {"/SOAP/{groupId}"})
@@ -37,9 +37,9 @@ public class SoapController extends ParentController {
     /**
      * Constructor with default content-type for responses
      */
-    public SoapController() {
-        getResponseHeaders().set("Content-Type", "application/soap+xml;charset=UTF-8");
-    }
+//    public SoapController() {
+//        getResponseHeaders().set("Content-Type", "application/soap+xml;charset=UTF-8");
+//    }
 
     /**
      *

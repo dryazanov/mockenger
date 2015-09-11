@@ -143,6 +143,8 @@ angular.module('mockengerClientMainApp')
                 } else {
                     requestService.ajax.save(requestParams, request, function(response) {
                         requestListService.getData().push(response);
+                        requestListService.setFilteredData(response);
+                        requestListService.setCurrent(response);
                         $scope.showGreenMessage('Mock-request <b>' + response.name + '</b> has been created');
                     }, function(errorResponse) {
                         $scope.showRedMessage(errorResponse);
