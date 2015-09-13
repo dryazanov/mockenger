@@ -12,7 +12,7 @@ angular.module('mockengerClientMainApp')
                     $scope.urlToSendRequests = null;
                     $scope.groupToSave = group;
                 } else {
-                    $scope.urlToSendRequests = API_BASE_PATH + "/" + projectListService.getCurrent().type + "/" + group.id
+                    $scope.urlToSendRequests = API_BASE_PATH + "/" + projectListService.getCurrent().type + "/" + group.id + "/"
                     $scope.groupToSave = {};
                     angular.copy(group, $scope.groupToSave);
                 }

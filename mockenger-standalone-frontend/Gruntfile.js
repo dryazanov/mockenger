@@ -134,7 +134,7 @@ module.exports = function (grunt) {
                     ENV: 'dev',
                     API_BASE_PATH:'http://localhost:8080',
                     APP_VERSION: parseVersionFromPomXml(),
-                    REQUESTS_PER_PAGE: 2,
+                    REQUESTS_PER_PAGE: 10,
                     BUILD_DATE: new Date()
                 }
             },

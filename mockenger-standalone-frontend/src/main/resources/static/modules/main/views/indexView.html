@@ -7,10 +7,10 @@
         <div class="list-group" >
             <li class="list-group-item" ng-repeat="project in projectListService.getData()">
                 <div class="pull-right">
-                    <button class="btn btn-xs" ng-click="editProject(project)">
+                    <button class="btn-primary btn-xs" ng-click="editProject(project)">
                         <span class="glyphicon glyphicon-cog"></span>
                     </button>
-                    <button class="btn btn-xs" ng-really-click="deleteProject(project)"
+                    <button class="btn-primary btn-xs" ng-really-click="deleteProject(project)"
                             ng-really-message="Do you really want to delete project '{{project.name}}' with all its groups and mocks?">
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
@@ -18,7 +18,7 @@
                 <div>
                     <a href="#/project/{{project.id}}">{{project.name}}</a>
                     &nbsp;
-                    <span class="label label-info">{{project.type}}</span>
+                    <span class="label label-success">{{project.type}}</span>
                 </div>
             </li>
         </div>

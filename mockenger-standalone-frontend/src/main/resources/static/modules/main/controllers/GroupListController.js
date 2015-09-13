@@ -12,7 +12,7 @@ angular.module('mockengerClientMainApp').controller('GroupListController', ['$sc
         $scope.loadGroupRequests = function(group) {
             requestListService.setCurrent(null);
             groupListService.setCurrent(group);
-            groupListService.setUrlForNewRequests(API_BASE_PATH + "/" + projectListService.getCurrent().type + "/" + group.id);
+            groupListService.setUrlForNewRequests(API_BASE_PATH + "/" + projectListService.getCurrent().type + "/" + group.id + "/");
 
             var paramsToSend = {
                 projectId: projectListService.getCurrent().id,
