@@ -31,7 +31,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-dependencies</artifactId>
             <version>${spring.boot.version}</version>
-            <scope>import</scope>
+            <scope>runtime</scope>
             <type>pom</type>
         </dependency>
         <dependency>
