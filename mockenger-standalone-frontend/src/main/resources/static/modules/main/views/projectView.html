@@ -9,7 +9,7 @@
                             <span class="glyphicon glyphicon-list"></span>
                         </a>
                     </div>
-                    <h5>{{currentProject.name}} <span class="label label-primary">{{currentProject.type}}</span></h5>
+                    <h5>{{currentProject.name}} <span class="label label-success">{{currentProject.type}}</span></h5>
                 </div>
                 <div class="list-group" ng-if="groupListService.getData().length == 0">
                     <div class="list-group-item"><h4>No groups here</h4></div>
@@ -17,10 +17,10 @@
                 <div class="list-group" ng-if="groupListService.getData().length > 0">
                     <a href class="list-group-item" ng-class="{active: isActive(group)}" ng-repeat="group in groupListService.getData() track by $index">
                         <div class="pull-right">
-                            <button class="btn btn-xs" ng-click="editGroup(group)">
+                            <button class="btn-primary btn-xs" ng-click="editGroup(group)">
                                 <span class="glyphicon glyphicon-cog"></span>
                             </button>
-                            <button class="btn btn-xs" ng-really-click="deleteGroup($index, group)"
+                            <button class="btn-primary btn-xs" ng-really-click="deleteGroup($index, group)"
                                     ng-really-message="Do you really want to delete group '{{project.name}}' with all its mocks?">
                                 <span class="glyphicon glyphicon-trash"></span>
                             </button>
@@ -28,16 +28,16 @@
                         <div ng-click="loadGroupRequests(group)">
                             {{group.name}}
                             &nbsp;
-                            <span ng-show="!group.recording" class="label label-info">Not recording</span>
+                            <span ng-show="!group.recording" class="label label-primary">Not recording</span>
                             <span ng-show="group.recording" class="label label-danger">Recording</span>
                         </div>
                     </a>
                 </div>
                 <div class="panel-footer">
                     <div class="pull-right">
-                        <button type="button" class="btn btn-primary btn-sm" ng-click="createGroup()">
+                        <button type="button" class="btn btn-warning btn-sm" ng-click="createGroup()">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                            Add group
+                            Create group
                         </button>
                     </div>
                     <div class="clearfix"></div>
@@ -46,7 +46,7 @@
         </div>
 
         <div class="col-md-9" ng-controller="RequestListController">
-            <div ng-if="requestListService.getData() == null" class="alert alert-info" role="alert">
+            <div ng-if="requestListService.getData() == null" class="alert" role="alert">
                 Please select a group
             </div>
 
@@ -66,7 +66,7 @@
                             </select>
                         </div>
                         <div class="pull-right">
-                            <button type="button" class="btn btn-sm btn-primary" ng-click="createRequest()">
+                            <button type="button" class="btn btn-sm btn-warning" ng-click="createRequest()">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                 Create request
                             </button>
@@ -78,8 +78,8 @@
                     <div ng-if="pageCount() <= 0">
                         <h4>No results found</h4>
                         <br/>
-                        <h6>Please use <b>Create request</b> button to add new request</h6>
-                        <h6>Alternatively, you can switch on <b>Recording</b> on the group level and send your requests to <b>{{groupListService.getUrlForNewRequests()}}</b></h6>
+                        <h5>Please use <b>Create request</b> button to add new request</h5>
+                        <h5>Alternatively, you can switch on <b>Recording</b> on the group level and send your requests to <b>{{groupListService.getUrlForNewRequests()}}</b></h5>
                     </div>
                     <table class="table table-striped table-hover" ng-if="pageCount() > 0">
                         <thead>
@@ -103,7 +103,7 @@
                                 <td class="col-md-2">{{request.method}}</td>
                                 <td class="col-md-8">@{{request.path.value}}</td>
                                 <td class="col-md-1">
-                                    <button class="btn btn-xs" ng-really-click="deleteRequest(request)"
+                                    <button class="btn-primary btn-xs" ng-really-click="deleteRequest(request)"
                                             ng-really-message="Do you really want to delete this request?">
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </button>
@@ -238,7 +238,7 @@
                                                                        aria-describedby="sizing-addon1" placeholder="Replacement">
                                                             </td>
                                                             <td class="col-lg-1">
-                                                                <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestListService.getCurrent().path.transformers)"
+                                                                <button class="btn-danger btn-sm" ng-really-click="deleteTransformer($index, requestListService.getCurrent().path.transformers)"
                                                                         ng-really-message="Do you really want to delete this transformer?">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
@@ -267,7 +267,7 @@
                                                                        aria-describedby="sizing-addon1" placeholder="Value">
                                                             </td>
                                                             <td>
-                                                                <button class="btn btn-x" ng-really-click="deleteParameter($index)"
+                                                                <button class="btn-danger btn-sm" ng-really-click="deleteParameter($index)"
                                                                         ng-really-message="Do you really want to delete this parameter?">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
@@ -298,7 +298,7 @@
                                                                        aria-describedby="sizing-addon1" placeholder="Replacement">
                                                             </td>
                                                             <td class="col-lg-1">
-                                                                <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestListService.getCurrent().parameters.transformers)"
+                                                                <button class="btn-danger btn-sm" ng-really-click="deleteTransformer($index, requestListService.getCurrent().parameters.transformers)"
                                                                         ng-really-message="Do you really want to delete this transformer?">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
@@ -328,7 +328,7 @@
                                                                        aria-describedby="sizing-addon1" placeholder="Value">
                                                             </td>
                                                             <td>
-                                                                <button class="btn btn-x" ng-really-click="deleteHeader($index, requestListService.getCurrent().headers.values)"
+                                                                <button class="btn-danger btn-sm" ng-really-click="deleteHeader($index, requestListService.getCurrent().headers.values)"
                                                                         ng-really-message="Do you really want to delete this header?">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
@@ -359,7 +359,7 @@
                                                                        aria-describedby="sizing-addon1" placeholder="Replacement">
                                                             </td>
                                                             <td class="col-lg-1">
-                                                                <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestListService.getCurrent().headers.transformers)"
+                                                                <button class="btn-danger btn-sm" ng-really-click="deleteTransformer($index, requestListService.getCurrent().headers.transformers)"
                                                                         ng-really-message="Do you really want to delete this transformer?">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
@@ -393,7 +393,7 @@
                                                                        aria-describedby="sizing-addon1" placeholder="Replacement">
                                                             </td>
                                                             <td>
-                                                                <button class="btn btn-x" ng-really-click="deleteTransformer($index, requestListService.getCurrent().body.transformers)"
+                                                                <button class="btn-danger btn-sm" ng-really-click="deleteTransformer($index, requestListService.getCurrent().body.transformers)"
                                                                         ng-really-message="Do you really want to delete this transformer?">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
@@ -435,7 +435,7 @@
                                                                        aria-describedby="sizing-addon1" placeholder="Value">
                                                             </td>
                                                             <td>
-                                                                <button class="btn btn-x" ng-really-click="deleteHeader($index, requestListService.getCurrent().mockResponse.headers)"
+                                                                <button class="btn-danger btn-sm" ng-really-click="deleteHeader($index, requestListService.getCurrent().mockResponse.headers)"
                                                                         ng-really-message="Do you really want to delete this header?">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
@@ -553,8 +553,8 @@
                     </div>
                     <div class="form-group" ng-class="hasError(groupForm.forwardTo)" ng-show="groupToSave.forwarding">
                         <label for="forwardTo">Base URL for forwarding</label>
-                        <input type="text" name="forwardTo" id="forwardTo" ng-model="groupToSave.forwardTo" class="form-control" required>
-                        <p ng-show="groupForm.forwardTo.$invalid && !groupForm.forwardTo.$pristine" class="help-block">Base URL cannot be empty</p>
+                        <input type="text" name="forwardTo" id="forwardTo" ng-model="groupToSave.forwardTo" class="form-control" ng-required="groupToSave.forwarding">
+                        <p ng-show="groupToSave.forwarding == true && (groupForm.forwardTo.$invalid && !groupForm.forwardTo.$pristine)" class="help-block">Base URL cannot be empty</p>
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -3,10 +3,33 @@ html {
     min-height: 100%;
 }
 
-body {
-    background: white;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: #333;
+a {
+    color: #34A8CF;
+    text-decoration: underline;
+}
+
+a.list-group-item, button.list-group-item {
+    text-decoration: none;
+}
+
+label {
+    color: #F5AD42;
+}
+
+.table > thead > tr > th {
+    color: #F5AD42;
+}
+
+.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+    background-color: #49515a;
+}
+
+.nav-tabs > li > a {
+    text-decoration: none;
+}
+
+.form-control {
+    background-color: #DDDDDD;
 }
 
 /* ==========================================================================
