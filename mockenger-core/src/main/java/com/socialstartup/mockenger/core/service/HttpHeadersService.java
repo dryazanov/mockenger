@@ -1,13 +1,13 @@
 package com.socialstartup.mockenger.core.service;
 
-import com.socialstartup.mockenger.core.config.MockengerHeadersStopListConfigParam;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by Dmitry Ryazanov on 11-Sep-15.
@@ -20,8 +20,9 @@ public class HttpHeadersService {
     public static final String MEDIA_TYPE_JSON = String.format("%s;%s", MediaType.APPLICATION_JSON_VALUE, CHARSET_UTF_8);
     public static final String MEDIA_TYPE_XML = String.format("%s;%s", MediaType.APPLICATION_XML_VALUE, CHARSET_UTF_8);
 
-    @Autowired
-    private MockengerHeadersStopListConfigParam stopListConfigParam;
+    @Value("#{'${mockenger.mock.response.ignore.headers}'.split(',')}")
+    private List<String> headersToIgnore;
+
 
     /**
      * @return
@@ -42,7 +43,7 @@ public class HttpHeadersService {
         HttpHeaders headers = getDefaultHeaders();
 
         for (Pair pair : headerList) {
-            if (!stopListConfigParam.getResponseHeaders().contains(pair.getKey().toLowerCase())) {
+            if (!headersToIgnore.contains(pair.getKey().toLowerCase())) {
                 headers.set(pair.getKey(), pair.getValue());
             }
         }

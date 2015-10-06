@@ -22,7 +22,9 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <spring.framework.version>4.2.0.RELEASE</spring.framework.version>
+        <spring.security.version>4.0.2.RELEASE</spring.security.version>
         <spring.data.mongodb.version>1.7.2.RELEASE</spring.data.mongodb.version>
+        <spring-security-oauth2.version>2.0.7.RELEASE</spring-security-oauth2.version>
         <spring.boot.version>1.2.4.RELEASE</spring.boot.version>
         <fasterxml.jackson.version>2.2.2</fasterxml.jackson.version>
         <jstl.version>1.2</jstl.version>
@@ -86,6 +88,21 @@
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-mongodb</artifactId>
                 <version>${spring.data.mongodb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-web</artifactId>
+                <version>${spring.security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-config</artifactId>
+                <version>${spring.security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security.oauth</groupId>
+                <artifactId>spring-security-oauth2</artifactId>
+                <version>${spring-security-oauth2.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>

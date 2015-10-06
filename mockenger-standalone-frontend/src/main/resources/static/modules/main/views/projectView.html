@@ -1,27 +1,27 @@
 <mkngr-navbar></mkngr-navbar>
 <div class="container-fluid">
-    <div class="row">
+    <div class="row" ng-if="currentProject.id != null">
         <div class="col-md-3" ng-controller="GroupListController">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="pull-right">
-                        <a type="button" href="/#/" class="btn btn-sm btn-primary" >
+                        <a type="button" href="/#/index" class="btn btn-sm btn-primary" >
                             <span class="glyphicon glyphicon-list"></span>
                         </a>
                     </div>
-                    <h5>{{currentProject.name}} <span class="label label-success">{{currentProject.type}}</span></h5>
+                    <b>{{currentProject.name}} <span class="label label-success">{{currentProject.type}}</span></b>
+                    <div class="clearfix"></div>
                 </div>
                 <div class="list-group" ng-if="groupListService.getData().length == 0">
                     <div class="list-group-item"><h4>No groups here</h4></div>
                 </div>
                 <div class="list-group" ng-if="groupListService.getData().length > 0">
                     <a href class="list-group-item" ng-class="{active: isActive(group)}" ng-repeat="group in groupListService.getData() track by $index">
-                        <div class="pull-right">
+                        <div class="pull-right" ng-if="hasRoleManager(user.roles)">
                             <button class="btn-primary btn-xs" ng-click="editGroup(group)">
                                 <span class="glyphicon glyphicon-cog"></span>
                             </button>
-                            <button class="btn-primary btn-xs" ng-really-click="deleteGroup($index, group)"
-                                    ng-really-message="Do you really want to delete group '{{project.name}}' with all its mocks?">
+                            <button class="btn-primary btn-xs" ng-click="deleteGroup($index, group)">
                                 <span class="glyphicon glyphicon-trash"></span>
                             </button>
                         </div>
@@ -33,7 +33,7 @@
                         </div>
                     </a>
                 </div>
-                <div class="panel-footer">
+                <div class="panel-footer" ng-if="hasRoleManager(user.roles)">
                     <div class="pull-right">
                         <button type="button" class="btn btn-warning btn-sm" ng-click="createGroup()">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
@@ -65,7 +65,7 @@
                                 </optgroup>
                             </select>
                         </div>
-                        <div class="pull-right">
+                        <div class="pull-right" ng-if="hasRoleManager(user.roles)">
                             <button type="button" class="btn btn-sm btn-warning" ng-click="createRequest()">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                 Create request
@@ -88,7 +88,7 @@
                                 <th>Name</th>
                                 <th>Method</th>
                                 <th>Path</th>
-                                <th>Delete</th>
+                                <th ng-if="hasRoleManager(user.roles)">Delete</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -102,9 +102,8 @@
                                 <td class="col-md-2">{{request.name}}</td>
                                 <td class="col-md-2">{{request.method}}</td>
                                 <td class="col-md-8">@{{request.path.value}}</td>
-                                <td class="col-md-1">
-                                    <button class="btn-primary btn-xs" ng-really-click="deleteRequest(request)"
-                                            ng-really-message="Do you really want to delete this request?">
+                                <td class="col-md-1" ng-if="hasRoleManager(user.roles)">
+                                    <button class="btn-primary btn-xs" ng-click="deleteRequest(request)">
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </button>
                                 </td>
@@ -238,8 +237,7 @@
                                                                        aria-describedby="sizing-addon1" placeholder="Replacement">
                                                             </td>
                                                             <td class="col-lg-1">
-                                                                <button class="btn-danger btn-sm" ng-really-click="deleteTransformer($index, requestListService.getCurrent().path.transformers)"
-                                                                        ng-really-message="Do you really want to delete this transformer?">
+                                                                <button class="btn-danger btn-sm" ng-click="deleteTransformer($index, requestListService.getCurrent().path.transformers)">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
                                                             </td>
@@ -267,8 +265,7 @@
                                                                        aria-describedby="sizing-addon1" placeholder="Value">
                                                             </td>
                                                             <td>
-                                                                <button class="btn-danger btn-sm" ng-really-click="deleteParameter($index)"
-                                                                        ng-really-message="Do you really want to delete this parameter?">
+                                                                <button class="btn-danger btn-sm" ng-click="deleteParameter($index)">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
                                                             </td>
@@ -298,8 +295,7 @@
                                                                        aria-describedby="sizing-addon1" placeholder="Replacement">
                                                             </td>
                                                             <td class="col-lg-1">
-                                                                <button class="btn-danger btn-sm" ng-really-click="deleteTransformer($index, requestListService.getCurrent().parameters.transformers)"
-                                                                        ng-really-message="Do you really want to delete this transformer?">
+                                                                <button class="btn-danger btn-sm" ng-click="deleteTransformer($index, requestListService.getCurrent().parameters.transformers)">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
                                                             </td>
@@ -328,8 +324,7 @@
                                                                        aria-describedby="sizing-addon1" placeholder="Value">
                                                             </td>
                                                             <td>
-                                                                <button class="btn-danger btn-sm" ng-really-click="deleteHeader($index, requestListService.getCurrent().headers.values)"
-                                                                        ng-really-message="Do you really want to delete this header?">
+                                                                <button class="btn-danger btn-sm" ng-click="deleteHeader($index, requestListService.getCurrent().headers.values)">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
                                                             </td>
@@ -359,8 +354,7 @@
                                                                        aria-describedby="sizing-addon1" placeholder="Replacement">
                                                             </td>
                                                             <td class="col-lg-1">
-                                                                <button class="btn-danger btn-sm" ng-really-click="deleteTransformer($index, requestListService.getCurrent().headers.transformers)"
-                                                                        ng-really-message="Do you really want to delete this transformer?">
+                                                                <button class="btn-danger btn-sm" ng-click="deleteTransformer($index, requestListService.getCurrent().headers.transformers)">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
                                                             </td>
@@ -393,8 +387,7 @@
                                                                        aria-describedby="sizing-addon1" placeholder="Replacement">
                                                             </td>
                                                             <td>
-                                                                <button class="btn-danger btn-sm" ng-really-click="deleteTransformer($index, requestListService.getCurrent().body.transformers)"
-                                                                        ng-really-message="Do you really want to delete this transformer?">
+                                                                <button class="btn-danger btn-sm" ng-click="deleteTransformer($index, requestListService.getCurrent().body.transformers)">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
                                                             </td>
@@ -435,8 +428,7 @@
                                                                        aria-describedby="sizing-addon1" placeholder="Value">
                                                             </td>
                                                             <td>
-                                                                <button class="btn-danger btn-sm" ng-really-click="deleteHeader($index, requestListService.getCurrent().mockResponse.headers)"
-                                                                        ng-really-message="Do you really want to delete this header?">
+                                                                <button class="btn-danger btn-sm" ng-click="deleteHeader($index, requestListService.getCurrent().mockResponse.headers)">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
                                                             </td>
@@ -493,7 +485,7 @@
                             </div>
                             </form>
                         </div>
-                        <div class="panel-footer">
+                        <div class="panel-footer" ng-if="hasRoleManager(user.roles)">
                             <div class="pull-right">
                                 <button type="button" class="btn btn-danger" data-dismiss="modal" ng-click="requestListService.setCurrent(null)">Cancel</button>
                                 <button type="button" class="btn btn-primary" ng-disabled="projectForm.$invalid" ng-click="saveRequest(requestListService.getCurrent())">Save</button>

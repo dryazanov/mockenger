@@ -1,6 +1,5 @@
 package com.socialstartup.mockenger.core.service;
 
-import com.socialstartup.mockenger.core.config.MockengerHeadersStopListConfigParam;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
@@ -13,11 +12,12 @@ import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by Dmitry Ryazanov
@@ -29,9 +29,9 @@ public class ProxyService {
 
     public final int DEFAULT_RESPONSE_HTTP_STATUS = 500;
 
-    @Autowired
-    private MockengerHeadersStopListConfigParam stopListConfigParam;
 
+    @Value("#{'${mockenger.proxy.request.ignore.headers}'.split(',')}")
+    private List<String> headersToIgnore;
 
     /**
      *
@@ -96,7 +96,7 @@ public class ProxyService {
 
         if (mockRequest.getHeaders() != null && mockRequest.getHeaders().getValues() != null) {
             for (Pair pair : mockRequest.getHeaders().getValues()) {
-                if (stopListConfigParam.getRequestHeaders().contains(pair.getKey())) {
+                if (headersToIgnore.contains(pair.getKey())) {
                     continue;
                 }
                 requestBuilder.addHeader(pair.getKey(), pair.getValue());

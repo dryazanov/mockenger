@@ -1,10 +1,29 @@
 <div class="well well-sm">
-    <div class="media">
-        <div class="media-left media-middle">
-            <img src="assets/images/logo.jpg" />
+    <div class="container-fluid">
+        <div class="media col-md-3">
+            <div class="media-left media-middle">
+                <img src="assets/images/logo.jpg" />
+            </div>
+            <div class="media-body">
+                <h4>Mockenger</h4>
+            </div>
         </div>
-        <div class="media-body">
-            <h4>Mockenger</h4>
+        <div class="media col-md-7">
+                <!--<a href="#">Statistics</a>
+                <a href="#">Users</a>
+                <a href="/#/logout">Logout</a>-->
+        </div>
+        <div ng-if="user.username">
+            <div class="col-md-1">
+                {{user.username}}<br/>
+                {{user.firstName}} {{user.lastName}}
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-warning btn-sm" ng-click="signOut()">
+                    <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                    Sign out
+                </button>
+            </div>
         </div>
     </div>
 </div>

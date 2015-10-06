@@ -1,13 +1,12 @@
 'use strict';
 
 angular.module('mockengerClientMainApp')
-    .controller('IndexPageController', ['$scope', '$filter', 'projectList', 'projectListService', 'valuesetService',
-        function ($scope, $filter, projectList, projectListService, valuesetService) {
+    .controller('IndexPageController', ['$rootScope', '$scope', '$filter', '$confirm', 'projectListService', 'valuesetService',
+        function ($rootScope, $scope, $filter, $confirm, projectListService, valuesetService) {
             var projectModal = $('#projectModal');
             $scope.projectListService = projectListService;
             $scope.projectsList = {};
             $scope.availableProjectTypes = {};
-            projectListService.setData(projectList);
 
             // Change value to uppercase in the field 'Code'
             $scope.$watch('currentProject.code', function(value) {
@@ -47,11 +46,15 @@ angular.module('mockengerClientMainApp')
             };
 
             $scope.deleteProject = function(project) {
-                projectListService.ajax.delete({projectId: project.id}, function(response, getResponseHeaders) {
-                    $scope.getProjects();
-                    $scope.showGreenMessage('Project <b>' + project.name + '</b> deleted');
-                }, function(errorResponse) {
-                    $scope.showRedMessage(errorResponse);
+                $confirm({
+                    text: "Do you really want to delete project '" + project.name + "' with all its groups and mocks?"
+                }).then(function() {
+                    projectListService.ajax.delete({projectId: project.id}, function(response, getResponseHeaders) {
+                        $scope.getProjects();
+                        $scope.showGreenMessage('Project <b>' + project.name + '</b> deleted');
+                    }, function(errorResponse) {
+                        $scope.showRedMessage(errorResponse);
+                    });
                 });
             };
 
@@ -75,6 +78,12 @@ angular.module('mockengerClientMainApp')
                 }
             };
 
-            $scope.getProjectTypes();
+            projectListService.ajax.query(function(response) {
+                projectListService.setData(response);
+                $scope.getProjectTypes();
+            }, function (errorResponse) {
+                $scope.showRedMessage(errorResponse);
+            });
         }
-]);
+    ]
+);
