@@ -1,26 +1,35 @@
+<mkngr-navbar></mkngr-navbar>
 <div class="container">
-    <div id="projects-list">
-        <button type="button" class="btn btn-primary btn-sm btn-block" ng-click="createProject()">
-            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-            Create project
-        </button>
-        <div class="list-group" >
-            <li class="list-group-item" ng-repeat="project in projectListService.getData()">
-                <div class="pull-right">
-                    <button class="btn-primary btn-xs" ng-click="editProject(project)">
-                        <span class="glyphicon glyphicon-cog"></span>
-                    </button>
-                    <button class="btn-primary btn-xs" ng-really-click="deleteProject(project)"
-                            ng-really-message="Do you really want to delete project '{{project.name}}' with all its groups and mocks?">
-                        <span class="glyphicon glyphicon-trash"></span>
-                    </button>
-                </div>
-                <div>
-                    <a href="#/project/{{project.id}}">{{project.name}}</a>
-                    &nbsp;
-                    <span class="label label-success">{{project.type}}</span>
-                </div>
-            </li>
+    <div class="col-md-6 col-md-offset-3">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <b>Project list</b>
+        </div>
+            <div class="list-group" >
+                <li class="list-group-item" ng-repeat="project in projectListService.getData()">
+                    <div class="pull-right" ng-if="hasRoleManager(user.roles)">
+                        <button class="btn-primary btn-xs" ng-click="editProject(project)">
+                            <span class="glyphicon glyphicon-cog"></span>
+                        </button>
+                        <button class="btn-primary btn-xs" ng-click="deleteProject(project)">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </div>
+                    <div>
+                        <a href="#/project/{{project.id}}">{{project.name}}</a>
+                        &nbsp;
+                        <span class="label label-success">{{project.type}}</span>
+                    </div>
+                </li>
+            </div>
+        <div class="panel-footer" ng-if="hasRoleManager(user.roles)">
+            <div class="pull-right">
+                <button type="button" class="btn btn-warning btn-sm" ng-click="createProject()">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    Create project
+                </button>
+            </div>
+            <div class="clearfix"></div>
         </div>
     </div>
 </div>

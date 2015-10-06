@@ -132,6 +132,8 @@ module.exports = function (grunt) {
                 },
                 constants: {
                     ENV: 'dev',
+                    SECURITY: true,
+                    SECRET_KEY: 'Y2xpZW50YXBwOjEyMzQ1Ng==',
                     API_BASE_PATH:'http://localhost:8080',
                     APP_VERSION: parseVersionFromPomXml(),
                     REQUESTS_PER_PAGE: 10,
@@ -144,9 +146,11 @@ module.exports = function (grunt) {
                 },
                 constants: {
                     ENV: 'prod',
+                    SECURITY: true,
+                    SECRET_KEY: 'Y2xpZW50YXBwOjEyMzQ1Ng==',
                     API_BASE_PATH:'/',
                     APP_VERSION: parseVersionFromPomXml(),
-                    REQUESTS_PER_PAGE: 15,
+                    REQUESTS_PER_PAGE: 20,
                     BUILD_DATE: new Date()
                 }
             }

@@ -26,6 +26,7 @@
     "angular-touch": "^1.4.4",
     "angular-animate": "^1.4.4",
     "angular-bootstrap": "^0.13.3",
+    "angular-confirm-modal": "^1.0.2",
     "bootstrap": "3.3.4",
     "ngtoast": "^1.5.5"
   }

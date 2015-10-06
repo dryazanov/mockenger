@@ -22,8 +22,20 @@ angular.module('mockengerClientComponents').factory('apiEndpointsService', ['API
         getGroupRestUrl: function() {
             return restUrls.getProjectRestUrl() + '/groups/:groupId';
         },
-        getRequestRestUrl: function getRequestRestUrl() {
+        getRequestRestUrl: function() {
             return restUrls.getGroupRestUrl() + '/requests/:requestId';
+        },
+        getOAuth2AccessTokenUrl: function() {
+            return API_BASE_PATH + '/oauth/token?grant_type=password';
+        },
+        getOAuth2RefreshTokenUrl: function() {
+            return API_BASE_PATH + '/oauth/token?grant_type=refresh_token';
+        },
+        getOAuth2LogoutUrl: function() {
+            return API_BASE_PATH + '/oauth/revoke';
+        },
+        getUserData: function() {
+            return API_BASE_PATH + '/oauth/user';
         }
     };
 

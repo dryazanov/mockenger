@@ -12,6 +12,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -43,7 +44,11 @@ public class CORSFilter implements Filter {
         response.setHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE, MAX_AGE);
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, ALLOW_HEADERS);
 
-        filterChain.doFilter(servletRequest, servletResponse);
+        if (RequestMethod.OPTIONS.name().equals(((HttpServletRequest) servletRequest).getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            filterChain.doFilter(servletRequest, servletResponse);
+        }
     }
 
     @Override

@@ -26,6 +26,8 @@ angular.module('mockengerClientMainApp').controller('ProjectPageController', ['$
         }, function (errorResponse) {
             $scope.showRedMessage(errorResponse);
         });
+    }, function(errorResponse) {
+        $scope.showRedMessage(errorResponse);
     });
 
     $scope.getRequestMethods = function(projectId) {

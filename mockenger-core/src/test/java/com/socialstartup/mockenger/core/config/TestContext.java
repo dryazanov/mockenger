@@ -1,6 +1,5 @@
 package com.socialstartup.mockenger.core.config;
 
-import com.socialstartup.mockenger.data.config.MockengerDatasourceConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -18,11 +17,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @Configuration
 @EnableWebMvc
-@Import(value = MockengerDatasourceConfiguration.class)
-@ComponentScan(
-        basePackages = {"com.socialstartup.mockenger.core.service", "com.socialstartup.mockenger.core.web"},
-        basePackageClasses = {MockengerHeadersStopListConfigParam.class
-})
+@Import(CoreConfiguration.class)
+@ComponentScan(basePackages = {"com.socialstartup.mockenger.core.web"})
 @PropertySource("classpath:mongodb-test.properties")
 @PropertySource("classpath:application-test.properties")
 public class TestContext extends WebMvcConfigurerAdapter {

@@ -3,13 +3,14 @@
 angular.module('mockengerClientMainApp')
     .controller('RequestController',[
         '$scope',
+        '$confirm',
         'projectListService',
         'groupListService',
         'requestService',
         'requestListService',
         'valuesetService',
 
-        function ($scope, projectListService, groupListService, requestService, requestListService, valuesetService) {
+        function ($scope, $confirm, projectListService, groupListService, requestService, requestListService, valuesetService) {
             var REGEXP = 'REGEXP';
             var KEY_VALUE = 'KEY_VALUE';
             var XPATH = 'XPATH';
@@ -47,10 +48,14 @@ angular.module('mockengerClientMainApp')
             }
 
             $scope.deleteParameter = function(index) {
-                var source = requestListService.getCurrent().parameters.values;
-                if (source != null && source[index] != null) {
-                    source.splice(index, 1);
-                }
+                $confirm({
+                    text: "Do you really want to delete this parameter?"
+                }).then(function() {
+                    var source = requestListService.getCurrent().parameters.values;
+                    if (source != null && source[index] != null) {
+                        source.splice(index, 1);
+                    }
+                });
             }
 
             $scope.addRequestHeader = function() {
@@ -76,9 +81,13 @@ angular.module('mockengerClientMainApp')
             }
 
             $scope.deleteHeader = function(index, source) {
-                if (source != null && source[index] != null) {
-                    source.splice(index, 1);
-                }
+                $confirm({
+                    text: "Do you really want to delete this header?"
+                }).then(function() {
+                    if (source != null && source[index] != null) {
+                        source.splice(index, 1);
+                    }
+                });
             }
 
             // Add transformer for Path
@@ -114,9 +123,13 @@ angular.module('mockengerClientMainApp')
             }
 
             $scope.deleteTransformer = function(index, source) {
-                if (source != null && source[index] != null) {
-                    source.splice(index, 1);
-                }
+                $confirm({
+                    text: "Do you really want to delete this transformer?"
+                }).then(function() {
+                    if (source != null && source[index] != null) {
+                        source.splice(index, 1);
+                    }
+                });
             }
 
             $scope.saveRequest = function(request) {

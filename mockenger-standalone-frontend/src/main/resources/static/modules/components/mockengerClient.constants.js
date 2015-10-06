@@ -4,12 +4,16 @@ angular.module('mockengerClientComponents')
 
 .constant('ENV', 'dev')
 
+.constant('SECURITY', true)
+
+.constant('SECRET_KEY', 'Y2xpZW50YXBwOjEyMzQ1Ng==')
+
 .constant('API_BASE_PATH', 'http://localhost:8080')
 
 .constant('APP_VERSION', '0.1-SNAPSHOT')
 
 .constant('REQUESTS_PER_PAGE', 10)
 
-.constant('BUILD_DATE', '2015-09-09T09:02:42.903Z')
+.constant('BUILD_DATE', '2015-10-05T12:36:03.673Z')
 
 ;
