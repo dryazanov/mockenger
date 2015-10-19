@@ -1,2 +1,2 @@
-cd D:\dev\checkout\mockenger2\mockenger-standalone-frontend
+cd ..\..\mockenger-standalone-frontend
 grunt serve
