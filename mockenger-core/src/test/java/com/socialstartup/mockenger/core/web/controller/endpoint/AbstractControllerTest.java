@@ -1,5 +1,6 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
+import com.socialstartup.mockenger.core.config.TestPropertyContext;
 import com.socialstartup.mockenger.core.config.TestContext;
 import com.socialstartup.mockenger.core.service.GroupService;
 import com.socialstartup.mockenger.core.service.ProjectService;
@@ -42,7 +43,7 @@ import java.util.Set;
 @Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {TestContext.class})
+@ContextConfiguration(classes = {TestPropertyContext.class, TestContext.class})
 public class AbstractControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -221,26 +222,6 @@ public class AbstractControllerTest {
     }
 
     protected static AbstractRequest getNewRequest(String groupId) {
-        Set<Pair> paramsMap = new HashSet<>();
-        Set<Pair> headersMap = new HashSet<>();
-        String PARAM_NAME1 = "A";
-        String PARAM_NAME2 = "b";
-        String PARAM_VALUE1 = "1";
-        String PARAM_VALUE2 = "2";
-        String HEADER_NAME1 = "header1";
-        String HEADER_NAME2 = "header2";
-        String HEADER_VALUE1 = "H1";
-        String HEADER_VALUE2 = "h2";
-
-        paramsMap.add(new Pair(PARAM_NAME1, PARAM_VALUE1));
-        paramsMap.add(new Pair(PARAM_NAME2, PARAM_VALUE2));
-
-        headersMap.add(new Pair(HEADER_NAME1, HEADER_VALUE1));
-        headersMap.add(new Pair(HEADER_NAME2, HEADER_VALUE2));
-
-        RegexpTransformer regexpTransformer = new RegexpTransformer();
-        XPathTransformer xPathTransformer = new XPathTransformer();
-        KeyValueTransformer keyValueTransformer = new KeyValueTransformer();
         AbstractRequest request = new AbstractRequest();
 
         String id = CommonUtils.generateUniqueId();
@@ -250,10 +231,15 @@ public class AbstractControllerTest {
         request.setName(REQUEST_NAME_TEST);
         request.setMethod(RequestMethod.POST);
         request.setCreationDate(new Date());
-        request.setPath(new Path(Arrays.asList(regexpTransformer, xPathTransformer), REQUEST_PATH));
-        request.setParameters(new Parameters(Arrays.asList(keyValueTransformer), paramsMap));
-        request.setHeaders(new Headers(Arrays.asList(keyValueTransformer), headersMap));
-        request.setBody(new Body(Arrays.asList(regexpTransformer, xPathTransformer), MOCK_REQUEST_BODY));
+        request.setPath(new Path(Arrays.asList(new RegexpTransformer(), new XPathTransformer()), REQUEST_PATH));
+
+        Set<Pair> paramsMap = new HashSet<>(Arrays.asList(new Pair("A", "1"), new Pair("b", "2")));
+        request.setParameters(new Parameters(Arrays.asList(new KeyValueTransformer()), paramsMap));
+
+        Set<Pair> headersMap = new HashSet<>(Arrays.asList(new Pair("header1", "H1"), new Pair("header2", "H2")));
+        request.setHeaders(new Headers(Arrays.asList(new KeyValueTransformer()), headersMap));
+
+        request.setBody(new Body(Arrays.asList(new RegexpTransformer(), new XPathTransformer()), MOCK_REQUEST_BODY));
 
         MockResponse mockResponse = new MockResponse();
         mockResponse.setHttpStatus(200);

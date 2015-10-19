@@ -1,6 +1,5 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
-import com.socialstartup.mockenger.core.config.TestContext;
 import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
@@ -19,11 +18,7 @@ import com.socialstartup.mockenger.data.model.persistent.transformer.RegexpTrans
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -42,11 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Dmitry Ryazanov on 6/29/2015.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(classes = {TestContext.class})
 public class RestControllerTest extends AbstractControllerTest {
-
     private static final String ENDPOINT_TEMPLATE = "/REST/%s/%s";
     private static final String REQUEST_PATH = "test/rest/mock/request";
     private static final String ID1 = "200000000001";

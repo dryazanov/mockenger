@@ -36,17 +36,19 @@ public class HttpHeadersService {
     }
 
     /**
+     * Creates header list using headersToIgnore as a filter
+     *
      * @param headerList
      * @return
      */
     public HttpHeaders createHeaders(Collection<Pair> headerList) {
         HttpHeaders headers = getDefaultHeaders();
 
-        for (Pair pair : headerList) {
+        headerList.forEach(pair -> {
             if (!headersToIgnore.contains(pair.getKey().toLowerCase())) {
                 headers.set(pair.getKey(), pair.getValue());
             }
-        }
+        });
 
         return headers;
     }

@@ -2,7 +2,6 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.socialstartup.mockenger.core.config.TestContext;
 import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
@@ -11,11 +10,7 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRe
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -28,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -41,11 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Dmitry Ryazanov on 6/29/2015.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(classes = {TestContext.class})
 public class RequestControllerTest extends AbstractControllerTest {
-
     private static final String ENDPOINT_TEMPLATE = "/projects/%s/groups/%s/requests/%s";
     private static final String ENDPOINT_REQUEST = String.format(ENDPOINT_TEMPLATE, PROJECT_ID, GROUP_ID, "");
     private static final String REQUEST_NAME_UPDATED = "ABC mock-request";
@@ -208,7 +200,7 @@ public class RequestControllerTest extends AbstractControllerTest {
         assertNull(getRequest(request.getId()));
     }
 
-    /*@Test
+    @Test
     public void testGetNoRequestsByGroupId() throws Exception {
         // Cleanup first
         deleteAllRequests();
@@ -216,11 +208,10 @@ public class RequestControllerTest extends AbstractControllerTest {
         ResultActions resultActions = getRequestsAllRest(project.getId(), group.getId());
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
-                .andExpect(jsonPath("$.rowCount", is(0)))
-                .andExpect(jsonPath("$.rows", hasSize(0)));
-    }*/
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
 
-    /*@Test
+    @Test
     public void testGetRequestsByGroupId() throws Exception {
         // Cleanup first
         deleteAllRequests();
@@ -232,11 +223,11 @@ public class RequestControllerTest extends AbstractControllerTest {
         ResultActions resultActions = getRequestsAllRest(project.getId(), group.getId());
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
-                .andExpect(jsonPath("$.rowCount", is(3)))
-                .andExpect(jsonPath("$.rows", hasSize(3)));
-
-        deleteAllRequests();
-    }*/
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$.[0].groupId", is(group.getId())))
+                .andExpect(jsonPath("$.[1].groupId", is(group.getId())))
+                .andExpect(jsonPath("$.[2].groupId", is(group.getId())));
+    }
 
 
 
