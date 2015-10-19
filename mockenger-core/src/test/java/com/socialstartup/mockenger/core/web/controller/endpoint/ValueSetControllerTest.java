@@ -2,17 +2,12 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.socialstartup.mockenger.core.config.TestContext;
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.dict.TransformerType;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
@@ -28,11 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Dmitry Ryazanov on 6/29/2015.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(classes = {TestContext.class})
 public class ValueSetControllerTest extends AbstractControllerTest {
-
     private static final String ENDPOINT_VALUESET = "/valueset";
     private static final String PROJECT_TYPES_VALUESET = ENDPOINT_VALUESET + "/projectTypes";
     private static final String REQUEST_METHODS_VALUESET = ENDPOINT_VALUESET + "/requestMethods";

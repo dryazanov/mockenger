@@ -129,7 +129,6 @@ public class RequestService {
      * @return
      */
     private boolean pathsEqual(AbstractRequest abstractRequestFromUser, AbstractRequest mockedAbstractRequest) {
-
         if (abstractRequestFromUser.getPath() != null && mockedAbstractRequest.getPath() != null) {
             String path = abstractRequestFromUser.getPath().getValue();
             List<AbstractTransformer> transformers = mockedAbstractRequest.getPath().getTransformers();

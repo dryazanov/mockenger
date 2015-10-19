@@ -4,7 +4,6 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRe
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Created by Dmitry Ryazanov
@@ -29,39 +29,46 @@ public class ProxyService {
 
     public final int DEFAULT_RESPONSE_HTTP_STATUS = 500;
 
-
     @Value("#{'${mockenger.proxy.request.ignore.headers}'.split(',')}")
     private List<String> headersToIgnore;
 
+
     /**
+     * Proxy request to defined destination and complete mock-request with a real response
      *
      * @param mockRequest Mock-request to forward
-     * @param forwardTo Host name where request will be forwarded
+     * @param baseHost Host name where request will be forwarded
      * @return
      */
-    public AbstractRequest forwardRequest(AbstractRequest mockRequest, String forwardTo) {
+    public AbstractRequest forwardRequest(AbstractRequest mockRequest, String baseHost) {
         HttpClient client = HttpClientBuilder.create().build();
-        HttpUriRequest httpUriRequest = createHttpRequest(mockRequest, forwardTo);
+        HttpUriRequest httpUriRequest = createHttpRequest(mockRequest, baseHost);
 
         try {
             // SEND REQUEST
             HttpResponse response = client.execute(httpUriRequest);
 
+            MockResponse mockResponse;
             if (mockRequest.getMockResponse() == null) {
-                MockResponse mockResponse = new MockResponse();
+                mockResponse = new MockResponse();
                 mockResponse.setHeaders(new HashSet<>());
                 mockRequest.setMockResponse(mockResponse);
+            } else {
+                mockResponse = mockRequest.getMockResponse();
             }
 
-            mockRequest.getMockResponse().setHttpStatus(response.getStatusLine() != null ? response.getStatusLine().getStatusCode() : DEFAULT_RESPONSE_HTTP_STATUS);
+            // Set response status
+            mockResponse.setHttpStatus(response.getStatusLine() != null ? response.getStatusLine().getStatusCode() : DEFAULT_RESPONSE_HTTP_STATUS);
 
-            for (Header header : response.getAllHeaders()) {
-                mockRequest.getMockResponse().getHeaders().add(new Pair(header.getName(), header.getValue()));
-            }
+            // Set response headers
+            Stream.of(response.getAllHeaders()).forEach(header -> {
+                mockResponse.getHeaders().add(new Pair(header.getName(), header.getValue()));
+            });
 
+            // Set response body
             if (response.getEntity() != null && response.getEntity().getContent() != null) {
                 String responseBody = IOUtils.toString(response.getEntity().getContent());
-                mockRequest.getMockResponse().setBody(responseBody);
+                mockResponse.setBody(responseBody);
             }
         } catch (IOException e) {
             LOG.error(String.format("Forwarding process failed for request '%s' with path '%s'", mockRequest.getName(), mockRequest.getPath().getValue()), e);
@@ -74,13 +81,12 @@ public class ProxyService {
      *
      * @return
      */
-    private HttpUriRequest createHttpRequest(AbstractRequest mockRequest, String forwardTo) {
-        if (mockRequest == null || forwardTo == null) {
+    private HttpUriRequest createHttpRequest(AbstractRequest mockRequest, String baseHost) {
+        if (mockRequest == null || baseHost == null) {
             throw new IllegalArgumentException();
         }
 
-        StringBuilder sb = new StringBuilder(forwardTo);
-
+        StringBuilder sb = new StringBuilder(baseHost);
         if (mockRequest.getPath() != null && mockRequest.getPath().getValue() != null) {
             sb.append(mockRequest.getPath().getValue());
         }
@@ -88,19 +94,18 @@ public class ProxyService {
         RequestBuilder requestBuilder = RequestBuilder.create(mockRequest.getMethod().name());
         requestBuilder.setUri(sb.toString());
 
+        // Set request parameters
         if (mockRequest.getParameters() != null && mockRequest.getParameters().getValues() != null) {
-            for (Pair pair : mockRequest.getParameters().getValues()) {
-                requestBuilder.addParameter(pair.getKey(), pair.getValue());
-            }
+            mockRequest.getParameters().getValues().forEach( pair -> requestBuilder.addParameter(pair.getKey(), pair.getValue()) );
         }
 
+        // Set request headers (excl. headers from black-list)
         if (mockRequest.getHeaders() != null && mockRequest.getHeaders().getValues() != null) {
-            for (Pair pair : mockRequest.getHeaders().getValues()) {
-                if (headersToIgnore.contains(pair.getKey())) {
-                    continue;
+            mockRequest.getHeaders().getValues().forEach(pair -> {
+                if (!headersToIgnore.contains(pair.getKey())) {
+                    requestBuilder.addHeader(pair.getKey(), pair.getValue());
                 }
-                requestBuilder.addHeader(pair.getKey(), pair.getValue());
-            }
+            });
         }
 
         return requestBuilder.build();
