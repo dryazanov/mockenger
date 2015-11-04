@@ -8,6 +8,7 @@ import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -81,7 +81,7 @@ public class RestController extends ParentController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/**", method = POST, consumes = "application/json")
+    @RequestMapping(value = "/**", method = POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity processPostJsonRequest(@PathVariable String groupId, @RequestBody String jsonBody, HttpServletRequest request) {
         Group group = findGroupById(groupId);
         try {
@@ -100,15 +100,11 @@ public class RestController extends ParentController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/**", method = POST, consumes = "application/xml")
+    @RequestMapping(value = "/**", method = POST, consumes = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity processPostXmlRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
         Group group = findGroupById(groupId);
-        try {
-            AbstractRequest mockRequest = postService.createMockRequestFromXml(group.getId(), requestBody, request, true);
-            return findMockedEntities(mockRequest, group);
-        } catch (TransformerException e) {
-            throw new MockObjectNotCreatedException("Cannot transform provided xml", e);
-        }
+        AbstractRequest mockRequest = postService.createMockRequestFromXml(group.getId(), requestBody, request);
+        return findMockedEntities(mockRequest, group);
     }
 
     /**
@@ -119,7 +115,7 @@ public class RestController extends ParentController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/**", method = PUT, consumes = "application/json")
+    @RequestMapping(value = "/**", method = PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity processPutJsonRequest(@PathVariable String groupId, @RequestBody String jsonBody, HttpServletRequest request) {
         Group group = findGroupById(groupId);
         try {
@@ -138,14 +134,10 @@ public class RestController extends ParentController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/**", method = PUT, consumes = "application/xml")
+    @RequestMapping(value = "/**", method = PUT, consumes = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity processPutXmlRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
         Group group = findGroupById(groupId);
-        try {
-            AbstractRequest mockRequest = putService.createMockRequestFromXml(group.getId(), requestBody, request, true);
-            return findMockedEntities(mockRequest, group);
-        } catch (TransformerException e) {
-            throw new MockObjectNotCreatedException("Cannot transform provided xml", e);
-        }
+        AbstractRequest mockRequest = putService.createMockRequestFromXml(group.getId(), requestBody, request);
+        return findMockedEntities(mockRequest, group);
     }
 }

@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.soap.SOAPException;
 import javax.xml.transform.TransformerException;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -52,21 +51,19 @@ public class SoapController extends ParentController {
 
     /**
      *
-     * @param requestBody
      * @param groupId
+     * @param requestBody
      * @param request
      * @return
-     * @throws SOAPException
-     * @throws TransformerException
-     * @throws FileNotFoundException
      */
     @ResponseBody
     @RequestMapping(value = "/**", method = POST, consumes = "application/soap+xml")
     public ResponseEntity processPostRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
-        String soapBody = null;
+        String soapBody;
         Group group = findGroupById(groupId);
+
         try {
-            soapBody = postService.getSoapBody(requestBody, true);
+            soapBody = postService.getSoapBody(requestBody);
         } catch (SOAPException e) {
             throw new MockObjectNotCreatedException("Cannot create SOAP message", e);
         } catch (TransformerException e) {
@@ -74,6 +71,7 @@ public class SoapController extends ParentController {
         } catch (IOException e) {
             throw new MockObjectNotCreatedException("Cannot read xml from the provided source", e);
         }
+
         AbstractRequest mockRequest = postService.createMockRequest(group.getId(), soapBody, request);
         return findMockedEntities(mockRequest, group);
     }

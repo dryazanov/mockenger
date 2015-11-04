@@ -1,14 +1,11 @@
 package com.socialstartup.mockenger.core.service;
 
 import com.socialstartup.mockenger.core.web.exception.NotUniqueValueException;
-import com.socialstartup.mockenger.data.model.dict.ProjectType;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.repository.ProjectEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * Created by Dmitry Ryazanov on 3/20/2015.
@@ -29,10 +26,6 @@ public class ProjectService {
 
     public Project findById(String id) {
         return projectEntityRepository.findOne(id);
-    }
-
-    public List<Project> findByType(ProjectType type) {
-        return projectEntityRepository.findByType(type);
     }
 
     public void save(Project entity) {

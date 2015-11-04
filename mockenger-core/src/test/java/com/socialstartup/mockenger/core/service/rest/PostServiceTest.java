@@ -31,13 +31,13 @@ public class PostServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCreateMockRequestXml() throws TransformerException {
-        PostRequest postRequest = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_XML_DECLARATION, httpServletRequestMock, true);
+        PostRequest postRequest = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_XML_DECLARATION, httpServletRequestMock);
         checkEntityWithBody(postRequest, RequestMethod.POST, XML_DATA);
     }
 
     @Test
     public void testCreateMockRequestXmlWithSpaces() throws TransformerException {
-        PostRequest postRequest = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_SPACES, httpServletRequestMock, true);
+        PostRequest postRequest = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_SPACES, httpServletRequestMock);
         checkEntityWithBody(postRequest, RequestMethod.POST, XML_DATA);
     }
 }

@@ -1,5 +1,6 @@
 package com.socialstartup.mockenger.core.service;
 
+import com.socialstartup.mockenger.commons.utils.JsonHelper;
 import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.core.util.HttpUtils;
 import com.socialstartup.mockenger.core.web.exception.NotUniqueValueException;
@@ -11,6 +12,7 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Param
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
 import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
 import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractTransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.RegexpTransformer;
 import com.socialstartup.mockenger.data.model.persistent.transformer.Transformer;
 import com.socialstartup.mockenger.data.repository.RequestEntityRepository;
 import org.slf4j.Logger;
@@ -22,6 +24,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -69,6 +72,18 @@ public class RequestService {
 
     public void remove(AbstractRequest entity) {
         requestEntityRepository.delete(entity);
+    }
+
+    public String prepareRequestXmlBody(String requestBody) {
+        requestBody = new RegexpTransformer(">\\s+<", "><").transform(requestBody.trim());
+        if (requestBody.startsWith("<?xml")) {
+            requestBody = requestBody.substring(requestBody.indexOf("?>") + 2);
+        }
+        return requestBody;
+    }
+
+    public String prepareRequestJsonBody(String requestBody) throws IOException {
+        return JsonHelper.removeWhitespaces(requestBody);
     }
 
     public AbstractRequest findMockedEntities(AbstractRequest mockRequest) {
@@ -132,6 +147,7 @@ public class RequestService {
         if (abstractRequestFromUser.getPath() != null && mockedAbstractRequest.getPath() != null) {
             String path = abstractRequestFromUser.getPath().getValue();
             List<AbstractTransformer> transformers = mockedAbstractRequest.getPath().getTransformers();
+
             if (!CollectionUtils.isEmpty(transformers)) {
                 for (Transformer transformer : transformers) {
                     path = transformer.transform(path);
@@ -245,7 +261,7 @@ public class RequestService {
      */
     private boolean bodiesEqual(AbstractRequest abstractRequestFromUser, AbstractRequest mockedAbstractRequest) {
         List<AbstractTransformer> transformers;
-        String usersRequestCheckSum = "";
+        String usersRequestCheckSum = null;
         String mockedCheckSum = mockedAbstractRequest.getCheckSum();
 
         if (abstractRequestFromUser.getMethod() != null) {

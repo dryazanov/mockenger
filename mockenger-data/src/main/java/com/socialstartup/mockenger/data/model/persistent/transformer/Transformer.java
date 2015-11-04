@@ -5,6 +5,6 @@ package com.socialstartup.mockenger.data.model.persistent.transformer;
  */
 public interface Transformer {
 
-    String transform(String source);
+    String transform(String source) throws TransformerException;
 
 }

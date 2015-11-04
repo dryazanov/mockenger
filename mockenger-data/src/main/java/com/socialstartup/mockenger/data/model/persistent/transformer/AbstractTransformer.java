@@ -25,10 +25,10 @@ public abstract class AbstractTransformer implements Transformer {
     protected void validate() {
         String className = this.getClass().getCanonicalName();
         if (this.pattern == null) {
-            throw new TransformerExeption(String.format("Pattern in %s is NULL", className));
+            throw new TransformerException(String.format("Pattern in %s is NULL", className));
         }
         if (this.replacement == null) {
-            throw new TransformerExeption(String.format("Replacement in %s is NULL", className));
+            throw new TransformerException(String.format("Replacement in %s is NULL", className));
         }
     }
 

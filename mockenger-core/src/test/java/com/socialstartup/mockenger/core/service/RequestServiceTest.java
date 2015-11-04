@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.http.HttpHeaders;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -55,18 +56,15 @@ public class RequestServiceTest {
     private static final String XML_BODY1 = "<note><to>Tove</to><from>Jani</from><heading>Reminder</heading></note>";
     private static final String XML_BODY2 = "<note><to>Tove</to><from>Jani</from><heading>Huyainder</heading></note>";
 
-    private static final String CONTENT_TYPE = "content-type";
     private static final String CHARSET_KOI8R = "charset=koi8r";
     private static final String CHARSET_UTF8 = "charset=utf-8";
     private static final String CONTENT_TYPE_VALUE1 = "application/soap+xml;" + CHARSET_UTF8;
     private static final String CONTENT_TYPE_VALUE2 = "text/jpeg; " + CHARSET_KOI8R;
     private static final String CONTENT_TYPE_VALUE3 = "application/soap+xml;" + CHARSET_KOI8R;
 
-    private static final String HOST = "host";
     private static final String HOST_VALUE1 = "localhost:8080";
     private static final String HOST_VALUE2 = "google.com";
 
-    private static final String ACCEPT = "accept";
     private static final String ACCEPT_VALUE1 = "*/*";
 
     private final Set<Pair> goodHeaders = new HashSet<>();
@@ -96,7 +94,7 @@ public class RequestServiceTest {
     private List<AbstractRequest> getRequestList;
 
 
-    AbstractMapTransformer keyValueTransformerHeader = new KeyValueTransformer(CONTENT_TYPE, CHARSET_KOI8R, CHARSET_UTF8);
+    AbstractMapTransformer keyValueTransformerHeader = new KeyValueTransformer(HttpHeaders.CONTENT_TYPE, CHARSET_KOI8R, CHARSET_UTF8);
     AbstractMapTransformer keyValueTransformerParam = new KeyValueTransformer(PARAM_NAME1, PARAM_VALUE4, PARAM_VALUE1);
     AbstractTransformer regexpTransformerPath = new RegexpTransformer("\\d+", "1");
     AbstractTransformer regexpTransformerBody = new RegexpTransformer("(?<=<heading>)\\w+(?=</heading>)", "Reminder");
@@ -116,15 +114,15 @@ public class RequestServiceTest {
     public void init() {
         initMocks(this);
 
-        goodHeaders.add(new Pair(CONTENT_TYPE, CONTENT_TYPE_VALUE1));
-        goodHeaders.add(new Pair(HOST, HOST_VALUE1));
+        goodHeaders.add(new Pair(HttpHeaders.CONTENT_TYPE, CONTENT_TYPE_VALUE1));
+        goodHeaders.add(new Pair(HttpHeaders.HOST, HOST_VALUE1));
 
-        badHeaders.add(new Pair(CONTENT_TYPE, CONTENT_TYPE_VALUE2));
-        badHeaders.add(new Pair(HOST, HOST_VALUE2));
+        badHeaders.add(new Pair(HttpHeaders.CONTENT_TYPE, CONTENT_TYPE_VALUE2));
+        badHeaders.add(new Pair(HttpHeaders.HOST, HOST_VALUE2));
 
-        moreHeaders.add(new Pair(CONTENT_TYPE, CONTENT_TYPE_VALUE1));
-        moreHeaders.add(new Pair(HOST, HOST_VALUE1));
-        moreHeaders.add(new Pair(ACCEPT, ACCEPT_VALUE1));
+        moreHeaders.add(new Pair(HttpHeaders.CONTENT_TYPE, CONTENT_TYPE_VALUE1));
+        moreHeaders.add(new Pair(HttpHeaders.HOST, HOST_VALUE1));
+        moreHeaders.add(new Pair(HttpHeaders.ACCEPT, ACCEPT_VALUE1));
 
         goodParameters.add(new Pair(PARAM_NAME1, PARAM_VALUE1));
         goodParameters.add(new Pair(PARAM_NAME2, PARAM_VALUE2));
@@ -188,8 +186,8 @@ public class RequestServiceTest {
         createPostRequests();
         List<AbstractMapTransformer> transformers = new ArrayList<>(Arrays.asList(keyValueTransformerHeader));
         Set<Pair> headers = new HashSet<>();
-        headers.add(new Pair(CONTENT_TYPE, CONTENT_TYPE_VALUE3));
-        headers.add(new Pair(HOST, HOST_VALUE1));
+        headers.add(new Pair(HttpHeaders.CONTENT_TYPE, CONTENT_TYPE_VALUE3));
+        headers.add(new Pair(HttpHeaders.HOST, HOST_VALUE1));
 
         postTestRequest.setHeaders(new Headers(headers));
         postRequest1.setHeaders(new Headers(transformers, goodHeaders));

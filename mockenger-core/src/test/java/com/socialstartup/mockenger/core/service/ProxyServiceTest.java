@@ -13,6 +13,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -64,7 +66,7 @@ public class ProxyServiceTest {
         Set<Pair> paramsMap = new HashSet<>(Arrays.asList(new Pair("A", "1"), new Pair("b", "2")));
         request.setParameters(new Parameters(paramsMap));
 
-        Set<Pair> headersMap = new HashSet<>(Arrays.asList(new Pair("content-type", "application/json"), new Pair("host", "localhost")));
+        Set<Pair> headersMap = new HashSet<>(Arrays.asList(new Pair(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE), new Pair(HttpHeaders.HOST, "localhost")));
         request.setHeaders(new Headers(headersMap));
 
         MockResponse mockResponse = new MockResponse();

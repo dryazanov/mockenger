@@ -10,10 +10,11 @@ import java.util.List;
 /**
  * Created by Dmitry Ryazanov on 6/10/2015.
  */
+// TODO: Not used. Remove if we won't use mappers at all
 public class GridRowMapper {
 
     public List<RequestRow> map(List<AbstractRequest> requestEntities) {
-        List<RequestRow> dtoList = new ArrayList<RequestRow>(requestEntities.size());
+        List<RequestRow> dtoList = new ArrayList<>(requestEntities.size());
 
         for (AbstractRequest abstractRequest : requestEntities) {
             dtoList.add(convert(abstractRequest));
