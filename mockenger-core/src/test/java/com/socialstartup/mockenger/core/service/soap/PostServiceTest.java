@@ -35,7 +35,7 @@ public class PostServiceTest extends AbstractServiceTest {
 
     @Test
     public void testGetSoapBody() throws SOAPException, TransformerException, IOException {
-        String soapBody = classUnderTest.getSoapBody(SOAP_XML_DATA, true);
+        String soapBody = classUnderTest.getSoapBody(SOAP_XML_DATA);
 
         assertNotNull(soapBody);
         assertEquals(SOAP_XML_BODY, soapBody);

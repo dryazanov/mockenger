@@ -31,13 +31,13 @@ public class PutServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCreateMockRequestXml() throws TransformerException {
-        PutRequest putRequest = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_XML_DECLARATION, httpServletRequestMock, true);
+        PutRequest putRequest = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_XML_DECLARATION, httpServletRequestMock);
         checkEntityWithBody(putRequest, RequestMethod.PUT, XML_DATA);
     }
 
     @Test
     public void testCreateMockRequestXmlWithSpaces() throws TransformerException {
-        PutRequest putRequest = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_SPACES, httpServletRequestMock, true);
+        PutRequest putRequest = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_SPACES, httpServletRequestMock);
         checkEntityWithBody(putRequest, RequestMethod.PUT, XML_DATA);
     }
 }

@@ -29,7 +29,6 @@ public class ValueSetControllerTest extends AbstractControllerTest {
     private static final String REQUEST_METHODS_VALUESET = ENDPOINT_VALUESET + "/requestMethods";
     private static final String TRANSFORMER_TYPES_VALUESET = ENDPOINT_VALUESET + "/transformerTypes";
     private static final String HEADERS_VALUESET = ENDPOINT_VALUESET + "/headers";
-    protected static final String CONTENT_TYPE_JSON_UTF8 = "application/json;charset=UTF-8";
 
 
     @Before

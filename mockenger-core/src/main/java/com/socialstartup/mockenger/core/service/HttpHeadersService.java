@@ -15,7 +15,7 @@ import java.util.List;
 @Component
 public class HttpHeadersService {
 
-    public static final String CONTENT_TYPE_KEY = "content-type";
+    public static final String CONTENT_TYPE_KEY = HttpHeaders.CONTENT_TYPE.toLowerCase();
     public static final String CHARSET_UTF_8 = "charset=UTF-8";
     public static final String MEDIA_TYPE_JSON = String.format("%s;%s", MediaType.APPLICATION_JSON_VALUE, CHARSET_UTF_8);
     public static final String MEDIA_TYPE_XML = String.format("%s;%s", MediaType.APPLICATION_XML_VALUE, CHARSET_UTF_8);
@@ -25,21 +25,21 @@ public class HttpHeadersService {
 
 
     /**
-     * @return
+     * @return object HttpHeaders with default headers inside
      */
     public HttpHeaders getDefaultHeaders() {
         HttpHeaders headers = new HttpHeaders();
 
         // Default content-type
-        headers.set(CONTENT_TYPE_KEY, MEDIA_TYPE_JSON);
+        headers.set(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_JSON);
         return headers;
     }
 
     /**
      * Creates header list using headersToIgnore as a filter
      *
-     * @param headerList
-     * @return
+     * @param headerList collection of headers to be added
+     * @return object HttpHeaders with added headers
      */
     public HttpHeaders createHeaders(Collection<Pair> headerList) {
         HttpHeaders headers = getDefaultHeaders();

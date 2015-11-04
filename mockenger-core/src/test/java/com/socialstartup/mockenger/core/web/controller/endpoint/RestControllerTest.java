@@ -49,6 +49,7 @@ public class RestControllerTest extends AbstractControllerTest {
     protected static final String REST_BAD_JSON_REQUEST = "{\"json\":\"is\",\"bad\"}";
 
     protected static final String REST_XML_REQUEST_BODY = new StringBuilder()
+            .append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
             .append("<note>")
             .append("<id>")
             .append(ID1)
@@ -71,6 +72,7 @@ public class RestControllerTest extends AbstractControllerTest {
     private Group group;
     private Group groupWithRecording;
     private String endpoint;
+    private String endpointWithRecording;
 
 
     @Before
@@ -82,6 +84,7 @@ public class RestControllerTest extends AbstractControllerTest {
         groupWithRecording = createGroup(project.getId(), true);
 
         endpoint = String.format(ENDPOINT_TEMPLATE, group.getId(), REQUEST_PATH);
+        endpointWithRecording = String.format(ENDPOINT_TEMPLATE, groupWithRecording.getId(), REQUEST_PATH);
     }
 
     @After
@@ -140,9 +143,13 @@ public class RestControllerTest extends AbstractControllerTest {
         MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_XML_UTF8);
         String content = REST_XML_REQUEST_BODY.replace(ID1, ID2);
 
-        createRequest(createXmlMockRequestForPost(group.getId()));
+        // Prepare request to add via API
+        AbstractRequest postRequest = createXmlMockRequestForPost(groupWithRecording.getId());
+        String postEndpoint = String.format(REQUEST_PATH_API, groupWithRecording.getProjectId(), groupWithRecording.getId());
+        // Send real request to API
+        sendPostRequest(postEndpoint, MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8), postRequest);
 
-        this.mockMvc.perform(post(endpoint).contentType(mediaType).content(content))
+        this.mockMvc.perform(post(endpointWithRecording).contentType(mediaType).content(content))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(CONTENT_TYPE_XML_UTF8))
                 .andExpect(xpath("/note/result").string(EXPECTED_RESULT_OK));
@@ -189,9 +196,13 @@ public class RestControllerTest extends AbstractControllerTest {
         MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_XML_UTF8);
         String content = REST_XML_REQUEST_BODY.replace(ID1, ID2);
 
-        createRequest(createXmlMockRequestForPut(group.getId()));
+        // Prepare request to send via API
+        AbstractRequest putRequest = createXmlMockRequestForPut(groupWithRecording.getId());
+        String postEndpoint = String.format(REQUEST_PATH_API, groupWithRecording.getProjectId(), groupWithRecording.getId());
+        // Send real request to API
+        sendPostRequest(postEndpoint, MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8), putRequest);
 
-        this.mockMvc.perform(put(endpoint).contentType(mediaType).content(content))
+        this.mockMvc.perform(put(endpointWithRecording).contentType(mediaType).content(content))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_XML_UTF8.toLowerCase()))
                 .andExpect(content().string(""));

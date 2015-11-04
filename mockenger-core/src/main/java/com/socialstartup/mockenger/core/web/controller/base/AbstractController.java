@@ -127,11 +127,15 @@ public abstract class AbstractController {
      */
     protected void cleanUpRequestBody(AbstractRequest mockRequest) {
         if (mockRequest.getBody() != null && mockRequest.getBody().getValue() != null) {
-            String newBody = mockRequest.getBody().getValue();
-            try {
-                newBody = JsonHelper.removeWhitespaces(mockRequest.getBody().getValue());
-            } catch (IOException e) {
-                LOG.warn("Cannot remove whitespaces from JSON", e);
+            String newBody = mockRequest.getBody().getValue().trim();
+            if (newBody.startsWith("{") && newBody.endsWith("}")) {
+                try {
+                    newBody = getRequestService().prepareRequestJsonBody(newBody);
+                } catch (IOException e) {
+                    LOG.warn("Cannot remove whitespaces from JSON", e);
+                }
+            } else {
+                newBody = getRequestService().prepareRequestXmlBody(newBody);
             }
             mockRequest.getBody().setValue(newBody);
         }

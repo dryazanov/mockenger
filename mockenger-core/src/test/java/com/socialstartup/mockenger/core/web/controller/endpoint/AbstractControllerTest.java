@@ -1,7 +1,9 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
-import com.socialstartup.mockenger.core.config.TestPropertyContext;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialstartup.mockenger.core.config.TestContext;
+import com.socialstartup.mockenger.core.config.TestPropertyContext;
 import com.socialstartup.mockenger.core.service.GroupService;
 import com.socialstartup.mockenger.core.service.ProjectService;
 import com.socialstartup.mockenger.core.service.RequestService;
@@ -24,10 +26,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -36,6 +40,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 /**
  * Created by Dmitry Ryazanov on 6/29/2015.
@@ -67,11 +73,14 @@ public class AbstractControllerTest {
     protected static final String GROUP_NAME_TEST = "Unit-test group";
     protected static final String REQUEST_NAME_TEST = "Unit-test mock-request";
     protected static final String REQUEST_PATH = "/unit/test/mock/request";
+    protected static final String REQUEST_PATH_API = "/projects/%s/groups/%s/requests";
 
-    protected static final String CONTENT_TYPE_JSON_UTF8 = "application/json;charset=UTF-8";
-    protected static final String CONTENT_TYPE_SOAP_UTF8 = "application/soap+xml;charset=UTF-8";
-    protected static final String CONTENT_TYPE_XML_UTF8 = "application/xml;charset=UTF-8";
-    protected static final String CONTENT_TYPE_HTML_UTF8 = "text/html;charset=UTF-8";
+    protected static final String SEMICOLON = ";";
+    protected static final String CHARSET_UTF8 = "charset=UTF-8";
+    protected static final String CONTENT_TYPE_JSON_UTF8 = MediaType.APPLICATION_JSON_VALUE + SEMICOLON + CHARSET_UTF8;
+    protected static final String CONTENT_TYPE_SOAP_UTF8 = "application/soap+xml" + SEMICOLON + CHARSET_UTF8;
+    protected static final String CONTENT_TYPE_XML_UTF8 = MediaType.APPLICATION_XML_VALUE + SEMICOLON + CHARSET_UTF8;
+    protected static final String CONTENT_TYPE_HTML_UTF8 = MediaType.TEXT_HTML_VALUE + SEMICOLON + CHARSET_UTF8;
 
     protected static final String MOCK_REQUEST_BODY = "{\"name\":\"NAME\",\"type\":\"TYPE\"}";
     protected static final String MOCK_RESPONSE_BODY = "{\"result\":\"OK\"}";
@@ -219,6 +228,11 @@ public class AbstractControllerTest {
 
     protected void createRequest(AbstractRequest request) {
         this.requestService.save(request);
+    }
+
+    protected ResultActions sendPostRequest(String endpoint, MediaType mediaType, AbstractRequest request) throws Exception {
+        String requestJson = new ObjectMapper(new JsonFactory()).writeValueAsString(request);
+        return this.mockMvc.perform(post(endpoint).contentType(mediaType).content(requestJson));
     }
 
     protected static AbstractRequest getNewRequest(String groupId) {

@@ -32,7 +32,7 @@ public class AccountService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = accountEntityRepository.findByUsername(username);
         if (account == null) {
-            throw new UsernameNotFoundException("Username " + username + " not found");
+            throw new UsernameNotFoundException(String.format("Username %s not found", username));
         }
         return new User(username, account.getPassword(), new ArrayList<>(account.getRoles()));
     }
