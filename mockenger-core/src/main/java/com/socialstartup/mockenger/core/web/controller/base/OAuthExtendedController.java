@@ -45,7 +45,7 @@ public class OAuthExtendedController extends AbstractController {
         if (((OAuth2Authentication) principal).isAuthenticated() && !StringUtils.isEmpty(principal.getName())) {
             Account account = accountService.findByUsername(principal.getName());
             if (account != null) {
-                AccountDTO dto = new AccountDTO(account.getFirstName(), account.getLastName(), account.getUsername(), account.getRoles());
+                AccountDTO dto = new AccountDTO(account.getFirstName(), account.getLastName(), account.getUsername(), account.getRole());
                 return new ResponseEntity(dto, getResponseHeaders(), HttpStatus.OK);
             }
         }

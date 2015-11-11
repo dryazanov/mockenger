@@ -1,4 +1,5 @@
 <div class="well well-sm">
+
     <div class="container-fluid">
         <div class="media col-md-3">
             <div class="media-left media-middle">
@@ -8,22 +9,36 @@
                 <h4>Mockenger</h4>
             </div>
         </div>
-        <div class="media col-md-7">
-                <!--<a href="#">Statistics</a>
-                <a href="#">Users</a>
-                <a href="/#/logout">Logout</a>-->
+
+        <div class="col-md-6">
+            <h4>
+                <div class="pull-right" ng-if="user.username">
+                    <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li class="well-sm">{{user.firstName}} {{user.lastName}}</li>
+                        <li role="separator" class="divider"></li>
+                        <li class="well-sm">
+                            <button type="button" class="btn btn-warning btn-sm" ng-click="signOut()">
+                                <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                                Sign out
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <a href="/#/index">Home</a>
+                |
+                <a href="/#/stat">Statistics</a>
+                <span ng-if="isAdmin(user.role)">
+                    |
+                    <a href="/#/admin">Admin panel</a>
+                </span>
+            </h4>
+            <div class="clearfix"></div>
         </div>
-        <div ng-if="user.username">
-            <div class="col-md-1">
-                {{user.username}}<br/>
-                {{user.firstName}} {{user.lastName}}
-            </div>
-            <div class="col-md-1">
-                <button type="button" class="btn btn-warning btn-sm" ng-click="signOut()">
-                    <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
-                    Sign out
-                </button>
-            </div>
-        </div>
+
+        <div class="col-md-3">&nbsp;</div>
     </div>
 </div>

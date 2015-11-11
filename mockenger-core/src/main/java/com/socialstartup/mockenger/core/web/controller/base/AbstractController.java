@@ -25,6 +25,8 @@ public abstract class AbstractController {
     private Logger LOG = LoggerFactory.getLogger(AbstractController.class);
 
     protected static final String VALUESET_ENDPOINT = "/valueset";
+    protected static final String ACCOUNTS_ENDPOINT = "/accounts";
+    protected static final String ACCOUNT_ID_ENDPOINT = ACCOUNTS_ENDPOINT + "/{accountId}";
     protected static final String PROJECTS_ENDPOINT = "/projects";
     protected static final String PROJECT_ID_ENDPOINT = PROJECTS_ENDPOINT + "/{projectId}";
     protected static final String GROUPS_ENDPOINT = "/groups";

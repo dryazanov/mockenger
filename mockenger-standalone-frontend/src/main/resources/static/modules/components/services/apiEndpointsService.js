@@ -14,10 +14,16 @@ angular.module('mockengerClientComponents').factory('apiEndpointsService', ['API
             },
             headers: function() {
                 return API_BASE_PATH + '/valueset/headers';
+            },
+            roles: function() {
+                return API_BASE_PATH + '/valueset/roles';
             }
         },
         getProjectRestUrl: function() {
             return API_BASE_PATH + '/projects/:projectId';
+        },
+        getAccountRestUrl: function() {
+            return API_BASE_PATH + '/accounts/:accountId';
         },
         getGroupRestUrl: function() {
             return restUrls.getProjectRestUrl() + '/groups/:groupId';

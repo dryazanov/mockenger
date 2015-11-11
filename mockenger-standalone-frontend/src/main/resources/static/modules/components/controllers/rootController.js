@@ -44,24 +44,26 @@ angular.module('mockengerClientComponents')
                 $location.path('/logout');
             }
 
-            $scope.hasRole = function(role, roles) {
+            $scope.isAdmin = function(role) {
                 if (SECURITY) {
-                    for (var idx in roles) {
-                        if (roles[idx] === role) {
-                            return true;
-                        }
-                    }
-                    return false;
+                    return (role == 'ADMIN' ? true : false);
                 }
                 return true;
             }
 
-            $scope.hasRoleManager = function(roles) {
-                return $scope.hasRole('MANAGER', roles);
+            $scope.isManagerOrAdmin = function(role) {
+                if (SECURITY) {
+                    return (role == 'MANAGER' || $scope.isAdmin(role) ? true : false);
+                }
+                return true;
+            }
+
+            $scope.getErrorStyle = function(input) {
+                return ($scope.hasError(input) ? 'has-error' : '');
             }
 
             $scope.hasError = function(input) {
-                return (input.$invalid && !input.$pristine ? 'has-error' : '');
+                return (input.$invalid && !input.$pristine);
             }
 
             $scope.showGreenMessage = function(text) {
