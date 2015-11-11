@@ -13,7 +13,8 @@ angular.module('mockengerClientMainApp').factory('valuesetService', ['$resource'
         projectTypes: $resource(apiEndpointsService.getValuesetRestUrl.projectTypes(), {}, methodGet),
         requestMethods: $resource(apiEndpointsService.getValuesetRestUrl.requestMethods(), { projectId: '@projectId' }, methodGet),
         transformerTypes: $resource(apiEndpointsService.getValuesetRestUrl.transformerTypes(), {}, methodGet),
-        headers: $resource(apiEndpointsService.getValuesetRestUrl.headers(), {}, methodGet)
+        headers: $resource(apiEndpointsService.getValuesetRestUrl.headers(), {}, methodGet),
+        roles: $resource(apiEndpointsService.getValuesetRestUrl.roles(), {}, methodGet)
     }
 
     return ValueSetService;

@@ -32,6 +32,10 @@ angular.module('mockengerClientMainApp', [
                         }]
                     }
                 })
+                .when('/admin', {
+                    templateUrl: '/modules/main/views/adminView.html',
+                    controller: 'AdminPageController'
+                })
                 .otherwise({
                     redirectTo: '/index'
                 });

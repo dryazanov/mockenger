@@ -1,5 +1,6 @@
 package com.socialstartup.mockenger.core.web.advice;
 
+import com.socialstartup.mockenger.core.web.exception.AccountDeleteException;
 import com.socialstartup.mockenger.core.web.exception.BadContentTypeException;
 import com.socialstartup.mockenger.core.web.exception.MockObjectNotCreatedException;
 import com.socialstartup.mockenger.core.web.exception.NotUniqueValueException;
@@ -79,6 +80,14 @@ public class ExceptionHandlingAdvice {
     public ErrorMessage handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         LOG.error("JSON object is not readable", ex);
         return new ErrorMessage("Unable to process request: json is not readable");
+    }
+
+    @ResponseBody
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400
+    public ErrorMessage handleAccountDeleteException(AccountDeleteException ex) {
+        LOG.error("", ex);
+        return new ErrorMessage(ex.getMessage());
     }
 
     @ResponseBody

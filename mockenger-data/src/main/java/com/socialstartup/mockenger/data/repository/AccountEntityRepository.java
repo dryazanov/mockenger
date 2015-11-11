@@ -8,7 +8,5 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface AccountEntityRepository extends CrudRepository<Account, String> {
 
-//    User findByEmailAndPassword(String email, String password);
-
     Account findByUsername(String username);
 }

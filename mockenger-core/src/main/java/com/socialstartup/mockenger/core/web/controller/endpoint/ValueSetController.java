@@ -5,6 +5,7 @@ import com.socialstartup.mockenger.core.util.HttpUtils;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
+import com.socialstartup.mockenger.data.model.dict.RoleType;
 import com.socialstartup.mockenger.data.model.dict.TransformerType;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class ValueSetController extends AbstractController {
     private final String REQUEST_METHOD_VALUESET = VALUESET_ENDPOINT + "/requestMethods";
     private final String TRANSFORMER_TYPE_VALUESET = VALUESET_ENDPOINT + "/transformerTypes";
     private final String HEADERS_VALUESET = VALUESET_ENDPOINT + "/headers";
+    private final String ROLES_VALUESET = VALUESET_ENDPOINT + "/roles";
 
     @Autowired
     private ProjectService projectService;
@@ -90,5 +92,16 @@ public class ValueSetController extends AbstractController {
     @RequestMapping(value = HEADERS_VALUESET, method = GET)
     public ResponseEntity getHeaders() {
         return new ResponseEntity(HttpUtils.getListOfHeaders(), getResponseHeaders(), HttpStatus.OK);
+    }
+
+    /**
+     * Returns all the roles
+     *
+     * @return 200 OK
+     */
+    @ResponseBody
+    @RequestMapping(value = ROLES_VALUESET, method = GET)
+    public ResponseEntity getRoles() {
+        return new ResponseEntity(RoleType.values(), getResponseHeaders(), HttpStatus.OK);
     }
 }

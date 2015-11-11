@@ -20,6 +20,7 @@ angular.module('mockengerClientMainApp').controller('ProjectPageController', ['$
         projectListService.setCurrent(obj);
         $scope.getRequestMethods(obj.id);
         $scope.getTransformerTypes();
+        $scope.getHeaders();
 
         groupListService.ajax.query({projectId: currentProject.id}, function(response, getResponseHeaders) {
             groupListService.setData(response);
@@ -46,7 +47,7 @@ angular.module('mockengerClientMainApp').controller('ProjectPageController', ['$
         });
     }
 
-    $scope.getTransformerTypes = function() {
+    $scope.getHeaders = function() {
         valuesetService.headers.get(function(response, getResponseHeaders) {
             $scope.headerList = response;
         }, function(errorResponse) {

@@ -5,7 +5,7 @@ import com.socialstartup.mockenger.data.model.persistent.base.AbstractPersistent
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Set;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by Dmitry Ryazanov on 14-Sep-15.
@@ -13,19 +13,19 @@ import java.util.Set;
 @Document(collection = "account")
 public class Account extends AbstractPersistentEntity<String> {
 
-    @NotBlank
+    @NotBlank(message = "firstName: may not be null or empty")
     private String firstName;
 
-    @NotBlank
+    @NotBlank(message = "lastName: may not be null or empty")
     private String lastName;
 
-    @NotBlank
+    @NotBlank(message = "username: may not be null or empty")
     private String username;
 
-    @NotBlank
     private String password;
 
-    private Set<RoleType> roles;
+    @NotNull(message = "role: may not be null")
+    private RoleType role;
 
 
     public String getFirstName() {
@@ -60,11 +60,11 @@ public class Account extends AbstractPersistentEntity<String> {
         this.password = password;
     }
 
-    public Set<RoleType> getRoles() {
-        return roles;
+    public RoleType getRole() {
+        return role;
     }
 
-    public void setRoles(Set<RoleType> roles) {
-        this.roles = roles;
+    public void setRoles(RoleType role) {
+        this.role = role;
     }
 }

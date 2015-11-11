@@ -1,13 +1,25 @@
 <mkngr-navbar></mkngr-navbar>
-<div class="container">
-    <div class="col-md-6 col-md-offset-3">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <b>Project list</b>
-        </div>
-            <div class="list-group" >
+
+<div class="container-fluid">
+    <div class="media col-md-3"></div>
+
+    <div class="col-md-6">
+        <div class="panel panel-default">
+
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <h3>
+                        <div class="pull-right" ng-if="isManagerOrAdmin(user.role)">
+                            <button type="button" class="btn btn-warning btn-sm" ng-click="createProject()">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                        Project list
+                        <div class="clearfix"></div>
+                    </h3>
+                </li>
                 <li class="list-group-item" ng-repeat="project in projectListService.getData()">
-                    <div class="pull-right" ng-if="hasRoleManager(user.roles)">
+                    <div class="pull-right" ng-if="isManagerOrAdmin(user.role)">
                         <button class="btn-primary btn-xs" ng-click="editProject(project)">
                             <span class="glyphicon glyphicon-cog"></span>
                         </button>
@@ -21,17 +33,13 @@
                         <span class="label label-success">{{project.type}}</span>
                     </div>
                 </li>
-            </div>
-        <div class="panel-footer" ng-if="hasRoleManager(user.roles)">
-            <div class="pull-right">
-                <button type="button" class="btn btn-warning btn-sm" ng-click="createProject()">
-                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    Create project
-                </button>
-            </div>
-            <div class="clearfix"></div>
+            </ul>
+            <div class="panel-footer">&nbsp;</div>
+
         </div>
     </div>
+
+    <div class="media col-md-3"></div>
 </div>
 
 <!-- Modal -->
@@ -45,26 +53,26 @@
                 </div>
                 <div class="modal-body">
                     <input type="hidden" ng-model="currentProject.id">
-                    <div class="form-group" ng-class="hasError(projectForm.name)">
+                    <div class="form-group" ng-class="getErrorStyle(projectForm.name)">
                         <label for="name">Name</label>
                         <input type="text" name="name" id="name" ng-model="currentProject.name" class="form-control" required>
-                        <p ng-show="projectForm.name.$invalid && !projectForm.name.$pristine" class="help-block">Project name is required</p>
+                        <p ng-show="hasError(projectForm.name)" class="help-block">Project name is required</p>
                     </div>
-                    <div class="form-group" ng-class="hasError(projectForm.code)">
+                    <div class="form-group" ng-class="getErrorStyle(projectForm.code)">
                         <label for="code">Code</label>
                         <input type="text" name="code" id="code" ng-model="currentProject.code"
                                ng-pattern="/^[a-zA-Z0-9]+$/" ng-disabled="currentProject.id != null" class="form-control" required>
-                        <div ng-show="projectForm.code.$invalid && !projectForm.code.$pristine">
+                        <div ng-show="hasError(projectForm.code)">
                             <p ng-show="projectForm.code.$error.required" class="help-block">Code is required</p>
                             <p ng-show="projectForm.code.$error.pattern" class="help-block">Only letters and numbers allowed</p>
                         </div>
                     </div>
-                    <div class="form-group" ng-class="hasError(projectForm.type)">
+                    <div class="form-group" ng-class="getErrorStyle(projectForm.type)">
                         <label for="type">Type</label>
                         <select name="type" id="type" ng-model="currentProject.type" required ng-disabled="currentProject.id != null" class="form-control">
                             <option ng-repeat="type in availableProjectTypes">{{type}}</option>
                         </select>
-                        <p ng-show="projectForm.type.$invalid && !projectForm.type.$pristine" class="help-block">Type is required</p>
+                        <p ng-show="hasError(projectForm.type)" class="help-block">Type is required</p>
                     </div>
                 </div>
                 <div class="modal-footer">

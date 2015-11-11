@@ -2,12 +2,12 @@ package com.socialstartup.mockenger.data.model.dto;
 
 import com.socialstartup.mockenger.data.model.dict.RoleType;
 
-import java.util.Set;
-
 /**
  * Created by Dmitry Ryazanov
  */
 public class AccountDTO {
+
+    private String id;
 
     private String firstName;
 
@@ -15,13 +15,21 @@ public class AccountDTO {
 
     private String username;
 
-    private Set<RoleType> roles;
+    private RoleType role;
 
-    public AccountDTO(String firstName, String lastName, String username, Set<RoleType> roles) {
+    public AccountDTO(String firstName, String lastName, String username, RoleType role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
-        this.roles = roles;
+        this.role = role;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -48,11 +56,11 @@ public class AccountDTO {
         this.username = username;
     }
 
-    public Set<RoleType> getRoles() {
-        return roles;
+    public RoleType getRole() {
+        return role;
     }
 
-    public void setRoles(Set<RoleType> roles) {
-        this.roles = roles;
+    public void setRole(RoleType role) {
+        this.role = role;
     }
 }
