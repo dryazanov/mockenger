@@ -4,7 +4,6 @@ import com.socialstartup.mockenger.core.service.account.AccountService;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.core.web.exception.AccountDeleteException;
 import com.socialstartup.mockenger.core.web.exception.ObjectNotFoundException;
-import com.socialstartup.mockenger.data.model.dto.AccountDTO;
 import com.socialstartup.mockenger.data.model.persistent.account.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -82,7 +79,7 @@ public class AccountController extends AbstractController {
         accountToUpdate.setLastName(account.getLastName());
         accountToUpdate.setRoles(account.getRole());
 
-        accountService.save(account);
+        accountService.save(accountToUpdate);
         return new ResponseEntity(account, getResponseHeaders(), HttpStatus.OK);
     }
 
@@ -111,14 +108,6 @@ public class AccountController extends AbstractController {
     @ResponseBody
     @RequestMapping(value = ACCOUNTS_ENDPOINT, method = GET)
     public ResponseEntity getAccountList() {
-        List<AccountDTO> accountsDTO = new ArrayList<>();
-
-        accountService.findAll().forEach(account -> {
-            AccountDTO dto = new AccountDTO(account.getFirstName(), account.getLastName(), account.getUsername(), account.getRole());
-            dto.setId(account.getId());
-            accountsDTO.add(dto);
-        });
-
-        return new ResponseEntity(accountsDTO, getResponseHeaders(), HttpStatus.OK);
+        return new ResponseEntity(accountService.findAll(), getResponseHeaders(), HttpStatus.OK);
     }
 }

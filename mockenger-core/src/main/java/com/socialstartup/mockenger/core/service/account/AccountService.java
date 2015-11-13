@@ -41,6 +41,10 @@ public class AccountService implements UserDetailsService {
         accountEntityRepository.delete(account);
     }
 
+    public void removeAll() {
+        accountEntityRepository.deleteAll();
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = accountEntityRepository.findByUsername(username);
