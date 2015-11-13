@@ -1,7 +1,6 @@
 package com.socialstartup.mockenger.core.web.controller.base;
 
 import com.socialstartup.mockenger.core.service.account.AccountService;
-import com.socialstartup.mockenger.data.model.dto.AccountDTO;
 import com.socialstartup.mockenger.data.model.persistent.account.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -41,12 +40,11 @@ public class OAuthExtendedController extends AbstractController {
 
     @ResponseBody
     @RequestMapping(value = "/oauth/user", method = RequestMethod.GET)
-    public ResponseEntity<AccountDTO> getUser(java.security.Principal principal) {
+    public ResponseEntity<Account> getUser(java.security.Principal principal) {
         if (((OAuth2Authentication) principal).isAuthenticated() && !StringUtils.isEmpty(principal.getName())) {
             Account account = accountService.findByUsername(principal.getName());
             if (account != null) {
-                AccountDTO dto = new AccountDTO(account.getFirstName(), account.getLastName(), account.getUsername(), account.getRole());
-                return new ResponseEntity(dto, getResponseHeaders(), HttpStatus.OK);
+                return new ResponseEntity(account, getResponseHeaders(), HttpStatus.OK);
             }
         }
         return new ResponseEntity(HttpStatus.NOT_FOUND);

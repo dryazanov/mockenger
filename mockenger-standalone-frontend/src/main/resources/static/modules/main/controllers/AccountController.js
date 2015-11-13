@@ -32,16 +32,16 @@ angular.module('mockengerClientMainApp')
             };
 
             $scope.saveAccountRequest = function(account, requestParams, greenMessage) {
-                accountService.ajax.save(requestParams, account, function() {
+                accountService.ajax.update(requestParams, account, function() {
                     accountModal.modal('hide');
                     $scope.showGreenMessage(greenMessage);
-                    $scope.updateAccountList();
+                    $scope.getAccountList();
                 }, function(errorResponse) {
                     $scope.showRedMessage(errorResponse);
                 });
             }
 
-            $scope.updateAccountList = function() {
+            $scope.getAccountList = function() {
                 accountListService.ajax.query(function(response) {
                     accountListService.setData(response);
                 }, function (errorResponse) {

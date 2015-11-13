@@ -1,5 +1,7 @@
 package com.socialstartup.mockenger.data.model.persistent.account;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.socialstartup.mockenger.data.model.dict.RoleType;
 import com.socialstartup.mockenger.data.model.persistent.base.AbstractPersistentEntity;
 import org.hibernate.validator.constraints.NotBlank;
@@ -21,6 +23,7 @@ public class Account extends AbstractPersistentEntity<String> {
 
     @NotBlank(message = "username: may not be null or empty")
     private String username;
+
 
     private String password;
 
@@ -52,10 +55,12 @@ public class Account extends AbstractPersistentEntity<String> {
         this.username = username;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
+    @JsonProperty("password")
     public void setPassword(String password) {
         this.password = password;
     }

@@ -22,7 +22,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <spring.framework.version>4.2.0.RELEASE</spring.framework.version>
-        <spring.security.version>4.0.2.RELEASE</spring.security.version>
+        <spring.security.version>4.0.3.RELEASE</spring.security.version>
         <spring.data.mongodb.version>1.7.2.RELEASE</spring.data.mongodb.version>
         <spring-security-oauth2.version>2.0.7.RELEASE</spring-security-oauth2.version>
         <spring.boot.version>1.2.4.RELEASE</spring.boot.version>
@@ -163,6 +163,12 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
                 <version>${spring.framework.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-test</artifactId>
+                <version>${spring.security.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
