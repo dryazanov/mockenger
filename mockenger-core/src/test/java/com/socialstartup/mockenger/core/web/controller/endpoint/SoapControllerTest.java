@@ -1,5 +1,7 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
@@ -16,9 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -121,10 +121,7 @@ public class SoapControllerTest extends AbstractControllerTest {
 
 
     private PostRequest createSoapMockRequest(String groupId) {
-        Set<Pair> headersMap = new HashSet<>();
-        headersMap.add(new Pair("content-type", CONTENT_TYPE_SOAP_UTF8.toLowerCase()));
-
-        RegexpTransformer regexpTransformer = new RegexpTransformer(ID2, ID1);
+        Set<Pair> headersSet = ImmutableSet.of(new Pair("content-type", CONTENT_TYPE_SOAP_UTF8.toLowerCase()));
 
         PostRequest postRequest = new PostRequest();
         postRequest.setGroupId(groupId);
@@ -132,18 +129,11 @@ public class SoapControllerTest extends AbstractControllerTest {
         postRequest.setName(REQUEST_NAME_TEST);
         postRequest.setMethod(RequestMethod.POST);
         postRequest.setCreationDate(new Date());
-
         postRequest.setPath(new Path(REQUEST_PATH));
         postRequest.setParameters(null);
-        postRequest.setHeaders(new Headers(headersMap));
-        postRequest.setBody(new Body(Arrays.asList(regexpTransformer), SOAP_XML_REQUEST_BODY));
-
-        MockResponse mockResponse = new MockResponse();
-        mockResponse.setHttpStatus(200);
-        mockResponse.setHeaders(headersMap);
-        mockResponse.setBody(SOAP_XML_RESPONSE);
-        postRequest.setMockResponse(mockResponse);
-
+        postRequest.setHeaders(new Headers(headersSet));
+        postRequest.setBody(new Body(ImmutableList.of(new RegexpTransformer(ID2, ID1)), SOAP_XML_REQUEST_BODY));
+        postRequest.setMockResponse(new MockResponse(200, headersSet, SOAP_XML_RESPONSE));
         postRequest.setCheckSum(CommonUtils.getCheckSum(postRequest));
 
         return postRequest;

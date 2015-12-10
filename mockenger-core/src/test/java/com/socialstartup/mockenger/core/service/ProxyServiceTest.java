@@ -1,5 +1,6 @@
 package com.socialstartup.mockenger.core.service;
 
+import com.google.common.collect.ImmutableSet;
 import com.socialstartup.mockenger.core.config.TestPropertyContext;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.GetRequest;
@@ -12,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.internal.util.collections.Sets;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -19,9 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -59,21 +59,15 @@ public class ProxyServiceTest {
 
     protected static AbstractRequest createNewRequest() {
         AbstractRequest request = new GetRequest();
+        Pair contentType = new Pair(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        Pair host = new Pair(HttpHeaders.HOST, "localhost");
+        Set<Pair> headersSet = Sets.newSet(contentType, host);
 
         request.setCreationDate(new Date());
         request.setPath(new Path(REQUEST_PATH));
-
-        Set<Pair> paramsMap = new HashSet<>(Arrays.asList(new Pair("A", "1"), new Pair("b", "2")));
-        request.setParameters(new Parameters(paramsMap));
-
-        Set<Pair> headersMap = new HashSet<>(Arrays.asList(new Pair(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE), new Pair(HttpHeaders.HOST, "localhost")));
-        request.setHeaders(new Headers(headersMap));
-
-        MockResponse mockResponse = new MockResponse();
-        mockResponse.setHttpStatus(200);
-        mockResponse.setHeaders(headersMap);
-        mockResponse.setBody(MOCK_RESPONSE_BODY);
-        request.setMockResponse(mockResponse);
+        request.setParameters(new Parameters(ImmutableSet.of(new Pair("A", "1"), new Pair("b", "2"))));
+        request.setHeaders(new Headers(headersSet));
+        request.setMockResponse(new MockResponse(200, headersSet, MOCK_RESPONSE_BODY));
 
         return request;
     }

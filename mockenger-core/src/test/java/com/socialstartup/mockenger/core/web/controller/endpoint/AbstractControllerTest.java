@@ -2,6 +2,8 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.socialstartup.mockenger.core.config.TestContext;
 import com.socialstartup.mockenger.core.config.TestPropertyContext;
 import com.socialstartup.mockenger.core.service.GroupService;
@@ -19,6 +21,8 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Parameters;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
 import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
+import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractTransformer;
 import com.socialstartup.mockenger.data.model.persistent.transformer.KeyValueTransformer;
 import com.socialstartup.mockenger.data.model.persistent.transformer.RegexpTransformer;
 import com.socialstartup.mockenger.data.model.persistent.transformer.XPathTransformer;
@@ -35,10 +39,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -237,6 +240,10 @@ public class AbstractControllerTest {
 
     protected static AbstractRequest getNewRequest(String groupId) {
         AbstractRequest request = new AbstractRequest();
+        List<AbstractMapTransformer> mapTransformers = ImmutableList.of(new KeyValueTransformer());
+        List<AbstractTransformer> transformers = ImmutableList.of(new RegexpTransformer(), new XPathTransformer());
+        Set<Pair> headersSet = ImmutableSet.of(new Pair("header1", "H1"), new Pair("header2", "H2"));
+        Set<Pair> paramsSet = ImmutableSet.of(new Pair("A", "1"), new Pair("b", "2"));
 
         String id = CommonUtils.generateUniqueId();
         request.setId(id);
@@ -245,22 +252,11 @@ public class AbstractControllerTest {
         request.setName(REQUEST_NAME_TEST);
         request.setMethod(RequestMethod.POST);
         request.setCreationDate(new Date());
-        request.setPath(new Path(Arrays.asList(new RegexpTransformer(), new XPathTransformer()), REQUEST_PATH));
-
-        Set<Pair> paramsMap = new HashSet<>(Arrays.asList(new Pair("A", "1"), new Pair("b", "2")));
-        request.setParameters(new Parameters(Arrays.asList(new KeyValueTransformer()), paramsMap));
-
-        Set<Pair> headersMap = new HashSet<>(Arrays.asList(new Pair("header1", "H1"), new Pair("header2", "H2")));
-        request.setHeaders(new Headers(Arrays.asList(new KeyValueTransformer()), headersMap));
-
-        request.setBody(new Body(Arrays.asList(new RegexpTransformer(), new XPathTransformer()), MOCK_REQUEST_BODY));
-
-        MockResponse mockResponse = new MockResponse();
-        mockResponse.setHttpStatus(200);
-        mockResponse.setHeaders(headersMap);
-        mockResponse.setBody(MOCK_RESPONSE_BODY);
-        request.setMockResponse(mockResponse);
-
+        request.setPath(new Path(transformers, REQUEST_PATH));
+        request.setParameters(new Parameters(mapTransformers, paramsSet));
+        request.setHeaders(new Headers(mapTransformers, headersSet));
+        request.setBody(new Body(transformers, MOCK_REQUEST_BODY));
+        request.setMockResponse(new MockResponse(200, headersSet, MOCK_RESPONSE_BODY));
         request.setCheckSum(CommonUtils.getCheckSum(request));
 
         return request;

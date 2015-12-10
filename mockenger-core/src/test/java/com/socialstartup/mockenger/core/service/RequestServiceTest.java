@@ -1,5 +1,7 @@
 package com.socialstartup.mockenger.core.service;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
@@ -145,10 +147,9 @@ public class RequestServiceTest {
     @Test
     public void testDoFilterForPostPathWithTransformer() {
         createPostRequests();
-        List<AbstractTransformer> transformers = new ArrayList<>(Arrays.asList(regexpTransformerPath));
 
         postTestRequest.setPath(new Path(URL2));
-        postRequest1.setPath(new Path(transformers, URL1));
+        postRequest1.setPath(new Path(ImmutableList.of(regexpTransformerPath), URL1));
 
         checkCorrectResult(classUnderTest.doFilter(postTestRequest, postRequestList), postRequest1);
     }
@@ -163,13 +164,10 @@ public class RequestServiceTest {
     @Test
     public void testDoFilterForPostParametersWithTransformer() {
         createPostRequests();
-        List<AbstractMapTransformer> transformers = new ArrayList<>(Arrays.asList(keyValueTransformerParam));
-        Set<Pair> parameters = new HashSet<>();
-        parameters.add(new Pair(PARAM_NAME2, PARAM_VALUE2));
-        parameters.add(new Pair(PARAM_NAME1, PARAM_VALUE4));
+        Set<Pair> parameters = ImmutableSet.of(new Pair(PARAM_NAME2, PARAM_VALUE2), new Pair(PARAM_NAME1, PARAM_VALUE4));
 
         postTestRequest.setParameters(new Parameters(parameters));
-        postRequest1.setParameters(new Parameters(transformers, goodParameters));
+        postRequest1.setParameters(new Parameters(ImmutableList.of(keyValueTransformerParam), goodParameters));
 
         checkCorrectResult(classUnderTest.doFilter(postTestRequest, postRequestList), postRequest1);
     }
@@ -184,13 +182,10 @@ public class RequestServiceTest {
     @Test
     public void testDoFilterForPostHeadersWithTransformer() {
         createPostRequests();
-        List<AbstractMapTransformer> transformers = new ArrayList<>(Arrays.asList(keyValueTransformerHeader));
-        Set<Pair> headers = new HashSet<>();
-        headers.add(new Pair(HttpHeaders.CONTENT_TYPE, CONTENT_TYPE_VALUE3));
-        headers.add(new Pair(HttpHeaders.HOST, HOST_VALUE1));
+        Set<Pair> headers = ImmutableSet.of(new Pair(HttpHeaders.CONTENT_TYPE, CONTENT_TYPE_VALUE3), new Pair(HttpHeaders.HOST, HOST_VALUE1));
 
         postTestRequest.setHeaders(new Headers(headers));
-        postRequest1.setHeaders(new Headers(transformers, goodHeaders));
+        postRequest1.setHeaders(new Headers(ImmutableList.of(keyValueTransformerHeader), goodHeaders));
 
         checkCorrectResult(classUnderTest.doFilter(postTestRequest, postRequestList), postRequest1);
     }
@@ -220,10 +215,9 @@ public class RequestServiceTest {
     @Test
     public void testDoFilterForPostBodyWithTransformer1() {
         createPostRequests();
-        List<AbstractTransformer> transformers = new ArrayList<>(Arrays.asList(regexpTransformerBody));
 
         postTestRequest.setBody(new Body(XML_BODY2));
-        postRequest1.setBody(new Body(transformers, XML_BODY1));
+        postRequest1.setBody(new Body(ImmutableList.of(regexpTransformerBody), XML_BODY1));
         postRequest1.setCheckSum(CommonUtils.getCheckSum(postRequest1));
 
         checkCorrectResult(classUnderTest.doFilter(postTestRequest, postRequestList), postRequest1);
@@ -232,10 +226,9 @@ public class RequestServiceTest {
     @Test
     public void testDoFilterForPostBodyWithTransformer2() {
         createPostRequests();
-        List<AbstractTransformer> transformers = new ArrayList<>(Arrays.asList(xPathTransformerBody));
 
         postTestRequest.setBody(new Body(XML_BODY2));
-        postRequest1.setBody(new Body(transformers, XML_BODY1));
+        postRequest1.setBody(new Body(ImmutableList.of(xPathTransformerBody), XML_BODY1));
         postRequest1.setCheckSum(CommonUtils.getCheckSum(postRequest1));
 
         checkCorrectResult(classUnderTest.doFilter(postTestRequest, postRequestList), postRequest1);

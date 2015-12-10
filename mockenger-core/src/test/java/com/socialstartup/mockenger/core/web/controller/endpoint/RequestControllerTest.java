@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -144,8 +145,8 @@ public class RequestControllerTest extends AbstractControllerTest {
     public void testAddAndSequenceGenerator() throws Exception {
         deleteAllRequests();
 
-        final int numOfMocks = 100;
-        final int numOfThreadToRun = numOfMocks / 5;
+        final int numOfMocks = 99;
+        final int numOfThreadToRun = numOfMocks / ThreadLocalRandom.current().nextInt(1, 25);
         final ExecutorService taskExecutor = Executors.newFixedThreadPool(numOfThreadToRun);
 
         for (int i = 0; i < numOfMocks; i++) {
@@ -261,10 +262,10 @@ public class RequestControllerTest extends AbstractControllerTest {
 
 
     private interface Runner {
-        void run(MockMvc mockMvc, String pId, String gId, AbstractRequest request, String msg) throws Exception;
+        void run(MockMvc mockMvc, String projectId, String groupId, AbstractRequest request, String msg) throws Exception;
     }
 
-    private static class AddRunner implements Runner {
+    private final static class AddRunner implements Runner {
         @Override
         public void run(MockMvc mockMvc, String projectId, String groupId, AbstractRequest request, String expectedErrorMsg) throws Exception {
             String requestJson = new ObjectMapper(new JsonFactory()).writeValueAsString(request);
@@ -277,7 +278,7 @@ public class RequestControllerTest extends AbstractControllerTest {
         }
     }
 
-    private static class SaveRunner implements Runner {
+    private final static class SaveRunner implements Runner {
         @Override
         public void run(MockMvc mockMvc, String projectId, String groupId, AbstractRequest request, String expectedErrorMsg) throws Exception {
             String requestJson = new ObjectMapper(new JsonFactory()).writeValueAsString(request);
@@ -290,7 +291,7 @@ public class RequestControllerTest extends AbstractControllerTest {
         }
     }
 
-    private static class Helper {
+    private final static class Helper {
         static void help(MockMvc mockMvc, Project project, Group group, AbstractRequest request, Runner runner) throws Exception {
             // Empty name
             request.setName("");
@@ -312,7 +313,7 @@ public class RequestControllerTest extends AbstractControllerTest {
         }
     }
 
-    private static class ExtendedHelper {
+    private final static class ExtendedHelper {
         static void help(MockMvc mockMvc, Project project, Group group, AbstractRequest request, Runner runner) throws Exception {
             Helper.help(mockMvc, project, group, request, runner);
 
@@ -324,7 +325,7 @@ public class RequestControllerTest extends AbstractControllerTest {
         }
     }
 
-    private class RestRequestSender implements Runnable {
+    private final class RestRequestSender implements Runnable {
 
         private String projectId;
 
