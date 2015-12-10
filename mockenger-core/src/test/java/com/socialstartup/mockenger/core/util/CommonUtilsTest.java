@@ -1,5 +1,7 @@
 package com.socialstartup.mockenger.core.util;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.PostRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Body;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
@@ -9,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +35,17 @@ public class CommonUtilsTest {
     private static final String PARAM_NAME2 = "b";
     private static final String PARAM_VALUE1 = "1";
     private static final String PARAM_VALUE2 = "2";
+
+    private static final String KEY = "key";
+    private static final String VALUE = "value";
+    private static final String KEY1 = "key1";
+    private static final String VALUE1 = "value1";
+    private static final String KEY2 = "key2";
+    private static final String VALUE2 = "value2";
+    private static final String KEY3 = "key3";
+    private static final String VALUE3 = "value3";
+    private static final String KEY4 = "key4";
+    private static final String VALUE4 = "value4";
 
     private final static String RESULT1 = "7794d3d9da59aec955a4b29c7f4157e1";
 
@@ -110,179 +122,130 @@ public class CommonUtilsTest {
 
     @Test
     public void testAllEmptyFalse() {
-        Map<String, String> map = new HashMap<>();
-        map.put("key", "value");
-
-        assertFalse(CommonUtils.allEmpty(Collections.emptyMap(), map));
+        assertFalse(CommonUtils.allEmpty(Collections.emptyMap(), newMap(0)));
     }
 
     @Test
     public void testAllMapsNotEmptyTrue() {
-        Map<String, String> map1 = new HashMap<>();
-        map1.put("key", "value");
-
-        Map<String, String> map2 = new HashMap<>();
-        map2.put("key", "value");
-
-        assertTrue(CommonUtils.allNotEmpty(map1, map2));
+        assertTrue(CommonUtils.allNotEmpty(newMap(0), newMap(0)));
     }
 
     @Test
     public void testAllSetsNotEmptyTrue() {
-        Set<Pair> set1 = new HashSet<>();
-        set1.add(new Pair("key", "value"));
-
-        Set<Pair> set2 = new HashSet<>();
-        set2.add(new Pair("key", "value"));
-
-        assertTrue(CommonUtils.allNotEmpty(set1, set2));
+        assertTrue(CommonUtils.allNotEmpty(newSet(0), newSet(0)));
     }
 
     @Test
     public void testAllMapsNotEmptyFalse() {
-        Map<String, String> map = new HashMap<>();
-        map.put("key", "value");
-
-        assertFalse(CommonUtils.allNotEmpty(Collections.emptyMap(), map));
+        assertFalse(CommonUtils.allNotEmpty(Collections.emptyMap(), newMap(0)));
     }
 
     @Test
     public void testAllSetsNotEmptyFalse() {
-        Set<Pair> set1 = new HashSet<>();
-        set1.add(new Pair("key", "value"));
-
-        assertFalse(CommonUtils.allNotEmpty(Collections.emptySet(), set1));
+        assertFalse(CommonUtils.allNotEmpty(Collections.emptySet(), newSet(0)));
     }
 
     @Test
     public void testContainsAllInMapTrue() {
-        Map<String, String> map1 = new HashMap<>();
-        map1.put("key1", "value1");
-        map1.put("key2", "value2");
-        map1.put("key3", "value3");
-
-        Map<String, String> map2 = new HashMap<>();
-        map2.put("key1", "value1");
-        map2.put("key3", "value3");
-
-        assertTrue(CommonUtils.containsAll(map1, map2));
+        assertTrue(CommonUtils.containsAll(newMap(1, 2, 3), newMap(1, 3)));
     }
 
     @Test
     public void testContainsAllInSetTrue() {
-        Set<Pair> set1 = new HashSet<>();
-        set1.add(new Pair("key1", "value1"));
-        set1.add(new Pair("key2", "value2"));
-        set1.add(new Pair("key3", "value3"));
-
-        Set<Pair> set2 = new HashSet<>();
-        set2.add(new Pair("key1", "value1"));
-        set2.add(new Pair("key3", "value3"));
-
-        assertTrue(CommonUtils.containsAll(set1, set2));
+        assertTrue(CommonUtils.containsAll(newSet(1, 2, 3), newSet(1, 3)));
     }
 
     @Test
     public void testContainsAllInMapFalse() {
-        Map<String, String> map1 = new HashMap<>();
-        map1.put("key1", "value1");
-        map1.put("key2", "value2");
-        map1.put("key3", "value3");
-
-        Map<String, String> map2 = new HashMap<>();
-        map2.put("key1", "value1");
-        map2.put("key4", "value4");
-
-        assertFalse(CommonUtils.containsAll(map1, map2));
+        assertFalse(CommonUtils.containsAll(newMap(1, 2, 3), newMap(1, 4)));
     }
 
     @Test
     public void testContainsAllInSetFalse() {
-        Set<Pair> set1 = new HashSet<>();
-        set1.add(new Pair("key1", "value1"));
-        set1.add(new Pair("key2", "value2"));
-        set1.add(new Pair("key3", "value3"));
-
-        Set<Pair> set2 = new HashSet<>();
-        set2.add(new Pair("key1", "value1"));
-        set2.add(new Pair("key4", "value4"));
-
-        assertFalse(CommonUtils.containsAll(set1, set2));
+        assertFalse(CommonUtils.containsAll(newSet(1, 2, 3), newSet(1, 4)));
     }
 
     @Test
     public void testEqualEntriesInMapTrue() {
-        Map<String, String> map1 = new HashMap<>();
-        map1.put("key2", "value2");
-        map1.put("key3", "value3");
-        map1.put("key1", "value1");
-
-        Map<String, String> map2 = new HashMap<>();
-        map2.put("key1", "value1");
-        map2.put("key3", "value3");
-        map2.put("key2", "value2");
-
-        assertTrue(CommonUtils.containsEqualEntries(map1, map2));
+        assertTrue(CommonUtils.containsEqualEntries(newMap(2, 3, 1), newMap(1, 3, 2)));
     }
 
     @Test
     public void testEqualEntriesInSetTrue() {
-        Set<Pair> set1 = new HashSet<>();
-        set1.add(new Pair("key2", "value2"));
-        set1.add(new Pair("key3", "value3"));
-        set1.add(new Pair("key1", "value1"));
-
-        Set<Pair> set2 = new HashSet<>();
-        set2.add(new Pair("key1", "value1"));
-        set2.add(new Pair("key3", "value3"));
-        set2.add(new Pair("key2", "value2"));
-
-        assertTrue(CommonUtils.containsEqualEntries(set1, set2));
+        assertTrue(CommonUtils.containsEqualEntries(newSet(2, 3, 1), newSet(1, 3, 2)));
     }
 
     @Test
     public void testEqualEntriesInMapFalse() {
-        Map<String, String> map1 = new HashMap<>();
-        map1.put("key2", "value2");
-        map1.put("key1", "value1");
-        map1.put("key3", "value3");
-
-        Map<String, String> map2 = new HashMap<>();
-        map2.put("key1", "value1");
-        map2.put("key4", "value4");
-        map2.put("key2", "value2");
-
-        assertFalse(CommonUtils.containsEqualEntries(map1, map2));
+        assertFalse(CommonUtils.containsEqualEntries(newMap(2, 1, 3), newMap(1, 4, 2)));
     }
 
     @Test
     public void testEqualEntriesInSetFalse() {
-        Set<Pair> set1 = new HashSet<>();
-        set1.add(new Pair("key2", "value2"));
-        set1.add(new Pair("key1", "value1"));
-        set1.add(new Pair("key3", "value3"));
-
-        Set<Pair> set2 = new HashSet<>();
-        set2.add(new Pair("key1", "value1"));
-        set2.add(new Pair("key4", "value4"));
-        set2.add(new Pair("key2", "value2"));
-
-        assertFalse(CommonUtils.containsEqualEntries(set1, set2));
+        assertFalse(CommonUtils.containsEqualEntries(newSet(2, 1, 3), newSet(1, 4, 2)));
     }
 
     @Test
     public void testEqualEntriesEmptyMap() {
-        Map<String, String> map1 = new HashMap<>();
-        map1.put("key1", "value1");
-
-        assertFalse(CommonUtils.containsEqualEntries(map1, Collections.emptyMap()));
+        assertFalse(CommonUtils.containsEqualEntries(newMap(1), Collections.emptyMap()));
     }
 
     @Test
     public void testEqualEntriesEmptySet() {
-        Set<Pair> set1 = new HashSet<>();
-        set1.add(new Pair("key2", "value2"));
+        assertFalse(CommonUtils.containsEqualEntries(newSet(2), Collections.emptySet()));
+    }
 
-        assertFalse(CommonUtils.containsEqualEntries(set1, Collections.emptySet()));
+    private Pair getPair(String key, String value) {
+        return new Pair(key, value);
+    }
+
+    private Set<Pair> newSet(final int... numbers) {
+        final ImmutableSet.Builder builder = ImmutableSet.builder();
+
+        for (int num : numbers) {
+            switch (num) {
+                case 0: builder.add(getPair(KEY, VALUE));
+                    continue;
+
+                case 1: builder.add(getPair(KEY1, VALUE1));
+                    continue;
+
+                case 2: builder.add(getPair(KEY2, VALUE2));
+                    continue;
+
+                case 3: builder.add(getPair(KEY3, VALUE3));
+                    continue;
+
+                case 4: builder.add(getPair(KEY4, VALUE4));
+                    continue;
+            }
+        }
+
+        return builder.build();
+    }
+
+    private Map<String, String> newMap(final int... numbers) {
+        final ImmutableMap.Builder builder = ImmutableMap.builder();
+
+        for (int num : numbers) {
+            switch (num) {
+                case 0: builder.put(KEY, VALUE);
+                    continue;
+
+                case 1: builder.put(KEY1, VALUE1);
+                    continue;
+
+                case 2: builder.put(KEY2, VALUE2);
+                    continue;
+
+                case 3: builder.put(KEY3, VALUE3);
+                    continue;
+
+                case 4: builder.put(KEY4, VALUE4);
+                    continue;
+            }
+        }
+
+        return builder.build();
     }
 }

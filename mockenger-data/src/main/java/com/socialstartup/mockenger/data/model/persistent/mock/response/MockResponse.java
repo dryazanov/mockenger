@@ -16,6 +16,16 @@ public class MockResponse {
     private String body;
 
 
+    public MockResponse() {
+        // default constructor
+    }
+
+    public MockResponse(int httpStatus, Set<Pair> headers, String body) {
+        this.httpStatus = httpStatus;
+        this.headers = headers;
+        this.body = body;
+    }
+
     public int getHttpStatus() {
         return httpStatus;
     }

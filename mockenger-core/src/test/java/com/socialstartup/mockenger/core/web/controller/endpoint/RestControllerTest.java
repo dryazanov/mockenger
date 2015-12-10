@@ -1,5 +1,7 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
@@ -20,9 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -281,31 +281,23 @@ public class RestControllerTest extends AbstractControllerTest {
     }
 
     private void createMockRequest(AbstractRequest request, String groupId, String contentType, String requestBody, String responseBody) {
-        Set<Pair> headersMap = new HashSet<>();
-        headersMap.add(new Pair("content-type", contentType));
-
-        KeyValueTransformer keyValueTransformer = new KeyValueTransformer("key", ID2, ID1);
-        RegexpTransformer regexpTransformer = new RegexpTransformer(ID2, ID1);
+        Set<Pair> headersSet = ImmutableSet.of(new Pair("content-type", contentType));
 
         request.setGroupId(groupId);
         request.setId(CommonUtils.generateUniqueId());
         request.setName(REQUEST_NAME_TEST);
         request.setCreationDate(new Date());
-
         request.setPath(new Path(REQUEST_PATH));
         request.setParameters(null);
+
         if (contentType != null) {
-            request.setHeaders(new Headers(Arrays.asList(keyValueTransformer), headersMap));
+            request.setHeaders(new Headers(ImmutableList.of(new KeyValueTransformer("key", ID2, ID1)), headersSet));
         }
         if (requestBody != null) {
-            request.setBody(new Body(Arrays.asList(regexpTransformer), requestBody));
+            request.setBody(new Body(ImmutableList.of(new RegexpTransformer(ID2, ID1)), requestBody));
         }
 
-        MockResponse mockResponse = new MockResponse();
-        mockResponse.setHttpStatus(200);
-        mockResponse.setHeaders(headersMap);
-        mockResponse.setBody(responseBody);
-        request.setMockResponse(mockResponse);
+        request.setMockResponse(new MockResponse(200, headersSet, responseBody));
     }
 
     private PostRequest createJsonMockRequestForPost(String groupId) {

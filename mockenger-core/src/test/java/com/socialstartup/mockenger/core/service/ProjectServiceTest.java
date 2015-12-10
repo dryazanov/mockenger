@@ -8,9 +8,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -47,9 +45,8 @@ public class ProjectServiceTest {
 
     @Test
     public void testRemove() {
-        List<Group> groupArrayList = new ArrayList<>(Arrays.asList(new Group(), new Group()));
         when(projectMock.getId()).thenReturn(PROJECT_ID);
-        when(groupServiceMock.findByProjectId(eq(PROJECT_ID))).thenReturn(groupArrayList);
+        when(groupServiceMock.findByProjectId(eq(PROJECT_ID))).thenReturn(Collections.nCopies(2, new Group()));
         doNothing().when(groupServiceMock).remove(any(Group.class));
         doNothing().when(projectEntityRepositoryMock).delete(eq(projectMock));
 
