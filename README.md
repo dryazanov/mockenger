@@ -81,5 +81,6 @@ POST/PUT: 200 - Request has succeeded, return added/updated object in the respon
 
 DELETE: 204 - Request has succeeded, no content in the response body
 
-ERRORS: 400 - Bad request, data from user is not valid. Error description in the response body
-        500 - Technical error. Error description in the response body
+ERRORS:
+400 - Bad request, data from user is not valid. Error description in the response body
+500 - Technical error. Error description in the response body
