@@ -1,7 +1,12 @@
 package com.socialstartup.mockenger.core.util;
 
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
@@ -15,6 +20,8 @@ import java.util.UUID;
  */
 public class CommonUtils {
 
+    private final static Logger LOG = LoggerFactory.getLogger(CommonUtils.class);
+
     public static String generateUniqueId() {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
@@ -22,16 +29,19 @@ public class CommonUtils {
     public static String getCheckSum(AbstractRequest abstractRequest) {
         if (abstractRequest.getBody() != null && abstractRequest.getBody().getValue() != null) {
             String bodyValue = abstractRequest.getBody().getValue();
+
             if (!StringUtils.isEmpty(bodyValue)) {
-                return DigestUtils.md5DigestAsHex(bodyValue.getBytes());
+                return DigestUtils.md5DigestAsHex(bodyValue.getBytes(Charsets.UTF_8));
             }
         }
+
         return CommonUtils.generateCheckSum(abstractRequest);
     }
 
 
     public static String generateCheckSum(AbstractRequest abstractRequest) {
         StringBuilder sb = new StringBuilder();
+
         if (abstractRequest.getPath() != null && abstractRequest.getPath().getValue() != null) {
             sb.append(abstractRequest.getPath().getValue());
         }
@@ -40,19 +50,22 @@ public class CommonUtils {
                 sb.append(pair.getKey()).append(pair.getValue());
             }
         }
+
         sb.append(abstractRequest.getMethod());
-        return DigestUtils.md5DigestAsHex(sb.toString().getBytes());
+        return DigestUtils.md5DigestAsHex(sb.toString().getBytes(Charsets.UTF_8));
     }
 
 
     public static String generateCheckSum(String ... args) {
         StringBuilder sb = new StringBuilder();
+
         for (String argument : args) {
             if (!StringUtils.isEmpty(argument)) {
                 sb.append(argument);
             }
         }
-        return DigestUtils.md5DigestAsHex(sb.toString().getBytes());
+
+        return DigestUtils.md5DigestAsHex(sb.toString().getBytes(Charsets.UTF_8));
     }
 
 
@@ -62,6 +75,7 @@ public class CommonUtils {
      * @param parameters
      * @return
      */
+    @SafeVarargs
     public static boolean allEmpty(Map<String, String>... parameters) {
         for (Map<String, String> map : parameters) {
             if (!CollectionUtils.isEmpty(map)) {
@@ -78,6 +92,7 @@ public class CommonUtils {
      * @param parameters
      * @return
      */
+    @SafeVarargs
     public static boolean allNotEmpty(Map<String, String>... parameters) {
         for (Map<String, String> map : parameters) {
             if (CollectionUtils.isEmpty(map)) {
@@ -136,18 +151,10 @@ public class CommonUtils {
      * @return
      */
     public static boolean containsEqualEntries(Map<String, String> map1, Map<String, String> map2) {
-        if (map1 == null && map2 == null) {
-            return true;
-        }
-        if ((map1 == null && map2 != null) || map1 != null && map2 == null || map1.size() != map2.size()) {
+        if (map1 == null || map2 == null) {
             return false;
         }
-        for (Map.Entry<String, String> entry : map2.entrySet()) {
-            if (!map1.containsKey(entry.getKey()) || !map1.get(entry.getKey()).equals(entry.getValue())) {
-                return false;
-            }
-        }
-        return true;
+        return Maps.difference(map1, map2).areEqual();
     }
 
     /**
@@ -158,17 +165,9 @@ public class CommonUtils {
      * @return
      */
     public static boolean containsEqualEntries(Set<Pair> set1, Set<Pair> set2) {
-        if (set1 == null && set2 == null) {
-            return true;
-        }
-        if ((set1 == null && set2 != null) || set1 != null && set2 == null || set1.size() != set2.size()) {
+        if (set1 == null || set2 == null) {
             return false;
         }
-        for (Pair pair : set1) {
-            if (!set2.contains(pair)) {
-                return false;
-            }
-        }
-        return true;
+        return Sets.difference(set1, set2).isEmpty();
     }
 }

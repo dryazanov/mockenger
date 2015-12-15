@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -28,12 +27,6 @@ public class GroupControllerTest extends AbstractControllerTest {
     private static final String ENDPOINT_TEMPLATE = "/projects/%s/groups/%s";
     private static final String ENDPOINT_GROUP = String.format(ENDPOINT_TEMPLATE, PROJECT_ID, "");
     private static final String GROUP_NAME_UPDATED = "ABC group";
-
-
-    @Before
-    public void setup() {
-        super.setup();
-    }
 
 
     @Test

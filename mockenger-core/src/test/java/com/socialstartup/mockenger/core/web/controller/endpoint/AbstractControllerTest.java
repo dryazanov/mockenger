@@ -107,18 +107,13 @@ public class AbstractControllerTest {
         return this.projectService.findAll();
     }
 
-    protected Project getAnyProject() throws Exception {
-        return this.projectService.findAll().iterator().next();
-    }
-
     protected void deleteProject(Project project) {
         this.projectService.remove(project);
     }
 
     protected void deleteAllProjects() {
-        Iterator<Project> iterator = getAllProjects().iterator();
-        while (iterator.hasNext()) {
-            deleteProject(iterator.next());
+        for (Project project : getAllProjects()) {
+            deleteProject(project);
         }
     }
 
@@ -213,9 +208,8 @@ public class AbstractControllerTest {
     }
 
     protected void deleteAllRequests() {
-        Iterator<AbstractRequest> iterator = getAllRequests().iterator();
-        while (iterator.hasNext()) {
-            deleteRequest(iterator.next());
+        for (AbstractRequest abstractRequest : getAllRequests()) {
+            deleteRequest(abstractRequest);
         }
     }
 

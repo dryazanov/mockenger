@@ -81,7 +81,7 @@ public abstract class AbstractServiceTest {
     public void init() {
         initMocks(this);
 
-        Enumeration emptyEnumeration = Collections.enumeration(Collections.EMPTY_LIST);
+        Enumeration<String> emptyEnumeration = Collections.enumeration(Collections.EMPTY_LIST);
 
         when(httpServletRequestMock.getAttribute(anyString())).thenReturn("");
         when(httpServletRequestMock.getHeaderNames()).thenReturn(emptyEnumeration);

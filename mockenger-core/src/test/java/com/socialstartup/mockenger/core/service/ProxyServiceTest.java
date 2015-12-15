@@ -39,7 +39,7 @@ public class ProxyServiceTest {
     private static final String MOCK_RESPONSE_BODY = "{\"result\":\"OK\"}";
 
     @InjectMocks
-    private ProxyService classUnderTest = new ProxyService();
+    private final ProxyService classUnderTest = new ProxyService();
 
     @Value("#{'${mockenger.proxy.request.ignore.headers}'.split(',')}")
     private List<String> headersToIgnore;

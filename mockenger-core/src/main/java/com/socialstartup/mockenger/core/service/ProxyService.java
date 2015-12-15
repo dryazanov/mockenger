@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 @Component
 public class ProxyService {
 
-    private Logger LOG = LoggerFactory.getLogger(ProxyService.class);
+    private final Logger LOG = LoggerFactory.getLogger(ProxyService.class);
 
     public final int DEFAULT_RESPONSE_HTTP_STATUS = 500;
 
@@ -61,9 +61,7 @@ public class ProxyService {
             mockResponse.setHttpStatus(response.getStatusLine() != null ? response.getStatusLine().getStatusCode() : DEFAULT_RESPONSE_HTTP_STATUS);
 
             // Set response headers
-            Stream.of(response.getAllHeaders()).forEach(header -> {
-                mockResponse.getHeaders().add(new Pair(header.getName(), header.getValue()));
-            });
+            Stream.of(response.getAllHeaders()).forEach(header -> mockResponse.getHeaders().add(new Pair(header.getName(), header.getValue())));
 
             // Set response body
             if (response.getEntity() != null && response.getEntity().getContent() != null) {

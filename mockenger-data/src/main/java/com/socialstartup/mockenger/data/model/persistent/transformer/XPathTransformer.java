@@ -12,7 +12,6 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -63,11 +62,7 @@ public class XPathTransformer extends AbstractTransformer {
             if (result != null) {
                 return result;
             }
-        } catch (ParserConfigurationException e) {
-            LOG.debug(e.getMessage());
-        } catch (IOException e) {
-            LOG.debug(e.getMessage());
-        } catch (SAXException e) {
+        } catch (ParserConfigurationException | IOException | SAXException e) {
             LOG.debug(e.getMessage());
         }
 
@@ -97,11 +92,7 @@ public class XPathTransformer extends AbstractTransformer {
 
                 return stringWriter.toString();
             }
-        } catch (XPathExpressionException e) {
-            LOG.debug(e.getMessage());
-        } catch (TransformerConfigurationException e) {
-            LOG.debug(e.getMessage());
-        } catch (TransformerException e) {
+        } catch (XPathExpressionException | TransformerException e) {
             LOG.debug(e.getMessage());
         }
 

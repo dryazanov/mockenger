@@ -114,21 +114,24 @@ public class RequestService {
 
     /**
      *
-     * @param r
-     * @param list
+     * @param incomingRequest
+     * @param requestsToCheck
      * @return
      */
-    public AbstractRequest doFilter(AbstractRequest r, List<AbstractRequest> list) {
-        for (AbstractRequest m : list) {
+    public AbstractRequest doFilter(AbstractRequest incomingRequest, List<AbstractRequest> requestsToCheck) {
+        for (AbstractRequest storedRequest : requestsToCheck) {
             LOG.debug("");
-            if (!pathsEqual(r, m) || !parametersEqual(r, m) || !headersEqual(r, m)) {
+            if (!pathsEqual(incomingRequest, storedRequest)
+                    || !parametersEqual(incomingRequest, storedRequest)
+                    || !headersEqual(incomingRequest, storedRequest)) {
+
                 LOG.debug("------------------------------");
                 LOG.debug("Skip this mock");
                 continue;
             }
 
-            if (bodiesEqual(r, m)) {
-                return m;
+            if (bodiesEqual(incomingRequest, storedRequest)) {
+                return storedRequest;
             }
         }
         LOG.debug("==============================");
@@ -174,17 +177,13 @@ public class RequestService {
      * @return
      */
     private boolean parametersEqual(AbstractRequest abstractRequestFromUser, AbstractRequest mockedAbstractRequest) {
-        List<AbstractMapTransformer> transformers;
-        Set<Pair> usersParameters;
-        Set<Pair> mockedParameters;
-
         Parameters abstractParams = abstractRequestFromUser.getParameters();
         Parameters mockedParams = mockedAbstractRequest.getParameters();
 
         if (abstractParams != null && mockedParams != null) {
             // Transform and check query parameters
-            usersParameters = (abstractParams.getValues() != null ? abstractParams.getValues() : new HashSet<>());
-            mockedParameters = (mockedParams.getValues() != null ? mockedParams.getValues() : new HashSet<>());
+            Set<Pair> usersParameters = (abstractParams.getValues() != null ? abstractParams.getValues() : new HashSet<>());
+            Set<Pair> mockedParameters = (mockedParams.getValues() != null ? mockedParams.getValues() : new HashSet<>());
 
             if (CommonUtils.allNotEmpty(usersParameters, mockedParameters)) {
                 usersParameters = applyTransformers(usersParameters, mockedAbstractRequest.getParameters().getTransformers());
@@ -210,14 +209,10 @@ public class RequestService {
      * @return
      */
     private boolean headersEqual(AbstractRequest abstractRequestFromUser, AbstractRequest mockedAbstractRequest) {
-        List<AbstractMapTransformer> transformers;
-        Set<Pair> usersHeaders;
-        Set<Pair> mockedHeaders;
-
         if (abstractRequestFromUser.getHeaders() != null && mockedAbstractRequest.getHeaders() != null) {
             // Transform and check headers
-            usersHeaders = new HashSet<>(abstractRequestFromUser.getHeaders().getValues());
-            mockedHeaders = new HashSet<>(mockedAbstractRequest.getHeaders().getValues());
+            Set<Pair> usersHeaders = new HashSet<>(abstractRequestFromUser.getHeaders().getValues());
+            Set<Pair> mockedHeaders = new HashSet<>(mockedAbstractRequest.getHeaders().getValues());
 
             if (CommonUtils.allNotEmpty(usersHeaders, mockedHeaders)) {
                 usersHeaders = applyTransformers(usersHeaders, mockedAbstractRequest.getHeaders().getTransformers());
@@ -260,16 +255,14 @@ public class RequestService {
      * @return
      */
     private boolean bodiesEqual(AbstractRequest abstractRequestFromUser, AbstractRequest mockedAbstractRequest) {
-        List<AbstractTransformer> transformers;
-        String usersRequestCheckSum = null;
-        String mockedCheckSum = mockedAbstractRequest.getCheckSum();
-
         if (abstractRequestFromUser.getMethod() != null) {
+            String usersRequestCheckSum = null;
+            String mockedCheckSum = mockedAbstractRequest.getCheckSum();
             if (abstractRequestFromUser.getMethod().equals(RequestMethod.POST) || abstractRequestFromUser.getMethod().equals(RequestMethod.PUT)) {
                 // Transform request body
                 if (abstractRequestFromUser.getBody() != null && mockedAbstractRequest.getBody() != null) {
                     String body = abstractRequestFromUser.getBody().getValue();
-                    transformers = mockedAbstractRequest.getBody().getTransformers();
+                    List<AbstractTransformer> transformers = mockedAbstractRequest.getBody().getTransformers();
                     if (!CollectionUtils.isEmpty(transformers)) {
                         for (Transformer transformer : transformers) {
                             body = transformer.transform(body);

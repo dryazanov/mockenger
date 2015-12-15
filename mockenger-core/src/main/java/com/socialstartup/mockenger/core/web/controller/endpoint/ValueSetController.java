@@ -27,11 +27,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @Controller
 public class ValueSetController extends AbstractController {
 
-    private final String PROJECT_TYPES_VALUESET = VALUESET_ENDPOINT + "/projectTypes";
-    private final String REQUEST_METHOD_VALUESET = VALUESET_ENDPOINT + "/requestMethods";
-    private final String TRANSFORMER_TYPE_VALUESET = VALUESET_ENDPOINT + "/transformerTypes";
-    private final String HEADERS_VALUESET = VALUESET_ENDPOINT + "/headers";
-    private final String ROLES_VALUESET = VALUESET_ENDPOINT + "/roles";
+    private final static String PROJECT_TYPES_VALUESET = VALUESET_ENDPOINT + "/projectTypes";
+    private final static String REQUEST_METHOD_VALUESET = VALUESET_ENDPOINT + "/requestMethods";
+    private final static String TRANSFORMER_TYPE_VALUESET = VALUESET_ENDPOINT + "/transformerTypes";
+    private final static String HEADERS_VALUESET = VALUESET_ENDPOINT + "/headers";
+    private final static String ROLES_VALUESET = VALUESET_ENDPOINT + "/roles";
 
     @Autowired
     private ProjectService projectService;

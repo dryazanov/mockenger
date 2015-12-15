@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class ExceptionHandlingAdvice {
 
-    Logger LOG = LoggerFactory.getLogger(ExceptionHandlingAdvice.class);
+    private final Logger LOG = LoggerFactory.getLogger(ExceptionHandlingAdvice.class);
 
     /**
      * Handle errors about bad content-type in the header

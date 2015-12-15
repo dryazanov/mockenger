@@ -40,8 +40,7 @@ public class XmlHelper {
 
     public static SOAPMessage stringToXmlConverter(String source) throws SOAPException, IOException {
         InputStream inputStream = new ByteArrayInputStream(source.getBytes(Charset.forName("UTF-8")));
-        SOAPMessage soapMessage = MessageFactory.newInstance().createMessage(new MimeHeaders(), inputStream);
-        return soapMessage;
+        return MessageFactory.newInstance().createMessage(new MimeHeaders(), inputStream);
     }
 
     public static String xmlToStringConverter(Node node, boolean omitXmlDeclaration) throws TransformerException {

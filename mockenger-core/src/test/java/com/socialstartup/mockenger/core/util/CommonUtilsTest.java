@@ -191,8 +191,24 @@ public class CommonUtilsTest {
     }
 
     @Test
+    public void testEqualEntriesMapWithNull() {
+        Map<String, String> map1 = null, map2 = null;
+        assertFalse(CommonUtils.containsEqualEntries(map1, map2));
+        assertFalse(CommonUtils.containsEqualEntries(map1, newMap(1)));
+        assertFalse(CommonUtils.containsEqualEntries(newMap(1), map2));
+    }
+
+    @Test
     public void testEqualEntriesEmptySet() {
         assertFalse(CommonUtils.containsEqualEntries(newSet(2), Collections.emptySet()));
+    }
+
+    @Test
+    public void testEqualEntriesSetWithNull() {
+        Set<Pair> set1 = null, set2 = null;
+        assertFalse(CommonUtils.containsEqualEntries(set1, set2));
+        assertFalse(CommonUtils.containsEqualEntries(set1, newSet(1)));
+        assertFalse(CommonUtils.containsEqualEntries(newSet(1), set2));
     }
 
     private Pair getPair(String key, String value) {
@@ -217,7 +233,6 @@ public class CommonUtilsTest {
                     continue;
 
                 case 4: builder.add(getPair(KEY4, VALUE4));
-                    continue;
             }
         }
 
@@ -242,7 +257,6 @@ public class CommonUtilsTest {
                     continue;
 
                 case 4: builder.put(KEY4, VALUE4);
-                    continue;
             }
         }
 

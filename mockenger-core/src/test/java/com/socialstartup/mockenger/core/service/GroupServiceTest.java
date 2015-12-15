@@ -1,5 +1,6 @@
 package com.socialstartup.mockenger.core.service;
 
+import com.google.common.collect.ImmutableList;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.DeleteRequest;
@@ -11,8 +12,6 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Matchers.any;
@@ -50,7 +49,7 @@ public class GroupServiceTest {
 
     @Test
     public void testRemove() {
-        List<AbstractRequest> abstractRequestList = new ArrayList<>(Arrays.asList(new PostRequest(), new GetRequest(), new DeleteRequest()));
+        List<AbstractRequest> abstractRequestList = ImmutableList.of(new PostRequest(), new GetRequest(), new DeleteRequest());
         when(groupMock.getId()).thenReturn(GROUP_ID);
         when(requestServiceMock.findByGroupId(eq(GROUP_ID))).thenReturn(abstractRequestList);
         doNothing().when(requestServiceMock).remove(any(AbstractRequest.class));

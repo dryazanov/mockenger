@@ -30,7 +30,7 @@ public class HttpHeadersServiceTest {
     private static final List<String> HEADERS_TO_ADD = Arrays.asList(MediaType.APPLICATION_JSON_VALUE, "host");
 
     @InjectMocks
-    private HttpHeadersService classUnderTest = new HttpHeadersService();
+    private final HttpHeadersService classUnderTest = new HttpHeadersService();
 
     @Value("#{'${mockenger.mock.response.ignore.headers}'.split(',')}")
     private List<String> headersToIgnore;
