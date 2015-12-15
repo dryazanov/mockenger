@@ -327,9 +327,9 @@ public class RequestControllerTest extends AbstractControllerTest {
 
     private final class RestRequestSender implements Runnable {
 
-        private String projectId;
+        private final String projectId;
 
-        private AbstractRequest requestToSend;
+        private final AbstractRequest requestToSend;
 
         public RestRequestSender(String projectId, AbstractRequest request) {
             this.projectId = projectId;

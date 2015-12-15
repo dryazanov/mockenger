@@ -1,5 +1,6 @@
 package com.socialstartup.mockenger.core.util;
 
+import com.google.common.collect.ImmutableList;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
@@ -8,7 +9,6 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -80,7 +80,7 @@ public class HttpUtils {
             requestHeaders.add(new BasicHeader(headerName, headerValue));
         }
 
-        return (Header[]) requestHeaders.toArray();
+        return requestHeaders.toArray(new Header[requestHeaders.size()]);
     }
 
     /**
@@ -118,7 +118,7 @@ public class HttpUtils {
      * @return list of headers (excluding ACCESS_CONTROL_*)
      */
     public static List<String> getListOfHeaders() {
-        return new ArrayList<>(Arrays.asList(
+        return ImmutableList.of(
                 ACCEPT,
                 ACCEPT_CHARSET,
                 ACCEPT_ENCODING,
@@ -170,6 +170,6 @@ public class HttpUtils {
                 VARY,
                 VIA,
                 WARNING,
-                WWW_AUTHENTICATE));
+                WWW_AUTHENTICATE);
     }
 }

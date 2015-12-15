@@ -12,9 +12,9 @@ public enum ProjectType {
     SOAP(Arrays.asList(RequestMethod.POST)),
     HTTP(Arrays.asList(RequestMethod.values()));
 
-    private List<RequestMethod> allowedMethods;
+    private final List<RequestMethod> allowedMethods;
 
-    private ProjectType(List<RequestMethod> allowedMethods) {
+    ProjectType(List<RequestMethod> allowedMethods) {
         this.allowedMethods = allowedMethods;
     }
 

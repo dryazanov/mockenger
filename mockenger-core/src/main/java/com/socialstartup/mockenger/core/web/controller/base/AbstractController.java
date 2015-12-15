@@ -22,7 +22,7 @@ import java.io.IOException;
  */
 public abstract class AbstractController {
 
-    private Logger LOG = LoggerFactory.getLogger(AbstractController.class);
+    private final Logger LOG = LoggerFactory.getLogger(AbstractController.class);
 
     protected static final String VALUESET_ENDPOINT = "/valueset";
     protected static final String ACCOUNTS_ENDPOINT = "/accounts";

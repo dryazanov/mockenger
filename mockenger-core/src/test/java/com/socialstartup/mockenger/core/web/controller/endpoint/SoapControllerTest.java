@@ -67,7 +67,6 @@ public class SoapControllerTest extends AbstractControllerTest {
             .toString();
 
     private Project project;
-    private Group group;
     private String endpoint;
 
     @Before
@@ -75,7 +74,7 @@ public class SoapControllerTest extends AbstractControllerTest {
         super.setup();
 
         project = createProject();
-        group = createGroup();
+        final Group group = createGroup();
         createRequest(createSoapMockRequest(group.getId()));
 
         endpoint = String.format(ENDPOINT_TEMPLATE, group.getId(), REQUEST_PATH);

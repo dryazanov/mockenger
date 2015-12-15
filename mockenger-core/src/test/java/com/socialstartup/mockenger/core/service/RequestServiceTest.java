@@ -26,8 +26,6 @@ import org.mockito.Mock;
 import org.springframework.http.HttpHeaders;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -47,7 +45,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
  */
 public class RequestServiceTest {
 
-    private static String GROUP_ID = "12345QWERTY";
+    private final static String GROUP_ID = "12345QWERTY";
 
     private static final String JSON1 = "{\"valid\":\"ok\",\"mock\":\"4\"}";
     private static final String JSON2 = "{\"valid\":\"not ok\",\"mock\":\"1\"}";
@@ -96,11 +94,11 @@ public class RequestServiceTest {
     private List<AbstractRequest> getRequestList;
 
 
-    AbstractMapTransformer keyValueTransformerHeader = new KeyValueTransformer(HttpHeaders.CONTENT_TYPE, CHARSET_KOI8R, CHARSET_UTF8);
-    AbstractMapTransformer keyValueTransformerParam = new KeyValueTransformer(PARAM_NAME1, PARAM_VALUE4, PARAM_VALUE1);
-    AbstractTransformer regexpTransformerPath = new RegexpTransformer("\\d+", "1");
-    AbstractTransformer regexpTransformerBody = new RegexpTransformer("(?<=<heading>)\\w+(?=</heading>)", "Reminder");
-    AbstractTransformer xPathTransformerBody = new XPathTransformer("/note/heading/text()", "Reminder");
+    private final AbstractMapTransformer keyValueTransformerHeader = new KeyValueTransformer(HttpHeaders.CONTENT_TYPE, CHARSET_KOI8R, CHARSET_UTF8);
+    private final AbstractMapTransformer keyValueTransformerParam = new KeyValueTransformer(PARAM_NAME1, PARAM_VALUE4, PARAM_VALUE1);
+    private final AbstractTransformer regexpTransformerPath = new RegexpTransformer("\\d+", "1");
+    private final AbstractTransformer regexpTransformerBody = new RegexpTransformer("(?<=<heading>)\\w+(?=</heading>)", "Reminder");
+    private final AbstractTransformer xPathTransformerBody = new XPathTransformer("/note/heading/text()", "Reminder");
 
     @InjectMocks
     private RequestService classUnderTest;
@@ -323,7 +321,7 @@ public class RequestServiceTest {
         getRequest2.setParameters(new Parameters(goodParameters));
         getRequest2.setCheckSum(CommonUtils.getCheckSum(getRequest2));
 
-        getRequestList = new ArrayList<>(Arrays.asList(getRequest2, getRequest1));
+        getRequestList = ImmutableList.of(getRequest2, getRequest1);
     }
     
     private void createPostRequests() {
@@ -353,7 +351,7 @@ public class RequestServiceTest {
         postRequest2.setCheckSum(CommonUtils.getCheckSum(postRequest2));
         postRequest2.setMockResponse(new MockResponse());
 
-        postRequestList = new ArrayList<>(Arrays.asList(postRequest2, postRequest1));
+        postRequestList = ImmutableList.of(postRequest2, postRequest1);
     }
 
     private void checkCorrectResult(AbstractRequest result, AbstractRequest request) {
