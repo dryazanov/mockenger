@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -216,7 +216,7 @@ public class CommonUtilsTest {
     }
 
     private Set<Pair> newSet(final int... numbers) {
-        final ImmutableSet.Builder builder = ImmutableSet.builder();
+        final ImmutableSet.Builder<Pair> builder = ImmutableSet.builder();
 
         for (int num : numbers) {
             switch (num) {
@@ -240,7 +240,7 @@ public class CommonUtilsTest {
     }
 
     private Map<String, String> newMap(final int... numbers) {
-        final ImmutableMap.Builder builder = ImmutableMap.builder();
+        final ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
 
         for (int num : numbers) {
             switch (num) {
