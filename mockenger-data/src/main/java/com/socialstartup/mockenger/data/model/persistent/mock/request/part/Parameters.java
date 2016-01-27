@@ -2,7 +2,9 @@ package com.socialstartup.mockenger.data.model.persistent.mock.request.part;
 
 import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -24,7 +26,7 @@ public class Parameters extends AbstractPart<AbstractMapTransformer> {
     }
 
     public Set<Pair> getValues() {
-        return values;
+        return Optional.ofNullable(values).orElse(new HashSet<>());
     }
 
     public void setValues(Set<Pair> values) {

@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * Created by Dmitry Ryazanov on 3/12/2015.
@@ -89,7 +90,7 @@ public class AbstractRequest extends AbstractPersistentEntity<String> {
     }
 
     public Path getPath() {
-        return path;
+        return Optional.ofNullable(path).orElse(new Path());
     }
 
     public void setPath(Path path) {
@@ -97,7 +98,7 @@ public class AbstractRequest extends AbstractPersistentEntity<String> {
     }
 
     public Headers getHeaders() {
-        return headers;
+        return Optional.ofNullable(headers).orElse(new Headers());
     }
 
     public void setHeaders(Headers headers) {
@@ -105,7 +106,7 @@ public class AbstractRequest extends AbstractPersistentEntity<String> {
     }
 
     public Parameters getParameters() {
-        return parameters;
+        return Optional.ofNullable(parameters).orElse(new Parameters());
     }
 
     public void setParameters(Parameters parameters) {
@@ -113,7 +114,7 @@ public class AbstractRequest extends AbstractPersistentEntity<String> {
     }
 
     public Body getBody() {
-        return this.body;
+        return Optional.ofNullable(body).orElse(new Body());
     }
 
     public void setBody(Body body) {

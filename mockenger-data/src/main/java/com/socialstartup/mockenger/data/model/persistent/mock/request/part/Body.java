@@ -3,6 +3,7 @@ package com.socialstartup.mockenger.data.model.persistent.mock.request.part;
 import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractTransformer;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Dmitry Ryazanov on 3/31/2015.
@@ -19,11 +20,11 @@ public class Body extends AbstractPart<AbstractTransformer> {
 
     public Body(List<AbstractTransformer> transformers, String value) {
         this.transformers = transformers;
-        this.value = value;
+        setValue(value);
     }
 
     public String getValue() {
-        return value;
+        return Optional.ofNullable(value).orElse("");
     }
 
     public void setValue(String value) {
