@@ -32,6 +32,10 @@ angular.module('mockengerClientMainApp')
                 });
             }
 
+            var isMethodWithBody = function(method) {
+                return ((method == 'POST' || method == 'PUT' || method == 'PATCH') ? true : false);
+            }
+
             $scope.selectMethod = function(method) {
                 requestListService.getCurrent().method = method;
             }
@@ -200,9 +204,5 @@ angular.module('mockengerClientMainApp')
 
             $scope.isRequestTabDisabled = function() {
                 return (requestListService.getCurrent().method != null && isMethodWithBody(requestListService.getCurrent().method) ? false : true);
-            }
-
-            var isMethodWithBody = function(method) {
-                return ((method == 'POST' || method == 'PUT' || method == 'PATCH') ? true : false);
             }
 }]);

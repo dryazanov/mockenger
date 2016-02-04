@@ -37,10 +37,7 @@ public class Pair implements Comparable<Pair> {
         }
         if (o instanceof Pair) {
             final Pair pair = (Pair) o;
-            if (isKeyEqual(pair.key) || isValueEqual(pair.value)) {
-                return false;
-            }
-            return true;
+            return !(isKeyEqual(pair.key) || isValueEqual(pair.value));
         }
         return false;
     }

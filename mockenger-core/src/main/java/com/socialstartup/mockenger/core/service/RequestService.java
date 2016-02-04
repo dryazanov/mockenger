@@ -63,12 +63,12 @@ public class RequestService {
         requestEntityRepository.delete(entity);
     }
 
-    public String prepareRequestXmlBody(String requestBody) {
-        requestBody = new RegexpTransformer(">\\s+<", "><").transform(requestBody.trim());
-        if (requestBody.startsWith("<?xml")) {
-            requestBody = requestBody.substring(requestBody.indexOf("?>") + 2);
+    public String prepareRequestXmlBody(final String requestBody) {
+        final String body = new RegexpTransformer(">\\s+<", "><").transform(requestBody.trim());
+        if (body.startsWith("<?xml")) {
+            return body.substring(body.indexOf("?>") + 2);
         }
-        return requestBody;
+        return body;
     }
 
     public String prepareRequestJsonBody(final String requestBody) throws IOException {
