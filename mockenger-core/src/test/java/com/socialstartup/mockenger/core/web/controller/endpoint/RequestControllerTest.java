@@ -292,7 +292,7 @@ public class RequestControllerTest extends AbstractControllerTest {
     }
 
     private final static class Helper {
-        static void help(MockMvc mockMvc, Project project, Group group, AbstractRequest request, Runner runner) throws Exception {
+        private static void help(MockMvc mockMvc, Project project, Group group, AbstractRequest request, Runner runner) throws Exception {
             // Empty name
             request.setName("");
             runner.run(mockMvc, project.getId(), group.getId(), request, "name: may not be null or empty");
@@ -302,19 +302,19 @@ public class RequestControllerTest extends AbstractControllerTest {
             runner.run(mockMvc, project.getId(), group.getId(), request, "name: may not be null or empty");
 
             // Name is null
-            request = getNewRequest(group.getId());
-            request.setGroupId(null);
-            runner.run(mockMvc, project.getId(), group.getId(), request, "groupId: may not be null");
+            AbstractRequest request1 = getNewRequest(group.getId());
+            request1.setGroupId(null);
+            runner.run(mockMvc, project.getId(), group.getId(), request1, "groupId: may not be null");
 
             // httpStatus in the response is zero
-            request = getNewRequest(group.getId());
-            request.getMockResponse().setHttpStatus(0);
-            runner.run(mockMvc, project.getId(), group.getId(), request, "httpStatus: must be number greater than zero");
+            AbstractRequest request2 = getNewRequest(group.getId());
+            request2.getMockResponse().setHttpStatus(0);
+            runner.run(mockMvc, project.getId(), group.getId(), request2, "httpStatus: must be number greater than zero");
         }
     }
 
     private final static class ExtendedHelper {
-        static void help(MockMvc mockMvc, Project project, Group group, AbstractRequest request, Runner runner) throws Exception {
+        private static void help(MockMvc mockMvc, Project project, Group group, AbstractRequest request, Runner runner) throws Exception {
             Helper.help(mockMvc, project, group, request, runner);
 
             // Wrong unique code (for save request only)
