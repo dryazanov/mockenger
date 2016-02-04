@@ -121,7 +121,7 @@ public class ParentController extends AbstractController {
         return headers;
     }
 
-    private ResponseEntity processRecording(final Group group, AbstractRequest mockRequest) {
+    private ResponseEntity processRecording(final Group group, final AbstractRequest mockRequest) {
         if (StringUtils.isEmpty(mockRequest.getName())) {
             mockRequest.setName(String.valueOf(mockRequest.getCreationDate().getTime()));
         }
@@ -132,7 +132,7 @@ public class ParentController extends AbstractController {
         cleanUpRequestBody(mockRequest);
 
         if (group.isForwarding()) {
-            mockRequest = proxyService.forwardRequest(mockRequest, group.getForwardTo());
+            mockRequest.setMockResponse(proxyService.forwardRequest(mockRequest, group.getForwardTo()));
         }
 
         getRequestService().save(mockRequest);

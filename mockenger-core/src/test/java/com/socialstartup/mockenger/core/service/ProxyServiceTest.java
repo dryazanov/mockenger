@@ -52,7 +52,8 @@ public class ProxyServiceTest {
 
     @Test
     public void testForwardRequest() {
-        AbstractRequest abstractRequest = classUnderTest.forwardRequest(createNewRequest(), BASE_URL);
+        AbstractRequest abstractRequest = createNewRequest();
+        abstractRequest.setMockResponse(classUnderTest.forwardRequest(createNewRequest(), BASE_URL));
         assertNotNull(abstractRequest);
         assertNotEquals(MOCK_RESPONSE_BODY, abstractRequest.getMockResponse().getBody());
     }
