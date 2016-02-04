@@ -70,7 +70,7 @@ public class OAuthExtendedControllerTest {
 
 
     @Before
-    public void setup() {
+    public void setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
                 .addFilters(springSecurityFilterChain).build();
 

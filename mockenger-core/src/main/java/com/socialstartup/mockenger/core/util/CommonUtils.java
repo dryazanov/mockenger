@@ -9,7 +9,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -55,7 +54,7 @@ public class CommonUtils {
         if (source == null) {
             return "";
         }
-        return DigestUtils.md5DigestAsHex(source.toString().getBytes(Charsets.UTF_8));
+        return DigestUtils.md5DigestAsHex(source.getBytes(Charsets.UTF_8));
     }
 
 

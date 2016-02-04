@@ -32,8 +32,8 @@ public class ValueSetControllerTest extends AbstractControllerTest {
 
 
     @Before
-    public void setup() {
-        super.setup();
+    public void setUp() {
+        super.setUp();
         deleteAllProjects();
     }
 

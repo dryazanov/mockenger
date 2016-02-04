@@ -95,7 +95,7 @@ public class ParentController extends AbstractController {
     protected ResponseEntity generateResponse(AbstractRequest mockRequest, AbstractRequest mockResult, Group group) {
         if (mockResult != null) {
             final MockResponse mockResponse = createMockResponse(mockResult);
-            org.springframework.http.HttpHeaders headers = httpHeadersService.getDefaultHeaders();
+            HttpHeaders headers = httpHeadersService.getDefaultHeaders();
 
             if (!CollectionUtils.isEmpty(mockResponse.getHeaders())) {
                 headers = httpHeadersService.createHeaders(mockResponse.getHeaders());
@@ -109,7 +109,7 @@ public class ParentController extends AbstractController {
         return new ResponseEntity<>(null, getResponseHeaders(), HttpStatus.NOT_FOUND);
     }
 
-    private org.springframework.http.HttpHeaders updateHeaders(final AbstractRequest mockRequest, final HttpHeaders headers) {
+    private HttpHeaders updateHeaders(final AbstractRequest mockRequest, final HttpHeaders headers) {
         final Set<Pair> headerValues = mockRequest.getHeaders().getValues();
         if (!CollectionUtils.isEmpty(headerValues)) {
             headerValues.forEach(pair -> {

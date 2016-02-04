@@ -70,8 +70,8 @@ public class SoapControllerTest extends AbstractControllerTest {
     private String endpoint;
 
     @Before
-    public void setup() {
-        super.setup();
+    public void setUp() {
+        super.setUp();
 
         project = createProject();
         final Group group = createGroup();
