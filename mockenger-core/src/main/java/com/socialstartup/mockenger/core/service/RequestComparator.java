@@ -1,11 +1,10 @@
 package com.socialstartup.mockenger.core.service;
 
+import com.google.common.collect.Sets;
 import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
-import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Headers;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
-import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Parameters;
 import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
 import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractTransformer;
 import com.socialstartup.mockenger.data.model.persistent.transformer.Transformer;
@@ -52,6 +51,7 @@ public class RequestComparator {
                 return true;
             }
         }
+        LOG.debug("Not equal, skip mock");
         return false;
     }
 
@@ -70,7 +70,8 @@ public class RequestComparator {
             }
         }
 
-        printPathDebugInfo(path);
+        ComparatorLogger.printPaths(path, requestsFromDb.getPath().getValue());
+
         return path.equals(requestsFromDb.getPath().getValue());
     }
 
@@ -80,13 +81,14 @@ public class RequestComparator {
      * @return
      */
     private boolean compareParameters() {
-        Set<Pair> paramsFromClient = extractParamsSafely(requestFromClient);
-        final Set<Pair> paramsFromDb = extractParamsSafely(requestsFromDb);
+        Set<Pair> paramsFromClient = requestFromClient.getParameters().getValues();
+        final Set<Pair> paramsFromDb = requestsFromDb.getParameters().getValues();
 
         if (CommonUtils.allNotEmpty(paramsFromClient, paramsFromDb)) {
             final List<AbstractMapTransformer> transformers = requestsFromDb.getParameters().getTransformers();
             paramsFromClient = applyTransformers(paramsFromClient, transformers);
-            printParametersDebugInfo(paramsFromClient, paramsFromDb);
+
+            ComparatorLogger.printParameters(paramsFromClient, paramsFromDb);
 
             return CommonUtils.containsEqualEntries(paramsFromClient, paramsFromDb);
         }
@@ -100,36 +102,19 @@ public class RequestComparator {
      * @return
      */
     private boolean compareHeaders() {
-        Set<Pair> userHeaders = extractHeadersSafely(requestFromClient);
-        final Set<Pair> mockHeaders = extractHeadersSafely(requestsFromDb);
+        Set<Pair> userHeaders = requestFromClient.getHeaders().getValues();
+        final Set<Pair> mockHeaders = requestsFromDb.getHeaders().getValues();
 
         if (CommonUtils.allNotEmpty(userHeaders, mockHeaders)) {
             final List<AbstractMapTransformer> transformers = requestsFromDb.getHeaders().getTransformers();
             userHeaders = applyTransformers(userHeaders, transformers);
-            printHeadersDebugInfo(userHeaders, mockHeaders);
+
+            ComparatorLogger.printHeaders(userHeaders, mockHeaders);
 
             return CommonUtils.containsAll(userHeaders, mockHeaders);
         }
 
         return true;
-    }
-
-    private Set<Pair> applyTransformers(Set<Pair> pairsToBeTransformed, final List<AbstractMapTransformer> transformers) {
-        if (!CollectionUtils.isEmpty(transformers)) {
-            for (final AbstractMapTransformer transformer : transformers) {
-                final Set<Pair> transformedPairs = new TreeSet<>();
-                pairsToBeTransformed.forEach((pair) -> transformedPairs.add(transformPairAndGet(transformer, pair)));
-                pairsToBeTransformed = transformedPairs;
-            }
-        }
-        return pairsToBeTransformed;
-    }
-
-    private Pair transformPairAndGet(final AbstractMapTransformer transformer, final Pair pair) {
-        if (pair.getKey().equals(transformer.getKey()) && !StringUtils.isEmpty(pair.getValue())) {
-            return new Pair(pair.getKey(), transformer.transform(pair.getValue()));
-        }
-        return pair;
     }
 
     /**
@@ -138,13 +123,14 @@ public class RequestComparator {
      * @return
      */
     private boolean compareBodies() {
-        String checksumFromClient;
-        if (isMethodWithBody(requestFromClient)) {
+        final String checksumFromClient;
+
+        if (isHttpMethodWithBody(requestFromClient)) {
             checksumFromClient = transformBodyAndGetChecksum();
         } else {
             // For other methods we only compare checksums
             checksumFromClient = CommonUtils.generateCheckSum(requestFromClient);
-            printChecksumDebugInfo(checksumFromClient);
+            ComparatorLogger.printChecksums(checksumFromClient, requestsFromDb.getCheckSum());
         }
 
         if (checksumFromClient.equals(requestsFromDb.getCheckSum())) {
@@ -155,60 +141,81 @@ public class RequestComparator {
         return false;
     }
 
+    private Set<Pair> applyTransformers(final Set<Pair> pairsToBeTransformed, final List<AbstractMapTransformer> transformers) {
+        if (!CollectionUtils.isEmpty(transformers)) {
+            final Set<Pair> resultSet = Sets.newHashSet();
+            pairsToBeTransformed.forEach(pair -> resultSet.add(transformAndGet(pair, transformers)));
+            return resultSet;
+        }
+        return pairsToBeTransformed;
+    }
+
+    private Pair transformAndGet(final Pair pair, final List<AbstractMapTransformer> transformers) {
+        String transformedValue = pair.getValue();
+        for (final AbstractMapTransformer transformer : transformers) {
+            if (pair.getKey().equals(transformer.getKey()) && !StringUtils.isEmpty(pair.getValue())) {
+                transformedValue = transformer.transform(pair.getValue());
+            }
+        }
+        return new Pair(pair.getKey(), transformedValue);
+    }
+
     private String transformBodyAndGetChecksum() {
-        String checksumFromClient = "";
         String bodyFromClient = requestFromClient.getBody().getValue();
 
-        if (!StringUtils.isEmpty(bodyFromClient)) {
-            final List<AbstractTransformer> transformers = requestsFromDb.getBody().getTransformers();
-            if (!CollectionUtils.isEmpty(transformers)) {
-                for (Transformer transformer : transformers) {
-                    bodyFromClient = transformer.transform(bodyFromClient);
-                }
-            }
-
-            printRequestBodyDebugInfo(bodyFromClient);
-            checksumFromClient = CommonUtils.generateCheckSum(bodyFromClient);
-            printChecksumDebugInfo(checksumFromClient);
+        if (StringUtils.isEmpty(bodyFromClient)) {
+            return "";
         }
-        return checksumFromClient;
+
+        final List<AbstractTransformer> transformers = requestsFromDb.getBody().getTransformers();
+        if (!CollectionUtils.isEmpty(transformers)) {
+            for (Transformer transformer : transformers) {
+                bodyFromClient = transformer.transform(bodyFromClient);
+            }
+        }
+
+        ComparatorLogger.printRequestBodies(bodyFromClient, requestsFromDb.getBody().getValue());
+
+        final String checksum = CommonUtils.generateCheckSum(bodyFromClient);
+        ComparatorLogger.printChecksums(checksum, requestsFromDb.getCheckSum());
+        return checksum;
     }
 
-    private void printDebugInfo(final String type, final String clientData, final String dbData) {
-        LOG.debug(type + ": client - " + clientData + " | db - " + dbData);
-    }
-
-    private void printPathDebugInfo(final String path) {
-        printDebugInfo("PATHS", path, requestsFromDb.getPath().getValue());
-    }
-
-    private void printParametersDebugInfo(final Set<Pair> paramsFromClient, final Set<Pair> paramsFromDb) {
-        printDebugInfo("PARAMETERS", paramsFromClient.toString(), paramsFromDb.toString());
-    }
-
-    private void printHeadersDebugInfo(final Set<Pair> headersFromClient, final Set<Pair> headersFromDb) {
-        printDebugInfo("HEADERS", headersFromClient.toString(), headersFromDb.toString());
-    }
-
-    private void printRequestBodyDebugInfo(String bodyFromClient) {
-        printDebugInfo("BODIES", bodyFromClient, requestsFromDb.getBody().getValue());
-    }
-
-    private void printChecksumDebugInfo(String checksumFromClient) {
-        printDebugInfo("CHECKSUMS", checksumFromClient, requestsFromDb.getCheckSum());
-    }
-
-    private Set<Pair> extractParamsSafely(AbstractRequest request) {
-        final Parameters params = Optional.ofNullable(request.getParameters()).orElse(new Parameters());
-        return Optional.ofNullable(params.getValues()).orElse(new HashSet<>());
-    }
-
-    private Set<Pair> extractHeadersSafely(AbstractRequest request) {
-        final Headers headers = Optional.ofNullable(request.getHeaders()).orElse(new Headers());
-        return Optional.ofNullable(headers.getValues()).orElse(new HashSet<>());
-    }
-
-    private boolean isMethodWithBody(AbstractRequest request) {
+    private boolean isHttpMethodWithBody(AbstractRequest request) {
         return request.getMethod() != null && (request.getMethod().equals(RequestMethod.POST) || request.getMethod().equals(RequestMethod.PUT));
+    }
+
+
+    private final static class ComparatorLogger {
+
+        public static final String PATHS_TITLE = "PATHS";
+        public static final String PARAMETERS_TITLE = "PARAMETERS";
+        public static final String HEADERS_TITLE = "HEADERS";
+        public static final String BODIES_TITLE = "BODIES";
+        public static final String CHECKSUMS_TITLE = "CHECKSUMS";
+
+        static void print(final String type, final String clientData, final String dbData) {
+            LOG.debug(String.format("%s: client - %s | db - %s", type, clientData, dbData));
+        }
+
+        static void printPaths(final String pathFromClient, final String pathFromDb) {
+            print(PATHS_TITLE, pathFromClient, pathFromDb);
+        }
+
+        static void printParameters(final Set<Pair> paramsFromClient, final Set<Pair> paramsFromDb) {
+            print(PARAMETERS_TITLE, paramsFromClient.toString(), paramsFromDb.toString());
+        }
+
+        static void printHeaders(final Set<Pair> headersFromClient, final Set<Pair> headersFromDb) {
+            print(HEADERS_TITLE, headersFromClient.toString(), headersFromDb.toString());
+        }
+
+        static void printRequestBodies(final String bodyFromClient, final String bodyFromDb) {
+            print(BODIES_TITLE, bodyFromClient, bodyFromDb);
+        }
+
+        static void printChecksums(final String checksumFromClient, final String checksumFromDb) {
+            print(CHECKSUMS_TITLE, checksumFromClient, checksumFromDb);
+        }
     }
 }

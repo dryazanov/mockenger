@@ -42,7 +42,7 @@ public class ProjectService {
     }
 
     public synchronized long getNextSequenceValue(String projectId) {
-        Project project = projectEntityRepository.findOne(projectId);
+        final Project project = projectEntityRepository.findOne(projectId);
         long sequenceValue = project.getSequence();
         project.setSequence(++sequenceValue);
         projectEntityRepository.save(project);

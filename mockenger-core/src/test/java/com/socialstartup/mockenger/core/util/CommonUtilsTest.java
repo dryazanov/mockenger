@@ -220,19 +220,28 @@ public class CommonUtilsTest {
 
         for (int num : numbers) {
             switch (num) {
-                case 0: builder.add(getPair(KEY, VALUE));
-                    continue;
+                case 0:
+                    builder.add(getPair(KEY, VALUE));
+                break;
 
-                case 1: builder.add(getPair(KEY1, VALUE1));
-                    continue;
+                case 1:
+                    builder.add(getPair(KEY1, VALUE1));
+                break;
 
-                case 2: builder.add(getPair(KEY2, VALUE2));
-                    continue;
+                case 2:
+                    builder.add(getPair(KEY2, VALUE2));
+                break;
 
-                case 3: builder.add(getPair(KEY3, VALUE3));
-                    continue;
+                case 3:
+                    builder.add(getPair(KEY3, VALUE3));
+                break;
 
-                case 4: builder.add(getPair(KEY4, VALUE4));
+                case 4:
+                    builder.add(getPair(KEY4, VALUE4));
+                break;
+
+                default:
+                    throw new IllegalArgumentException();
             }
         }
 
@@ -244,19 +253,28 @@ public class CommonUtilsTest {
 
         for (int num : numbers) {
             switch (num) {
-                case 0: builder.put(KEY, VALUE);
-                    continue;
+                case 0:
+                    builder.put(KEY, VALUE);
+                break;
 
-                case 1: builder.put(KEY1, VALUE1);
-                    continue;
+                case 1:
+                    builder.put(KEY1, VALUE1);
+                break;
 
-                case 2: builder.put(KEY2, VALUE2);
-                    continue;
+                case 2:
+                    builder.put(KEY2, VALUE2);
+                break;
 
-                case 3: builder.put(KEY3, VALUE3);
-                    continue;
+                case 3:
+                    builder.put(KEY3, VALUE3);
+                break;
 
-                case 4: builder.put(KEY4, VALUE4);
+                case 4:
+                    builder.put(KEY4, VALUE4);
+                break;
+
+                default:
+                    throw new IllegalArgumentException();
             }
         }
 
