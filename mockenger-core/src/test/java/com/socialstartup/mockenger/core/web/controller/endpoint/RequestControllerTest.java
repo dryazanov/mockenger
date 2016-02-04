@@ -48,8 +48,8 @@ public class RequestControllerTest extends AbstractControllerTest {
     private AbstractRequest request;
 
     @Before
-    public void setup() {
-        super.setup();
+    public void setUp() {
+        super.setUp();
 
         project = createProject(true);
         group = createGroup();
@@ -319,9 +319,9 @@ public class RequestControllerTest extends AbstractControllerTest {
 
             // Wrong unique code (for save request only)
             String uniqueWrongCode = "WRONG-1";
-            request = getNewRequest(group.getId());
-            request.setUniqueCode(uniqueWrongCode);
-            runner.run(mockMvc, project.getId(), group.getId(), request, String.format("Cannot find MockRequest with ID '%s' and unique code '%s'", request.getId(), uniqueWrongCode));
+            AbstractRequest request1 = getNewRequest(group.getId());
+            request1.setUniqueCode(uniqueWrongCode);
+            runner.run(mockMvc, project.getId(), group.getId(), request1, String.format("Cannot find MockRequest with ID '%s' and unique code '%s'", request1.getId(), uniqueWrongCode));
         }
     }
 

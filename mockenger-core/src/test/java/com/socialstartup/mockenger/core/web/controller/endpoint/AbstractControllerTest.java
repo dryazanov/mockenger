@@ -90,7 +90,7 @@ public class AbstractControllerTest {
 
     
     @Before
-    public void setup() {
+    public void setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
     }
 
