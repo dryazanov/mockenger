@@ -28,7 +28,7 @@ public class HttpHeadersService {
      * @return object HttpHeaders with default headers inside
      */
     public HttpHeaders getDefaultHeaders() {
-        HttpHeaders headers = new HttpHeaders();
+        final HttpHeaders headers = new HttpHeaders();
 
         // Default content-type
         headers.set(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_JSON);
@@ -42,7 +42,7 @@ public class HttpHeadersService {
      * @return object HttpHeaders with added headers
      */
     public HttpHeaders createHeaders(Collection<Pair> headerList) {
-        HttpHeaders headers = getDefaultHeaders();
+        final HttpHeaders headers = getDefaultHeaders();
 
         headerList.forEach(pair -> {
             if (!headersToIgnore.contains(pair.getKey().toLowerCase())) {

@@ -5,12 +5,11 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -20,52 +19,43 @@ import java.util.UUID;
  */
 public class CommonUtils {
 
-    private final static Logger LOG = LoggerFactory.getLogger(CommonUtils.class);
-
     public static String generateUniqueId() {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
-    public static String getCheckSum(AbstractRequest abstractRequest) {
-        if (abstractRequest.getBody() != null && abstractRequest.getBody().getValue() != null) {
-            String bodyValue = abstractRequest.getBody().getValue();
-
-            if (!StringUtils.isEmpty(bodyValue)) {
-                return DigestUtils.md5DigestAsHex(bodyValue.getBytes(Charsets.UTF_8));
-            }
+    public static String getCheckSum(final AbstractRequest abstractRequest) {
+        if (abstractRequest.getBody() != null && !StringUtils.isEmpty(abstractRequest.getBody().getValue())) {
+            return generateCheckSum(abstractRequest.getBody().getValue());
         }
 
         return CommonUtils.generateCheckSum(abstractRequest);
     }
 
 
-    public static String generateCheckSum(AbstractRequest abstractRequest) {
-        StringBuilder sb = new StringBuilder();
-
-        if (abstractRequest.getPath() != null && abstractRequest.getPath().getValue() != null) {
-            sb.append(abstractRequest.getPath().getValue());
-        }
-        if (abstractRequest.getParameters() != null && abstractRequest.getParameters().getValues() != null) {
-            for (Pair pair : abstractRequest.getParameters().getValues()) {
-                sb.append(pair.getKey()).append(pair.getValue());
-            }
-        }
-
-        sb.append(abstractRequest.getMethod());
-        return DigestUtils.md5DigestAsHex(sb.toString().getBytes(Charsets.UTF_8));
+    public static String generateCheckSum(final AbstractRequest abstractRequest) {
+        final StringBuilder sb = new StringBuilder(abstractRequest.getPath().getValue());
+        abstractRequest.getParameters().getValues().forEach(pair -> sb.append(pair.getKey()).append(pair.getValue()));
+        return generateCheckSum(sb.append(abstractRequest.getMethod()).toString());
     }
 
 
-    public static String generateCheckSum(String ... args) {
-        StringBuilder sb = new StringBuilder();
+    public static String generateCheckSum(final String ... args) {
+        final StringBuilder sb = new StringBuilder();
 
-        for (String argument : args) {
+        for (final String argument : args) {
             if (!StringUtils.isEmpty(argument)) {
                 sb.append(argument);
             }
         }
 
-        return DigestUtils.md5DigestAsHex(sb.toString().getBytes(Charsets.UTF_8));
+        return generateCheckSum(sb.toString());
+    }
+
+    public static String generateCheckSum(final String source) {
+        if (source == null) {
+            return "";
+        }
+        return DigestUtils.md5DigestAsHex(source.toString().getBytes(Charsets.UTF_8));
     }
 
 
@@ -76,8 +66,8 @@ public class CommonUtils {
      * @return
      */
     @SafeVarargs
-    public static boolean allEmpty(Map<String, String>... parameters) {
-        for (Map<String, String> map : parameters) {
+    public static boolean allEmpty(final Map<String, String>... parameters) {
+        for (final Map<String, String> map : parameters) {
             if (!CollectionUtils.isEmpty(map)) {
                 return false;
             }
@@ -93,8 +83,8 @@ public class CommonUtils {
      * @return
      */
     @SafeVarargs
-    public static boolean allNotEmpty(Map<String, String>... parameters) {
-        for (Map<String, String> map : parameters) {
+    public static boolean allNotEmpty(final Map<String, String>... parameters) {
+        for (final Map<String, String> map : parameters) {
             if (CollectionUtils.isEmpty(map)) {
                 return false;
             }
@@ -109,8 +99,8 @@ public class CommonUtils {
      * @param parameters
      * @return
      */
-    public static boolean allNotEmpty(Set<Pair>... parameters) {
-        for (Set<Pair> set : parameters) {
+    public static boolean allNotEmpty(final Set<Pair>... parameters) {
+        for (final Set<Pair> set : parameters) {
             if (CollectionUtils.isEmpty(set)) {
                 return false;
             }
@@ -126,7 +116,7 @@ public class CommonUtils {
      * @param map2
      * @return
      */
-    public static boolean containsAll(Map<String, String> map1, Map<String, String> map2) {
+    public static boolean containsAll(final Map<String, String> map1, final Map<String, String> map2) {
         return map1.entrySet().containsAll(map2.entrySet());
     }
 
@@ -138,7 +128,7 @@ public class CommonUtils {
      * @param set2
      * @return
      */
-    public static boolean containsAll(Set<Pair> set1, Set<Pair> set2) {
+    public static boolean containsAll(final Set<Pair> set1, final Set<Pair> set2) {
         return set1.containsAll(set2);
     }
 
@@ -150,7 +140,7 @@ public class CommonUtils {
      * @param map2
      * @return
      */
-    public static boolean containsEqualEntries(Map<String, String> map1, Map<String, String> map2) {
+    public static boolean containsEqualEntries(final Map<String, String> map1, final Map<String, String> map2) {
         if (map1 == null || map2 == null) {
             return false;
         }
@@ -164,7 +154,7 @@ public class CommonUtils {
      * @param set2
      * @return
      */
-    public static boolean containsEqualEntries(Set<Pair> set1, Set<Pair> set2) {
+    public static boolean containsEqualEntries(final Set<Pair> set1, final Set<Pair> set2) {
         if (set1 == null || set2 == null) {
             return false;
         }

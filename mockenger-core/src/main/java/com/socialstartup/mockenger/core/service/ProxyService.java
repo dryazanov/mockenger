@@ -40,15 +40,15 @@ public class ProxyService {
      * @param baseHost Host name where request will be forwarded
      * @return
      */
-    public AbstractRequest forwardRequest(AbstractRequest mockRequest, String baseHost) {
-        HttpClient client = HttpClientBuilder.create().build();
-        HttpUriRequest httpUriRequest = createHttpRequest(mockRequest, baseHost);
+    public AbstractRequest forwardRequest(final AbstractRequest mockRequest, final String baseHost) {
+        final HttpClient client = HttpClientBuilder.create().build();
+        final HttpUriRequest httpUriRequest = createHttpRequest(mockRequest, baseHost);
 
         try {
             // SEND REQUEST
-            HttpResponse response = client.execute(httpUriRequest);
+            final HttpResponse response = client.execute(httpUriRequest);
+            final MockResponse mockResponse;
 
-            MockResponse mockResponse;
             if (mockRequest.getMockResponse() == null) {
                 mockResponse = new MockResponse();
                 mockResponse.setHeaders(new HashSet<>());
@@ -61,7 +61,10 @@ public class ProxyService {
             mockResponse.setHttpStatus(response.getStatusLine() != null ? response.getStatusLine().getStatusCode() : DEFAULT_RESPONSE_HTTP_STATUS);
 
             // Set response headers
-            Stream.of(response.getAllHeaders()).forEach(header -> mockResponse.getHeaders().add(new Pair(header.getName(), header.getValue())));
+            Stream.of(response.getAllHeaders()).forEach(header -> {
+                final Pair pair = new Pair(header.getName(), header.getValue());
+                mockResponse.getHeaders().add(pair);
+            });
 
             // Set response body
             if (response.getEntity() != null && response.getEntity().getContent() != null) {
@@ -79,26 +82,25 @@ public class ProxyService {
      *
      * @return
      */
-    private HttpUriRequest createHttpRequest(AbstractRequest mockRequest, String baseHost) {
+    private HttpUriRequest createHttpRequest(final AbstractRequest mockRequest, final String baseHost) {
         if (mockRequest == null || baseHost == null) {
             throw new IllegalArgumentException();
         }
 
-        StringBuilder sb = new StringBuilder(baseHost);
-        if (mockRequest.getPath() != null && mockRequest.getPath().getValue() != null) {
+        final StringBuilder sb = new StringBuilder(baseHost);
+        if (mockRequest.getPath() != null) {
             sb.append(mockRequest.getPath().getValue());
         }
 
-        RequestBuilder requestBuilder = RequestBuilder.create(mockRequest.getMethod().name());
+        final RequestBuilder requestBuilder = RequestBuilder.create(mockRequest.getMethod().name());
         requestBuilder.setUri(sb.toString());
 
-        // Set request parameters
-        if (mockRequest.getParameters() != null && mockRequest.getParameters().getValues() != null) {
-            mockRequest.getParameters().getValues().forEach( pair -> requestBuilder.addParameter(pair.getKey(), pair.getValue()) );
+        if (mockRequest.getParameters() != null) {
+            mockRequest.getParameters().getValues().forEach(pair -> requestBuilder.addParameter(pair.getKey(), pair.getValue()));
         }
 
         // Set request headers (excl. headers from black-list)
-        if (mockRequest.getHeaders() != null && mockRequest.getHeaders().getValues() != null) {
+        if (mockRequest.getHeaders() != null) {
             mockRequest.getHeaders().getValues().forEach(pair -> {
                 if (!headersToIgnore.contains(pair.getKey())) {
                     requestBuilder.addHeader(pair.getKey(), pair.getValue());
