@@ -32,14 +32,25 @@ public class Pair implements Comparable<Pair> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+            return true;
+        }
         if (o instanceof Pair) {
-            Pair pair = (Pair) o;
-            if (key != null ? !key.equals(pair.key) : pair.key != null) return false;
-            if (value != null ? !value.equals(pair.value) : pair.value != null) return false;
+            final Pair pair = (Pair) o;
+            if (isKeyEqual(pair.key) || isValueEqual(pair.value)) {
+                return false;
+            }
             return true;
         }
         return false;
+    }
+
+    private boolean isKeyEqual(final String pairKey) {
+        return (key != null ? !key.equals(pairKey) : pairKey != null);
+    }
+
+    private boolean isValueEqual(final String pairValue) {
+        return (value != null ? !value.equals(pairValue) : pairValue != null);
     }
 
     @Override

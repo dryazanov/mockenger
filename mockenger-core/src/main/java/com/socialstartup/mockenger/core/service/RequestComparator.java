@@ -194,27 +194,27 @@ public class RequestComparator {
         public static final String BODIES_TITLE = "BODIES";
         public static final String CHECKSUMS_TITLE = "CHECKSUMS";
 
-        static void print(final String type, final String clientData, final String dbData) {
+        private static void print(final String type, final String clientData, final String dbData) {
             LOG.debug(String.format("%s: client - %s | db - %s", type, clientData, dbData));
         }
 
-        static void printPaths(final String pathFromClient, final String pathFromDb) {
+        private static void printPaths(final String pathFromClient, final String pathFromDb) {
             print(PATHS_TITLE, pathFromClient, pathFromDb);
         }
 
-        static void printParameters(final Set<Pair> paramsFromClient, final Set<Pair> paramsFromDb) {
+        private static void printParameters(final Set<Pair> paramsFromClient, final Set<Pair> paramsFromDb) {
             print(PARAMETERS_TITLE, paramsFromClient.toString(), paramsFromDb.toString());
         }
 
-        static void printHeaders(final Set<Pair> headersFromClient, final Set<Pair> headersFromDb) {
+        private static void printHeaders(final Set<Pair> headersFromClient, final Set<Pair> headersFromDb) {
             print(HEADERS_TITLE, headersFromClient.toString(), headersFromDb.toString());
         }
 
-        static void printRequestBodies(final String bodyFromClient, final String bodyFromDb) {
+        private static void printRequestBodies(final String bodyFromClient, final String bodyFromDb) {
             print(BODIES_TITLE, bodyFromClient, bodyFromDb);
         }
 
-        static void printChecksums(final String checksumFromClient, final String checksumFromDb) {
+        private static void printChecksums(final String checksumFromClient, final String checksumFromDb) {
             print(CHECKSUMS_TITLE, checksumFromClient, checksumFromDb);
         }
     }

@@ -24,9 +24,10 @@ public class PostService extends RequestService {
      * @param request
      * @return
      */
-    public PostRequest createMockRequest(String groupId, String soapBody, HttpServletRequest request) {
-        Body body = new Body(soapBody);
-        return (PostRequest) fillUpEntity(new PostRequest(body), groupId, request);
+    public PostRequest createMockRequest(final String groupId, final String soapBody, final HttpServletRequest request) {
+        final Body body = new Body(soapBody);
+        final PostRequest postRequest = new PostRequest(body);
+        return (PostRequest) fillUpEntity(postRequest, groupId, request);
     }
 
     /**
@@ -37,9 +38,8 @@ public class PostService extends RequestService {
      * @throws TransformerException
      * @throws IOException
      */
-    public String getSoapBody(String requestBody) throws SOAPException, TransformerException, IOException {
-        requestBody = prepareRequestXmlBody(requestBody);
-        SOAPMessage soapMessage = XmlHelper.stringToXmlConverter(requestBody);
+    public String getSoapBody(final String requestBody) throws SOAPException, TransformerException, IOException {
+        final SOAPMessage soapMessage = XmlHelper.stringToXmlConverter(prepareRequestXmlBody(requestBody));
         return XmlHelper.xmlToStringConverter(soapMessage.getSOAPBody(), true);
     }
 }

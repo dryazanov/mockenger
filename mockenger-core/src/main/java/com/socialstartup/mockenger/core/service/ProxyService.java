@@ -40,7 +40,7 @@ public class ProxyService {
      * @param baseHost Host name where request will be forwarded
      * @return
      */
-    public AbstractRequest forwardRequest(final AbstractRequest mockRequest, final String baseHost) {
+    public MockResponse forwardRequest(final AbstractRequest mockRequest, final String baseHost) {
         final HttpClient client = HttpClientBuilder.create().build();
         final HttpUriRequest httpUriRequest = createHttpRequest(mockRequest, baseHost);
 
@@ -71,11 +71,12 @@ public class ProxyService {
                 String responseBody = IOUtils.toString(response.getEntity().getContent());
                 mockResponse.setBody(responseBody);
             }
+
+            return mockResponse;
         } catch (IOException e) {
             LOG.error(String.format("Forwarding process failed for request '%s' with path '%s'", mockRequest.getName(), mockRequest.getPath().getValue()), e);
         }
-
-        return mockRequest;
+        return new MockResponse();
     }
 
     /**
