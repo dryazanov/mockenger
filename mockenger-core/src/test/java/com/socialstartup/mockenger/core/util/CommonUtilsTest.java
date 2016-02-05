@@ -192,7 +192,8 @@ public class CommonUtilsTest {
 
     @Test
     public void testEqualEntriesMapWithNull() {
-        Map<String, String> map1 = null, map2 = null;
+        Map<String, String> map1 = null;
+        Map<String, String> map2 = null;
         assertFalse(CommonUtils.containsEqualEntries(map1, map2));
         assertFalse(CommonUtils.containsEqualEntries(map1, newMap(1)));
         assertFalse(CommonUtils.containsEqualEntries(newMap(1), map2));
@@ -205,7 +206,8 @@ public class CommonUtilsTest {
 
     @Test
     public void testEqualEntriesSetWithNull() {
-        Set<Pair> set1 = null, set2 = null;
+        Set<Pair> set1 = null;
+        Set<Pair> set2 = null;
         assertFalse(CommonUtils.containsEqualEntries(set1, set2));
         assertFalse(CommonUtils.containsEqualEntries(set1, newSet(1)));
         assertFalse(CommonUtils.containsEqualEntries(newSet(1), set2));
