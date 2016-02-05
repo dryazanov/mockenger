@@ -33,11 +33,13 @@ public class CORSFilter implements Filter {
 
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {}
+    public void init(FilterConfig filterConfig) throws ServletException {
+        // Nothing to do
+    }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
+    public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
+        final HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, ALLOW_ORIGIN);
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, StringUtils.arrayToCommaDelimitedString(RequestMethod.values()));
@@ -52,5 +54,7 @@ public class CORSFilter implements Filter {
     }
 
     @Override
-    public void destroy() {}
+    public void destroy() {
+        // Nothing to do
+    }
 }

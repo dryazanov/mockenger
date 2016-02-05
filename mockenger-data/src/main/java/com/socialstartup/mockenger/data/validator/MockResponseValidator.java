@@ -19,12 +19,10 @@ public class MockResponseValidator implements ConstraintValidator<MockResponseVa
 
     @Override
     public boolean isValid(MockResponse mockResponse, ConstraintValidatorContext context) {
-        if (mockResponse != null) {
-            if (mockResponse.getHttpStatus() <= 0) {
-                context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate(MSG).addConstraintViolation();
-                return false;
-            }
+        if (mockResponse != null && mockResponse.getHttpStatus() <= 0) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate(MSG).addConstraintViolation();
+            return false;
         }
         return true;
     }
