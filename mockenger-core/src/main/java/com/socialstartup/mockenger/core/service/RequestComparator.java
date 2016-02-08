@@ -14,6 +14,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Created by Dmitry Ryazanov on 27/01/2016.
@@ -151,13 +152,10 @@ public class RequestComparator {
     }
 
     private Pair transformAndGet(final Pair pair, final List<AbstractMapTransformer> transformers) {
-        String transformedValue = pair.getValue();
-        for (final AbstractMapTransformer transformer : transformers) {
-            if (pair.getKey().equals(transformer.getKey()) && !StringUtils.isEmpty(pair.getValue())) {
-                transformedValue = transformer.transform(pair.getValue());
-            }
-        }
-        return new Pair(pair.getKey(), transformedValue);
+        return new Pair(pair.getKey(), transformers.stream()
+                .map(t -> t.transform(pair.getValue()))
+                .findFirst()
+                .orElse(pair.getValue()));
     }
 
     private String transformBodyAndGetChecksum() {
@@ -169,9 +167,10 @@ public class RequestComparator {
 
         final List<AbstractTransformer> transformers = requestsFromDb.getBody().getTransformers();
         if (!CollectionUtils.isEmpty(transformers)) {
-            for (Transformer transformer : transformers) {
-                bodyFromClient = transformer.transform(bodyFromClient);
-            }
+            bodyFromClient = transformers.stream()
+                    .map(t -> t.transform(requestFromClient.getBody().getValue()))
+                    .findFirst()
+                    .orElse(bodyFromClient);
         }
 
         ComparatorLogger.printRequestBodies(bodyFromClient, requestsFromDb.getBody().getValue());
