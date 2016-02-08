@@ -8,9 +8,8 @@ angular.module('mockengerClientMainApp')
         'groupListService',
         'requestService',
         'requestListService',
-        'valuesetService',
 
-        function ($scope, $confirm, projectListService, groupListService, requestService, requestListService, valuesetService) {
+        function ($scope, $confirm, projectListService, groupListService, requestService, requestListService) {
             var REGEXP = 'REGEXP';
             var KEY_VALUE = 'KEY_VALUE';
             var XPATH = 'XPATH';
@@ -33,7 +32,7 @@ angular.module('mockengerClientMainApp')
             }
 
             var isMethodWithBody = function(method) {
-                return ((method == 'POST' || method == 'PUT' || method == 'PATCH') ? true : false);
+                return (method === 'POST' || method === 'PUT' || method === 'PATCH');
             }
 
             $scope.selectMethod = function(method) {
@@ -136,17 +135,32 @@ angular.module('mockengerClientMainApp')
                 });
             }
 
-            $scope.saveRequest = function(request) {
-                if (request.name == null || request.name == '') {
+            var isNameOk = function(name) {
+                if (name == null || name === '') {
                     $scope.showRedMessage({data: {errors: new Array('Field <b>Name</b> is required')}});
-                    return;
+                    return false;
                 }
-                if (request.mockResponse == null || request.mockResponse.httpStatus == null || request.mockResponse.httpStatus == '') {
+                return true;
+            }
+
+            var isResponseDataOk = function(mockResponse) {
+                if (mockResponse == null || mockResponse.httpStatus == null || mockResponse.httpStatus === '') {
                     $scope.showRedMessage({data: {errors: new Array('Field <b>HTTP status code</b> is required')}});
-                    return;
+                    return false;
                 }
-                if (request.method == null || request.method == undefined) {
+                return true;
+            }
+
+            var isHttpMethodOk = function(method) {
+                if (method == null || method === undefined) {
                     $scope.showRedMessage({data: {errors: new Array('<b>Method</b> may not be null or empty')}});
+                    return false;
+                }
+                return true;
+            }
+
+            $scope.saveRequest = function(request) {
+                if (!isNameOk(request.name) || !isResponseDataOk(request.mockResponse) || !isHttpMethodOk(request.method)) {
                     return;
                 }
                 if (!isMethodWithBody(request.method)) {
@@ -159,7 +173,7 @@ angular.module('mockengerClientMainApp')
                 }
                 if (request.id != null) {
                     requestParams['requestId'] = request.id;
-                    requestService.ajax.update(requestParams, request, function(response) {
+                    requestService.ajax.update(requestParams, request, function() {
                         $scope.showGreenMessage('Mock-request <b>' + request.name + '</b> successfully updated');
                     }, function(errorResponse) {
                         $scope.showRedMessage(errorResponse);
@@ -199,7 +213,7 @@ angular.module('mockengerClientMainApp')
 
             $scope.prevRequest = function() {
                 requestListService.filteredDataCurrentIndex--;
-                requestListService.setCurrent(requestListService.getFilteredData()[requestListService.filteredDataCurrentIndex])
+                requestListService.setCurrent(requestListService.getFilteredData()[requestListService.filteredDataCurrentIndex]);
             }
 
             $scope.isRequestTabDisabled = function() {

@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('mockengerClientComponents')
-    .controller('rootController', ['$rootScope', '$scope', '$http', '$location', '$cookies', 'apiEndpointsService', 'ngToast', 'ENV', 'SECURITY', 'APP_VERSION', 'BUILD_DATE',
-        function ($rootScope, $scope, $http, $location, $cookies, apiEndpointsService, ngToast, ENV, SECURITY, APP_VERSION, BUILD_DATE) {
+    .controller('rootController', ['$rootScope', '$scope', '$http', '$location', 'ngToast', 'ENV', 'SECURITY', 'APP_VERSION', 'BUILD_DATE',
+        function ($rootScope, $scope, $http, $location, ngToast, ENV, SECURITY, APP_VERSION, BUILD_DATE) {
 
             $scope.app = {
                 env: ENV,
@@ -46,14 +46,14 @@ angular.module('mockengerClientComponents')
 
             $scope.isAdmin = function(role) {
                 if (SECURITY) {
-                    return (role == 'ADMIN' ? true : false);
+                    return (role === 'ADMIN');
                 }
                 return true;
             }
 
             $scope.isManagerOrAdmin = function(role) {
                 if (SECURITY) {
-                    return (role == 'MANAGER' || $scope.isAdmin(role) ? true : false);
+                    return (role === 'MANAGER' || $scope.isAdmin(role));
                 }
                 return true;
             }
@@ -73,13 +73,7 @@ angular.module('mockengerClientComponents')
             $scope.showRedMessage = function(error) {
                 if (error != null && error.data != null) {
                     if (error.data.errors != null && error.data.errors.length > 0) {
-                        for (var i = 0, l = error.data.errors.length; i < l; i++) {
-                            ngToast.create({
-                                className: 'danger',
-                                dismissOnTimeout: false,
-                                content: error.data.errors[i]
-                            });
-                        }
+                        $scope.showErrorsFromList(error.data.errors);
                     } else if (error.data.error != null) {
                         var errorMessage = null;
                         if (error.data.error_description != null) {
@@ -106,6 +100,16 @@ angular.module('mockengerClientComponents')
                             });
                         }
                     }
+                }
+            }
+
+            $scope.showErrorsFromList = function(errors) {
+                for (var i = 0, l = errors.length; i < l; i++) {
+                    ngToast.create({
+                        className: 'danger',
+                        dismissOnTimeout: false,
+                        content: errors[i]
+                    });
                 }
             }
         }
