@@ -136,7 +136,7 @@ angular.module('mockengerClientMainApp')
             }
 
             var isNameOk = function(name) {
-                if (name == null || name === '') {
+                if (!name) {
                     $scope.showRedMessage({data: {errors: new Array('Field <b>Name</b> is required')}});
                     return false;
                 }
@@ -144,7 +144,7 @@ angular.module('mockengerClientMainApp')
             }
 
             var isResponseDataOk = function(mockResponse) {
-                if (mockResponse == null || mockResponse.httpStatus == null || mockResponse.httpStatus === '') {
+                if (!mockResponse || !mockResponse.httpStatus) {
                     $scope.showRedMessage({data: {errors: new Array('Field <b>HTTP status code</b> is required')}});
                     return false;
                 }
@@ -152,7 +152,7 @@ angular.module('mockengerClientMainApp')
             }
 
             var isHttpMethodOk = function(method) {
-                if (method == null || method === undefined) {
+                if (!method) {
                     $scope.showRedMessage({data: {errors: new Array('<b>Method</b> may not be null or empty')}});
                     return false;
                 }

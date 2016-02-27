@@ -4,6 +4,7 @@ import com.socialstartup.mockenger.core.service.RequestService;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.PostRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Body;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.transform.TransformerException;
@@ -22,8 +23,11 @@ public class PostService extends RequestService {
      * @return
      * @throws IOException
      */
-    public PostRequest createMockRequestFromJson(String groupId, String requestBody, HttpServletRequest request) throws IOException {
-        return createRequest(groupId, prepareRequestJsonBody(requestBody), request);
+    public PostRequest createMockRequestFromJson(final String groupId, final String requestBody,
+                                                 final HttpServletRequest request) throws IOException {
+
+        final String preparedBody = (StringUtils.isEmpty(requestBody) ? "" : prepareRequestJsonBody(requestBody));
+        return createRequest(groupId, preparedBody, request);
     }
 
     /**
