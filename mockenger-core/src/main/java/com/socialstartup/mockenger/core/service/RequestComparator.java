@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Dmitry Ryazanov on 27/01/2016.
