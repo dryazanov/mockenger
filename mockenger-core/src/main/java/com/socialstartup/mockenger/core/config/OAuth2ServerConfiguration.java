@@ -48,15 +48,26 @@ public class OAuth2ServerConfiguration {
                 .authorizeRequests()
                 .antMatchers("/oauth/revoke").authenticated()
                 .antMatchers("/oauth/user").authenticated()
-                .antMatchers("/REST/**", "/SOAP/**", "/HTTP/**").hasAnyAuthority(RoleType.USER.name(),
-                    RoleType.MANAGER.name(), RoleType.ADMIN.name())
-                .antMatchers(HttpMethod.GET, "/projects/**", "/valueset/**").hasAnyAuthority(RoleType.USER.name(),
-                    RoleType.MANAGER.name(), RoleType.ADMIN.name())
-                .antMatchers(HttpMethod.DELETE, "/projects/**").hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
-                .antMatchers(HttpMethod.POST, "/projects/**").hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
-                .antMatchers(HttpMethod.PUT, "/projects/**").hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
-                .antMatchers(HttpMethod.GET, "/valueset/roles").hasAuthority(RoleType.ADMIN.name())
-                .antMatchers("/accounts/**").hasAnyAuthority(RoleType.ADMIN.name())
+                .antMatchers("/REST/**", "/SOAP/**", "/HTTP/**").anonymous()
+
+                .antMatchers(HttpMethod.GET, "/projects/**", "/valueset/**")
+                    .hasAnyAuthority(RoleType.USER.name(), RoleType.MANAGER.name(), RoleType.ADMIN.name())
+
+                .antMatchers(HttpMethod.DELETE, "/projects/**")
+                    .hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
+
+                .antMatchers(HttpMethod.POST, "/projects/**")
+                    .hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
+
+                .antMatchers(HttpMethod.PUT, "/projects/**")
+                    .hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
+
+                .antMatchers(HttpMethod.GET, "/valueset/roles")
+                    .hasAuthority(RoleType.ADMIN.name())
+
+                .antMatchers("/accounts/**")
+                    .hasAnyAuthority(RoleType.ADMIN.name())
+
                 .anyRequest().denyAll();
             // @formatter:on
         }
