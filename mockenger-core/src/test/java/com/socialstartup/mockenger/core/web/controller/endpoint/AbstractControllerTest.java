@@ -121,32 +121,34 @@ public class AbstractControllerTest {
         return createProject(false);
     }
 
-    protected Project createProject(boolean generateRandomProjectCode) {
-        return createProject(getNewProject(generateRandomProjectCode));
+    protected Project createProject(boolean useRandomCode) {
+        return createProject(getProjectBuilder(useRandomCode).build());
     }
 
-    protected Project createProject(Project project) {
-        this.projectService.save(project);
-        return project;
+    protected Project createProject(final Project project) {
+        return projectService.save(project);
     }
 
-    protected Project getNewProject() {
-        return getNewProject(false);
+    protected Project.ProjectBuilder getProjectBuilder() {
+        return getProjectBuilder(false);
     }
 
-    protected Project getNewProject(boolean generateRandomProjectCode) {
-        String id = CommonUtils.generateUniqueId();
-        String code = PROJECT_CODE_TEST + (generateRandomProjectCode ? "-" + id  : "");
-        Project project = new Project(PROJECT_NAME_TEST, code, ProjectType.HTTP);
-        project.setId(id);
-        return project;
+    protected Project.ProjectBuilder getProjectBuilder(final boolean useRandomCode) {
+        final String id = CommonUtils.generateUniqueId();
+        final String code = PROJECT_CODE_TEST + (useRandomCode ? "-" + id  : "");
+
+        return Project.builder()
+                .id(id)
+                .name(PROJECT_NAME_TEST)
+                .code(code)
+                .type(ProjectType.HTTP);
     }
 
     // ===============
     // GROUP HELPERS
     // ===============
 
-    protected Group getGroup(String groupId) {
+    protected Group getGroup(final String groupId) {
         return this.groupService.findById(groupId);
     }
 
@@ -161,38 +163,32 @@ public class AbstractControllerTest {
         }
     }
 
-    protected void deleteGroup(Group group) {
-        this.groupService.remove(group);
+    protected void deleteGroup(final Group group) {
+        groupService.remove(group);
     }
 
     protected Group createGroup() {
         return createGroup(true);
     }
 
-    protected Group createGroup(boolean recording) {
-        Group group = getNewGroup(recording);
-        this.groupService.save(group);
-        return group;
+    protected Group createGroup(final boolean recording) {
+        return groupService.save(
+                getGroupBuilder().recording(recording).build()
+        );
     }
 
-    protected Group createGroup(String projectId, boolean recording) {
-        Group group = getNewGroup(projectId, recording);
-        this.groupService.save(group);
-        return group;
+    protected Group createGroup(final String projectId, final boolean recording) {
+        return groupService.save(
+                getGroupBuilder().projectId(projectId).recording(recording).build()
+        );
     }
 
-    protected Group getNewGroup() {
-        return getNewGroup(true);
-    }
-
-    protected Group getNewGroup(boolean recording) {
-        return getNewGroup(PROJECT_ID, recording);
-    }
-
-    protected Group getNewGroup(String projectId, boolean recording) {
-        Group group = new Group(projectId, GROUP_NAME_TEST, recording);
-        group.setId(CommonUtils.generateUniqueId());
-        return group;
+    protected Group.GroupBuilder getGroupBuilder() {
+        return Group.builder()
+                .id(CommonUtils.generateUniqueId())
+                .projectId(PROJECT_ID)
+                .name(GROUP_NAME_TEST)
+                .recording(true);
     }
 
     // ===============

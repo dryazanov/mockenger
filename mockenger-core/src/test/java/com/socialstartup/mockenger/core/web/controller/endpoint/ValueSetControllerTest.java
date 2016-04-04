@@ -61,11 +61,10 @@ public class ValueSetControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetValuesetRequestMethodsByProjectIdOk() throws Exception {
-        Project project = getNewProject();
-        project.setType(ProjectType.REST);
-        project = createProject(project);
+        final Project project = createProject(getProjectBuilder().type(ProjectType.REST).build());
+        final ResultActions resultActions = this.mockMvc.perform(
+                get(REQUEST_METHODS_VALUESET).param("projectId", project.getId()));
 
-        ResultActions resultActions = this.mockMvc.perform(get(REQUEST_METHODS_VALUESET).param("projectId", project.getId()));
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.[0]").value(RequestMethod.GET.name()))
@@ -76,11 +75,10 @@ public class ValueSetControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetValuesetRequestMethodsByProjectId2Ok() throws Exception {
-        Project project = getNewProject();
-        project.setType(ProjectType.SOAP);
-        project = createProject(project);
+        final Project project = createProject(getProjectBuilder().type(ProjectType.SOAP).build());
+        final ResultActions resultActions = this.mockMvc.perform(
+                get(REQUEST_METHODS_VALUESET).param("projectId", project.getId()));
 
-        ResultActions resultActions = this.mockMvc.perform(get(REQUEST_METHODS_VALUESET).param("projectId", project.getId()));
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.[0]").value(RequestMethod.POST.name()));

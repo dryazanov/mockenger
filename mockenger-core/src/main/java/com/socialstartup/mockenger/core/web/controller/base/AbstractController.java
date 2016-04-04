@@ -14,8 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  *
@@ -68,14 +70,9 @@ public abstract class AbstractController {
      * @param projectId
      * @return
      */
-    protected Project findProjectById(String projectId) {
-        Project project = getProjectService().findById(projectId);
-
-        if (project == null) {
-            throw new ObjectNotFoundException("Project", projectId);
-        }
-
-        return project;
+    protected Project findProjectById(final String projectId) {
+        return Optional.ofNullable(getProjectService().findById(projectId))
+                .orElseThrow(() -> new ObjectNotFoundException("Project", projectId));
     }
 
     /**
@@ -83,14 +80,9 @@ public abstract class AbstractController {
      * @param groupId
      * @return
      */
-    protected Group findGroupById(String groupId) {
-        Group group = getGroupService().findById(groupId);
-
-        if (group == null) {
-            throw new ObjectNotFoundException("Group", groupId);
-        }
-
-        return group;
+    protected Group findGroupById(final String groupId) {
+        return Optional.ofNullable(getGroupService().findById(groupId))
+                .orElseThrow(() -> new ObjectNotFoundException("Group", groupId));
     }
 
     /**
@@ -98,14 +90,9 @@ public abstract class AbstractController {
      * @param requestId
      * @return
      */
-    protected AbstractRequest findRequestById(String requestId) {
-        AbstractRequest request = getRequestService().findById(requestId);
-
-        if (request == null) {
-            throw new ObjectNotFoundException("MockRequest", requestId);
-        }
-
-        return request;
+    protected AbstractRequest findRequestById(final String requestId) {
+        return Optional.ofNullable(getRequestService().findById(requestId))
+                .orElseThrow(() -> new ObjectNotFoundException("MockRequest", requestId));
     }
 
     /**
@@ -113,33 +100,31 @@ public abstract class AbstractController {
      * @param requestId
      * @return
      */
-    protected AbstractRequest findRequestByIdAndUniqueCode(String requestId, String uniqueCode) {
-        AbstractRequest request = getRequestService().findByIdAndUniqueCode(requestId, uniqueCode);
-
-        if (request == null) {
-            throw new IllegalArgumentException(String.format("Cannot find MockRequest with ID '%s' and unique code '%s'", requestId, uniqueCode));
-        }
-
-        return request;
+    protected AbstractRequest findRequestByIdAndUniqueCode(final String requestId, final String uniqueCode) {
+        return Optional.ofNullable(getRequestService().findByIdAndUniqueCode(requestId, uniqueCode))
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find MockRequest with ID '" +
+                        requestId + "' and unique code '" + uniqueCode + "'"));
     }
 
     /**
      *
      * @param mockRequest
      */
-    protected void cleanUpRequestBody(AbstractRequest mockRequest) {
-        if (mockRequest.getBody() != null && mockRequest.getBody().getValue() != null) {
-            String newBody = mockRequest.getBody().getValue().trim();
-            if (newBody.startsWith("{") && newBody.endsWith("}")) {
+    protected void cleanUpRequestBody(final AbstractRequest mockRequest) {
+        if (mockRequest.getBody() != null && !StringUtils.isEmpty(mockRequest.getBody().getValue())) {
+            final String body = mockRequest.getBody().getValue().trim();
+
+            if (body.startsWith("{") && body.endsWith("}")) {
                 try {
-                    newBody = getRequestService().prepareRequestJsonBody(newBody);
+                    final String jsonBody = getRequestService().prepareRequestJsonBody(body);
+                    mockRequest.getBody().setValue(jsonBody);
                 } catch (IOException e) {
                     LOG.warn("Cannot remove whitespaces from JSON", e);
                 }
             } else {
-                newBody = getRequestService().prepareRequestXmlBody(newBody);
+                final String xmlBody = getRequestService().prepareRequestXmlBody(body);
+                mockRequest.getBody().setValue(xmlBody);
             }
-            mockRequest.getBody().setValue(newBody);
         }
     }
 
@@ -147,10 +132,10 @@ public abstract class AbstractController {
      *
      * @param mockResponse
      */
-    protected void cleanUpResponseBody(MockResponse mockResponse) {
+    protected void cleanUpResponseBody(final MockResponse mockResponse) {
         if (mockResponse != null && mockResponse.getBody() != null) {
             try {
-                String newBody = JsonHelper.removeWhitespaces(mockResponse.getBody());
+                final String newBody = JsonHelper.removeWhitespaces(mockResponse.getBody());
                 mockResponse.setBody(newBody);
             } catch (IOException e) {
                 LOG.warn("Cannot remove whitespaces from response body (JSON)", e);

@@ -46,7 +46,7 @@ public class ProjectServiceTest {
     @Test
     public void testRemove() {
         when(projectMock.getId()).thenReturn(PROJECT_ID);
-        when(groupServiceMock.findByProjectId(eq(PROJECT_ID))).thenReturn(Collections.nCopies(2, new Group()));
+        when(groupServiceMock.findByProjectId(eq(PROJECT_ID))).thenReturn(Collections.nCopies(2, Group.builder().build()));
         doNothing().when(groupServiceMock).remove(any(Group.class));
         doNothing().when(projectEntityRepositoryMock).delete(eq(projectMock));
 

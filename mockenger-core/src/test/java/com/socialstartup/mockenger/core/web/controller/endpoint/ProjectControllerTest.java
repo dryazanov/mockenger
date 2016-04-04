@@ -80,10 +80,9 @@ public class ProjectControllerTest extends AbstractControllerTest {
         testAddProject(null);
     }
 
-    private void testAddProject(String name) throws Exception {
-        Project project = getNewProject();
-        project.setName(name);
-        ResultActions resultActions = createProjectRest(project);
+    private void testAddProject(final String name) throws Exception {
+        final ResultActions resultActions = createProjectRest(getProjectBuilder().name(name).build());
+
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
@@ -92,10 +91,8 @@ public class ProjectControllerTest extends AbstractControllerTest {
 
     @Test
     public void testAddProjectWithNullType() throws Exception {
-        Project project = getNewProject();
-        project.setType(null);
+        final ResultActions resultActions = createProjectRest(getProjectBuilder().type(null).build());
 
-        ResultActions resultActions = createProjectRest(project);
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
@@ -104,7 +101,11 @@ public class ProjectControllerTest extends AbstractControllerTest {
 
     @Test
     public void testAddProjectWithWrongType() throws Exception {
-        ResultActions resultActions =  this.mockMvc.perform(post(ENDPOINT_PROJECT).contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)).content(PROJECT_WITH_WRONG_TYPE));
+        final ResultActions resultActions =  this.mockMvc.perform(
+                post(ENDPOINT_PROJECT)
+                        .contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8))
+                        .content(PROJECT_WITH_WRONG_TYPE));
+
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
@@ -113,37 +114,36 @@ public class ProjectControllerTest extends AbstractControllerTest {
 
     @Test
     public void testAddProject() throws Exception {
-        ResultActions resultActions = null;
-        Project project = getNewProject();
+        final Project project1 = getProjectBuilder().build();
 
         // Expect response status 200
-        resultActions = createProjectRest(project);
-        resultActions.andExpect(status().isOk())
+        final ResultActions resultActions1 = createProjectRest(project1);
+        resultActions1.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
-                .andExpect(jsonPath("$.id").value(not(project.getId())));
+                .andExpect(jsonPath("$.id").value(not(project1.getId())));
 
         // Expect response status 500
-        resultActions = createProjectRest(project);
-        resultActions.andExpect(status().isBadRequest())
+        final ResultActions resultActions2 = createProjectRest(project1);
+        resultActions2.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
-                .andExpect(jsonPath("$.errors[0]").value(String.format("Project with the code '%s' already exist", project.getCode())));
+                .andExpect(jsonPath("$.errors[0]").value(String.format("Project with the code '%s' already exist", project1.getCode())));
 
         // Expect response status 200
-        project.setCode(PROJECT_CODE_TEST + "1");
-        resultActions = createProjectRest(project);
-        resultActions.andExpect(status().isOk())
+        final Project project2 = getProjectBuilder().code(PROJECT_CODE_TEST + "1").build();
+        final ResultActions resultActions3 = createProjectRest(project2);
+        resultActions3.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
-                .andExpect(jsonPath("$.id").value(not(project.getId())));
+                .andExpect(jsonPath("$.id").value(not(project2.getId())));
 
         deleteAllProjects();
     }
 
     @Test
     public void testSaveProject() throws Exception {
-        Project project = createProject();
-        project.setName(PROJECT_NAME_UPDATED);
+        final Project project = createProject();
+        final Project projectToUpdate = getProjectBuilder().id(project.getId()).name(PROJECT_NAME_UPDATED).build();
+        final ResultActions resultActions = updateProjectRest(projectToUpdate);
 
-        ResultActions resultActions = updateProjectRest(project);
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.id").value(project.getId()));
@@ -161,11 +161,11 @@ public class ProjectControllerTest extends AbstractControllerTest {
         testSaveProject(null);
     }
 
-    private void testSaveProject(String name) throws Exception {
-        Project project = createProject();
-        project.setName(name);
+    private void testSaveProject(final String name) throws Exception {
+        final Project project = createProject();
+        final Project projectToUpdate = getProjectBuilder().id(project.getId()).name(name).build();
+        final ResultActions resultActions = updateProjectRest(projectToUpdate);
 
-        ResultActions resultActions = updateProjectRest(project);
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
@@ -174,10 +174,10 @@ public class ProjectControllerTest extends AbstractControllerTest {
 
     @Test
     public void testSaveProjectWithNullType() throws Exception {
-        Project project = createProject();
-        project.setType(null);
+        final Project project = createProject();
+        final Project projectToUpdate = getProjectBuilder().id(project.getId()).type(null).build();
+        final ResultActions resultActions = updateProjectRest(projectToUpdate);
 
-        ResultActions resultActions = updateProjectRest(project);
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
@@ -186,8 +186,9 @@ public class ProjectControllerTest extends AbstractControllerTest {
 
     @Test
     public void testDeleteProject() throws Exception {
-        Project project = createProject();
-        ResultActions resultActions = deleteProjectRest(project.getId());
+        final Project project = createProject();
+        final ResultActions resultActions = deleteProjectRest(project.getId());
+
         resultActions.andExpect(status().isNoContent()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
     }
 
@@ -197,7 +198,8 @@ public class ProjectControllerTest extends AbstractControllerTest {
         createProject(true);
         createProject(true);
 
-        ResultActions resultActions = getProjectAllRest();
+        final ResultActions resultActions = getProjectAllRest();
+
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$", hasSize(3)))

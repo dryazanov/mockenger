@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -38,9 +37,8 @@ public class GroupController extends AbstractController {
      */
     @ResponseBody
     @RequestMapping(value = GROUPID, method = GET)
-    public ResponseEntity getGroup(@PathVariable String groupId) {
-        Group group = findGroupById(groupId);
-        return new ResponseEntity(group, getResponseHeaders(), HttpStatus.OK);
+    public ResponseEntity getGroupById(@PathVariable final String groupId) {
+        return new ResponseEntity(findGroupById(groupId), getResponseHeaders(), HttpStatus.OK);
     }
 
 
@@ -52,13 +50,13 @@ public class GroupController extends AbstractController {
      */
     @ResponseBody
     @RequestMapping(value = GROUPS, method = POST)
-    public ResponseEntity addGroup(@Valid @RequestBody Group group, BindingResult result) {
+    public ResponseEntity addGroup(@Valid @RequestBody final Group group, final BindingResult result) {
         if (result.hasErrors()) {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
-        group.setId(null);
-        getGroupService().save(group);
-        return new ResponseEntity(group, getResponseHeaders(), HttpStatus.OK);
+
+        final Group groupToAdd = getGroupService().getGroupClone(group).id(null).build();
+        return new ResponseEntity(getGroupService().save(groupToAdd), getResponseHeaders(), HttpStatus.OK);
     }
 
 
@@ -70,13 +68,22 @@ public class GroupController extends AbstractController {
      */
     @ResponseBody
     @RequestMapping(value = GROUPID, method = PUT)
-    public ResponseEntity saveGroup(@PathVariable String groupId, @Valid @RequestBody Group group, BindingResult result) {
+    public ResponseEntity saveGroup(@PathVariable final String groupId,
+                                    @Valid @RequestBody final Group group,
+                                    final BindingResult result) {
+
         if (result.hasErrors()) {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
-        findGroupById(groupId); // Check if group exists
-        getGroupService().save(group);
-        return new ResponseEntity(group, getResponseHeaders(), HttpStatus.OK);
+
+        // Check if group exists
+        findGroupById(groupId);
+
+        if (!groupId.equals(group.getId())) {
+            throw new IllegalArgumentException("Group IDs in the URL and in the payload are not equals");
+        }
+
+        return new ResponseEntity(getGroupService().save(group), getResponseHeaders(), HttpStatus.OK);
     }
 
 
@@ -87,9 +94,8 @@ public class GroupController extends AbstractController {
      */
     @ResponseBody
     @RequestMapping(value = GROUPID, method = DELETE)
-    public ResponseEntity deleteGroup(@PathVariable String groupId) {
-        Group group = findGroupById(groupId);
-        getGroupService().remove(group);
+    public ResponseEntity deleteGroup(@PathVariable final String groupId) {
+        getGroupService().remove(findGroupById(groupId));
         return new ResponseEntity(getResponseHeaders(), HttpStatus.NO_CONTENT);
     }
 
@@ -101,9 +107,10 @@ public class GroupController extends AbstractController {
      */
     @ResponseBody
     @RequestMapping(value = GROUPS, method = GET)
-    public ResponseEntity getGroupList(@PathVariable String projectId) {
-        Project project = findProjectById(projectId);
-        List<Group> groupList = getGroupService().findByProjectId(project.getId());
-        return new ResponseEntity((groupList != null ? groupList : new ArrayList<>()), getResponseHeaders(), HttpStatus.OK);
+    public ResponseEntity getGroupList(@PathVariable final String projectId) {
+        final Project project = findProjectById(projectId);
+        final List<Group> groupList = getGroupService().findByProjectId(project.getId());
+
+        return new ResponseEntity(groupList, getResponseHeaders(), HttpStatus.OK);
     }
 }

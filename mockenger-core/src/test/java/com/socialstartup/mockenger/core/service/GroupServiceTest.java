@@ -14,6 +14,8 @@ import org.mockito.Mock;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -29,6 +31,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class GroupServiceTest {
 
     private static final String GROUP_ID = "GROUPID";
+    private static final String PROJECT_ID = "PROJECTID";
 
     @InjectMocks
     private GroupService classUnderTest;
@@ -62,5 +65,18 @@ public class GroupServiceTest {
         verify(requestServiceMock, times(3)).remove(any(AbstractRequest.class));
         verify(groupEntityRepositoryMock).delete(eq(groupMock));
         verifyNoMoreInteractions(groupMock, requestServiceMock, groupEntityRepositoryMock);
+    }
+
+    @Test
+    public void testGetEmptyGroupList() {
+        when(groupEntityRepositoryMock.findByProjectId(eq(PROJECT_ID))).thenReturn(null);
+
+        final List<Group> groups = classUnderTest.findByProjectId(PROJECT_ID);
+
+        assertNotNull(groups);
+        assertEquals(0, groups.size());
+
+        verify(groupEntityRepositoryMock).findByProjectId(eq(PROJECT_ID));
+        verifyNoMoreInteractions(groupEntityRepositoryMock);
     }
 }
