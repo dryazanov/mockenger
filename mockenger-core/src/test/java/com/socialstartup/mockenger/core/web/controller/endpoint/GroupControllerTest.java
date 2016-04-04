@@ -63,9 +63,10 @@ public class GroupControllerTest extends AbstractControllerTest {
 
     @Test
     public void testAddGroupWithEmptyName() throws Exception {
-        Group group = getNewGroup();
-        group.setName("");
-        ResultActions resultActions = createGroupRest(group);
+        final ResultActions resultActions = createGroupRest(
+                getGroupBuilder().name("").build()
+        );
+
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
@@ -74,9 +75,10 @@ public class GroupControllerTest extends AbstractControllerTest {
 
     @Test
     public void testAddGroupWithNullName() throws Exception {
-        Group group = getNewGroup();
-        group.setName(null);
-        ResultActions resultActions = createGroupRest(group);
+        final ResultActions resultActions = createGroupRest(
+                getGroupBuilder().name(null).build()
+        );
+
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
@@ -85,30 +87,29 @@ public class GroupControllerTest extends AbstractControllerTest {
 
     @Test
     public void testAddGroup() throws Exception {
-        ResultActions resultActions = null;
-        Group group = getNewGroup();
+        final Group group = getGroupBuilder().build();
 
         // Expect response status 200
-        resultActions = createGroupRest(group);
-        resultActions.andExpect(status().isOk())
-                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
-                .andExpect(jsonPath("$.id").value(not(group.getId())));
-
+        callAddGroup(group);
         // Expect response status 200
-        resultActions = createGroupRest(group);
-        resultActions.andExpect(status().isOk())
-                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
-                .andExpect(jsonPath("$.id").value(not(group.getId())));
+        callAddGroup(group);
 
         deleteAllGroups();
     }
 
+    private void callAddGroup(final Group group) throws Exception {
+        final ResultActions resultActions1 = createGroupRest(group);
+        resultActions1.andExpect(status().isOk())
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
+                .andExpect(jsonPath("$.id").value(not(group.getId())));
+    }
+
     @Test
     public void testSaveGroup() throws Exception {
-        Group group = createGroup();
-        group.setName(GROUP_NAME_UPDATED);
+        final Group group = createGroup();
+        final Group groupToUpdate = getGroupBuilder().id(group.getId()).name(GROUP_NAME_UPDATED).build();
+        final ResultActions resultActions = updateGroupRest(groupToUpdate);
 
-        ResultActions resultActions = updateGroupRest(group);
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.id").value(group.getId()));
@@ -118,9 +119,10 @@ public class GroupControllerTest extends AbstractControllerTest {
 
     @Test
     public void testSaveGroupWithEmptyName() throws Exception {
-        Group group = getNewGroup();
-        group.setName("");
-        ResultActions resultActions = updateGroupRest(group);
+        final ResultActions resultActions = updateGroupRest(
+                getGroupBuilder().name("").build()
+        );
+
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
@@ -129,9 +131,10 @@ public class GroupControllerTest extends AbstractControllerTest {
 
     @Test
     public void testSaveGroupWithNullName() throws Exception {
-        Group group = getNewGroup();
-        group.setName(null);
-        ResultActions resultActions = updateGroupRest(group);
+        final ResultActions resultActions = updateGroupRest(
+                getGroupBuilder().name(null).build()
+        );
+
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
@@ -159,15 +162,15 @@ public class GroupControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetGroupsByProjectId() throws Exception {
-        Project project = createProject(true);
+        final Project project = createProject(true);
+        final Group group = getGroupBuilder().projectId(project.getId()).build();
 
-        Group group = createGroup();
-        group.setProjectId(project.getId());
         createGroupRest(group);
         createGroupRest(group);
         createGroupRest(group);
 
-        ResultActions resultActions = getGroupsAllRest(project.getId());
+        final ResultActions resultActions = getGroupsAllRest(project.getId());
+
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$", hasSize(3)))

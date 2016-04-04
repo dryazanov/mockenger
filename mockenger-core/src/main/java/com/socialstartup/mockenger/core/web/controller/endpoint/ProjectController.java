@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -36,9 +35,8 @@ public class ProjectController extends AbstractController {
      */
     @ResponseBody
     @RequestMapping(value = PROJECTID, method = GET)
-    public ResponseEntity getProject(@PathVariable String projectId) {
-        Project project = findProjectById(projectId);
-        return new ResponseEntity(project, getResponseHeaders(), HttpStatus.OK);
+    public ResponseEntity getProject(@PathVariable final String projectId) {
+        return new ResponseEntity(findProjectById(projectId), getResponseHeaders(), HttpStatus.OK);
     }
 
 
@@ -49,8 +47,7 @@ public class ProjectController extends AbstractController {
     @ResponseBody
     @RequestMapping(value = PROJECTS, method = GET)
     public ResponseEntity getProjectList() {
-        Iterable<Project> projectList = getProjectService().findAll();
-        return new ResponseEntity((projectList != null ? projectList : new ArrayList<>()), getResponseHeaders(), HttpStatus.OK);
+        return new ResponseEntity(getProjectService().findAll(), getResponseHeaders(), HttpStatus.OK);
     }
 
 
@@ -62,14 +59,13 @@ public class ProjectController extends AbstractController {
      */
     @ResponseBody
     @RequestMapping(value = PROJECTS, method = POST)
-    public ResponseEntity addProject(@Valid @RequestBody Project project, BindingResult result) {
+    public ResponseEntity addProject(@Valid @RequestBody final Project project, final BindingResult result) {
         if (result.hasErrors()) {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
-        project.setId(null);
-        getProjectService().save(project);
 
-        return new ResponseEntity(project, getResponseHeaders(), HttpStatus.OK);
+        final Project projectToAdd = getProjectService().getProjectClone(project).id(null).build();
+        return new ResponseEntity(getProjectService().save(projectToAdd), getResponseHeaders(), HttpStatus.OK);
     }
 
 
@@ -82,13 +78,22 @@ public class ProjectController extends AbstractController {
      */
     @ResponseBody
     @RequestMapping(value = PROJECTID, method = PUT)
-    public ResponseEntity saveProject(@PathVariable String projectId, @Valid @RequestBody Project project, BindingResult result) {
+    public ResponseEntity saveProject(@PathVariable final String projectId,
+                                      @Valid @RequestBody final Project project,
+                                      final BindingResult result) {
+
         if (result.hasErrors()) {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
-        findProjectById(projectId); // Check if project exists
-        getProjectService().save(project);
-        return new ResponseEntity(project, getResponseHeaders(), HttpStatus.OK);
+
+        // Check if project exists
+        findProjectById(projectId);
+
+        if (!projectId.equals(project.getId())) {
+            throw new IllegalArgumentException("Project IDs in the URL and in the payload are not equals");
+        }
+
+        return new ResponseEntity(getProjectService().save(project), getResponseHeaders(), HttpStatus.OK);
     }
 
 
@@ -99,9 +104,8 @@ public class ProjectController extends AbstractController {
      */
     @ResponseBody
     @RequestMapping(value = PROJECTID, method = DELETE)
-    public ResponseEntity deleteProject(@PathVariable String projectId) {
-        Project project = findProjectById(projectId);
-        getProjectService().remove(project);
+    public ResponseEntity deleteProject(@PathVariable final String projectId) {
+        getProjectService().remove(findProjectById(projectId));
         return new ResponseEntity(getResponseHeaders(), HttpStatus.NO_CONTENT);
     }
 }

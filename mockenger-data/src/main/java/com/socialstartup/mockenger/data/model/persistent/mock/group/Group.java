@@ -1,14 +1,23 @@
 package com.socialstartup.mockenger.data.model.persistent.mock.group;
 
-import com.socialstartup.mockenger.data.model.persistent.base.AbstractPersistentEntity;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
+import lombok.Getter;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * Created by Dmitry Ryazanov on 3/12/2015.
  */
+@Builder
+@Getter
 @Document(collection = "group")
-public class Group extends AbstractPersistentEntity<String> {
+public class Group {
+
+    @Id
+    private String id;
 
     private String projectId;
 
@@ -22,51 +31,19 @@ public class Group extends AbstractPersistentEntity<String> {
     private String forwardTo;
 
 
-    public Group() {}
+    @JsonCreator
+    public Group(@JsonProperty("id") final String id,
+                 @JsonProperty("projectId") final String projectId,
+                 @JsonProperty("name") final String name,
+                 @JsonProperty("recording") final boolean recording,
+                 @JsonProperty("forwarding") final boolean forwarding,
+                 @JsonProperty("forwardTo") final String forwardTo) {
 
-    public Group(String projectId, String name, boolean recording) {
+        this.id = id;
         this.projectId = projectId;
         this.name = name;
         this.recording = recording;
-    }
-
-    public String getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean isRecording() {
-        return recording;
-    }
-
-    public void setRecording(boolean recording) {
-        this.recording = recording;
-    }
-
-    public boolean isForwarding() {
-        return forwarding;
-    }
-
-    public void setForwarding(boolean forwarding) {
         this.forwarding = forwarding;
-    }
-
-    public String getForwardTo() {
-        return forwardTo;
-    }
-
-    public void setForwardTo(String forwardTo) {
         this.forwardTo = forwardTo;
     }
 }

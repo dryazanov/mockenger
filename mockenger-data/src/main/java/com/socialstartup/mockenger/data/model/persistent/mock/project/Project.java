@@ -1,9 +1,13 @@
 package com.socialstartup.mockenger.data.model.persistent.mock.project;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
-import com.socialstartup.mockenger.data.model.persistent.base.AbstractPersistentEntity;
+import lombok.Builder;
+import lombok.Getter;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,8 +17,13 @@ import javax.validation.constraints.Pattern;
 /**
  * Created by Dmitry Ryazanov on 6/15/2015.
  */
+@Builder
+@Getter
 @Document(collection = "project")
-public class Project extends AbstractPersistentEntity<String> {
+public class Project {
+
+    @Id
+    private String id;
 
     @NotBlank(message = "Name: may not be null or empty")
     private String name;
@@ -30,43 +39,18 @@ public class Project extends AbstractPersistentEntity<String> {
     @JsonIgnore
     private long sequence;
 
-    public Project() {}
 
-    public Project(String name, String code, ProjectType type) {
+    @JsonCreator
+    public Project(@JsonProperty("id") final String id,
+                   @JsonProperty("name") final String name,
+                   @JsonProperty("code") final String code,
+                   @JsonProperty("type") final ProjectType type,
+                   @JsonProperty("sequence") final long sequence) {
+
+        this.id = id;
         this.name = name;
         this.code = code;
         this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public void setSequence(long sequence) {
         this.sequence = sequence;
-    }
-
-    public Long getSequence() {
-        return sequence;
-    }
-
-    public ProjectType getType() {
-        return type;
-    }
-
-    public void setType(ProjectType type) {
-        this.type = type;
     }
 }
