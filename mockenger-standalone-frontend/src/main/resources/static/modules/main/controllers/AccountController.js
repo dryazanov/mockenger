@@ -24,15 +24,25 @@ angular.module('mockengerClientMainApp')
                     $scope.accountForm.repassword.$invalid = false;
 
                     if (account.id != null) {
-                        $scope.saveAccountRequest(account, {accountId: account.id}, 'Account <b>' + account.username + '</b> successfully updated');
+                        $scope.updateAccountRequest(account, {accountId: account.id}, 'Account <b>' + account.username + '</b> successfully updated');
                     } else {
-                        $scope.saveAccountRequest(account, {}, 'Account <b>' + account.username + '</b> has been created');
+                        $scope.saveAccountRequest(account, 'Account <b>' + account.username + '</b> has been created');
                     }
                 }
             };
 
-            $scope.saveAccountRequest = function(account, requestParams, greenMessage) {
+            $scope.updateAccountRequest = function(account, requestParams, greenMessage) {
                 accountService.ajax.update(requestParams, account, function() {
+                    accountModal.modal('hide');
+                    $scope.showGreenMessage(greenMessage);
+                    $scope.getAccountList();
+                }, function(errorResponse) {
+                    $scope.showRedMessage(errorResponse);
+                });
+            }
+
+            $scope.saveAccountRequest = function(account, greenMessage) {
+                accountService.ajax.save(account, function() {
                     accountModal.modal('hide');
                     $scope.showGreenMessage(greenMessage);
                     $scope.getAccountList();

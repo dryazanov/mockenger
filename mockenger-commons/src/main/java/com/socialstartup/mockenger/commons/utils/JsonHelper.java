@@ -19,8 +19,8 @@ public class JsonHelper {
      * @throws IOException
      */
     public static String removeWhitespaces(String requestBody) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper(new JsonFactory());
-        JsonNode jsonNode = objectMapper.readTree(requestBody);
+        final ObjectMapper objectMapper = new ObjectMapper(new JsonFactory());
+        final JsonNode jsonNode = objectMapper.readTree(requestBody);
         return objectMapper.writeValueAsString(jsonNode);
     }
 }

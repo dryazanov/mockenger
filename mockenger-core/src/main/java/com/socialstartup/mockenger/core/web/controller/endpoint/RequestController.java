@@ -7,17 +7,14 @@ import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -25,9 +22,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 /**
- * Created by Dmitry Ryazanov on 7/3/2015.
+ * @author Dmitry Ryazanov
  */
-@Controller
+@RestController
 public class RequestController extends AbstractController {
 
     private static final String REQUESTS = PROJECT_ID_ENDPOINT + GROUP_ID_ENDPOINT + REQUESTS_ENDPOINT;
@@ -35,24 +32,27 @@ public class RequestController extends AbstractController {
 
 
     /**
-     * Gets one mock-request by provided ID
+     * Gets specific mock-request by ID
      *
      * @param projectId
      * @param groupId
      * @param requestId
      * @return
      */
-    @ResponseBody
     @RequestMapping(value = REQUESTID, method = GET)
-    public ResponseEntity getRequest(@PathVariable String projectId, @PathVariable String groupId, @PathVariable String requestId) {
+    public ResponseEntity getRequest(@PathVariable final String projectId,
+                                     @PathVariable final String groupId,
+                                     @PathVariable final String requestId) {
+
         findProjectById(projectId);
         findGroupById(groupId);
+
         return new ResponseEntity(findRequestById(requestId), getResponseHeaders(), HttpStatus.OK);
     }
 
 
     /**
-     * Adds mock-request
+     * Creates mock-request
      *
      * @param projectId
      * @param groupId
@@ -60,17 +60,18 @@ public class RequestController extends AbstractController {
      * @param result
      * @return HttpStatus.OK with created object in the response body
      */
-    @ResponseBody
     @RequestMapping(value = REQUESTS, method = POST)
-    public ResponseEntity addRequest(@PathVariable String projectId, @PathVariable String groupId,
-                                     @Valid @RequestBody AbstractRequest request, BindingResult result) {
+    public ResponseEntity addRequest(@PathVariable final String projectId,
+                                     @PathVariable final String groupId,
+                                     @Valid @RequestBody final AbstractRequest request,
+                                     final BindingResult result) {
 
         if (result.hasErrors()) {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
 
         // TODO: Maybe we can create validation with the chain: check request -> check group -> check project
-        Project project = findProjectById(projectId);
+        final Project project = findProjectById(projectId);
         findGroupById(groupId);
 
         // Set id to null to create new mock
@@ -98,10 +99,12 @@ public class RequestController extends AbstractController {
      * @param request
      * @return
      */
-    @ResponseBody
     @RequestMapping(value = REQUESTID, method = PUT)
-    public ResponseEntity saveRequest(@PathVariable String projectId, @PathVariable String groupId, @PathVariable String requestId,
-                                      @Valid @RequestBody AbstractRequest request, BindingResult result) {
+    public ResponseEntity saveRequest(@PathVariable final String projectId,
+                                      @PathVariable final String groupId,
+                                      @PathVariable final String requestId,
+                                      @Valid @RequestBody final AbstractRequest request,
+                                      final BindingResult result) {
 
         if (result.hasErrors()) {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
@@ -133,12 +136,13 @@ public class RequestController extends AbstractController {
      * @param requestId
      * @return
      */
-    @ResponseBody
     @RequestMapping(value = REQUESTID, method = DELETE)
-    public ResponseEntity deleteRequest(@PathVariable String projectId, @PathVariable String groupId, @PathVariable String requestId) {
+    public ResponseEntity deleteRequest(@PathVariable final String projectId,
+                                        @PathVariable final String groupId,
+                                        @PathVariable final String requestId) {
+
         findProjectById(projectId);
         findGroupById(groupId);
-
         getRequestService().remove(findRequestById(requestId));
 
         return new ResponseEntity(getResponseHeaders(), HttpStatus.NO_CONTENT);
@@ -152,17 +156,12 @@ public class RequestController extends AbstractController {
      * @param groupId
      * @return
      */
-    @ResponseBody
     @RequestMapping(value = REQUESTS, method = GET)
-    public ResponseEntity getRequestList(@PathVariable String projectId, @PathVariable String groupId) {
+    public ResponseEntity getRequestList(@PathVariable final String projectId, @PathVariable final String groupId) {
         findProjectById(projectId);
-        Group group = findGroupById(groupId);
 
-        List<AbstractRequest> requestList = getRequestService().findByGroupId(group.getId());
-
-        if (requestList == null) {
-            requestList = new ArrayList<>();
-        }
+        final Group group = findGroupById(groupId);
+        final Iterable<AbstractRequest> requestList = getRequestService().findByGroupId(group.getId());
 
         return new ResponseEntity(requestList, getResponseHeaders(), HttpStatus.OK);
     }

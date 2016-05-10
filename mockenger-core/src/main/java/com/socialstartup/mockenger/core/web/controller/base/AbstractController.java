@@ -35,6 +35,8 @@ public abstract class AbstractController {
     protected static final String GROUP_ID_ENDPOINT = GROUPS_ENDPOINT + "/{groupId}";
     protected static final String REQUESTS_ENDPOINT = "/requests";
     protected static final String REQUEST_ID_ENDPOINT = REQUESTS_ENDPOINT + "/{requestId}";
+    protected static final String EVENTS_ENDPOINT = "/events";
+    protected static final String EVENT_ID_ENDPOINT = EVENTS_ENDPOINT + "/{eventId}";
 
     @Autowired
     private ProjectService projectService;

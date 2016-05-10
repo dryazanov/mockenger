@@ -3,6 +3,7 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 import com.socialstartup.mockenger.core.service.ProjectService;
 import com.socialstartup.mockenger.core.util.HttpUtils;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
+import com.socialstartup.mockenger.data.model.dict.EventType;
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.dict.RoleType;
@@ -29,9 +30,10 @@ public class ValueSetController extends AbstractController {
 
     private final static String PROJECT_TYPES_VALUESET = VALUESET_ENDPOINT + "/projectTypes";
     private final static String REQUEST_METHOD_VALUESET = VALUESET_ENDPOINT + "/requestMethods";
-    private final static String TRANSFORMER_TYPE_VALUESET = VALUESET_ENDPOINT + "/transformerTypes";
+    private final static String TRANSFORMER_TYPES_VALUESET = VALUESET_ENDPOINT + "/transformerTypes";
     private final static String HEADERS_VALUESET = VALUESET_ENDPOINT + "/headers";
     private final static String ROLES_VALUESET = VALUESET_ENDPOINT + "/roles";
+    private final static String EVENT_TYPES_VALUESET = VALUESET_ENDPOINT + "/eventTypes";
 
     @Autowired
     private ProjectService projectService;
@@ -77,7 +79,7 @@ public class ValueSetController extends AbstractController {
      * @return 200 OK
      */
     @ResponseBody
-    @RequestMapping(value = TRANSFORMER_TYPE_VALUESET, method = GET)
+    @RequestMapping(value = TRANSFORMER_TYPES_VALUESET, method = GET)
     public ResponseEntity getTransformerTypes() {
         return new ResponseEntity(Arrays.asList(TransformerType.values()), getResponseHeaders(), HttpStatus.OK);
     }
@@ -103,5 +105,16 @@ public class ValueSetController extends AbstractController {
     @RequestMapping(value = ROLES_VALUESET, method = GET)
     public ResponseEntity getRoles() {
         return new ResponseEntity(RoleType.values(), getResponseHeaders(), HttpStatus.OK);
+    }
+
+    /**
+     * Returns all the values of EventType
+     *
+     * @return 200 OK
+     */
+    @ResponseBody
+    @RequestMapping(value = EVENT_TYPES_VALUESET, method = GET)
+    public ResponseEntity getEventTypes() {
+        return new ResponseEntity(EventType.values(), getResponseHeaders(), HttpStatus.OK);
     }
 }

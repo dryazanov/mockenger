@@ -1,7 +1,11 @@
 package com.socialstartup.mockenger.core.config;
 
+import com.socialstartup.mockenger.core.service.OAuth2TokenManager;
+import com.socialstartup.mockenger.core.web.controller.endpoint.AccountController;
+import com.socialstartup.mockenger.data.config.DatasourceConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -10,6 +14,12 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"com.socialstartup.mockenger.core.web"})
-@Import({CoreConfiguration.class, SecurityConfiguration.class, OAuth2ServerConfiguration.class})
+@ComponentScan(
+        excludeFilters = {
+                @ComponentScan.Filter(value = OAuth2TokenManager.class, type = FilterType.ASSIGNABLE_TYPE),
+                @ComponentScan.Filter(value = AccountController.class, type = FilterType.ASSIGNABLE_TYPE)
+        },
+        basePackages = {"com.socialstartup.mockenger.core.web", "com.socialstartup.mockenger.core.service"}
+)
+@Import({DatasourceConfiguration.class})
 public class TestContext {}

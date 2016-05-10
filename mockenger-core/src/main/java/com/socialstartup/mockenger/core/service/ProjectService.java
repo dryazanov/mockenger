@@ -2,6 +2,7 @@ package com.socialstartup.mockenger.core.service;
 
 import com.google.common.collect.ImmutableList;
 import com.socialstartup.mockenger.core.web.exception.NotUniqueValueException;
+import com.socialstartup.mockenger.data.model.persistent.log.Eventable;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.repository.ProjectEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ public class ProjectService {
     }
 
 
+    @Eventable
     public Project save(final Project entity) {
         try {
             return projectEntityRepository.save(entity);
@@ -42,6 +44,7 @@ public class ProjectService {
     }
 
 
+    @Eventable
     public void remove(final Project project) {
         groupService.findByProjectId(project.getId()).forEach(groupService::remove);
         projectEntityRepository.delete(project);
@@ -55,11 +58,11 @@ public class ProjectService {
 
 
     private Project getCloneWithIncrementedSequence(final Project project) {
-        return getProjectClone(project).sequence(project.getSequence() + 1).build();
+        return ProjectService.getProjectClone(project).sequence(project.getSequence() + 1).build();
     }
 
 
-    public Project.ProjectBuilder getProjectClone(final Project project) {
+    public static Project.ProjectBuilder getProjectClone(final Project project) {
         return Project.builder()
                 .id(project.getId())
                 .name(project.getName())

@@ -1,75 +1,64 @@
 package com.socialstartup.mockenger.data.model.persistent.account;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.socialstartup.mockenger.data.model.dict.RoleType;
-import com.socialstartup.mockenger.data.model.persistent.base.AbstractPersistentEntity;
+import lombok.Builder;
+import lombok.Getter;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
 
 /**
- * Created by Dmitry Ryazanov on 14-Sep-15.
+ * @author Dmitry Ryazanov
  */
+@Getter
+@Builder
 @Document(collection = "account")
-public class Account extends AbstractPersistentEntity<String> {
+public class Account {
 
-    @NotBlank(message = "firstName: may not be null or empty")
+    @Id
+    private String id;
+
+    @NotBlank(message = "First name: may not be null or empty")
     private String firstName;
 
-    @NotBlank(message = "lastName: may not be null or empty")
+    @NotBlank(message = "Last name: may not be null or empty")
     private String lastName;
 
-    @NotBlank(message = "username: may not be null or empty")
+    @NotBlank(message = "Username: may not be null or empty")
+    @Indexed(name = "unique_username_1", unique = true, collection = "account")
     private String username;
-
 
     private String password;
 
-    @NotNull(message = "role: may not be null")
+    @NotNull(message = "Role: may not be null")
     private RoleType role;
 
 
-    public String getFirstName() {
-        return firstName;
-    }
 
-    public void setFirstName(String firstName) {
+    @JsonCreator
+    public Account(@JsonProperty("id") final String id,
+                   @JsonProperty("firstName") final String firstName,
+                   @JsonProperty("lastName") final String lastName,
+                   @JsonProperty("username") final String username,
+                   @JsonProperty("password") final String password,
+                   @JsonProperty("role") final RoleType role) {
+
+        this.id = id;
         this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
         this.username = username;
+        this.password = password;
+        this.role = role;
     }
 
     @JsonIgnore
     public String getPassword() {
         return password;
-    }
-
-    @JsonProperty("password")
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public RoleType getRole() {
-        return role;
-    }
-
-    public void setRoles(RoleType role) {
-        this.role = role;
     }
 }

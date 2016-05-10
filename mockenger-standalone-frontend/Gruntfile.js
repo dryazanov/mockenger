@@ -236,6 +236,14 @@ module.exports = function (grunt) {
         },
 
         connect: {
+            dev: {
+                options: {
+                    keepalive: true,
+                    port: env.port,
+                    hostname: env.hostname,
+                    base: 'src/main/resources/static/'
+                }
+            },
             dist: {
                 options: {
                     keepalive: true,
@@ -356,8 +364,9 @@ module.exports = function (grunt) {
         'clean:server',
         'wiredep',
         'ngconstant:dev',
-        'browserSync',
-        'watch'
+//        'browserSync',
+//        'watch'
+        'connect:dev'
     ]);
 
     grunt.registerTask('serveDist', [

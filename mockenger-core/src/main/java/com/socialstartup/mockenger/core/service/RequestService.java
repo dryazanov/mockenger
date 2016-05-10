@@ -1,9 +1,11 @@
 package com.socialstartup.mockenger.core.service;
 
+import com.google.common.collect.ImmutableList;
 import com.socialstartup.mockenger.commons.utils.JsonHelper;
 import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.core.util.HttpUtils;
 import com.socialstartup.mockenger.core.web.exception.NotUniqueValueException;
+import com.socialstartup.mockenger.data.model.persistent.log.Eventable;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Headers;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Parameters;
@@ -35,30 +37,35 @@ public class RequestService {
     private RequestEntityRepository requestEntityRepository;
 
 
-    public AbstractRequest findById(String id) {
+    public AbstractRequest findById(final String id) {
         return requestEntityRepository.findOne(id);
     }
 
-    public AbstractRequest findByIdAndUniqueCode(String id, String code) {
+
+    public AbstractRequest findByIdAndUniqueCode(final String id, final String code) {
         return requestEntityRepository.findByIdAndUniqueCode(id, code);
     }
 
+
     public Iterable<AbstractRequest> findAll() {
-        return requestEntityRepository.findAll();
+        return Optional.ofNullable(requestEntityRepository.findAll()).orElse(ImmutableList.of());
     }
 
-    public List<AbstractRequest> findByGroupId(String groupId) {
+
+    public Iterable<AbstractRequest> findByGroupId(final String groupId) {
         return requestEntityRepository.findByGroupId(groupId);
     }
 
-    public void save(final AbstractRequest entity) {
+    @Eventable
+    public AbstractRequest save(final AbstractRequest entity) {
         try {
-            requestEntityRepository.save(entity);
+            return requestEntityRepository.save(entity);
         } catch (DuplicateKeyException ex) {
-            throw new NotUniqueValueException(String.format("Request with the code '%s' already exist", entity.getUniqueCode()));
+            throw new NotUniqueValueException(String.format("Request with the code '%s' already exists", entity.getUniqueCode()));
         }
     }
 
+    @Eventable
     public void remove(final AbstractRequest entity) {
         requestEntityRepository.delete(entity);
     }
@@ -71,9 +78,11 @@ public class RequestService {
         return body;
     }
 
+
     public String prepareRequestJsonBody(final String requestBody) throws IOException {
         return JsonHelper.removeWhitespaces(requestBody);
     }
+
 
     public AbstractRequest findMockedEntities(final AbstractRequest mockRequest) {
         List<AbstractRequest> entities = requestEntityRepository.findByGroupIdAndMethod(mockRequest.getGroupId(), mockRequest.getMethod());
@@ -84,6 +93,7 @@ public class RequestService {
 
         return null;
     }
+
 
     public AbstractRequest fillUpEntity(final AbstractRequest mockRequest, final String groupId, final HttpServletRequest request) {
         final Path path = new Path(HttpUtils.getUrlPath(request));

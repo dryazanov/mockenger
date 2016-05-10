@@ -19,6 +19,9 @@ angular.module('mockengerClientComponents').factory('apiEndpointsService', ['API
                 return API_BASE_PATH + '/valueset/roles';
             }
         },
+        getEventRestUrl: function() {
+            return API_BASE_PATH + '/events/:eventId';
+        },
         getProjectRestUrl: function() {
             return API_BASE_PATH + '/projects/:projectId';
         },

@@ -98,8 +98,8 @@ public class RestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testPostJsonRequestOk() throws Exception {
-        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
-        String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2);
+        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
+        final String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2);
 
         createRequest(createJsonMockRequestForPost(group.getId()));
 
@@ -111,7 +111,7 @@ public class RestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testPostJsonRequestWithBadJson() throws Exception {
-        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
+        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
 
         this.mockMvc.perform(post(endpoint).contentType(mediaType).content(REST_BAD_JSON_REQUEST))
                 .andExpect(status().isBadRequest())
@@ -120,32 +120,33 @@ public class RestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testPostJsonRequestNotFound() throws Exception {
-        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
-        String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2);
+        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
+        final String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2);
 
         this.mockMvc.perform(post(endpoint).contentType(mediaType).content(content)).andExpect(status().isNotFound());
     }
 
     @Test
     public void testPostJsonRequestNotFoundButCreated() throws Exception {
-        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
-        String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2);
-        endpoint = String.format(ENDPOINT_TEMPLATE, groupWithRecording.getId(), REQUEST_PATH);
+        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
+        final String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2);
+        final String postEndpoint = String.format(ENDPOINT_TEMPLATE, groupWithRecording.getId(), REQUEST_PATH);
 
-        this.mockMvc.perform(post(endpoint).contentType(mediaType).content(content)).andExpect(status().isCreated());
-        this.mockMvc.perform(post(endpoint).contentType(mediaType).content(content)).andExpect(status().isFound());
+        this.mockMvc.perform(post(postEndpoint).contentType(mediaType).content(content)).andExpect(status().isCreated());
+        this.mockMvc.perform(post(postEndpoint).contentType(mediaType).content(content)).andExpect(status().isFound());
     }
 
     //========== POST WITH XML =================//
 
     @Test
     public void testPostXmlRequest() throws Exception {
-        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_XML_UTF8);
-        String content = REST_XML_REQUEST_BODY.replace(ID1, ID2);
+        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_XML_UTF8);
+        final String content = REST_XML_REQUEST_BODY.replace(ID1, ID2);
 
         // Prepare request to add via API
-        AbstractRequest postRequest = createXmlMockRequestForPost(groupWithRecording.getId());
-        String postEndpoint = String.format(REQUEST_PATH_API, groupWithRecording.getProjectId(), groupWithRecording.getId());
+        final AbstractRequest postRequest = createXmlMockRequestForPost(groupWithRecording.getId());
+        final String postEndpoint = String.format(REQUEST_PATH_API, groupWithRecording.getProjectId(), groupWithRecording.getId());
+
         // Send real request to API
         sendPostRequest(postEndpoint, MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8), postRequest);
 
@@ -160,8 +161,8 @@ public class RestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testPutJsonRequestOk() throws Exception {
-        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
-        String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2);
+        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
+        final String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2);
 
         createRequest(createJsonMockRequestForPut(group.getId()));
 
@@ -173,15 +174,15 @@ public class RestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testPutJsonRequestNotFound() throws Exception {
-        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
-        String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2);
+        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
+        final String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2);
 
         this.mockMvc.perform(put(endpoint).contentType(mediaType).content(content)).andExpect(status().isNotFound());
     }
 
     @Test
     public void testPutJsonRequestWithBadJson() throws Exception {
-        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
+        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
 
         this.mockMvc.perform(put(endpoint).contentType(mediaType).content(REST_BAD_JSON_REQUEST))
                 .andExpect(status().isBadRequest())
@@ -193,12 +194,13 @@ public class RestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testPutXmlRequest() throws Exception {
-        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_XML_UTF8);
-        String content = REST_XML_REQUEST_BODY.replace(ID1, ID2);
+        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_XML_UTF8);
+        final String content = REST_XML_REQUEST_BODY.replace(ID1, ID2);
 
         // Prepare request to send via API
-        AbstractRequest putRequest = createXmlMockRequestForPut(groupWithRecording.getId());
-        String postEndpoint = String.format(REQUEST_PATH_API, groupWithRecording.getProjectId(), groupWithRecording.getId());
+        final AbstractRequest putRequest = createXmlMockRequestForPut(groupWithRecording.getId());
+        final String postEndpoint = String.format(REQUEST_PATH_API, groupWithRecording.getProjectId(), groupWithRecording.getId());
+
         // Send real request to API
         sendPostRequest(postEndpoint, MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8), putRequest);
 
@@ -213,7 +215,7 @@ public class RestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetJsonRequestOk() throws Exception {
-        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
+        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
 
         createRequest(createJsonMockRequestForGet(group.getId()));
 
@@ -232,7 +234,7 @@ public class RestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetXmlRequestOk() throws Exception {
-        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_XML_UTF8);
+        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_XML_UTF8);
 
         createRequest(createXmlMockRequestForGet(group.getId()));
 
@@ -260,7 +262,7 @@ public class RestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testPostHtmlRequestNotOk() throws Exception {
-        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_HTML_UTF8);
+        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_HTML_UTF8);
 
         this.mockMvc.perform(post(endpoint).contentType(mediaType).content(""))
                 .andExpect(status().isBadRequest())
@@ -272,7 +274,7 @@ public class RestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testPutHtmlRequestNotOk() throws Exception {
-        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_HTML_UTF8);
+        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_HTML_UTF8);
 
         this.mockMvc.perform(put(endpoint).contentType(mediaType).content(""))
                 .andExpect(status().isBadRequest())
@@ -280,8 +282,10 @@ public class RestControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.errors[0]").value("Invalid header 'Content-type': application/json or application/xml are only allowed in REST requests"));
     }
 
-    private void createMockRequest(AbstractRequest request, String groupId, String contentType, String requestBody, String responseBody) {
-        Set<Pair> headersSet = ImmutableSet.of(new Pair("content-type", contentType));
+    private void createMockRequest(final AbstractRequest request, final String groupId, final String contentType,
+                                   final String requestBody, final String responseBody) {
+
+        final Set<Pair> headersSet = ImmutableSet.of(new Pair("content-type", contentType));
 
         request.setGroupId(groupId);
         request.setId(CommonUtils.generateUniqueId());
@@ -301,57 +305,71 @@ public class RestControllerTest extends AbstractControllerTest {
     }
 
     private PostRequest createJsonMockRequestForPost(String groupId) {
-        PostRequest postRequest = new PostRequest();
+        final PostRequest postRequest = new PostRequest();
+
         createMockRequest(postRequest, groupId, CONTENT_TYPE_JSON_UTF8.toLowerCase(), REST_JSON_REQUEST_BODY, REST_JSON_RESPONSE_BODY);
         postRequest.setCheckSum(CommonUtils.getCheckSum(postRequest));
         postRequest.getMockResponse().setHttpStatus(201);
         postRequest.getMockResponse().setHeaders(null);
+
         return postRequest;
     }
 
     private PutRequest createJsonMockRequestForPut(String groupId) {
-        PutRequest putRequest = new PutRequest();
+        final PutRequest putRequest = new PutRequest();
+
         createMockRequest(putRequest, groupId, CONTENT_TYPE_JSON_UTF8.toLowerCase(), REST_JSON_REQUEST_BODY, null);
         putRequest.setCheckSum(CommonUtils.getCheckSum(putRequest));
+
         return putRequest;
     }
 
     private GetRequest createJsonMockRequestForGet(String groupId) {
-        GetRequest getRequest = new GetRequest();
+        final GetRequest getRequest = new GetRequest();
+
         createMockRequest(getRequest, groupId, CONTENT_TYPE_JSON_UTF8.toLowerCase(), null, REST_JSON_RESPONSE_BODY);
         getRequest.setCheckSum(CommonUtils.generateCheckSum(getRequest));
+
         return getRequest;
     }
 
     private PostRequest createXmlMockRequestForPost(String groupId) {
-        PostRequest postRequest = new PostRequest();
+        final PostRequest postRequest = new PostRequest();
+
         createMockRequest(postRequest, groupId, CONTENT_TYPE_XML_UTF8.toLowerCase(), REST_XML_REQUEST_BODY, REST_XML_RESPONSE_BODY);
         postRequest.setCheckSum(CommonUtils.getCheckSum(postRequest));
         postRequest.getMockResponse().setHttpStatus(201);
         postRequest.getMockResponse().setHeaders(null);
+
         return postRequest;
     }
 
     private PutRequest createXmlMockRequestForPut(String groupId) {
-        PutRequest putRequest = new PutRequest();
+        final PutRequest putRequest = new PutRequest();
+
         createMockRequest(putRequest, groupId, CONTENT_TYPE_XML_UTF8.toLowerCase(), REST_XML_REQUEST_BODY, null);
         putRequest.setCheckSum(CommonUtils.getCheckSum(putRequest));
+
         return putRequest;
     }
 
     private GetRequest createXmlMockRequestForGet(String groupId) {
-        GetRequest getRequest = new GetRequest();
+        final GetRequest getRequest = new GetRequest();
+
         createMockRequest(getRequest, groupId, CONTENT_TYPE_XML_UTF8.toLowerCase(), null, REST_XML_RESPONSE_BODY);
         getRequest.setCheckSum(CommonUtils.generateCheckSum(getRequest));
+
         return getRequest;
     }
 
     private DeleteRequest createMockRequestForDelete(String groupId) {
-        DeleteRequest deleteRequest = new DeleteRequest();
+        final DeleteRequest deleteRequest = new DeleteRequest();
+
         createMockRequest(deleteRequest, groupId, null, null, null);
         deleteRequest.getMockResponse().setHttpStatus(204);
         deleteRequest.getMockResponse().setHeaders(null);
         deleteRequest.setCheckSum(CommonUtils.generateCheckSum(deleteRequest));
+
         return deleteRequest;
     }
 }

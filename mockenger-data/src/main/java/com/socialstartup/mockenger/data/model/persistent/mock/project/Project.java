@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -19,13 +20,14 @@ import javax.validation.constraints.Pattern;
  */
 @Builder
 @Getter
+@ToString
 @Document(collection = "project")
 public class Project {
 
     @Id
     private String id;
 
-    @NotBlank(message = "Name: may not be null or empty")
+    @NotBlank(message = "Project name: may not be null or empty")
     private String name;
 
     @NotBlank(message = "Code: may not be null or empty")
@@ -33,7 +35,7 @@ public class Project {
     @Indexed(name = "code_1", unique = true, collection = "project")
     private String code;
 
-    @NotNull(message = "Type: may not be null")
+    @NotNull(message = "Project type: may not be null")
     private ProjectType type;
 
     @JsonIgnore
