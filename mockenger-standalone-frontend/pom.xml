@@ -13,7 +13,7 @@
     <artifactId>mockenger-standalone-frontend</artifactId>
 
     <properties>
-    <grunt.build.dir>dist</grunt.build.dir>
+        <grunt.build.dir>dist</grunt.build.dir>
     </properties>
 
     <profiles>

@@ -1,12 +1,14 @@
 package com.socialstartup.mockenger.data.model.persistent.mock.response;
 
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
+import lombok.ToString;
 
 import java.util.Set;
 
 /**
  * Created by Dmitry Ryazanov on 3/12/2015.
  */
+@ToString
 public class MockResponse {
 
     private int httpStatus;

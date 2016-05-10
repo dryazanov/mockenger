@@ -9,20 +9,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
- *
+ * @author Dmitry Ryazanov
  */
-@Controller
-@EnableResourceServer
 @Profile("security")
-public class OAuthExtendedController extends AbstractController {
+@RestController
+@EnableResourceServer
+public class OAuth2ExtendedController extends AbstractController {
 
     @Autowired
     private DefaultTokenServices defaultTokenServices;
@@ -31,14 +30,13 @@ public class OAuthExtendedController extends AbstractController {
     private AccountService accountService;
 
 
-    @ResponseBody
+
     @RequestMapping(value = "/oauth/revoke", method = RequestMethod.POST)
     public ResponseEntity revokeTokens(@RequestParam("token") String token) {
         defaultTokenServices.revokeToken(token);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @ResponseBody
     @RequestMapping(value = "/oauth/user", method = RequestMethod.GET)
     public ResponseEntity<Account> getUser(java.security.Principal principal) {
         if (((OAuth2Authentication) principal).isAuthenticated() && !StringUtils.isEmpty(principal.getName())) {

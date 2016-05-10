@@ -1,6 +1,7 @@
 package com.socialstartup.mockenger.data.model.persistent.mock.request.part;
 
 import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
+import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Set;
 /**
  * Created by Dmitry Ryazanov on 3/31/2015.
  */
+@ToString(callSuper = true)
 public class Parameters extends AbstractPart<AbstractMapTransformer> {
 
     private Set<Pair> values;

@@ -1,5 +1,6 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
+import com.socialstartup.mockenger.core.service.ProjectService;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import org.springframework.http.HttpStatus;
@@ -64,7 +65,7 @@ public class ProjectController extends AbstractController {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
 
-        final Project projectToAdd = getProjectService().getProjectClone(project).id(null).build();
+        final Project projectToAdd = ProjectService.getProjectClone(project).id(null).build();
         return new ResponseEntity(getProjectService().save(projectToAdd), getResponseHeaders(), HttpStatus.OK);
     }
 

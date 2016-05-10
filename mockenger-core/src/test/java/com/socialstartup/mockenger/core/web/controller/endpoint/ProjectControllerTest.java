@@ -86,7 +86,7 @@ public class ProjectControllerTest extends AbstractControllerTest {
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]").value("Name: may not be null or empty"));
+                .andExpect(jsonPath("$.errors[0]").value("Project name: may not be null or empty"));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class ProjectControllerTest extends AbstractControllerTest {
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]").value("Type: may not be null"));
+                .andExpect(jsonPath("$.errors[0]").value("Project type: may not be null"));
     }
 
     @Test
@@ -169,7 +169,7 @@ public class ProjectControllerTest extends AbstractControllerTest {
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]").value("Name: may not be null or empty"));
+                .andExpect(jsonPath("$.errors[0]").value("Project name: may not be null or empty"));
     }
 
     @Test
@@ -181,7 +181,7 @@ public class ProjectControllerTest extends AbstractControllerTest {
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]").value("Type: may not be null"));
+                .andExpect(jsonPath("$.errors[0]").value("Project type: may not be null"));
     }
 
     @Test
@@ -189,7 +189,8 @@ public class ProjectControllerTest extends AbstractControllerTest {
         final Project project = createProject();
         final ResultActions resultActions = deleteProjectRest(project.getId());
 
-        resultActions.andExpect(status().isNoContent()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
+        resultActions.andExpect(status().isNoContent())
+                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
     }
 
     @Test

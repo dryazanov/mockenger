@@ -301,7 +301,7 @@ public class RequestControllerTest extends AbstractControllerTest {
             request.setName(null);
             runner.run(mockMvc, project.getId(), group.getId(), request, "name: may not be null or empty");
 
-            // Name is null
+            // GroupId is null
             AbstractRequest request1 = getNewRequest(group.getId());
             request1.setGroupId(null);
             runner.run(mockMvc, project.getId(), group.getId(), request1, "groupId: may not be null");

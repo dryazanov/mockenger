@@ -1,7 +1,7 @@
 {
-  "name": "mockenger-standalone-frontend",
-  "version": "0.0.0",
-  "description": "Description for mockenger-standalone-frontend",
+  "name": "mockenger-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for the mock server",
   "private": true,
   "main": "index.html",
   "scripts": {

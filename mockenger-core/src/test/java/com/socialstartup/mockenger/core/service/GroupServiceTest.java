@@ -14,7 +14,7 @@ import org.mockito.Mock;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -71,10 +71,10 @@ public class GroupServiceTest {
     public void testGetEmptyGroupList() {
         when(groupEntityRepositoryMock.findByProjectId(eq(PROJECT_ID))).thenReturn(null);
 
-        final List<Group> groups = classUnderTest.findByProjectId(PROJECT_ID);
+        final Iterable<Group> groups = classUnderTest.findByProjectId(PROJECT_ID);
 
         assertNotNull(groups);
-        assertEquals(0, groups.size());
+        assertFalse(groups.iterator().hasNext());
 
         verify(groupEntityRepositoryMock).findByProjectId(eq(PROJECT_ID));
         verifyNoMoreInteractions(groupEntityRepositoryMock);

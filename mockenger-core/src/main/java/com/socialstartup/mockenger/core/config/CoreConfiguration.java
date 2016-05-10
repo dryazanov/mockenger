@@ -3,6 +3,7 @@ package com.socialstartup.mockenger.core.config;
 import com.socialstartup.mockenger.data.config.DatasourceConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 
 /**
@@ -10,5 +11,6 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @Import(DatasourceConfiguration.class)
-@ComponentScan(basePackages = {"com.socialstartup.mockenger.core.service"})
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@ComponentScan(basePackages = {"com.socialstartup.mockenger.core.log", "com.socialstartup.mockenger.core.service"})
 public class CoreConfiguration {}

@@ -1,8 +1,11 @@
 package com.socialstartup.mockenger.data.model.persistent.mock.request.part;
 
+import lombok.ToString;
+
 /**
  *
  */
+@ToString
 public class Pair implements Comparable<Pair> {
 
     private String key;
@@ -42,14 +45,6 @@ public class Pair implements Comparable<Pair> {
         return false;
     }
 
-    private boolean isKeyEqual(final String pairKey) {
-        return (key != null ? !key.equals(pairKey) : pairKey != null);
-    }
-
-    private boolean isValueEqual(final String pairValue) {
-        return (value != null ? !value.equals(pairValue) : pairValue != null);
-    }
-
     @Override
     public int compareTo(Pair obj) {
         if (this.equals(obj)) {
@@ -59,6 +54,14 @@ public class Pair implements Comparable<Pair> {
         } else {
             return this.getValue().compareTo(obj.getValue());
         }
+    }
+
+    private boolean isKeyEqual(final String pairKey) {
+        return (key != null ? !key.equals(pairKey) : pairKey != null);
+    }
+
+    private boolean isValueEqual(final String pairValue) {
+        return (value != null ? !value.equals(pairValue) : pairValue != null);
     }
 }
 

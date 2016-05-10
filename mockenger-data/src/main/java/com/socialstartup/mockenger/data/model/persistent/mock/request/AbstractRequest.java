@@ -8,6 +8,7 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
 import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
 import com.socialstartup.mockenger.data.model.persistent.base.AbstractPersistentEntity;
 import com.socialstartup.mockenger.data.validator.MockResponseValidation;
+import lombok.ToString;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,6 +20,7 @@ import java.util.Optional;
 /**
  * Created by Dmitry Ryazanov on 3/12/2015.
  */
+@ToString
 @Document(collection = "request")
 public class AbstractRequest extends AbstractPersistentEntity<String> {
 

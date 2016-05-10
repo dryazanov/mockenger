@@ -109,7 +109,7 @@ public class GroupController extends AbstractController {
     @RequestMapping(value = GROUPS, method = GET)
     public ResponseEntity getGroupList(@PathVariable final String projectId) {
         final Project project = findProjectById(projectId);
-        final List<Group> groupList = getGroupService().findByProjectId(project.getId());
+        final Iterable<Group> groupList = getGroupService().findByProjectId(project.getId());
 
         return new ResponseEntity(groupList, getResponseHeaders(), HttpStatus.OK);
     }

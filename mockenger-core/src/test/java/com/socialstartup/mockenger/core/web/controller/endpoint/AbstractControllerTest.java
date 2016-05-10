@@ -9,6 +9,7 @@ import com.socialstartup.mockenger.core.config.TestPropertyContext;
 import com.socialstartup.mockenger.core.service.GroupService;
 import com.socialstartup.mockenger.core.service.ProjectService;
 import com.socialstartup.mockenger.core.service.RequestService;
+import com.socialstartup.mockenger.core.service.account.AccountService;
 import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
@@ -54,11 +55,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @WebAppConfiguration
 @ContextConfiguration(classes = {TestPropertyContext.class, TestContext.class})
 public class AbstractControllerTest {
+
     @Autowired
     private WebApplicationContext webApplicationContext;
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private AccountService accountService;
 
     @Autowired
     private GroupService groupService;
@@ -74,6 +79,10 @@ public class AbstractControllerTest {
     protected static final String PROJECT_NAME_TEST = "Unit-test project";
     protected static final String PROJECT_CODE_TEST = "UTCODE";
     protected static final String GROUP_NAME_TEST = "Unit-test group";
+    protected static final String ACCOUNT_FIRST_NAME_TEST = "First name";
+    protected static final String ACCOUNT_LAST_NAME_TEST = "Last name";
+    protected static final String ACCOUNT_USERNAME_TEST = "UserName";
+    protected static final String ACCOUNT_PASSWORD_TEST = "pswd";
     protected static final String REQUEST_NAME_TEST = "Unit-test mock-request";
     protected static final String REQUEST_PATH = "/unit/test/mock/request";
     protected static final String REQUEST_PATH_API = "/projects/%s/groups/%s/requests";
@@ -98,7 +107,7 @@ public class AbstractControllerTest {
     // ===============
     // PROJECT HELPERS
     // ===============
-    
+
     protected Project getProject(String projectId) {
         return this.projectService.findById(projectId);
     }
