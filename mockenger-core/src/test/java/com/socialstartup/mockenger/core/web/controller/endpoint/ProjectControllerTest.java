@@ -22,11 +22,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Created by Dmitry Ryazanov on 6/29/2015.
+ * @author Dmitry Ryazanov
  */
 public class ProjectControllerTest extends AbstractControllerTest {
+
     private static final String ENDPOINT_PROJECT = "/projects/";
+
     private static final String PROJECT_NAME_UPDATED = "ABC project";
+
     private static final String PROJECT_WITH_WRONG_TYPE = "{\"name\":\"ABC project\",\"type\":\"WRONG\"}";
 
 
@@ -40,9 +43,9 @@ public class ProjectControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetProject() throws Exception {
-        Project project = createProject();
+        final Project project = createProject();
+        final ResultActions resultActions = getProjectRest(project.getId());
 
-        ResultActions resultActions = getProjectRest(project.getId());
         resultActions.andExpect(status().isOk())
             .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
             .andExpect(jsonPath("$.id").value(project.getId()))
@@ -54,7 +57,8 @@ public class ProjectControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetProjectIdIsNull() throws Exception {
-        ResultActions resultActions = getProjectRest(null);
+        final ResultActions resultActions = getProjectRest(null);
+
         resultActions.andExpect(status().isNotFound())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
@@ -63,7 +67,8 @@ public class ProjectControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetProjectNotFound() throws Exception {
-        ResultActions resultActions = getProjectRest(PROJECT_ID);
+        final ResultActions resultActions = getProjectRest(PROJECT_ID);
+
         resultActions.andExpect(status().isNotFound())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))

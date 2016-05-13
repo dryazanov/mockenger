@@ -81,15 +81,15 @@ public abstract class AbstractServiceTest {
     public void init() {
         initMocks(this);
 
-        Enumeration<String> emptyEnumeration = Collections.enumeration(Collections.EMPTY_LIST);
+        final Enumeration<String> emptyEnumeration = Collections.enumeration(Collections.EMPTY_LIST);
 
         when(httpServletRequestMock.getAttribute(anyString())).thenReturn("");
         when(httpServletRequestMock.getHeaderNames()).thenReturn(emptyEnumeration);
         when(httpServletRequestMock.getParameterNames()).thenReturn(emptyEnumeration);
     }
 
-    protected void checkEntityWithoutBody(AbstractRequest entity, RequestMethod method) {
-        String checkSum = CommonUtils.getCheckSum(entity);
+    protected void checkEntityWithoutBody(final AbstractRequest entity, final RequestMethod method) {
+        final String checkSum = CommonUtils.getCheckSum(entity);
 
         assertNotNull(entity);
         assertNull(entity.getBody());
@@ -98,8 +98,8 @@ public abstract class AbstractServiceTest {
         assertEquals(checkSum, entity.getCheckSum());
     }
 
-    protected void checkEntityWithBody(AbstractRequest entity, RequestMethod method, String compareWith) {
-        String checkSum = CommonUtils.getCheckSum(entity);
+    protected void checkEntityWithBody(final AbstractRequest entity, final RequestMethod method, final String compareWith) {
+        final String checkSum = CommonUtils.getCheckSum(entity);
 
         assertNotNull(entity);
         assertNotNull(entity.getBody());
