@@ -6,13 +6,18 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.socialstartup.mockenger.core.config.TestContext;
 import com.socialstartup.mockenger.core.config.TestPropertyContext;
+import com.socialstartup.mockenger.core.service.EventService;
 import com.socialstartup.mockenger.core.service.GroupService;
 import com.socialstartup.mockenger.core.service.ProjectService;
 import com.socialstartup.mockenger.core.service.RequestService;
 import com.socialstartup.mockenger.core.service.account.AccountService;
 import com.socialstartup.mockenger.core.util.CommonUtils;
+import com.socialstartup.mockenger.data.model.dict.EventType;
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
+import com.socialstartup.mockenger.data.model.persistent.log.Event;
+import com.socialstartup.mockenger.data.model.persistent.log.EventBuilder;
+import com.socialstartup.mockenger.data.model.persistent.log.ProjectEvent;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
@@ -70,6 +75,10 @@ public class AbstractControllerTest {
 
     @Autowired
     private RequestService requestService;
+
+    @Autowired
+    private EventService eventService;
+
 
     protected MockMvc mockMvc;
 
@@ -259,5 +268,32 @@ public class AbstractControllerTest {
         request.setCheckSum(CommonUtils.getCheckSum(request));
 
         return request;
+    }
+
+    // ===============
+    // EVENT HELPERS
+    // ===============
+
+    protected Event getEvent(final String eventId) {
+        return eventService.findById(eventId);
+    }
+
+    protected void deleteAllEvents() {
+        getAllEvents().forEach((entity) -> eventService.remove(entity));
+    }
+
+    protected Iterable<Event> getAllEvents() {
+        return eventService.findAll();
+    }
+
+    protected Event createEvent() {
+        final Project project = getProjectBuilder(true).build();
+        final ProjectEvent event = ((EventBuilder)ProjectEvent.builder())
+                .eventType(EventType.SAVE)
+                .entity(project)
+                .username("test.username")
+                .build();
+
+        return eventService.save(event);
     }
 }

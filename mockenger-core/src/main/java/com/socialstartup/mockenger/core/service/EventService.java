@@ -10,10 +10,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
- * Created by Dmitry Ryazanov on 3/24/2015.
+ * @author Dmitry Ryazanov
  */
 @Component
 public class EventService {
@@ -30,14 +31,9 @@ public class EventService {
     }
 
 
-    public Iterable<Event> findByEntityType(final Class<? extends Event> clazz, final Integer page, final String sort) {
+    public Page<Event> findByEntityTypes(final List<String> eventClassTypes, final Integer page, final String sort) {
         final PageRequest pageable = new PageRequest(getPage(page), ITEMS_PER_PAGE, Sort.Direction.DESC, getSortField(sort));
-        return eventRepository.findByEntityType(clazz.getCanonicalName(), pageable);
-    }
-
-
-    public Iterable<Event> findByEventType(final String eventType) {
-        return eventRepository.findByEventType(eventType);
+        return eventRepository.findByEntityTypeIn(eventClassTypes, pageable);
     }
 
 

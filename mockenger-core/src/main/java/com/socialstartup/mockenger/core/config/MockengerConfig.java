@@ -21,12 +21,13 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
 @ComponentScan(basePackages = {"com.socialstartup.mockenger.core.web"})
 @Import({CoreConfiguration.class, SecurityConfiguration.class, OAuth2ServerConfiguration.class})
 public class MockengerConfig {
+
+    private TokenStore inMemoryTokenStore = new InMemoryTokenStore();
+
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertyPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
-
-    private TokenStore inMemoryTokenStore = new InMemoryTokenStore();
 
     @Bean
     public TokenStore getTokenStore() {
