@@ -8,7 +8,7 @@ angular.module('mockengerClientMainApp')
 
             // Get event list
             $scope.updateEventList = function(types, page, sort) {
-                eventListService.events.get({types: types, page: page, sort, sort}, function(response) {
+                eventListService.events.get({types: types, page: page, sort: sort}, function(response) {
                     eventListService.setCurrentPage(page);
                     eventListService.setData(response);
                 }, function (errorResponse) {
