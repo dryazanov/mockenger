@@ -5,8 +5,10 @@ angular.module('mockengerClientComponents')
         function($q, $location, $cookies, $injector) {
             return {
                 'request': function(config) {
-                    if ($cookies.get('accessToken') != null && $cookies.get('accessToken') != 'undefined') {
-                        config.headers['Authorization'] = 'Bearer ' + $cookies.get('accessToken');
+                    if (config.url.match('.*?\\.html') == null) {
+                        if ($cookies.get('accessToken') != null && $cookies.get('accessToken') != 'undefined') {
+                            config.headers['Authorization'] = 'Bearer ' + $cookies.get('accessToken');
+                        }
                     }
                     return config;
                 },

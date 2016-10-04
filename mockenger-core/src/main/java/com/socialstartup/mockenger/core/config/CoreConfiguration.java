@@ -1,16 +1,16 @@
 package com.socialstartup.mockenger.core.config;
 
-import com.socialstartup.mockenger.data.config.DatasourceConfiguration;
+import com.socialstartup.mockenger.data.config.MongoDBConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 
 /**
- * Created by ydolzhenko on 17.06.15.
+ * @author Dmitry Ryazanov
  */
 @Configuration
-@Import(DatasourceConfiguration.class)
+@Import(MongoDBConfiguration.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @ComponentScan(basePackages = {"com.socialstartup.mockenger.core.log", "com.socialstartup.mockenger.core.service"})
 public class CoreConfiguration {}

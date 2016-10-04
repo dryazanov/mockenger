@@ -3,10 +3,9 @@
   "version": "0.0.0",
   "appPath": "src/main/resources/static/",
   "testPath": "src/test/resources/javascript/spec",
-  "homepage": "https://github.com/yuridolzhenko/mockenger",
+  "homepage": "https://bitbucket.org/dryazanov/mockenger",
   "authors": [
-    "Dmitry Ryazanov <dmitry@ryazanov.info>",
-    "Yuri Dolzhenko <yuri.dolzhenko@gmail.com>"
+    "Dmitry Ryazanov <dmitry@ryazanov.info>"
   ],
   "private": true,
   "ignore": [

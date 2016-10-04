@@ -47,7 +47,6 @@ public class AccountControllerTest extends OAuth2AbstractControllerTest {
     @Test
     public void testAddAccountWithEmptyFirstName() throws Exception {
         testAddAccountFailed(getAccountBuilder().firstName(""), "First name: may not be null or empty");
-//        testAddAccountFailed(getAccountBuilder().firstName(""), "firstName: may not be null or empty");
     }
 
     @Test

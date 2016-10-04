@@ -16,8 +16,6 @@ import com.socialstartup.mockenger.data.model.dict.EventType;
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.log.Event;
-import com.socialstartup.mockenger.data.model.persistent.log.EventBuilder;
-import com.socialstartup.mockenger.data.model.persistent.log.ProjectEvent;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
@@ -288,11 +286,12 @@ public class AbstractControllerTest {
 
     protected Event createEvent() {
         final Project project = getProjectBuilder(true).build();
-        final ProjectEvent event = ((EventBuilder)ProjectEvent.builder())
-                .eventType(EventType.SAVE)
-                .entity(project)
-                .username("test.username")
-                .build();
+		final Event event = Event.<Project>builder()
+				.eventType(EventType.SAVE)
+				.eventDate(new Date())
+				.entity(project)
+				.username("test.username")
+				.build();
 
         return eventService.save(event);
     }

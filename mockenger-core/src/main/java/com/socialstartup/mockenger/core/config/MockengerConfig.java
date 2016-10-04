@@ -15,7 +15,6 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
  */
 @Configuration
 @PropertySources(value = {
-        @PropertySource("classpath:mongodb.properties"),
         @PropertySource("classpath:application.properties")
 })
 @ComponentScan(basePackages = {"com.socialstartup.mockenger.core.web"})

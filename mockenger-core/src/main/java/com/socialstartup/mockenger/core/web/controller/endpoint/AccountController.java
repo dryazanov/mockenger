@@ -7,6 +7,7 @@ import com.socialstartup.mockenger.core.web.exception.AccountDeleteException;
 import com.socialstartup.mockenger.core.web.exception.ObjectNotFoundException;
 import com.socialstartup.mockenger.data.model.persistent.account.Account;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,8 +27,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 /**
- * Created by Dmitry Ryazanov
+ * @author Dmitry Ryazanov
  */
+@Profile("security")
 @RestController
 public class AccountController extends AbstractController {
 

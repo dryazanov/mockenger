@@ -4,7 +4,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 
-
+/**
+ * @author Dmitry Ryazanov
+ */
 @Profile("security")
 @Configuration
 @Import({ResourceServerConfiguration.class, AuthorizationServerConfiguration.class})

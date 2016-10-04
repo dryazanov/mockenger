@@ -16,6 +16,8 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
+import static com.socialstartup.mockenger.core.web.controller.base.AbstractController.API_PATH;
+
 /**
  * @author Dmitry Ryazanov
  */
@@ -47,6 +49,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.tokenStore(tokenStore)
+				.pathMapping("/oauth/token", API_PATH + "/oauth/token")
                 .authenticationManager(authenticationManager)
                 .userDetailsService(accountService);
     }
@@ -54,17 +57,14 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        // @formatter:off
-        clients
-            .inMemory()
-            .withClient(clientAppNAme)
-            .secret(secret)
-            .authorizedGrantTypes("password", "refresh_token")
-            .accessTokenValiditySeconds(600)
-            .refreshTokenValiditySeconds(3600)
-            .scopes("read", "write")
-            .resourceIds(resourceId);
-        // @formatter:on
+        clients.inMemory()
+				.withClient(clientAppNAme)
+				.secret(secret)
+				.authorizedGrantTypes("password", "refresh_token")
+				.accessTokenValiditySeconds(600)
+				.refreshTokenValiditySeconds(3600)
+				.scopes("read", "write")
+				.resourceIds(resourceId);
     }
 
 

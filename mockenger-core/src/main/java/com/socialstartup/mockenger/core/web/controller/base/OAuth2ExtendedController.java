@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableResourceServer
 public class OAuth2ExtendedController extends AbstractController {
 
-    @Autowired
+	@Autowired
     private DefaultTokenServices defaultTokenServices;
 
     @Autowired
@@ -31,16 +31,16 @@ public class OAuth2ExtendedController extends AbstractController {
 
 
 
-    @RequestMapping(value = "/oauth/revoke", method = RequestMethod.POST)
-    public ResponseEntity revokeTokens(@RequestParam("token") String token) {
+    @RequestMapping(value = REVOKE_ENDPOINT, method = RequestMethod.POST)
+    public ResponseEntity revokeTokens(@RequestParam("token") final String token) {
         defaultTokenServices.revokeToken(token);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping(value = "/oauth/user", method = RequestMethod.GET)
-    public ResponseEntity<Account> getUser(java.security.Principal principal) {
+    @RequestMapping(value = USER_ENDPOINT, method = RequestMethod.GET)
+    public ResponseEntity<Account> getUser(final java.security.Principal principal) {
         if (((OAuth2Authentication) principal).isAuthenticated() && !StringUtils.isEmpty(principal.getName())) {
-            Account account = accountService.findByUsername(principal.getName());
+            final Account account = accountService.findByUsername(principal.getName());
             if (account != null) {
                 return new ResponseEntity(account, getResponseHeaders(), HttpStatus.OK);
             }

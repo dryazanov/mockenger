@@ -23,7 +23,7 @@
 
         <spring.framework.version>4.2.0.RELEASE</spring.framework.version>
         <spring.security.version>4.0.3.RELEASE</spring.security.version>
-        <spring.data.mongodb.version>1.7.2.RELEASE</spring.data.mongodb.version>
+        <spring.data.mongodb.version>1.9.3.RELEASE</spring.data.mongodb.version>
         <spring-security-oauth2.version>2.0.7.RELEASE</spring-security-oauth2.version>
         <spring.boot.version>1.2.4.RELEASE</spring.boot.version>
         <fasterxml.jackson.version>2.2.2</fasterxml.jackson.version>
@@ -95,6 +95,11 @@
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-mongodb</artifactId>
                 <version>${spring.data.mongodb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-autoconfigure</artifactId>
+                <version>${spring.boot.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
@@ -242,6 +247,10 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
+            <resource>
+                <directory>static</directory>
+                <targetPath>static</targetPath>
+            </resource>
         </resources>
         <plugins>
             <plugin>
@@ -259,7 +268,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.2</version>
+                <version>3.0.2</version>
                 <executions>
                     <execution>
                         <goals>

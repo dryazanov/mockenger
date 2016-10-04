@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
 import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractTransformer;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by Dmitry Ryazanov on 27/01/2016.
+ * @author Dmitry Ryazanov
  */
 public class RequestComparator {
 
@@ -26,7 +27,7 @@ public class RequestComparator {
      */
     private static final Logger LOG = LoggerFactory.getLogger(RequestService.class);
     
-    private final AbstractRequest requestFromClient;
+    private final GenericRequest requestFromClient;
     private AbstractRequest requestsFromDb;
 
     /**
@@ -34,7 +35,7 @@ public class RequestComparator {
      *
      * @param requestFromClient
      */
-    public RequestComparator(final AbstractRequest requestFromClient) {
+    public RequestComparator(final GenericRequest requestFromClient) {
         this.requestFromClient = requestFromClient;
     }
 
@@ -153,7 +154,8 @@ public class RequestComparator {
 
     private Pair transformAndGet(final Pair pair, final List<AbstractMapTransformer> transformers) {
         return new Pair(pair.getKey(), transformers.stream()
-                .map(t -> t.transform(pair.getValue()))
+                .filter(t -> pair.getKey().equals(t.getKey()) && !StringUtils.isEmpty(pair.getValue()))
+				.map(t -> t.transform(pair.getValue()))
                 .findFirst()
                 .orElse(pair.getValue()));
     }
@@ -180,7 +182,7 @@ public class RequestComparator {
         return checksum;
     }
 
-    private boolean isHttpMethodWithBody(AbstractRequest request) {
+    private boolean isHttpMethodWithBody(GenericRequest request) {
         return request.getMethod() != null && (request.getMethod().equals(RequestMethod.POST) || request.getMethod().equals(RequestMethod.PUT));
     }
 

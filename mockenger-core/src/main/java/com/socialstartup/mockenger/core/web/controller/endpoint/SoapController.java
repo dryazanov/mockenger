@@ -19,26 +19,20 @@ import javax.xml.soap.SOAPException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
+import static com.socialstartup.mockenger.core.web.controller.base.AbstractController.API_PATH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
- * Created by Dmitry Ryazanov on 3/24/2015.
+ * @author Dmitry Ryazanov
  */
 @Controller
-@RequestMapping(value = {"/SOAP/{groupId}"})
+@RequestMapping(value = API_PATH + "/SOAP/{groupId}")
 public class SoapController extends ParentController {
 
     @Autowired
     @Qualifier("soapPostService")
     private PostService postService;
 
-
-    /**
-     * Constructor with default content-type for responses
-     */
-//    public SoapController() {
-//        getResponseHeaders().set("Content-Type", "application/soap+xml;charset=UTF-8");
-//    }
 
     /**
      *

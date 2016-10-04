@@ -9,6 +9,7 @@ import com.socialstartup.mockenger.core.service.http.PutService;
 import com.socialstartup.mockenger.core.service.http.TraceService;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static com.socialstartup.mockenger.core.web.controller.base.AbstractController.API_PATH;
 import static com.socialstartup.mockenger.data.model.dict.RequestMethod.CONNECT;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -32,10 +34,10 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.springframework.web.bind.annotation.RequestMethod.TRACE;
 
 /**
- * Created by Dmitry Ryazanov on 3/24/2015.
+ * @author Dmitry Ryazanov
  */
 @Controller
-@RequestMapping(value = {"/HTTP/{groupId}"})
+@RequestMapping(value = API_PATH + "/HTTP/{groupId}")
 public class HttpController extends ParentController {
 
     @Autowired
@@ -155,8 +157,10 @@ public class HttpController extends ParentController {
     @ResponseBody
     @RequestMapping(value = "/**", method = POST)
     public ResponseEntity processPostRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
-        Group group = findGroupById(groupId);
-        AbstractRequest mockRequest = postService.createMockRequest(group.getId(), requestBody, request);
+        final Group group = findGroupById(groupId);
+        final GenericRequest mockRequest = postService.createGenericRequest(group.getId(), requestBody, request);
+		cleanUpRequestBody(mockRequest);
+
         return findMockedEntities(mockRequest, group);
     }
 
