@@ -1,5 +1,6 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
+import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.dict.EventEntityType;
 import com.socialstartup.mockenger.data.model.persistent.log.Event;
 import org.junit.Before;
@@ -18,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class EventControllerTest extends AbstractControllerTest {
 
-    private static final String ENDPOINT_TEMPLATE = "/events/";
+    private static final String ENDPOINT_TEMPLATE = AbstractController.API_PATH + "/events/";
 
 
     @Before

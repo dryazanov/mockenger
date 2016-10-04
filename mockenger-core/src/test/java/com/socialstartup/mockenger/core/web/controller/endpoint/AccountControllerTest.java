@@ -22,11 +22,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Created by Dmitry Ryazanov on 6/29/2015.
+ * @author Dmitry Ryazanov
  */
 public class AccountControllerTest extends OAuth2AbstractControllerTest {
 
-    private static final String ENDPOINT_ACCOUNT = "/accounts/";
     private static final String ACCOUNT_FIRST_NAME_UPDATED = "First name1";
     private static final String ACCOUNT_LAST_NAME_UPDATED = "Last name1";
     private static final String ACCOUNT_USERNAME_UPDATED = "UserName1";

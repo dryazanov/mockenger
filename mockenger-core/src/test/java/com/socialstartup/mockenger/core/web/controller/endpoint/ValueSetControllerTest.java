@@ -2,6 +2,7 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.dict.TransformerType;
@@ -21,10 +22,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Created by Dmitry Ryazanov on 6/29/2015.
+ * @author Dmitry Ryazanov
  */
 public class ValueSetControllerTest extends AbstractControllerTest {
-    private static final String ENDPOINT_VALUESET = "/valueset";
+
+    private static final String ENDPOINT_VALUESET = AbstractController.API_PATH + "/valueset";
     private static final String PROJECT_TYPES_VALUESET = ENDPOINT_VALUESET + "/projectTypes";
     private static final String REQUEST_METHODS_VALUESET = ENDPOINT_VALUESET + "/requestMethods";
     private static final String TRANSFORMER_TYPES_VALUESET = ENDPOINT_VALUESET + "/transformerTypes";

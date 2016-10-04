@@ -3,6 +3,7 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialstartup.mockenger.core.util.CommonUtils;
+import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
@@ -36,10 +37,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Created by Dmitry Ryazanov on 6/29/2015.
+ * @author Dmitry Ryazanov
  */
 public class RequestControllerTest extends AbstractControllerTest {
-    private static final String ENDPOINT_TEMPLATE = "/projects/%s/groups/%s/requests/%s";
+
+    private static final String ENDPOINT_TEMPLATE = AbstractController.API_PATH + "/projects/%s/groups/%s/requests/%s";
     private static final String ENDPOINT_REQUEST = String.format(ENDPOINT_TEMPLATE, PROJECT_ID, GROUP_ID, "");
     private static final String REQUEST_NAME_UPDATED = "ABC mock-request";
 

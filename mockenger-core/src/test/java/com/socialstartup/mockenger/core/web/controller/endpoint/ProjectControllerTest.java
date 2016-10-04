@@ -2,6 +2,7 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import org.junit.Before;
@@ -26,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class ProjectControllerTest extends AbstractControllerTest {
 
-    private static final String ENDPOINT_PROJECT = "/projects/";
+    private static final String ENDPOINT_PROJECT = AbstractController.API_PATH + "/projects/";
 
     private static final String PROJECT_NAME_UPDATED = "ABC project";
 
