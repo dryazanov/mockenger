@@ -3,6 +3,7 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.socialstartup.mockenger.core.util.CommonUtils;
+import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
@@ -35,10 +36,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 /**
- * Created by Dmitry Ryazanov on 6/29/2015.
+ * @author Dmitry Ryazanov
  */
 public class RestControllerTest extends AbstractControllerTest {
-    private static final String ENDPOINT_TEMPLATE = "/REST/%s/%s";
+
+    private static final String ENDPOINT_TEMPLATE = AbstractController.API_PATH + "/REST/%s/%s";
     private static final String REQUEST_PATH = "test/rest/mock/request";
     private static final String ID1 = "200000000001";
     private static final String ID2 = "100000000002";

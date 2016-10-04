@@ -43,9 +43,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         TestSecurityContext.class
 })
 public class OAuth2AbstractControllerTest {
-    protected static final String OAUTH_GET_TOKEN = "/oauth/token?grant_type=password";
-    protected static final String OAUTH_REVOKE_TOKEN = "/oauth/revoke";
-    protected static final String OAUTH_GET_USER = "/oauth/user";
+    protected static final String OAUTH_GET_TOKEN = AbstractController.API_PATH + "/oauth/token?grant_type=password";
+    protected static final String OAUTH_REVOKE_TOKEN = AbstractController.API_PATH + "/oauth/revoke";
+    protected static final String OAUTH_GET_USER = AbstractController.API_PATH + "/oauth/user";
 
     protected static final String ACCOUNT_USERNAME = "testuser";
     protected static final String ACCOUNT_PASSWORD = "123456";
@@ -56,7 +56,7 @@ public class OAuth2AbstractControllerTest {
     protected static final String CLIENT_APP = "clientapp";
     protected static final String SECRET = "123456";
 
-    protected static final String ENDPOINT_ACCOUNT = "/accounts/";
+    protected static final String ENDPOINT_ACCOUNT = AbstractController.API_PATH + "/accounts/";
     protected static final String SEMICOLON = ";";
     protected static final String CHARSET_UTF8 = "charset=UTF-8";
     protected static final String CONTENT_TYPE_JSON_UTF8 = MediaType.APPLICATION_JSON_VALUE + SEMICOLON + CHARSET_UTF8;

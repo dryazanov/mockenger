@@ -2,6 +2,7 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import org.junit.Test;
@@ -21,10 +22,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Created by Dmitry Ryazanov on 6/29/2015.
+ * @author Dmitry Ryazanov
  */
 public class GroupControllerTest extends AbstractControllerTest {
-    private static final String ENDPOINT_TEMPLATE = "/projects/%s/groups/%s";
+    private static final String ENDPOINT_TEMPLATE = AbstractController.API_PATH + "/projects/%s/groups/%s";
     private static final String ENDPOINT_GROUP = String.format(ENDPOINT_TEMPLATE, PROJECT_ID, "");
     private static final String GROUP_NAME_UPDATED = "ABC group";
 
