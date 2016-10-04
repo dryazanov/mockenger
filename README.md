@@ -10,15 +10,18 @@
 * Install Grunt
 
 ##
-From mockenger-standalone-frontend module run:
+Install build dependencies from ***package.json***
+```
+cd mockenger-standalone-frontend/
+```
 
 ```
 npm install
 ```
-This will install build dependencies, taken from package.json. Run 'npm install' each time package.json updates.
+Run ***npm install*** every time when update ***package.json***
 
 ##
-In order to install frontend libraries taken from bower.json, run
+In order to install frontend libraries taken from ***bower.json***, run
 ```
 cd mockenger-standalone-frontend/
 ```
@@ -54,32 +57,34 @@ grunt serveDist
 
 1) Install mongodb
 
-2) Run mongodb with the command
+2) Run mongodb
 ```
 mongod --dbpath /path/to/mongodb/data
 ```
 
-Use `auth` flag if you created users in your mongodb for access control.
-Don't forget to update property `spring.data.mongodb.uri` in `application.properties`
+Use ***--auth*** flag if you created users in your mongodb for access control.
+Don't forget to update property ***spring.data.mongodb.uri*** in ***application.properties***
 ```
 mongod --auth --dbpath /path/to/mongodb/data
 ```
 
 ##
-3) When your mongodb is up and running you can add some data there:
-##
+3) When your mongodb is up and running you can add some data there
+
  - To restore db from the dump run
+
     ```
     mongorestore --db mockenger mockenger-parent/testdata/mockenger/
     ```
 
  - To create db dump run
+
     ```
     mongodump --db mockenger --out mockenger-parent/testdata/
     ```
 
 ##
-4) Now, run command 
+4) Start backend 
 ```
 cd mockenger-standalone/
 ```
@@ -96,7 +101,7 @@ You can also start backend application using generated jar file
 ```
 java -jar target/mockenger-standalone-<release_number>.jar
 ```
-Use argument `--spring.profiles.active=security` if you want to 
+Use argument ***--spring.profiles.active=security*** if you want to 
 start backend with OAuth2 security protection
 
 ##
