@@ -14,6 +14,6 @@ import java.util.List;
  */
 public interface EventRepository<T extends Event> extends PagingAndSortingRepository<T, String> {
 
-    @Query("{ '" + DefaultMongoTypeMapper.DEFAULT_TYPE_KEY + "' : { $in : ?0 } }")
+    @Query("{ 'entity." + DefaultMongoTypeMapper.DEFAULT_TYPE_KEY + "' : { $in : ?0 } }")
     Page<T> findByEntityTypeIn(List<String> eventClassTypes, Pageable pageable);
 }

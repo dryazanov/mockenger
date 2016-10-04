@@ -1,19 +1,21 @@
 package com.socialstartup.mockenger.data.model.dict;
 
 
-import com.socialstartup.mockenger.data.model.persistent.log.AccountEvent;
-import com.socialstartup.mockenger.data.model.persistent.log.GroupEvent;
-import com.socialstartup.mockenger.data.model.persistent.log.ProjectEvent;
-import com.socialstartup.mockenger.data.model.persistent.log.RequestEvent;
+import com.socialstartup.mockenger.data.model.persistent.account.Account;
+import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
+import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 
 /**
  * @author  Dmitry Ryazanov
  */
 public enum EventEntityType {
-    ACCOUNT(AccountEvent.class),
-    PROJECT(ProjectEvent.class),
-    GROUP(GroupEvent.class),
-    REQUEST(RequestEvent.class);
+    ACCOUNT(Account.class),
+    PROJECT(Project.class),
+    GROUP(Group.class),
+    REQUEST(AbstractRequest.class),
+    GENERIC_REQUEST(GenericRequest.class);
 
     private String clazz;
 

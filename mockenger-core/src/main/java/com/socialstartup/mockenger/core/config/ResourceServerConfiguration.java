@@ -10,8 +10,10 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 
+import static com.socialstartup.mockenger.core.web.controller.base.AbstractController.API_PATH;
+
 /**
- * Created by dryazanov on 26/04/16.
+ * @author Dmitry Ryazanov
  */
 @Profile("security")
 @Configuration
@@ -22,38 +24,38 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     private String resourceId;
 
     @Override
-    public void configure(ResourceServerSecurityConfigurer resources) {
+    public void configure(final ResourceServerSecurityConfigurer resources) {
         resources.resourceId(resourceId);
     }
 
     @Override
-    public void configure(HttpSecurity http) throws Exception {
+    public void configure(final HttpSecurity http) throws Exception {
         // @formatter:off
         http
             .authorizeRequests()
-            .antMatchers("/oauth/revoke").authenticated()
-            .antMatchers("/oauth/user").authenticated()
-            .antMatchers("/REST/**", "/SOAP/**", "/HTTP/**").anonymous()
+            .antMatchers(API_PATH + "/oauth/revoke").authenticated()
+            .antMatchers(API_PATH + "/oauth/user").authenticated()
+            .antMatchers(API_PATH + "/REST/**", API_PATH + "/SOAP/**", API_PATH + "/HTTP/**").anonymous()
 
-            .antMatchers(HttpMethod.GET, "/projects/**", "/valueset/**", "/events/**")
+            .antMatchers(HttpMethod.GET, API_PATH + "/projects/**", API_PATH + "/valueset/**", API_PATH + "/events/**")
             .hasAnyAuthority(RoleType.USER.name(), RoleType.MANAGER.name(), RoleType.ADMIN.name())
 
-            .antMatchers(HttpMethod.DELETE, "/projects/**")
+            .antMatchers(HttpMethod.DELETE, API_PATH + "/projects/**")
             .hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
 
-            .antMatchers(HttpMethod.POST, "/projects/**")
+            .antMatchers(HttpMethod.POST, API_PATH + "/projects/**")
             .hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
 
-            .antMatchers(HttpMethod.PUT, "/projects/**")
+            .antMatchers(HttpMethod.PUT, API_PATH + "/projects/**")
             .hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
 
-            .antMatchers(HttpMethod.GET, "/valueset/roles")
+            .antMatchers(HttpMethod.GET, API_PATH + "/valueset/roles")
             .hasAuthority(RoleType.ADMIN.name())
 
-            .antMatchers("/accounts/**")
+            .antMatchers(API_PATH + "/accounts/**")
             .hasAnyAuthority(RoleType.ADMIN.name())
 
-            .anyRequest().denyAll();
+            .anyRequest().permitAll();
         // @formatter:on
     }
 }

@@ -9,6 +9,7 @@ import com.socialstartup.mockenger.core.web.exception.ObjectNotFoundException;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,22 +21,32 @@ import java.io.IOException;
 import java.util.Optional;
 
 /**
- *
+ * @author Dmitry Ryazanov
  */
 public abstract class AbstractController {
 
     private final Logger LOG = LoggerFactory.getLogger(AbstractController.class);
 
-    protected static final String VALUESET_ENDPOINT = "/valueset";
-    protected static final String ACCOUNTS_ENDPOINT = "/accounts";
+    public static final String API_PATH = "/api";
+
+	protected static final String REVOKE_ENDPOINT = API_PATH + "/oauth/revoke";
+	protected static final String USER_ENDPOINT = API_PATH + "/oauth/user";
+
+    protected static final String VALUESET_ENDPOINT = API_PATH + "/valueset";
+
+    protected static final String ACCOUNTS_ENDPOINT = API_PATH + "/accounts";
     protected static final String ACCOUNT_ID_ENDPOINT = ACCOUNTS_ENDPOINT + "/{accountId}";
-    protected static final String PROJECTS_ENDPOINT = "/projects";
+
+    protected static final String PROJECTS_ENDPOINT = API_PATH + "/projects";
     protected static final String PROJECT_ID_ENDPOINT = PROJECTS_ENDPOINT + "/{projectId}";
+
     protected static final String GROUPS_ENDPOINT = "/groups";
     protected static final String GROUP_ID_ENDPOINT = GROUPS_ENDPOINT + "/{groupId}";
+
     protected static final String REQUESTS_ENDPOINT = "/requests";
     protected static final String REQUEST_ID_ENDPOINT = REQUESTS_ENDPOINT + "/{requestId}";
-    protected static final String EVENTS_ENDPOINT = "/events";
+
+    protected static final String EVENTS_ENDPOINT = API_PATH + "/events";
     protected static final String EVENT_ID_ENDPOINT = EVENTS_ENDPOINT + "/{eventId}";
 
     @Autowired
@@ -112,7 +123,7 @@ public abstract class AbstractController {
      *
      * @param mockRequest
      */
-    protected void cleanUpRequestBody(final AbstractRequest mockRequest) {
+    protected void cleanUpRequestBody(final GenericRequest mockRequest) {
         if (mockRequest.getBody() != null && !StringUtils.isEmpty(mockRequest.getBody().getValue())) {
             final String body = mockRequest.getBody().getValue().trim();
 

@@ -1,7 +1,7 @@
 package com.socialstartup.mockenger.core.log;
 
 import com.socialstartup.mockenger.data.model.persistent.account.Account;
-import com.socialstartup.mockenger.data.model.persistent.log.AccountEvent;
+import com.socialstartup.mockenger.data.model.persistent.log.Event;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -18,14 +18,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class AccountAspect extends CommonAspect {
 
-
     @Pointcut(EVENTABLE_ANNOTATION + " && args(account))")
     public void onAccountChanged(final Account account) {}
 
 
     @After("onAccountChanged(account)")
-    public void logAfterAccountChanged(final JoinPoint joinPoint, final Account account) {
-        final AccountEvent event = fillUpEvent(AccountEvent.builder(), getEventType(joinPoint), account).build();
-        getEventService().save(event);
+    public void createEvent(final JoinPoint joinPoint, final Account account) {
+		save(Event.<Account>builder().eventType(getEventType(joinPoint)).entity(account));
     }
 }

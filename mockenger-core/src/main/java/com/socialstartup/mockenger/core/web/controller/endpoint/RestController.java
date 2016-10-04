@@ -19,16 +19,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+import static com.socialstartup.mockenger.core.web.controller.base.AbstractController.API_PATH;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 /**
- * Created by Dmitry Ryazanov on 3/24/2015.
+ * @author Dmitry Ryazanov
  */
 @Controller
-@RequestMapping(value = {"/REST/{groupId}"})
+@RequestMapping(value = API_PATH + "/REST/{groupId}")
 public class RestController extends ParentController {
 
     @Autowired

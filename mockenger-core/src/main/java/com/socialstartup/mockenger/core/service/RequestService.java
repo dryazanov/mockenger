@@ -7,6 +7,7 @@ import com.socialstartup.mockenger.core.util.HttpUtils;
 import com.socialstartup.mockenger.core.web.exception.NotUniqueValueException;
 import com.socialstartup.mockenger.data.model.persistent.log.Eventable;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Headers;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Parameters;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
@@ -23,7 +24,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Created by Dmitry Ryazanov on 3/24/2015.
+ * @author Dmitry Ryazanov
  */
 @Component
 public class RequestService {
@@ -84,7 +85,7 @@ public class RequestService {
     }
 
 
-    public AbstractRequest findMockedEntities(final AbstractRequest mockRequest) {
+    public AbstractRequest findMockedEntities(final GenericRequest mockRequest) {
         List<AbstractRequest> entities = requestEntityRepository.findByGroupIdAndMethod(mockRequest.getGroupId(), mockRequest.getMethod());
 
         if (entities != null && entities.size() > 0) {
@@ -95,13 +96,12 @@ public class RequestService {
     }
 
 
-    public AbstractRequest fillUpEntity(final AbstractRequest mockRequest, final String groupId, final HttpServletRequest request) {
+    public GenericRequest fillUpEntity(final GenericRequest mockRequest, final String groupId, final HttpServletRequest request) {
         final Path path = new Path(HttpUtils.getUrlPath(request));
         final Headers headers = new Headers(HttpUtils.getHeaders(request, false));
         final Parameters parameters = new Parameters(HttpUtils.getParameterMap(request));
 
         mockRequest.setGroupId(groupId);
-        mockRequest.setCreationDate(new Date());
         mockRequest.setPath(path);
         mockRequest.setHeaders(headers);
         mockRequest.setParameters(parameters);
@@ -109,6 +109,23 @@ public class RequestService {
 
         return mockRequest;
     }
+    
+    public AbstractRequest toAbstractRequest(final GenericRequest genericRequest) {
+		final Date now = new Date();
+		final AbstractRequest abstractRequest = new AbstractRequest();
+
+		abstractRequest.setGroupId(genericRequest.getGroupId());
+		abstractRequest.setMethod(genericRequest.getMethod());
+		abstractRequest.setName(String.valueOf(now.getTime()));
+		abstractRequest.setCreationDate(now);
+		abstractRequest.setPath(genericRequest.getPath());
+		abstractRequest.setParameters(genericRequest.getParameters());
+		abstractRequest.setHeaders(genericRequest.getHeaders());
+		abstractRequest.setBody(genericRequest.getBody());
+		abstractRequest.setCheckSum(CommonUtils.getCheckSum(genericRequest));
+
+		return abstractRequest;
+	}
 
 
     /**
@@ -117,7 +134,7 @@ public class RequestService {
      * @param requestsFromDb
      * @return
      */
-    public AbstractRequest doFilter(final AbstractRequest incomingRequest, final List<AbstractRequest> requestsFromDb) {
+    public AbstractRequest doFilter(final GenericRequest incomingRequest, final List<AbstractRequest> requestsFromDb) {
         final RequestComparator requestComparator = new RequestComparator(incomingRequest);
 
         for (AbstractRequest storedRequest : requestsFromDb) {

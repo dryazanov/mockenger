@@ -1,42 +1,53 @@
 package com.socialstartup.mockenger.data.model.persistent.log;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.socialstartup.mockenger.data.model.dict.EventResultType;
 import com.socialstartup.mockenger.data.model.dict.EventType;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
 /**
- * Created by dryazanov on 06/04/16.
+ * @author Dmitry Ryazanov
  */
 @Getter
+@Builder
 @ToString
-public class Event {
+@Document(collection = "event")
+public class Event<T> {
 
-    @Id
-    private String id;
+	@Id
+	private String id;
 
-    protected EventType eventType;
+	private T entity;
 
-    protected Date eventDate;
+	private EventType eventType;
 
-    protected String username;
+	private Date eventDate;
 
-    protected EventResultType resultType;
+	private String username;
+
+	private EventResultType resultType;
 
 
-    /**
-     * Default constructor
-     */
-    private Event() {}
+	@JsonCreator
+	public Event(@JsonProperty("id") final String id,
+				 @JsonProperty("entity") final T entity,
+				 @JsonProperty("eventType") final EventType eventType,
+				 @JsonProperty("timestamp") final Date eventDate,
+				 @JsonProperty("username") final String username,
+				 @JsonProperty("resultType") final EventResultType resultType) {
 
-    public Event(final String id, final EventType eventType, final Date eventDate, final String username, final EventResultType resultType) {
-        this.id = id;
-        this.eventType = eventType;
-        this.eventDate = eventDate;
-        this.username = username;
-        this.resultType = resultType;
-    }
+		this.id = id;
+		this.entity = entity;
+		this.eventType = eventType;
+		this.eventDate = eventDate;
+		this.username = username;
+		this.resultType = resultType;
+	}
 }

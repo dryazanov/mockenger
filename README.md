@@ -3,8 +3,6 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/4cfcf88539ba49be8ed773807b312405)](https://www.codacy.com/app/dryazanov/mockenger)
 ##
 ##
-
-
 **Frontend install**
 
 * Install Node JS
@@ -15,9 +13,7 @@
 From mockenger-standalone-frontend module run:
 
 ```
-#!cmd
-
->> npm install
+npm install
 ```
 This will install build dependencies, taken from package.json. Run 'npm install' each time package.json updates.
 
@@ -25,9 +21,7 @@ This will install build dependencies, taken from package.json. Run 'npm install'
 From mockenger-standalone-frontend module run:
 
 ```
-#!cmd
-
->> bower install
+bower install
 ```
 This will install frontend libraries taken from bower.json.
 
@@ -35,27 +29,21 @@ This will install frontend libraries taken from bower.json.
 To start frontend in dev mode, run:
 
 ```
-#!cmd
-
->> grunt serve
+grunt serve
 ```
 
 ##
 To build frontend, run:
 
 ```
-#!cmd
-
->> grunt
+grunt
 ```
 
 ##
 To build and start from built artifact, run:
 
 ```
-#!cmd
-
->> grunt serveDist
+grunt serveDist
 ```
 
 ##
@@ -65,17 +53,36 @@ To build and start from built artifact, run:
 1) Install mongodb
 
 2) Run mongo with the command
-mongod --dbpath \path\to\mongodb\data
+```
+mongod --dbpath /path/to/mongodb/data
+```
+or
+```
+mongod --auth --dbpath /Users/dryazanov/Applications/mongodb-3.2.3/data/db/
+```
 
-3a) To restore db from the dump run:
-mongorestore --db mockenger \mockenger-parent\testdata\mockenger
+##
+3)
+* To restore db from the dump run
+    ```
+    mongorestore --db mockenger mockenger-parent/testdata/mockenger/
+    ```
 
-3b) To create db dump run:
-mongodump --db mockenger --out mockenger-parent\testdata\
-
+* To create db dump run
+    ```
+    mongodump --db mockenger --out mockenger-parent/testdata/
+    ```
+##
 4) Go to mockenger-standalone parent folder and run
+```
 mvn spring-boot:run
+```
+or
+```
+java -jar target/mockenger-standalone-0.1.jar --spring.profiles.active=security
+```
 
+##
 5) Open http://localhost:15123/#/
 
 ##

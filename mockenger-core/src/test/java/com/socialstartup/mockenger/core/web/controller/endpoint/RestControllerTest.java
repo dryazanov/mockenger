@@ -150,7 +150,7 @@ public class RestControllerTest extends AbstractControllerTest {
         // Send real request to API
         sendPostRequest(postEndpoint, MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8), postRequest);
 
-        this.mockMvc.perform(post(endpointWithRecording).contentType(mediaType).content(content))
+        mockMvc.perform(post(endpointWithRecording).contentType(mediaType).content(content))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(CONTENT_TYPE_XML_UTF8))
                 .andExpect(xpath("/note/result").string(EXPECTED_RESULT_OK));

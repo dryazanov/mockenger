@@ -11,25 +11,19 @@ import com.socialstartup.mockenger.data.model.dto.Message;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
-import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Optional;
-import java.util.Set;
-
-import static com.socialstartup.mockenger.core.service.HttpHeadersService.CONTENT_TYPE_KEY;
-import static com.socialstartup.mockenger.core.service.HttpHeadersService.MEDIA_TYPE_XML;
 
 /**
  *
@@ -77,12 +71,14 @@ public class ParentController extends AbstractController {
      * @param group
      * @return
      */
-    protected ResponseEntity findMockedEntities(AbstractRequest mockRequest, Group group) {
+    protected ResponseEntity findMockedEntities(GenericRequest mockRequest, Group group) {
         if (mockRequest == null) {
             throw new MockObjectNotCreatedException("Provided mock-request is null or empty");
         }
+
         final AbstractRequest mockResult = getRequestService().findMockedEntities(mockRequest);
-        return generateResponse(mockRequest, mockResult, group);
+
+		return generateResponse(mockRequest, mockResult, group);
     }
 
     /**
@@ -92,65 +88,77 @@ public class ParentController extends AbstractController {
      * @param group
      * @return
      */
-    protected ResponseEntity generateResponse(AbstractRequest mockRequest, AbstractRequest mockResult, Group group) {
+    protected ResponseEntity generateResponse(GenericRequest mockRequest, AbstractRequest mockResult, Group group) {
         if (mockResult != null) {
             final MockResponse mockResponse = createMockResponse(mockResult);
-            HttpHeaders headers = httpHeadersService.getDefaultHeaders();
+			final HttpHeaders headers = getHttpHeaders(mockRequest, mockResponse);
+			final HttpStatus httpStatus = HttpStatus.valueOf(mockResponse.getHttpStatus());
 
-            if (!CollectionUtils.isEmpty(mockResponse.getHeaders())) {
-                headers = httpHeadersService.createHeaders(mockResponse.getHeaders());
-            } else if (mockRequest.getHeaders() != null) {
-                headers = updateHeaders(mockRequest, headers);
-            }
-            return new ResponseEntity<>(mockResponse.getBody(), headers, HttpStatus.valueOf(mockResponse.getHttpStatus()));
+			return new ResponseEntity<>(mockResponse.getBody(), headers, httpStatus);
         } else if (group.isRecording()) {
             return processRecording(group, mockRequest);
         }
+
         return new ResponseEntity<>(null, getResponseHeaders(), HttpStatus.NOT_FOUND);
     }
 
-    private HttpHeaders updateHeaders(final AbstractRequest mockRequest, final HttpHeaders headers) {
-        final Set<Pair> headerValues = mockRequest.getHeaders().getValues();
-        if (!CollectionUtils.isEmpty(headerValues)) {
-            headerValues.forEach(pair -> {
-                if (pair.getKey().equals(CONTENT_TYPE_KEY) && pair.getValue().contains(MediaType.APPLICATION_XML_VALUE)) {
-                    headers.set(CONTENT_TYPE_KEY, MEDIA_TYPE_XML);
-                }
-            });
-        }
-        return headers;
-    }
 
-    private ResponseEntity processRecording(final Group group, final AbstractRequest mockRequest) {
-        if (StringUtils.isEmpty(mockRequest.getName())) {
-            mockRequest.setName(String.valueOf(mockRequest.getCreationDate().getTime()));
-        }
+	private HttpHeaders getHttpHeaders(final GenericRequest mockRequest, final MockResponse mockResponse) {
+		final HttpHeaders headers = httpHeadersService.getDefaultHeaders();
 
-        final Project project = findProjectById(group.getProjectId());
-        final long nextSequenceValue = getProjectService().getNextSequenceValue(group.getProjectId());
-        mockRequest.setUniqueCode(project.getCode() + "-" + nextSequenceValue);
-        cleanUpRequestBody(mockRequest);
+		if (!CollectionUtils.isEmpty(mockResponse.getHeaders())) {
+			return httpHeadersService.createHeaders(mockResponse.getHeaders());
+		} else if (mockRequest.getHeaders() != null) {
+			return httpHeadersService.updateContentTypeHeader(mockRequest, headers);
+		}
+
+		return headers;
+	}
+
+
+	private ResponseEntity processRecording(final Group group, final GenericRequest mockRequest) {
+		final AbstractRequest abstractRequest = getRequestService().toAbstractRequest(mockRequest);
+
+		abstractRequest.setUniqueCode(getUniqueCode(group.getProjectId()));
+        cleanUpRequestBody(abstractRequest);
 
         if (group.isForwarding()) {
-            mockRequest.setMockResponse(proxyService.forwardRequest(mockRequest, group.getForwardTo()));
+			abstractRequest.setMockResponse(proxyService.forwardRequest(abstractRequest, group.getForwardTo()));
         }
 
-        getRequestService().save(mockRequest);
+        getRequestService().save(abstractRequest);
+
         return new ResponseEntity<Object>(mockRequest, getResponseHeaders(), HttpStatus.CREATED);
     }
 
-    private MockResponse createMockResponse(final AbstractRequest mockResult) {
-        return Optional.ofNullable(mockResult.getMockResponse()).map(res -> res).orElse(createResponse302());
+
+	private String getUniqueCode(final String projectId) {
+		final Project project = findProjectById(projectId);
+		final long nextSequenceValue = getProjectService().getNextSequenceValue(projectId);
+
+		return project.getCode() + "-" + nextSequenceValue;
+	}
+
+
+	private MockResponse createMockResponse(final AbstractRequest mockResult) {
+        return Optional.ofNullable(mockResult.getMockResponse()).orElse(createResponse302());
     }
 
+
     private MockResponse createResponse302() {
-        String jsonMessageToSend = "";
-        final String message = "The mock you are looking for does exist but the response object is null";
-        try {
-            jsonMessageToSend = new ObjectMapper().writeValueAsString(new Message(message));
-        } catch (JsonProcessingException e) {
-            LOG.warn("Can't convert message '" + message + "' to json. Message will be send as a plain text", e);
-        }
-        return new MockResponse(HttpStatus.FOUND.value(), Collections.emptySet(), jsonMessageToSend);
+        return new MockResponse(HttpStatus.FOUND.value(), Collections.emptySet(), get302ResponseMessage());
     }
+
+
+	private String get302ResponseMessage() {
+		final String message = "The mock you are looking for does exist but the response object is null";
+
+		try {
+			return new ObjectMapper().writeValueAsString(new Message(message));
+		} catch (JsonProcessingException e) {
+			LOG.warn("Can't convert message '" + message + "' to json. Message will be send as a plain text", e);
+		}
+
+		return message;
+	}
 }

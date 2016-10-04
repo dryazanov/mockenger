@@ -3,7 +3,7 @@ package com.socialstartup.mockenger.core.util;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
@@ -12,9 +12,10 @@ import org.springframework.util.StringUtils;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
- * Created by Dmitry Ryazanov on 3/22/2015.
+ * @author Dmitry Ryazanov
  */
 public class CommonUtils {
 
@@ -22,7 +23,7 @@ public class CommonUtils {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
-    public static String getCheckSum(final AbstractRequest abstractRequest) {
+    public static String getCheckSum(final GenericRequest abstractRequest) {
         if (abstractRequest.getBody() != null && !StringUtils.isEmpty(abstractRequest.getBody().getValue())) {
             return generateCheckSum(abstractRequest.getBody().getValue());
         }
@@ -31,10 +32,15 @@ public class CommonUtils {
     }
 
 
-    public static String generateCheckSum(final AbstractRequest abstractRequest) {
-        final StringBuilder sb = new StringBuilder(abstractRequest.getPath().getValue());
-        abstractRequest.getParameters().getValues().forEach(pair -> sb.append(pair.getKey()).append(pair.getValue()));
-        return generateCheckSum(sb.append(abstractRequest.getMethod()).toString());
+    public static String generateCheckSum(final GenericRequest abstractRequest) {
+        final String result =
+				abstractRequest.getPath().getValue() +
+						abstractRequest.getParameters().getValues()
+								.stream()
+								.map(pair -> pair.getKey() + pair.getValue())
+								.collect(Collectors.joining()) + abstractRequest.getMethod();
+
+        return generateCheckSum(result);
     }
 
 

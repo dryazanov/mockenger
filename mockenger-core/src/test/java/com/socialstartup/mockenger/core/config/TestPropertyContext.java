@@ -11,7 +11,6 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
  */
 @Configuration
 @PropertySources(value = {
-        @PropertySource("classpath:mongodb-test.properties"),
         @PropertySource("classpath:application-test.properties")
 })
 public class TestPropertyContext {
