@@ -8,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -27,7 +26,7 @@ import static org.junit.Assert.assertNull;
 @ContextConfiguration(classes = TestPropertyContext.class)
 public class HttpHeadersServiceTest {
 
-    private static final List<String> HEADERS_TO_ADD = Arrays.asList(MediaType.APPLICATION_JSON_VALUE, "host");
+    private static final List<String> HEADERS_TO_ADD = Arrays.asList(HttpHeaders.CONTENT_TYPE, "host");
 
     @InjectMocks
     private final HttpHeadersService classUnderTest = new HttpHeadersService();
@@ -54,7 +53,7 @@ public class HttpHeadersServiceTest {
         headersToIgnore.forEach( item -> pairList.add(new Pair(item, "value")) );
 
         HttpHeaders headers = classUnderTest.createHeaders(pairList);
-        assertEquals(3, headers.size());
+        assertEquals(2, headers.size());
         headersToIgnore.forEach( header -> assertNull(headers.get(header)) );
     }
 }
