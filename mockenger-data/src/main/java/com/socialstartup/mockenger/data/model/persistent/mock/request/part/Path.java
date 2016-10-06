@@ -1,35 +1,36 @@
 package com.socialstartup.mockenger.data.model.persistent.mock.request.part;
 
-import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractTransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.Transformer;
 import lombok.ToString;
 
 import java.util.List;
-import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
 
 /**
- * Created by Dmitry Ryazanov on 3/31/2015.
+ * @author Dmitry Ryazanov
  */
 @ToString(callSuper = true)
-public class Path extends AbstractPart<AbstractTransformer> {
+public class Path extends AbstractPart<Transformer> {
 
     private String value;
 
     public Path() {}
 
-    public Path(String value) {
+    public Path(final String value) {
         this.value = value;
     }
 
-    public Path(List<AbstractTransformer> transformers, String value) {
+    public Path(final List<Transformer> transformers, final String value) {
         this.transformers = transformers;
         setValue(value);
     }
 
     public String getValue() {
-        return Optional.ofNullable(value).orElse("");
+        return ofNullable(value).orElse("");
     }
 
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 }

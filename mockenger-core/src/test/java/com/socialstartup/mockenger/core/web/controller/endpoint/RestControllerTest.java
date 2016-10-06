@@ -18,6 +18,7 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
 import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
 import com.socialstartup.mockenger.data.model.persistent.transformer.KeyValueTransformer;
 import com.socialstartup.mockenger.data.model.persistent.transformer.RegexpTransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.Transformer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,18 +45,19 @@ public class RestControllerTest extends AbstractControllerTest {
     private static final String REQUEST_PATH = "test/rest/mock/request";
     private static final String ID1 = "200000000001";
     private static final String ID2 = "100000000002";
+	private static final String VALUE1 = "V1";
+    private static final String VALUE2 = "V2";
     private static final String EXPECTED_RESULT_OK = "OK";
 
-    protected static final String REST_JSON_REQUEST_BODY = "{\"id\":" + ID1 + ",\"name\":\"NAME\",\"type\":\"TYPE\"}";
+    protected static final String REST_JSON_REQUEST_BODY = "{\"id\":" + ID1 + ",\"dynamicValue\":\"" + VALUE1 + "\",\"name\":\"NAME\",\"type\":\"TYPE\"}";
     protected static final String REST_JSON_RESPONSE_BODY = "{\"result\":\"OK\"}";
     protected static final String REST_BAD_JSON_REQUEST = "{\"json\":\"is\",\"bad\"}";
 
     protected static final String REST_XML_REQUEST_BODY = new StringBuilder()
             .append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
             .append("<note>")
-            .append("<id>")
-            .append(ID1)
-            .append("</id>")
+            .append("<id>").append(ID1).append("</id>")
+            .append("<dynamicValue>").append(VALUE1).append("</dynamicValue>")
             .append("<to>Tove</to>")
             .append("<from>Jani</from>")
             .append("<heading>Reminder</heading>")
@@ -101,7 +103,7 @@ public class RestControllerTest extends AbstractControllerTest {
     @Test
     public void testPostJsonRequestOk() throws Exception {
         final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
-        final String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2);
+        final String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2).replace(VALUE1, VALUE2);
 
         createRequest(createJsonMockRequestForPost(group.getId()));
 
@@ -300,7 +302,10 @@ public class RestControllerTest extends AbstractControllerTest {
             request.setHeaders(new Headers(ImmutableList.of(new KeyValueTransformer("key", ID2, ID1)), headersSet));
         }
         if (requestBody != null) {
-            request.setBody(new Body(ImmutableList.of(new RegexpTransformer(ID2, ID1)), requestBody));
+			final ImmutableList<Transformer> transformers = ImmutableList.of(
+					new RegexpTransformer(ID2, ID1), new RegexpTransformer(VALUE2, VALUE1)
+			);
+			request.setBody(new Body(transformers, requestBody));
         }
 
         request.setMockResponse(new MockResponse(200, headersSet, responseBody));

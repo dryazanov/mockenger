@@ -3,16 +3,18 @@ package com.socialstartup.mockenger.core.util;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static org.springframework.util.DigestUtils.md5DigestAsHex;
 
 /**
  * @author Dmitry Ryazanov
@@ -28,20 +30,22 @@ public class CommonUtils {
             return generateCheckSum(abstractRequest.getBody().getValue());
         }
 
-        return CommonUtils.generateCheckSum(abstractRequest);
+        return generateCheckSum(abstractRequest);
     }
 
 
-    public static String generateCheckSum(final GenericRequest abstractRequest) {
-        final String result =
-				abstractRequest.getPath().getValue() +
-						abstractRequest.getParameters().getValues()
-								.stream()
-								.map(pair -> pair.getKey() + pair.getValue())
-								.collect(Collectors.joining()) + abstractRequest.getMethod();
+    public static String generateCheckSum(final GenericRequest genericRequest) {
+		final String path = genericRequest.getPath().getValue();
+		final Set<Pair> params = genericRequest.getParameters().getValues();
+		final RequestMethod method = genericRequest.getMethod();
 
-        return generateCheckSum(result);
+		return generateCheckSum(path + joinParams(params) + method);
     }
+
+
+    private static String joinParams(final Set<Pair> params) {
+		return params.stream().map(p -> p.getKey() + p.getValue()).collect(Collectors.joining());
+	}
 
 
     public static String generateCheckSum(final String ... args) {
@@ -56,11 +60,12 @@ public class CommonUtils {
         return generateCheckSum(sb.toString());
     }
 
+
     public static String generateCheckSum(final String source) {
         if (source == null) {
             return "";
         }
-        return DigestUtils.md5DigestAsHex(source.getBytes(Charsets.UTF_8));
+        return md5DigestAsHex(source.getBytes(Charsets.UTF_8));
     }
 
 

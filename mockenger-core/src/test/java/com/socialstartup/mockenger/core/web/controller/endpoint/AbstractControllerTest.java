@@ -26,10 +26,9 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Parameters;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
 import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
-import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
-import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractTransformer;
 import com.socialstartup.mockenger.data.model.persistent.transformer.KeyValueTransformer;
 import com.socialstartup.mockenger.data.model.persistent.transformer.RegexpTransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.Transformer;
 import com.socialstartup.mockenger.data.model.persistent.transformer.XPathTransformer;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -247,8 +246,8 @@ public class AbstractControllerTest {
 
     protected static AbstractRequest getNewRequest(String groupId) {
         AbstractRequest request = new AbstractRequest();
-        List<AbstractMapTransformer> mapTransformers = ImmutableList.of(new KeyValueTransformer());
-        List<AbstractTransformer> transformers = ImmutableList.of(new RegexpTransformer(), new XPathTransformer());
+        List<Transformer> mapTransformers = ImmutableList.of(new KeyValueTransformer());
+        List<Transformer> transformers = ImmutableList.of(new RegexpTransformer(), new XPathTransformer());
         Set<Pair> headersSet = ImmutableSet.of(new Pair("header1", "H1"), new Pair("header2", "H2"));
         Set<Pair> paramsSet = ImmutableSet.of(new Pair("A", "1"), new Pair("b", "2"));
 

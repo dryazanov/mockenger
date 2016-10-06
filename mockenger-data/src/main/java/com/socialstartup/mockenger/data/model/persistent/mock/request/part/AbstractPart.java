@@ -3,12 +3,13 @@ package com.socialstartup.mockenger.data.model.persistent.mock.request.part;
 import com.socialstartup.mockenger.data.model.persistent.transformer.Transformer;
 import lombok.ToString;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
+import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
 
 /**
- * Created by Dmitry Ryazanov on 3/31/2015.
+ * @author Dmitry Ryazanov
  */
 @ToString
 public abstract class AbstractPart<T extends Transformer> {
@@ -16,10 +17,10 @@ public abstract class AbstractPart<T extends Transformer> {
     protected List<T> transformers;
 
     public List<T> getTransformers() {
-        return Optional.ofNullable(transformers).orElse(new ArrayList<>());
+        return ofNullable(transformers).orElse(emptyList());
     }
 
-    public void setTransformers(List<T> transformers) {
+    public void setTransformers(final List<T> transformers) {
         this.transformers = transformers;
     }
 }

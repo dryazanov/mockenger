@@ -10,7 +10,8 @@ import lombok.ToString;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
-import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Dmitry Ryazanov
@@ -52,7 +53,7 @@ public class GenericRequest extends AbstractPersistentEntity<String> {
     }
 
     public Path getPath() {
-        return Optional.ofNullable(path).orElse(new Path());
+        return ofNullable(path).orElse(new Path());
     }
 
     public void setPath(Path path) {
@@ -60,7 +61,7 @@ public class GenericRequest extends AbstractPersistentEntity<String> {
     }
 
     public Headers getHeaders() {
-        return Optional.ofNullable(headers).orElse(new Headers());
+        return ofNullable(headers).orElse(new Headers());
     }
 
     public void setHeaders(Headers headers) {
@@ -68,7 +69,7 @@ public class GenericRequest extends AbstractPersistentEntity<String> {
     }
 
     public Parameters getParameters() {
-        return Optional.ofNullable(parameters).orElse(new Parameters());
+        return ofNullable(parameters).orElse(new Parameters());
     }
 
     public void setParameters(Parameters parameters) {
@@ -76,7 +77,7 @@ public class GenericRequest extends AbstractPersistentEntity<String> {
     }
 
     public Body getBody() {
-        return Optional.ofNullable(body).orElse(new Body());
+        return ofNullable(body).orElse(new Body());
     }
 
     public void setBody(Body body) {
