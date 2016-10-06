@@ -1,59 +1,63 @@
 package com.socialstartup.mockenger.core.service;
 
-import com.google.common.collect.Sets;
-import com.socialstartup.mockenger.core.util.CommonUtils;
+import com.google.common.base.Strings;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
-import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
-import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractTransformer;
 import com.socialstartup.mockenger.data.model.persistent.transformer.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.socialstartup.mockenger.core.util.CommonUtils.allNotEmpty;
+import static com.socialstartup.mockenger.core.util.CommonUtils.containsAll;
+import static com.socialstartup.mockenger.core.util.CommonUtils.containsEqualEntries;
+import static com.socialstartup.mockenger.core.util.CommonUtils.generateCheckSum;
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Dmitry Ryazanov
  */
 public class RequestComparator {
 
-    /**
-     * Logger
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(RequestService.class);
-    
-    private final GenericRequest requestFromClient;
-    private AbstractRequest requestsFromDb;
+    private final GenericRequest incoming;
+
+    private AbstractRequest persistent;
+
+	private Printer p;
+
 
     /**
      * Constructor
      *
-     * @param requestFromClient
+     * @param incomingRequest
      */
-    public RequestComparator(final GenericRequest requestFromClient) {
-        this.requestFromClient = requestFromClient;
+    public RequestComparator(final GenericRequest incomingRequest) {
+        this.incoming = incomingRequest;
+		this.p = new Printer();
     }
 
     /**
-     * Compares requestFromClient with every passed requestsFromDb
+     * Compares incoming with every passed persistent
      *
-     * @param requestsFromDb
+     * @param persistentRequest
      * @return
      */
-    public boolean compareTo(final AbstractRequest requestsFromDb) {
-        if (requestsFromDb != null) {
-            this.requestsFromDb = requestsFromDb;
+    public boolean compareTo(final AbstractRequest persistentRequest) {
+        if (persistentRequest != null) {
+            this.persistent = persistentRequest;
 
             if (comparePaths() && compareParameters() && compareHeaders() && compareBodies()) {
                 return true;
             }
         }
-        LOG.debug("Not equal, skip mock");
+
+        p.printSkipMock();
         return false;
     }
 
@@ -63,19 +67,14 @@ public class RequestComparator {
      * @return
      */
     private boolean comparePaths() {
-        String path = requestFromClient.getPath().getValue();
-        final List<AbstractTransformer> transformers = requestsFromDb.getPath().getTransformers();
+		final String incomingPath = getPath(incoming.getPath().getValue());
+		final String persistentPath = persistent.getPath().getValue();
 
-        if (!CollectionUtils.isEmpty(transformers)) {
-            for (Transformer transformer : transformers) {
-                path = transformer.transform(path);
-            }
-        }
+		p.printPaths(incomingPath, persistentPath);
 
-        ComparatorLogger.printPaths(path, requestsFromDb.getPath().getValue());
-
-        return path.equals(requestsFromDb.getPath().getValue());
+        return incomingPath.equals(persistentPath);
     }
+
 
     /**
      * Compare request parameters
@@ -83,16 +82,14 @@ public class RequestComparator {
      * @return
      */
     private boolean compareParameters() {
-        Set<Pair> paramsFromClient = requestFromClient.getParameters().getValues();
-        final Set<Pair> paramsFromDb = requestsFromDb.getParameters().getValues();
+        Set<Pair> incomingParams = incoming.getParameters().getValues();
+        final Set<Pair> persistentParams = persistent.getParameters().getValues();
 
-        if (CommonUtils.allNotEmpty(paramsFromClient, paramsFromDb)) {
-            final List<AbstractMapTransformer> transformers = requestsFromDb.getParameters().getTransformers();
-            paramsFromClient = applyTransformers(paramsFromClient, transformers);
+        if (allNotEmpty(incomingParams, persistentParams)) {
+            incomingParams = applyTransformers(incomingParams, persistent.getParameters().getTransformers());
+            p.printParams(incomingParams, persistentParams);
 
-            ComparatorLogger.printParameters(paramsFromClient, paramsFromDb);
-
-            return CommonUtils.containsEqualEntries(paramsFromClient, paramsFromDb);
+            return containsEqualEntries(incomingParams, persistentParams);
         }
 
         return true;
@@ -104,16 +101,14 @@ public class RequestComparator {
      * @return
      */
     private boolean compareHeaders() {
-        Set<Pair> userHeaders = requestFromClient.getHeaders().getValues();
-        final Set<Pair> mockHeaders = requestsFromDb.getHeaders().getValues();
+        Set<Pair> incomingHeaders = incoming.getHeaders().getValues();
+        final Set<Pair> persistentHeaders = persistent.getHeaders().getValues();
 
-        if (CommonUtils.allNotEmpty(userHeaders, mockHeaders)) {
-            final List<AbstractMapTransformer> transformers = requestsFromDb.getHeaders().getTransformers();
-            userHeaders = applyTransformers(userHeaders, transformers);
+        if (allNotEmpty(incomingHeaders, persistentHeaders)) {
+            incomingHeaders = applyTransformers(incomingHeaders, persistent.getHeaders().getTransformers());
+            p.printHeaders(incomingHeaders, persistentHeaders);
 
-            ComparatorLogger.printHeaders(userHeaders, mockHeaders);
-
-            return CommonUtils.containsAll(userHeaders, mockHeaders);
+            return containsAll(incomingHeaders, persistentHeaders);
         }
 
         return true;
@@ -125,98 +120,136 @@ public class RequestComparator {
      * @return
      */
     private boolean compareBodies() {
-        final String checksumFromClient;
+        final String checksum;
 
-        if (isHttpMethodWithBody(requestFromClient)) {
-            checksumFromClient = transformBodyAndGetChecksum();
+        if (isHttpMethodWithBody(incoming)) {
+            checksum = transformBodyAndGetChecksum();
         } else {
             // For other methods we only compare checksums
-            checksumFromClient = CommonUtils.generateCheckSum(requestFromClient);
-            ComparatorLogger.printChecksums(checksumFromClient, requestsFromDb.getCheckSum());
+            checksum = generateCheckSum(incoming);
+            p.printChecksums(checksum, persistent.getCheckSum());
         }
 
-        if (checksumFromClient.equals(requestsFromDb.getCheckSum())) {
-            LOG.debug("Mock found!");
+        if (checksum.equals(persistent.getCheckSum())) {
+            p.printMockFound();
             return true;
         }
 
         return false;
     }
 
-    private Set<Pair> applyTransformers(final Set<Pair> pairsToBeTransformed, final List<AbstractMapTransformer> transformers) {
+
+	private boolean isHttpMethodWithBody(final GenericRequest request) {
+		return ofNullable(request)
+				.map(GenericRequest::getMethod)
+				.map(m -> m.equals(RequestMethod.POST) || m.equals(RequestMethod.PUT))
+				.orElse(false);
+	}
+
+
+	private String transformBodyAndGetChecksum() {
+		final String body = getBody(incoming.getBody().getValue());
+		p.printBodies(body, persistent.getBody().getValue());
+
+		final String checksum = generateCheckSum(body);
+		p.printChecksums(checksum, persistent.getCheckSum());
+
+		return checksum;
+	}
+
+
+    private Set<Pair> applyTransformers(final Set<Pair> pairsToBeTransformed, final List<Transformer> transformers) {
         if (!CollectionUtils.isEmpty(transformers)) {
-            final Set<Pair> resultSet = Sets.newHashSet();
-            pairsToBeTransformed.forEach(pair -> resultSet.add(transformAndGet(pair, transformers)));
-            return resultSet;
+			return pairsToBeTransformed.parallelStream()
+					.map(pair -> transformAndGet(pair, transformers))
+					.collect(Collectors.toSet());
         }
+
         return pairsToBeTransformed;
     }
 
-    private Pair transformAndGet(final Pair pair, final List<AbstractMapTransformer> transformers) {
-        return new Pair(pair.getKey(), transformers.stream()
-                .filter(t -> pair.getKey().equals(t.getKey()) && !StringUtils.isEmpty(pair.getValue()))
-				.map(t -> t.transform(pair.getValue()))
-                .findFirst()
-                .orElse(pair.getValue()));
-    }
 
-    private String transformBodyAndGetChecksum() {
-        String bodyFromClient = requestFromClient.getBody().getValue();
-
-        if (StringUtils.isEmpty(bodyFromClient)) {
-            return "";
-        }
-
-        final List<AbstractTransformer> transformers = requestsFromDb.getBody().getTransformers();
-        if (!CollectionUtils.isEmpty(transformers)) {
-            bodyFromClient = transformers.stream()
-                    .map(t -> t.transform(requestFromClient.getBody().getValue()))
-                    .findFirst()
-                    .orElse(bodyFromClient);
-        }
-
-        ComparatorLogger.printRequestBodies(bodyFromClient, requestsFromDb.getBody().getValue());
-
-        final String checksum = CommonUtils.generateCheckSum(bodyFromClient);
-        ComparatorLogger.printChecksums(checksum, requestsFromDb.getCheckSum());
-        return checksum;
-    }
-
-    private boolean isHttpMethodWithBody(GenericRequest request) {
-        return request.getMethod() != null && (request.getMethod().equals(RequestMethod.POST) || request.getMethod().equals(RequestMethod.PUT));
+    private Pair transformAndGet(final Pair pair, final List<Transformer> transformers) {
+		return new Pair(pair.getKey(), transformString(pair.getValue(), transformers));
     }
 
 
-    private final static class ComparatorLogger {
+	private String transformString(final String stringToTransform, final  List<Transformer> transformers) {
+		final int size = transformers.size();
+		final Transformer transformer = transformers.get(0);
 
-        public static final String PATHS_TITLE = "PATHS";
-        public static final String PARAMETERS_TITLE = "PARAMETERS";
-        public static final String HEADERS_TITLE = "HEADERS";
-        public static final String BODIES_TITLE = "BODIES";
-        public static final String CHECKSUMS_TITLE = "CHECKSUMS";
+		if (size == 1) {
+			return transformer.transform(stringToTransform);
+		}
 
-        private static void print(final String type, final String clientData, final String dbData) {
-            LOG.debug(String.format("%s: client - %s | db - %s", type, clientData, dbData));
+		return transformer.transform(transformString(stringToTransform, transformers.subList(1, size)));
+	}
+
+
+	private String getPath(final String initialPath) {
+		final String path = ofNullable(initialPath).orElse("");
+		final List<Transformer> transformers = persistent.getPath().getTransformers();
+
+		if (!CollectionUtils.isEmpty(transformers)) {
+			return transformString(initialPath, transformers);
+		}
+
+		return path;
+	}
+
+
+	private String getBody(final String initialBody) {
+		final String body = ofNullable(initialBody).orElse("");
+		final List<Transformer> transformers = persistent.getBody().getTransformers();
+
+		if (!CollectionUtils.isEmpty(transformers)) {
+			return transformString(body, transformers);
+		}
+
+		return body;
+	}
+
+
+
+	/**
+	 * Local printer of the comparison steps
+	 */
+	private final class Printer {
+
+		private final Logger LOG = LoggerFactory.getLogger(RequestComparator.Printer.class);
+
+        void print(final String type, final String incomingData, final String persistentData) {
+            LOG.debug(String.format("%s: in - %s | db - %s", type, incomingData, persistentData));
         }
 
-        private static void printPaths(final String pathFromClient, final String pathFromDb) {
-            print(PATHS_TITLE, pathFromClient, pathFromDb);
+        void printMockFound() {
+			LOG.debug(Strings.repeat("*", 25));
+			LOG.debug("MOCK FOUND!");
+			LOG.debug(Strings.repeat("*", 25));
+		}
+
+		void printSkipMock() {
+			LOG.debug("Mocks are not NOT equal, skip");
+		}
+
+        void printPaths(final String path1, final String path2) {
+            print("PATHS", path1, path2);
         }
 
-        private static void printParameters(final Set<Pair> paramsFromClient, final Set<Pair> paramsFromDb) {
-            print(PARAMETERS_TITLE, paramsFromClient.toString(), paramsFromDb.toString());
+        void printParams(final Set<Pair> params1, final Set<Pair> params2) {
+            print("PARAMETERS", params1.toString(), params2.toString());
         }
 
-        private static void printHeaders(final Set<Pair> headersFromClient, final Set<Pair> headersFromDb) {
-            print(HEADERS_TITLE, headersFromClient.toString(), headersFromDb.toString());
+        void printHeaders(final Set<Pair> headers1, final Set<Pair> headers2) {
+            print("HEADERS", headers1.toString(), headers2.toString());
         }
 
-        private static void printRequestBodies(final String bodyFromClient, final String bodyFromDb) {
-            print(BODIES_TITLE, bodyFromClient, bodyFromDb);
+        void printBodies(final String body1, final String body2) {
+            print("BODIES", body1, body2);
         }
 
-        private static void printChecksums(final String checksumFromClient, final String checksumFromDb) {
-            print(CHECKSUMS_TITLE, checksumFromClient, checksumFromDb);
+        void printChecksums(final String checksum1, final String checksum2) {
+            print("CHECKSUMS", checksum1, checksum2);
         }
     }
 }

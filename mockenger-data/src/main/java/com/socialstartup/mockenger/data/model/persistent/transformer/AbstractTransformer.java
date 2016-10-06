@@ -1,7 +1,5 @@
 package com.socialstartup.mockenger.data.model.persistent.transformer;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.socialstartup.mockenger.data.model.dict.TransformerType;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,12 +9,6 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-@JsonSubTypes({
-    @JsonSubTypes.Type(value = RegexpTransformer.class, name = "REGEXP"),
-    @JsonSubTypes.Type(value = XPathTransformer.class, name = "XPATH"),
-    @JsonSubTypes.Type(value = KeyValueTransformer.class, name = "KEY_VALUE")
-})
 public abstract class AbstractTransformer implements Transformer {
 
     protected TransformerType type;

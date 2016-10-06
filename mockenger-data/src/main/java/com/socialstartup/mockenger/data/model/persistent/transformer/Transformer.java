@@ -1,8 +1,17 @@
 package com.socialstartup.mockenger.data.model.persistent.transformer;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 /**
- * Created by ydolzhenko on 25.06.15.
+ * @author Dmitry Ryazanov
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({
+		@JsonSubTypes.Type(value = RegexpTransformer.class, name = "REGEXP"),
+		@JsonSubTypes.Type(value = XPathTransformer.class, name = "XPATH"),
+		@JsonSubTypes.Type(value = KeyValueTransformer.class, name = "KEY_VALUE")
+})
 public interface Transformer {
 
     String transform(String source) throws TransformerException;

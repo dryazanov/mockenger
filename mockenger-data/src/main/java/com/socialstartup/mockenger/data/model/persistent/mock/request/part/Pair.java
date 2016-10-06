@@ -14,7 +14,7 @@ public class Pair implements Comparable<Pair> {
 
     public Pair() {}
 
-    public Pair(String key, String value) {
+    public Pair(final String key, final String value) {
         this.key = key;
         this.value = value;
     }
@@ -34,7 +34,7 @@ public class Pair implements Comparable<Pair> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -46,7 +46,7 @@ public class Pair implements Comparable<Pair> {
     }
 
     @Override
-    public int compareTo(Pair obj) {
+    public int compareTo(final Pair obj) {
         if (this.equals(obj)) {
             return 0;
         } else if (!this.getKey().equals(obj.getKey())) {

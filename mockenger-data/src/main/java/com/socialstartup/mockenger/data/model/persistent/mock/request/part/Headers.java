@@ -1,18 +1,19 @@
 package com.socialstartup.mockenger.data.model.persistent.mock.request.part;
 
-import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
+import com.socialstartup.mockenger.data.model.persistent.transformer.Transformer;
 import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
+import static java.util.Optional.ofNullable;
+
 /**
- * Created by Dmitry Ryazanov on 3/31/2015.
+ * @author Dmitry Ryazanov
  */
 @ToString(callSuper = true)
-public class Headers extends AbstractPart<AbstractMapTransformer> {
+public class Headers extends AbstractPart<Transformer> {
 
     private Set<Pair> values;
 
@@ -23,16 +24,16 @@ public class Headers extends AbstractPart<AbstractMapTransformer> {
         this.values = values;
     }
 
-    public Headers(List<AbstractMapTransformer> transformers, Set<Pair> values) {
+    public Headers(final List<Transformer> transformers, final Set<Pair> values) {
         this.transformers = transformers;
         setValues(values);
     }
 
     public Set<Pair> getValues() {
-        return Optional.ofNullable(values).orElse(new HashSet<>());
+        return ofNullable(values).orElse(new HashSet<>());
     }
 
-    public void setValues(Set<Pair> values) {
+    public void setValues(final Set<Pair> values) {
         this.values = values;
     }
 }

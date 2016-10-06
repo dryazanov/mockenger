@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 /**
- * Created by Dmitry Ryazanov on 3/23/2015.
+ * @author Dmitry Ryazanov
  */
 public class XPathTransformer extends AbstractTransformer {
 
@@ -56,14 +56,15 @@ public class XPathTransformer extends AbstractTransformer {
         validate();
 
         try {
-            Document document = XmlHelper.stringToXml(source);
+            final Document document = XmlHelper.stringToXml(source);
 //            document.setXmlStandalone(false);
-            String result = transform(document);
+            final String result = transform(document);
+
             if (result != null) {
                 return result;
             }
         } catch (ParserConfigurationException | IOException | SAXException e) {
-            LOG.debug(e.getMessage());
+            LOG.error(e.getMessage());
         }
 
         return source;
@@ -72,19 +73,19 @@ public class XPathTransformer extends AbstractTransformer {
     // TODO: Store info about failed transformation and show it later to user
     private String transform(Node source) {
         try {
-            XPath xPath = XPathFactory.newInstance().newXPath();
-            XPathExpression expression = xPath.compile(this.pattern);
-            NodeList nodeList = (NodeList) expression.evaluate(source, XPathConstants.NODESET);
+            final XPath xPath = XPathFactory.newInstance().newXPath();
+            final XPathExpression expression = xPath.compile(this.pattern);
+            final NodeList nodeList = (NodeList) expression.evaluate(source, XPathConstants.NODESET);
 
             if (nodeList.getLength() > 0) {
                 LOG.debug(String.format("Node value: %s", nodeList.item(0).getNodeValue()));
                 nodeList.item(0).setNodeValue(this.replacement);
 
                 // save the result
-                DOMSource domSource = new DOMSource(source);
-                StringWriter stringWriter = new StringWriter();
-                StreamResult streamResult = new StreamResult(stringWriter);
-                Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                final DOMSource domSource = new DOMSource(source);
+                final StringWriter stringWriter = new StringWriter();
+                final StreamResult streamResult = new StreamResult(stringWriter);
+                final Transformer transformer = TransformerFactory.newInstance().newTransformer();
                 transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
                 transformer.transform(domSource, streamResult);
 
@@ -93,7 +94,7 @@ public class XPathTransformer extends AbstractTransformer {
                 return stringWriter.toString();
             }
         } catch (XPathExpressionException | TransformerException e) {
-            LOG.debug(e.getMessage());
+            LOG.error(e.getMessage());
         }
 
         return null;
