@@ -9,12 +9,8 @@
         <relativePath>../mockenger-parent/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>mockenger-standalone-frontend</artifactId>
 
-    <properties>
-        <grunt.build.dir>dist</grunt.build.dir>
-    </properties>
 
     <profiles>
         <profile>
@@ -52,10 +48,10 @@
                                 </goals>
                             </execution>
                             <execution>
-                                <id>exec-grunt</id>
+                                <id>exec-gulp</id>
                                 <phase>process-resources</phase>
                                 <configuration>
-                                    <executable>grunt</executable>
+                                    <executable>gulp</executable>
                                 </configuration>
                                 <goals>
                                     <goal>exec</goal>
