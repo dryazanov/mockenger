@@ -6,10 +6,14 @@ var ngAnnotate = require('gulp-ng-annotate');
 var sourcemaps = require('gulp-sourcemaps');
 var useref = require('gulp-useref');
 var gulpif = require('gulp-if');
+var csso = require('gulp-csso');
+var autoprefixer = require('gulp-autoprefixer');
+
 var minifyCss = require('gulp-clean-css');
 var lazypipe = require('lazypipe');
-
 var fs = require('fs');
+
+var htmlPath = 'src/main/resources/static/index.html';
 
 var parseString = require('xml2js').parseString;
 // Returns the second occurence of the version number
@@ -74,6 +78,22 @@ gulp.task('minifyVendorCss', function () {
         .pipe(minifyCss())
         .pipe(concat('vendor.css'))
         .pipe(gulp.dest(properties.project.destination + 'styles'))
+});
+
+gulp.task('minify', function () {
+  return gulp.src(htmlPath)
+    .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
+    .pipe(gulpif('*.js', ngAnnotate()))
+    .pipe(gulpif('*.js', removeUseStrict()))
+    .pipe(gulpif('*.js', uglify()))
+    .pipe(gulpif('*.css', autoprefixer({
+        browsers: ['last 2 versions'],
+        cascade: false
+    })))
+    .pipe(gulpif('*.css', csso()))
+    .pipe(gulpif('*.css', minifyCss()))
+    .pipe(sourcemaps.write('maps'))
+    .pipe(gulp.dest(properties.project.destination));
 });
 
 
