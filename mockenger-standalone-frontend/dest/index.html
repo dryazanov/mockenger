@@ -1,0 +1,40 @@
+<!doctype html>
+
+<html lang="en" ng-app="mockengerClientMainApp">
+<head>
+    <base href="/">
+    <meta charset="utf-8">
+
+    <title>Mockenger</title>
+    <meta name="description" content="Mockenger">
+    <meta name="author" content="Social Startups">
+    <link rel="stylesheet" href="assets/styles/vendor.css">
+    <link rel="stylesheet" href="assets/styles/main.css">
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+
+<body ng-controller="rootController">
+<!--[if lt IE 9]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+    your browser</a> to improve your experience.</p>
+<![endif]-->
+<toast></toast>
+<div ng-show="app.env === 'dev'" class="development" ng-cloak=""></div>
+<div ng-view=""></div>
+
+<!--<footer class="footer">
+    <div class="container">
+        <p class="text-muted">You are running {{app.version}} Mockenger version built on {{app.buildDate}}</p>
+    </div>
+</footer>-->
+<script src="scripts/vendor.js"></script>
+
+<script src="scripts/mockengerComponents.js"></script>
+
+<script src="scripts/mockengerClientMain.js"></script>
+
+</body>
+</html>
