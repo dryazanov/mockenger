@@ -31,6 +31,7 @@
     "gulp-autoprefixer": "^3.1.1",
     "gulp-clean-css": "^2.0.13",
     "gulp-concat": "^2.6.0",
+    "gulp-contrib-copy": "^0.1.2",
     "gulp-csso": "^2.0.0",
     "gulp-filter": "^4.0.0",
     "gulp-html-minifier": "^0.1.8",

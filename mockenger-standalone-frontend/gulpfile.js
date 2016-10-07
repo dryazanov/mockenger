@@ -1,3 +1,4 @@
+// require
 var gulp = require('gulp');
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
@@ -8,15 +9,19 @@ var useref = require('gulp-useref');
 var gulpif = require('gulp-if');
 var csso = require('gulp-csso');
 var autoprefixer = require('gulp-autoprefixer');
+var copy = require('gulp-contrib-copy');
+var es = require('event-stream');
 
 var minifyCss = require('gulp-clean-css');
 var lazypipe = require('lazypipe');
+
 var fs = require('fs');
-
-var htmlPath = 'src/main/resources/static/index.html';
-
 var parseString = require('xml2js').parseString;
-// Returns the second occurence of the version number
+
+
+
+
+// Returns current version number of the project from the pom.xml
 var parseVersionFromPomXml = function () {
     var version;
     var pomXml = fs.readFileSync('pom.xml', 'utf8');
@@ -26,62 +31,28 @@ var parseVersionFromPomXml = function () {
     return version;
 };
 
+// Returns value of the property frontend.build.dir
 var parseBuildDirFromPomXml = function () {
     var buildDir;
-    var pomXml = fs.readFileSync('pom.xml', 'utf8');
+    var pomXml = fs.readFileSync('../mockenger-parent/pom.xml', 'utf8');
     parseString(pomXml, function (err, result) {
-        buildDir = result.project.properties[0]['grunt.build.dir'][0];
+        buildDir = result.project.properties[0]['frontend.build.dir'][0];
     });
     return buildDir;
 };
 
-
+// Create internal properties
 var properties = {
     project: {
         version: parseVersionFromPomXml(),
         source: 'src/main/resources/static/',
-        destination: 'dest/' //TODO: parseVersionFromPomXml()
+        destination: parseBuildDirFromPomXml() + '/'
     }
 }
 
-gulp.task('minifyAppJs', function () {
-//    console.log('==> ' + properties.project.source);
-//    console.log('==> ' + properties.project.destination);
-    return gulp.src([
-            properties.project.source + 'modules/**/mockengerClientComponents.js',
-            properties.project.source + 'modules/**/!(mockengerClientComponents)*.js'
-        ])
-        .pipe(sourcemaps.init())
-        .pipe(ngAnnotate())
-        .pipe(uglify())
-        .pipe(concat('api.js'))
-        .pipe(removeUseStrict())
-//        .pipe(sourcemaps.write("./"))
-        .pipe(gulp.dest(properties.project.destination + 'js'))
-});
 
-gulp.task('minifyVendorJs', function () {
-    return gulp.src(properties.project.source + 'libs/**/*.min.js')
-        .pipe(concat('vendor.js'))
-        .pipe(gulp.dest(properties.project.destination + 'js'))
-});
-
-
-gulp.task('minifyAppCss', function () {
-    return gulp.src(properties.project.source + 'assets/**/*.css')
-        .pipe(minifyCss())
-        .pipe(gulp.dest(properties.project.destination))
-});
-
-gulp.task('minifyVendorCss', function () {
-    return gulp.src(properties.project.source + 'libs/**/*.css')
-        .pipe(minifyCss())
-        .pipe(concat('vendor.css'))
-        .pipe(gulp.dest(properties.project.destination + 'styles'))
-});
-
-gulp.task('minify', function () {
-  return gulp.src(htmlPath)
+gulp.task('minifyAndUpdateIndexRef', function () {
+  return gulp.src(properties.project.source + 'index.html')
     .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
     .pipe(gulpif('*.js', ngAnnotate()))
     .pipe(gulpif('*.js', removeUseStrict()))
@@ -96,5 +67,21 @@ gulp.task('minify', function () {
     .pipe(gulp.dest(properties.project.destination));
 });
 
+gulp.task('copyViews', function() {
+    return gulp.src([properties.project.source + 'modules/main/views/*.html'])
+        .pipe(gulp.dest(properties.project.destination + 'modules/main/views/'))
+});
 
-gulp.task('default', ['minifyAppJs', 'minifyVendorJs', 'minifyAppCss', 'minifyVendorCss'])
+gulp.task('copyFonts', function() {
+    return gulp.src([properties.project.source + 'libs/bootstrap/fonts/*'])
+        .pipe(gulp.dest(properties.project.destination + 'assets/fonts/'))
+});
+
+gulp.task('copyImages', function() {
+    return gulp.src([properties.project.source + 'assets/images/*'])
+        .pipe(gulp.dest(properties.project.destination + 'assets/images/'))
+});
+
+
+
+gulp.task('default', ['minifyAndUpdateIndexRef', 'copyViews', 'copyFonts', 'copyImages'])
