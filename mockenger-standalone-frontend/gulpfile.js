@@ -11,9 +11,10 @@ var csso = require('gulp-csso');
 var autoprefixer = require('gulp-autoprefixer');
 var copy = require('gulp-contrib-copy');
 var es = require('event-stream');
-
 var minifyCss = require('gulp-clean-css');
 var lazypipe = require('lazypipe');
+var ngConstant = require('gulp-ng-constant');
+var webserver = require('gulp-webserver');
 
 var fs = require('fs');
 var parseString = require('xml2js').parseString;
@@ -41,17 +42,55 @@ var parseBuildDirFromPomXml = function () {
     return buildDir;
 };
 
-// Create internal properties
-var properties = {
-    project: {
-        version: parseVersionFromPomXml(),
-        source: 'src/main/resources/static/',
-        destination: parseBuildDirFromPomXml() + '/'
+var getArgument = function(option) {
+    var i = process.argv.indexOf("--" + option);
+
+    if (i > -1) {
+        return [true, process.argv[i + 1]];
     }
+
+    return [undefined, undefined];
 }
 
 
-gulp.task('minifyAndUpdateIndexRef', function () {
+// Create properties
+var properties = {
+        env: {
+            dev: {
+                host: 'localhost',
+                port: 15123,
+                const: {
+                    ENV: 'dev',
+                    SECURITY: true,
+                    SECRET_KEY: 'Y2xpZW50YXBwOjEyMzQ1Ng==',
+                    API_BASE_PATH: 'http://localhost:8080/api',
+                    APP_VERSION: parseVersionFromPomXml(),
+                    REQUESTS_PER_PAGE: 10,
+                    BUILD_DATE: new Date()
+                }
+            },
+            prod: {
+                host: 'localhost',
+                port: 15123,
+                const: {
+                    ENV: 'prod',
+                    SECURITY: true,
+                    SECRET_KEY: 'Y2xpZW50YXBwOjEyMzQ1Ng==',
+                    API_BASE_PATH: 'http://website.com/api',
+                    APP_VERSION: parseVersionFromPomXml(),
+                    REQUESTS_PER_PAGE: 10,
+                    BUILD_DATE: new Date()
+                }
+            }
+        },
+        project: {
+            source: 'src/main/resources/static/',
+            dest: parseBuildDirFromPomXml() + '/'
+        }
+}
+
+
+gulp.task('minifyAndUpdateIndexRef', ['ngConstants'], function () {
   return gulp.src(properties.project.source + 'index.html')
     .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
     .pipe(gulpif('*.js', ngAnnotate()))
@@ -64,24 +103,59 @@ gulp.task('minifyAndUpdateIndexRef', function () {
     .pipe(gulpif('*.css', csso()))
     .pipe(gulpif('*.css', minifyCss()))
     .pipe(sourcemaps.write('maps'))
-    .pipe(gulp.dest(properties.project.destination));
+    .pipe(gulp.dest(properties.project.dest));
 });
+
 
 gulp.task('copyViews', function() {
     return gulp.src([properties.project.source + 'modules/main/views/*.html'])
-        .pipe(gulp.dest(properties.project.destination + 'modules/main/views/'))
+        .pipe(gulp.dest(properties.project.dest + 'modules/main/views/'))
 });
+
 
 gulp.task('copyFonts', function() {
     return gulp.src([properties.project.source + 'libs/bootstrap/fonts/*'])
-        .pipe(gulp.dest(properties.project.destination + 'assets/fonts/'))
+        .pipe(gulp.dest(properties.project.dest + 'assets/fonts/'))
 });
+
 
 gulp.task('copyImages', function() {
     return gulp.src([properties.project.source + 'assets/images/*'])
-        .pipe(gulp.dest(properties.project.destination + 'assets/images/'))
+        .pipe(gulp.dest(properties.project.dest + 'assets/images/'))
+});
+
+
+gulp.task('ngConstants', function () {
+    var envConfig = (getArgument('production')[0] === undefined) ? properties.env.dev.const : properties.env.prod.const;
+    envConfig.SECURITY = (getArgument('security')[0] === undefined) ? true : getArgument('security')[1];
+
+    return ngConstant({
+        constants: envConfig,
+        name: 'mockengerClientComponents',
+        wrap: false,
+        stream: true
+    })
+    .pipe(gulp.dest(properties.project.source + 'modules/components/'));
+});
+
+
+gulp.task('webServer', ['ngConstants'], function() {
+    var envConfig = (getArgument('production')[0] === undefined) ? properties.env.dev : properties.env.prod;
+
+    return gulp.src(properties.project.dest)
+        .pipe(webserver({
+            host: envConfig['host'],
+            port: envConfig['port'],
+            livereload: true,
+            open: true
+        }));
 });
 
 
 
-gulp.task('default', ['minifyAndUpdateIndexRef', 'copyViews', 'copyFonts', 'copyImages'])
+gulp.task('default', [
+    'minifyAndUpdateIndexRef',
+    'copyViews',
+    'copyFonts',
+    'copyImages'
+])
