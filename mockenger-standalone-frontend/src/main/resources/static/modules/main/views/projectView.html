@@ -48,9 +48,9 @@
         </div>
 
         <div class="col-md-9" ng-controller="RequestListController">
-            <div ng-if="requestListService.getData() == null" class="alert" role="alert">
+            <h1 ng-if="requestListService.getData() == null" class="alert" role="alert">
                 Please select a group
-            </div>
+            </h1>
 
             <div ng-if="requestListService.getData() != null &&  !requestListService.getCurrent()" class="panel panel-default">
                 <div class="panel-heading">
