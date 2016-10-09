@@ -4,7 +4,7 @@ angular.module('mockengerClientComponents')
             restrict: 'E',
             templateUrl: '/modules/main/views/mkngrNavbar.html',
             link: function(scope, element) {
-                if (SECURITY) {
+                if (scope.isSecurityMode()) {
                     scope.user = null;
                     if ($cookies.get('user') != null) {
                         scope.user = angular.fromJson($cookies.get('user'));

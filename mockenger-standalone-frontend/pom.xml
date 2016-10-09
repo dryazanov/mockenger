@@ -11,6 +11,10 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>mockenger-standalone-frontend</artifactId>
 
+    <properties>
+        <gulp.build.environment>development</gulp.build.environment>
+        <gulp.build.security>true</gulp.build.security>
+    </properties>
 
     <profiles>
         <profile>
@@ -52,6 +56,12 @@
                                 <phase>process-resources</phase>
                                 <configuration>
                                     <executable>gulp</executable>
+                                    <arguments>
+                                        <argument>--environment</argument>
+                                        <argument>${gulp.build.environment}</argument>
+                                        <argument>--security</argument>
+                                        <argument>${gulp.build.security}</argument>
+                                    </arguments>
                                 </configuration>
                                 <goals>
                                     <goal>exec</goal>

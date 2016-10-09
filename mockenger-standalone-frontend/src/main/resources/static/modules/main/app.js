@@ -11,7 +11,8 @@ angular.module('mockengerClientMainApp', [
         'ngTouch',
         'ngToast',
         'ui.bootstrap',
-        'angular-confirm'
+        'angular-confirm',
+        'ngProgress'
     ])
     .config(['$locationProvider', '$routeProvider', '$httpProvider', 'ngToastProvider', 'SECURITY',
         function ($locationProvider, $routeProvider, $httpProvider, ngToastProvider, SECURITY) {
@@ -40,7 +41,7 @@ angular.module('mockengerClientMainApp', [
                     redirectTo: '/index'
                 });
 
-            if (SECURITY) {
+            if (String(SECURITY) == 'true') {
                 $routeProvider
                     .when('/login', {
                         template: ' ',
@@ -64,6 +65,8 @@ angular.module('mockengerClientMainApp', [
                 timeout: 4000
             });
     }])
-    .run(function($confirmModalDefaults) {
-         $confirmModalDefaults.templateUrl = '/modules/main/views/confirm.html';
+    .run(function($rootScope, $confirmModalDefaults, ngProgressFactory) {
+        $rootScope.progressbar = ngProgressFactory.createInstance();
+        $rootScope.progressbar.setHeight('10px');
+        $confirmModalDefaults.templateUrl = '/modules/main/views/confirm.html';
     });

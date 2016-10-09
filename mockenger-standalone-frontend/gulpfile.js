@@ -43,10 +43,18 @@ var parseBuildDirFromPomXml = function () {
 };
 
 var getArgument = function(option) {
-    var i = process.argv.indexOf("--" + option);
+    var ARG_PREFIX = "--";
+    var i = process.argv.indexOf(ARG_PREFIX + option);
 
     if (i > -1) {
-        return [true, process.argv[i + 1]];
+        var v = process.argv[i + 1];
+
+        if (v.indexOf(ARG_PREFIX) > -1) {
+            v = undefined;
+        }
+
+        console.log("Found argument '" + option + "' with value: " + v);
+        return [true, v];
     }
 
     return [undefined, undefined];
@@ -76,9 +84,9 @@ var properties = {
                     ENV: 'prod',
                     SECURITY: true,
                     SECRET_KEY: 'Y2xpZW50YXBwOjEyMzQ1Ng==',
-                    API_BASE_PATH: 'http://website.com/api',
+                    API_BASE_PATH: 'http://localhost:8080/api',
                     APP_VERSION: parseVersionFromPomXml(),
-                    REQUESTS_PER_PAGE: 10,
+                    REQUESTS_PER_PAGE: 20,
                     BUILD_DATE: new Date()
                 }
             }
@@ -126,8 +134,12 @@ gulp.task('copyImages', function() {
 
 
 gulp.task('ngConstants', function () {
-    var envConfig = (getArgument('production')[0] === undefined) ? properties.env.dev.const : properties.env.prod.const;
-    envConfig.SECURITY = (getArgument('security')[0] === undefined) ? true : getArgument('security')[1];
+    console.log(process.argv);
+
+    var securityArg = getArgument('security');
+    var environmentArg = getArgument('environment');
+    var envConfig = (environmentArg[0] !== undefined && environmentArg[1] === 'production') ? properties.env.prod.const : properties.env.dev.const;
+    envConfig.SECURITY = (securityArg[0] === undefined || (String(securityArg[1]) != 'true' && String(securityArg[1]) != 'false')) ? true : securityArg[1];
 
     return ngConstant({
         constants: envConfig,
@@ -142,7 +154,7 @@ gulp.task('ngConstants', function () {
 gulp.task('webServer', ['ngConstants'], function() {
     var envConfig = (getArgument('production')[0] === undefined) ? properties.env.dev : properties.env.prod;
 
-    return gulp.src(properties.project.dest)
+    return gulp.src(properties.project.source)
         .pipe(webserver({
             host: envConfig['host'],
             port: envConfig['port'],

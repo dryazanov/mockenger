@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('mockengerClientComponents')
-    .controller('rootController', ['$rootScope', '$scope', '$http', '$location', 'ngToast', 'ENV', 'SECURITY', 'APP_VERSION', 'BUILD_DATE',
-        function ($rootScope, $scope, $http, $location, ngToast, ENV, SECURITY, APP_VERSION, BUILD_DATE) {
+    .controller('rootController', ['$rootScope', '$scope', '$http', '$location', 'ngToast', 'ngProgressFactory', 'ENV', 'SECURITY', 'APP_VERSION', 'BUILD_DATE',
+        function ($rootScope, $scope, $http, $location, ngToast, ngProgressFactory, ENV, SECURITY, APP_VERSION, BUILD_DATE) {
 
             $scope.app = {
                 env: ENV,
@@ -10,52 +10,20 @@ angular.module('mockengerClientComponents')
                 buildDate: BUILD_DATE
             };
 
-            var STATUS = {
-                IDLE: 0,
-                LOADING: 1,
-                ERROR: 2
-            };
-
-            $scope.setContentLoading = function () {
-                return STATUS.LOADING;
-            };
-
-            $scope.setContentReady = function () {
-                return STATUS.IDLE;
-            };
-
-            $scope.setContentLoadingFailed = function () {
-                return STATUS.ERROR;
-            };
-
-            $scope.isContentLoading = function (status) {
-                return status === STATUS.LOADING;
-            };
-
-            $scope.isContentReady = function (status) {
-                return status === STATUS.IDLE;
-            };
-
-            $scope.isContentLoadingFailed = function (status) {
-                return status === STATUS.ERROR;
-            };
-
             $scope.signOut = function() {
                 $location.path('/logout');
             }
 
+            $scope.isSecurityMode = function() {
+                return (String(SECURITY) == 'true');
+            }
+
             $scope.isAdmin = function(role) {
-                if (SECURITY) {
-                    return (role === 'ADMIN');
-                }
-                return true;
+                return ($scope.isSecurityMode() ? role === 'ADMIN' : true);
             }
 
             $scope.isManagerOrAdmin = function(role) {
-                if (SECURITY) {
-                    return (role === 'MANAGER' || $scope.isAdmin(role));
-                }
-                return true;
+                return ($scope.isSecurityMode() ? (role === 'MANAGER' || $scope.isAdmin(role)) : true);
             }
 
             $scope.getErrorStyle = function(input) {
@@ -81,7 +49,7 @@ angular.module('mockengerClientComponents')
                             var msg = error.data.error_description;
                             errorMessage = msg;
 
-                            if (SECURITY) {
+                            if ($scope.isSecurityMode()) {
                                 if (err == 'unauthorized' || (err == 'invalid_token' && msg.indexOf('Invalid refresh token (expired)') >= 0)) {
                                     errorMessage = "Authorization required";
                                     $location.path('/login');
