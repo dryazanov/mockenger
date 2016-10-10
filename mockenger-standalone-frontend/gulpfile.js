@@ -79,12 +79,12 @@ var properties = {
             },
             prod: {
                 host: 'localhost',
-                port: 15123,
+                port: 9000,
                 const: {
                     ENV: 'prod',
                     SECURITY: true,
                     SECRET_KEY: 'Y2xpZW50YXBwOjEyMzQ1Ng==',
-                    API_BASE_PATH: 'http://localhost:8080/api',
+                    API_BASE_PATH: 'http://localhost:9000/api',
                     APP_VERSION: parseVersionFromPomXml(),
                     REQUESTS_PER_PAGE: 20,
                     BUILD_DATE: new Date()
