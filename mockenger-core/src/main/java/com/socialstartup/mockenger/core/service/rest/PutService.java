@@ -1,6 +1,7 @@
 package com.socialstartup.mockenger.core.service.rest;
 
 import com.socialstartup.mockenger.core.service.RequestService;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.PutRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Body;
 import com.socialstartup.mockenger.data.model.persistent.transformer.TransformerException;
@@ -10,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
- * Created by Dmitry Ryazanov on 3/24/2015.
+ * @author Dmitry Ryazanov
  */
 @Component(value = "restPutService")
 public class PutService extends RequestService {
@@ -22,7 +23,9 @@ public class PutService extends RequestService {
      * @return
      * @throws IOException
      */
-    public PutRequest createMockRequestFromJson(String groupId, String requestBody, HttpServletRequest request) throws IOException {
+    public GenericRequest createMockRequestFromJson(final String groupId, final String requestBody,
+													final HttpServletRequest request) throws IOException {
+
         return createRequest(groupId, prepareRequestJsonBody(requestBody), request);
     }
 
@@ -34,12 +37,13 @@ public class PutService extends RequestService {
      * @return
      * @throws javax.xml.transform.TransformerException
      */
-    public PutRequest createMockRequestFromXml(String groupId, String requestBody, HttpServletRequest request) throws TransformerException {
+    public GenericRequest createMockRequestFromXml(final String groupId, final String requestBody,
+												   final HttpServletRequest request) throws TransformerException {
+
         return createRequest(groupId, prepareRequestXmlBody(requestBody), request);
     }
 
-    private PutRequest createRequest(String groupId, String requestBody, HttpServletRequest request) {
-        Body body = new Body(requestBody);
-        return (PutRequest) fillUpEntity(new PutRequest(body), groupId, request);
+    private GenericRequest createRequest(final String groupId, final String requestBody, final HttpServletRequest request) {
+        return fillUpEntity(new PutRequest(new Body(requestBody)), groupId, request);
     }
 }

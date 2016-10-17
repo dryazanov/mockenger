@@ -2,11 +2,12 @@ package com.socialstartup.mockenger.data.model.persistent.transformer;
 
 import com.socialstartup.mockenger.data.model.dict.TransformerType;
 
+import static java.util.Optional.ofNullable;
+
 /**
- * Created by Dmitry Ryazanov on 3/22/2015.
+ * @author Dmitry Ryazanov
  */
 public class KeyValueTransformer extends AbstractMapTransformer {
-
 
     /**
      * Default constructor
@@ -15,6 +16,7 @@ public class KeyValueTransformer extends AbstractMapTransformer {
         setType(TransformerType.KEY_VALUE);
     }
 
+
     /**
      * Constructor with params
      *
@@ -22,12 +24,13 @@ public class KeyValueTransformer extends AbstractMapTransformer {
      * @param pattern
      * @param replacement
      */
-    public KeyValueTransformer(String key, String pattern, String replacement) {
+    public KeyValueTransformer(final String key, String pattern, final String replacement) {
         this();
         setKey(key);
         setPattern(pattern);
         setReplacement(replacement);
     }
+
 
     /**
      * Replaces value for specific key
@@ -36,9 +39,11 @@ public class KeyValueTransformer extends AbstractMapTransformer {
      * @return
      */
     @Override
-    public String transform(String value) {
+    public String transform(final String value) {
         validate();
-        return value.replaceFirst(this.pattern, this.replacement);
-    }
 
+		return ofNullable(value)
+				.map(s -> s.replaceFirst(this.pattern, this.replacement))
+				.orElse("");
+    }
 }

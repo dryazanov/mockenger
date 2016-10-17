@@ -4,6 +4,6 @@ import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import org.springframework.data.repository.CrudRepository;
 
 /**
- * Created by ydolzhenko on 17.06.15.
+ * @author Dmitry Ryazanov
  */
 public interface ProjectEntityRepository extends CrudRepository<Project, String> {}

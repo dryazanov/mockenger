@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
 /**
- * Created by ydolzhenko on 15.06.15.
+ * @author Dmitry Ryazanov
  */
 @SpringBootApplication
 @Import(MockengerConfig.class)

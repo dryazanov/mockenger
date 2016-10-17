@@ -52,7 +52,7 @@ public class XPathTransformer extends AbstractTransformer {
      */
     // TODO: Store info about failed transformation and show it later to user
     @Override
-    public String transform(String source) {
+    public String transform(final String source) {
         validate();
 
         try {
@@ -71,7 +71,7 @@ public class XPathTransformer extends AbstractTransformer {
     }
 
     // TODO: Store info about failed transformation and show it later to user
-    private String transform(Node source) {
+    private String transform(final Node source) {
         try {
             final XPath xPath = XPathFactory.newInstance().newXPath();
             final XPathExpression expression = xPath.compile(this.pattern);

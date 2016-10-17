@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author Dmitry Ryazanov
  */
-public class RestControllerTest extends AbstractControllerTest {
+public class RestfullControllerTest extends AbstractControllerTest {
 
     private static final String ENDPOINT_TEMPLATE = AbstractController.API_PATH + "/REST/%s/%s";
     private static final String REQUEST_PATH = "test/rest/mock/request";

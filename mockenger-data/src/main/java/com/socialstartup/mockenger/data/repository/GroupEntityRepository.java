@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 /**
- * Created by ydolzhenko on 17.06.15.
+ * @author Dmitry Ryazanov
  */
 public interface GroupEntityRepository extends CrudRepository<Group, String> {
 

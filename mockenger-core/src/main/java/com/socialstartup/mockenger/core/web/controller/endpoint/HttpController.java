@@ -8,17 +8,15 @@ import com.socialstartup.mockenger.core.service.http.PostService;
 import com.socialstartup.mockenger.core.service.http.PutService;
 import com.socialstartup.mockenger.core.service.http.TraceService;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
-import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,7 +34,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.TRACE;
 /**
  * @author Dmitry Ryazanov
  */
-@Controller
+@RestController
 @RequestMapping(value = API_PATH + "/HTTP/{groupId}")
 public class HttpController extends ParentController {
 
@@ -70,9 +68,8 @@ public class HttpController extends ParentController {
      * @param request
      * @return
      */
-    @ResponseBody
     @RequestMapping(value = "/**", method = GET)
-    public ResponseEntity processGetRequest(@PathVariable String groupId, HttpServletRequest request) {
+    public ResponseEntity processGetRequest(@PathVariable final String groupId, final HttpServletRequest request) {
         return doGetRequest(groupId, request);
     }
 
@@ -82,9 +79,8 @@ public class HttpController extends ParentController {
      * @param request
      * @return
      */
-    @ResponseBody
     @RequestMapping(value = "/**", method = DELETE)
-    public ResponseEntity processDeleteRequest(@PathVariable String groupId, HttpServletRequest request) {
+    public ResponseEntity processDeleteRequest(@PathVariable final String groupId, final HttpServletRequest request) {
         return doDeleteRequest(groupId, request);
     }
 
@@ -94,11 +90,11 @@ public class HttpController extends ParentController {
      * @param request
      * @return
      */
-    @ResponseBody
     @RequestMapping(value = "/**", method = HEAD)
-    public ResponseEntity processHeadRequest(@PathVariable String groupId, HttpServletRequest request) {
-        Group group = findGroupById(groupId);
-        AbstractRequest mockRequest = headService.createMockRequest(group.getId(), request);
+    public ResponseEntity processHeadRequest(@PathVariable final String groupId, final HttpServletRequest request) {
+        final Group group = findGroupById(groupId);
+        final GenericRequest mockRequest = headService.createMockRequest(group.getId(), request);
+
         return findMockedEntities(mockRequest, group);
     }
 
@@ -108,11 +104,11 @@ public class HttpController extends ParentController {
      * @param request
      * @return
      */
-    @ResponseBody
     @RequestMapping(value = "/**", method = OPTIONS)
-    public ResponseEntity processOptionsRequest(@PathVariable String groupId, HttpServletRequest request) {
-        Group group = findGroupById(groupId);
-        AbstractRequest mockRequest = optionsService.createMockRequest(group.getId(), request);
+    public ResponseEntity processOptionsRequest(@PathVariable final String groupId, final HttpServletRequest request) {
+        final Group group = findGroupById(groupId);
+        final GenericRequest mockRequest = optionsService.createMockRequest(group.getId(), request);
+
         return findMockedEntities(mockRequest, group);
     }
 
@@ -122,11 +118,11 @@ public class HttpController extends ParentController {
      * @param request
      * @return
      */
-    @ResponseBody
     @RequestMapping(value = "/**", method = TRACE)
-    public ResponseEntity processTraceRequest(@PathVariable String groupId, HttpServletRequest request) {
-        Group group = findGroupById(groupId);
-        AbstractRequest mockRequest = traceService.createMockRequest(group.getId(), request);
+    public ResponseEntity processTraceRequest(@PathVariable final String groupId, final HttpServletRequest request) {
+        final Group group = findGroupById(groupId);
+        final GenericRequest mockRequest = traceService.createMockRequest(group.getId(), request);
+
         return findMockedEntities(mockRequest, group);
     }
 
@@ -136,14 +132,15 @@ public class HttpController extends ParentController {
      * @param request
      * @return
      */
-    @ResponseBody
     @RequestMapping(value = "/**")
-    public ResponseEntity processOtherRequests(@PathVariable String groupId, HttpServletRequest request) {
-        if (request.getMethod().equals(CONNECT)) {
-            Group group = findGroupById(groupId);
-            AbstractRequest mockRequest = connectService.createMockRequest(group.getId(), request);
+    public ResponseEntity processOtherRequests(@PathVariable final String groupId, final HttpServletRequest request) {
+        if (CONNECT.equals(request.getMethod())) {
+            final Group group = findGroupById(groupId);
+            final GenericRequest mockRequest = connectService.createMockRequest(group.getId(), request);
+
             return findMockedEntities(mockRequest, group);
         }
+
         return new ResponseEntity(getResponseHeaders(), HttpStatus.NOT_FOUND);
     }
 
@@ -154,9 +151,11 @@ public class HttpController extends ParentController {
      * @param request
      * @return
      */
-    @ResponseBody
     @RequestMapping(value = "/**", method = POST)
-    public ResponseEntity processPostRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
+    public ResponseEntity processPostRequest(@PathVariable final String groupId,
+											 @RequestBody final String requestBody,
+											 final HttpServletRequest request) {
+
         final Group group = findGroupById(groupId);
         final GenericRequest mockRequest = postService.createGenericRequest(group.getId(), requestBody, request);
 		cleanUpRequestBody(mockRequest);
@@ -171,11 +170,14 @@ public class HttpController extends ParentController {
      * @param request
      * @return
      */
-    @ResponseBody
     @RequestMapping(value = "/**", method = PUT)
-    public ResponseEntity processPutRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
-        Group group = findGroupById(groupId);
-        AbstractRequest mockRequest = putService.createMockRequest(group.getId(), requestBody, request);
+    public ResponseEntity processPutRequest(@PathVariable final String groupId,
+											@RequestBody final String requestBody,
+											final HttpServletRequest request) {
+
+        final Group group = findGroupById(groupId);
+        final GenericRequest mockRequest = putService.createMockRequest(group.getId(), requestBody, request);
+
         return findMockedEntities(mockRequest, group);
     }
 
@@ -186,11 +188,14 @@ public class HttpController extends ParentController {
      * @param request
      * @return
      */
-    @ResponseBody
     @RequestMapping(value = "/**", method = PATCH)
-    public ResponseEntity processPatchRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
-        Group group = findGroupById(groupId);
-        AbstractRequest mockRequest = patchService.createMockRequest(group.getId(), requestBody, request);
+    public ResponseEntity processPatchRequest(@PathVariable final String groupId,
+											  @RequestBody final String requestBody,
+											  final HttpServletRequest request) {
+
+        final Group group = findGroupById(groupId);
+        final GenericRequest mockRequest = patchService.createMockRequest(group.getId(), requestBody, request);
+
         return findMockedEntities(mockRequest, group);
     }
 }

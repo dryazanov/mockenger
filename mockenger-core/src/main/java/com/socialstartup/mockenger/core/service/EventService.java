@@ -71,4 +71,8 @@ public class EventService {
     public void remove(final Event entity) {
         eventRepository.delete(entity);
     }
+
+	public void removeAll() {
+		eventRepository.deleteAll();
+	}
 }

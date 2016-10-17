@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.socialstartup.mockenger.data.model.dict.RoleType;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -18,6 +19,7 @@ import javax.validation.constraints.NotNull;
  */
 @Getter
 @Builder
+@ToString
 @Document(collection = "account")
 public class Account {
 

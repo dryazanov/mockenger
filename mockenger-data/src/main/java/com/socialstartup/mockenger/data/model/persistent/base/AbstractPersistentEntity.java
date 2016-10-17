@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id;
 import java.io.Serializable;
 
 /**
- * Created by ydolzhenko on 15.06.15.
+ * @author Dmitry Ryazanov
  */
 public abstract class AbstractPersistentEntity<T extends Serializable> {
 

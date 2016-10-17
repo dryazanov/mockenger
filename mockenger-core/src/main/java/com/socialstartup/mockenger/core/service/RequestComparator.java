@@ -5,6 +5,7 @@ import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
+import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
 import com.socialstartup.mockenger.data.model.persistent.transformer.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import static com.socialstartup.mockenger.core.util.CommonUtils.containsAll;
 import static com.socialstartup.mockenger.core.util.CommonUtils.containsEqualEntries;
 import static com.socialstartup.mockenger.core.util.CommonUtils.generateCheckSum;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Dmitry Ryazanov
@@ -160,7 +162,7 @@ public class RequestComparator {
 
     private Set<Pair> applyTransformers(final Set<Pair> pairsToBeTransformed, final List<Transformer> transformers) {
         if (!CollectionUtils.isEmpty(transformers)) {
-			return pairsToBeTransformed.parallelStream()
+			return pairsToBeTransformed.stream()
 					.map(pair -> transformAndGet(pair, transformers))
 					.collect(Collectors.toSet());
         }
@@ -170,19 +172,30 @@ public class RequestComparator {
 
 
     private Pair transformAndGet(final Pair pair, final List<Transformer> transformers) {
-		return new Pair(pair.getKey(), transformString(pair.getValue(), transformers));
+		final String pairKey = pair.getKey();
+		final List<Transformer> filteredTransformers = transformers.stream()
+				.filter(t -> t instanceof AbstractMapTransformer)
+				.filter(t -> pairKey.equals(((AbstractMapTransformer) t).getKey()))
+				.collect(toList());
+
+		return new Pair(pairKey, transformString(pair.getValue(), filteredTransformers));
     }
 
 
 	private String transformString(final String stringToTransform, final  List<Transformer> transformers) {
 		final int size = transformers.size();
-		final Transformer transformer = transformers.get(0);
 
-		if (size == 1) {
-			return transformer.transform(stringToTransform);
+		if (size > 0) {
+			final Transformer transformer = transformers.get(size - 1);
+
+			if (size == 1) {
+				return transformer.transform(stringToTransform);
+			}
+
+			return transformer.transform(transformString(stringToTransform, transformers.subList(0, size - 1)));
 		}
 
-		return transformer.transform(transformString(stringToTransform, transformers.subList(1, size)));
+		return stringToTransform;
 	}
 
 

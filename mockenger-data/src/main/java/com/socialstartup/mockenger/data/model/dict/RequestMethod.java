@@ -1,10 +1,12 @@
 package com.socialstartup.mockenger.data.model.dict;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
- * Created by ydolzhenko on 15.06.15.
+ * @author Dmitry Ryazanov
  */
 public enum RequestMethod {
 
@@ -19,7 +21,7 @@ public enum RequestMethod {
     CONNECT;
 
     public static Map<String, String> getValueSet() {
-        Map<String, String> valueset = new HashMap<>(RequestMethod.values().length);
+		final Map<String, String> valueset = new HashMap<>(RequestMethod.values().length);
         for (RequestMethod method : RequestMethod.values()) {
             valueset.put(method.name(), method.name());
         }
