@@ -4,15 +4,14 @@ import com.socialstartup.mockenger.core.service.soap.PostService;
 import com.socialstartup.mockenger.core.web.exception.BadContentTypeException;
 import com.socialstartup.mockenger.core.web.exception.MockObjectNotCreatedException;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
-import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.soap.SOAPException;
@@ -25,7 +24,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 /**
  * @author Dmitry Ryazanov
  */
-@Controller
+@RestController
 @RequestMapping(value = API_PATH + "/SOAP/{groupId}")
 public class SoapController extends ParentController {
 
@@ -37,7 +36,6 @@ public class SoapController extends ParentController {
     /**
      *
      */
-    @ResponseBody
     @RequestMapping(value = "/**", method = POST)
     public void processPosRequest() {
         throw new BadContentTypeException("Invalid header 'Content-type': application/soap+xml is only allowed in SOAP requests");
@@ -50,14 +48,18 @@ public class SoapController extends ParentController {
      * @param request
      * @return
      */
-    @ResponseBody
     @RequestMapping(value = "/**", method = POST, consumes = "application/soap+xml")
-    public ResponseEntity processPostRequest(@PathVariable String groupId, @RequestBody String requestBody, HttpServletRequest request) {
-        String soapBody;
-        Group group = findGroupById(groupId);
+    public ResponseEntity processPostRequest(@PathVariable final String groupId,
+											 @RequestBody final String requestBody,
+											 final HttpServletRequest request) {
+
+        final Group group = findGroupById(groupId);
 
         try {
-            soapBody = postService.getSoapBody(requestBody);
+        	final String soapBody = postService.getSoapBody(requestBody);
+			final GenericRequest mockRequest = postService.createMockRequest(group.getId(), soapBody, request);
+
+			return findMockedEntities(mockRequest, group);
         } catch (SOAPException e) {
             throw new MockObjectNotCreatedException("Cannot create SOAP message", e);
         } catch (TransformerException e) {
@@ -65,8 +67,5 @@ public class SoapController extends ParentController {
         } catch (IOException e) {
             throw new MockObjectNotCreatedException("Cannot read xml from the provided source", e);
         }
-
-        AbstractRequest mockRequest = postService.createMockRequest(group.getId(), soapBody, request);
-        return findMockedEntities(mockRequest, group);
     }
 }

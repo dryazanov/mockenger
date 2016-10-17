@@ -2,7 +2,7 @@ package com.socialstartup.mockenger.core.service.rest;
 
 import com.socialstartup.mockenger.core.service.AbstractServiceTest;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
-import com.socialstartup.mockenger.data.model.persistent.mock.request.PutRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
@@ -19,25 +19,25 @@ public class PutServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCreateMockRequestJson() throws IOException {
-        PutRequest putRequest = classUnderTest.createMockRequestFromJson(GROUP_ID, JSON_DATA, httpServletRequestMock);
+        GenericRequest putRequest = classUnderTest.createMockRequestFromJson(GROUP_ID, JSON_DATA, httpServletRequestMock);
         checkEntityWithBody(putRequest, RequestMethod.PUT, JSON_DATA);
     }
 
     @Test
     public void testCreateMockRequestJsonWithSpaces() throws IOException {
-        PutRequest putRequest = classUnderTest.createMockRequestFromJson(GROUP_ID, JSON_WITH_SPACES, httpServletRequestMock);
+		GenericRequest putRequest = classUnderTest.createMockRequestFromJson(GROUP_ID, JSON_WITH_SPACES, httpServletRequestMock);
         checkEntityWithBody(putRequest, RequestMethod.PUT, JSON_DATA);
     }
 
     @Test
     public void testCreateMockRequestXml() throws TransformerException {
-        PutRequest putRequest = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_XML_DECLARATION, httpServletRequestMock);
+		GenericRequest putRequest = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_XML_DECLARATION, httpServletRequestMock);
         checkEntityWithBody(putRequest, RequestMethod.PUT, XML_DATA);
     }
 
     @Test
     public void testCreateMockRequestXmlWithSpaces() throws TransformerException {
-        PutRequest putRequest = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_SPACES, httpServletRequestMock);
+		GenericRequest putRequest = classUnderTest.createMockRequestFromXml(GROUP_ID, XML_DATA_WITH_SPACES, httpServletRequestMock);
         checkEntityWithBody(putRequest, RequestMethod.PUT, XML_DATA);
     }
 }

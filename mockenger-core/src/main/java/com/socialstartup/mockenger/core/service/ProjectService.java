@@ -1,6 +1,5 @@
 package com.socialstartup.mockenger.core.service;
 
-import com.google.common.collect.ImmutableList;
 import com.socialstartup.mockenger.core.web.exception.NotUniqueValueException;
 import com.socialstartup.mockenger.data.model.persistent.log.Eventable;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
@@ -9,10 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 /**
- * Created by Dmitry Ryazanov on 3/20/2015.
+ * @author Dmitry Ryazanov
  */
 @Component
 public class ProjectService {
@@ -25,7 +22,7 @@ public class ProjectService {
 
 
     public Iterable<Project> findAll() {
-        return Optional.ofNullable(projectEntityRepository.findAll()).orElse(ImmutableList.of());
+        return projectEntityRepository.findAll();
     }
 
 
@@ -49,6 +46,12 @@ public class ProjectService {
         groupService.findByProjectId(project.getId()).forEach(groupService::remove);
         projectEntityRepository.delete(project);
     }
+
+
+	@Eventable
+	public void removeAll() {
+		findAll().forEach(this::remove);
+	}
 
 
     public synchronized long getNextSequenceValue(final String projectId) {

@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 /**
- * Created by ydolzhenko on 17.06.15.
+ * @author Dmitry Ryazanov
  */
 public interface RequestEntityRepository extends CrudRepository<AbstractRequest, String> {
 

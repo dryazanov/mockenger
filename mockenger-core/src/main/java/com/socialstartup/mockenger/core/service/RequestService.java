@@ -1,5 +1,6 @@
 package com.socialstartup.mockenger.core.service;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.socialstartup.mockenger.commons.utils.JsonHelper;
 import com.socialstartup.mockenger.core.util.CommonUtils;
@@ -143,7 +144,9 @@ public class RequestService {
             }
         }
 
-        LOG.debug("No mocks found!");
+		LOG.debug(Strings.repeat("*", 25));
+		LOG.debug("TOO BAD, NO MOCKS FOUND...");
+		LOG.debug(Strings.repeat("*", 25));
         return null;
     }
 

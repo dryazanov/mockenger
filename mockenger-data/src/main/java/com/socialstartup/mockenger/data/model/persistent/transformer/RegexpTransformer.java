@@ -2,8 +2,10 @@ package com.socialstartup.mockenger.data.model.persistent.transformer;
 
 import com.socialstartup.mockenger.data.model.dict.TransformerType;
 
+import static java.util.Optional.ofNullable;
+
 /**
- * Created by Dmitry Ryazanov on 3/22/2015.
+ * @author Dmitry Ryazanov
  */
 public class RegexpTransformer extends AbstractTransformer {
 
@@ -14,17 +16,19 @@ public class RegexpTransformer extends AbstractTransformer {
         setType(TransformerType.REGEXP);
     }
 
+
     /**
      * Constructor with params
      *
      * @param pattern
      * @param replacement
      */
-    public RegexpTransformer(String pattern, String replacement) {
+    public RegexpTransformer(final String pattern, final String replacement) {
         this();
         setPattern(pattern);
         setReplacement(replacement);
     }
+
 
     /**
      * Runs transformation against provided source
@@ -33,8 +37,11 @@ public class RegexpTransformer extends AbstractTransformer {
      * @return
      */
     @Override
-    public String transform(String source) {
+    public String transform(final String source) {
         validate();
-        return source.replaceAll(this.pattern, this.replacement);
+
+		return ofNullable(source)
+				.map(s -> s.replaceAll(this.pattern, this.replacement))
+				.orElse("");
     }
 }

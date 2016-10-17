@@ -2,7 +2,6 @@ package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
@@ -95,7 +94,6 @@ public class RequestControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.parameters.transformers", hasSize(1)))
                 .andExpect(jsonPath("$.body.value").value(MOCK_REQUEST_BODY))
                 .andExpect(jsonPath("$.body.transformers", hasSize(2)))
-                .andExpect(jsonPath("$.checkSum").value(CommonUtils.getCheckSum(request)))
                 .andExpect(jsonPath("$.mockResponse.httpStatus").value(200))
                 .andExpect(jsonPath("$.mockResponse.headers", notNullValue()))
                 .andExpect(jsonPath("$.mockResponse.body").value(MOCK_RESPONSE_BODY));

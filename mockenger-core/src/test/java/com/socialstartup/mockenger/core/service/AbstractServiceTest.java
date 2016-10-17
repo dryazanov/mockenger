@@ -3,6 +3,7 @@ package com.socialstartup.mockenger.core.service;
 import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.junit.Before;
 import org.mockito.Mock;
 
@@ -98,7 +99,7 @@ public abstract class AbstractServiceTest {
         assertEquals(checkSum, entity.getCheckSum());
     }
 
-    protected void checkEntityWithBody(final AbstractRequest entity, final RequestMethod method, final String compareWith) {
+    protected void checkEntityWithBody(final GenericRequest entity, final RequestMethod method, final String compareWith) {
         final String checkSum = CommonUtils.getCheckSum(entity);
 
         assertNotNull(entity);
