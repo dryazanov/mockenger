@@ -2,7 +2,7 @@ package com.socialstartup.mockenger.data.model.dict;
 
 
 /**
- * Created by Dmitry Ryazanov on 3/12/2015.
+ * @author Dmitry Ryazanov
  */
 public enum EventResultType {
     OK,

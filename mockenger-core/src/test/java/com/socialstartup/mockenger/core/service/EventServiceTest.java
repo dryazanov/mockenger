@@ -93,8 +93,8 @@ public class EventServiceTest {
 
     @Test
     public void testFindByEntityTypes() {
-        final String className = EventEntityType.getClassName(EventEntityType.PROJECT.name());
-        final Page<Event> events = classUnderTest.findByEntityTypes(Arrays.asList(className), ITEMS_PER_PAGE, DEFAULT_SORT_FIELD);
+        final List<String> className = EventEntityType.getClassNames(EventEntityType.PROJECT.name());
+        final Page<Event> events = classUnderTest.findByEntityTypes(className, ITEMS_PER_PAGE, DEFAULT_SORT_FIELD);
 
         assertNotNull(events);
         assertEquals(1, events.getNumberOfElements());

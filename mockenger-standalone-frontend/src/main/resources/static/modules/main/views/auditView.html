@@ -1,0 +1,93 @@
+<mkngr-navbar></mkngr-navbar>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <h4>Events</h4>
+                    </li>
+                    <li class="list-group-item" ng-repeat="(entityType, entityTypeName) in eventEntityTypes">
+                        <div>
+                            <a href ng-click="loadEventsByEntityType(entityType)">
+                                {{entityTypeName}}
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+                <div class="panel-footer">&nbsp;</div>
+            </div>
+        </div>
+
+
+        <div class="col-md-9" ng-controller="EventListController">
+            <h5 ng-if="eventListService.getData() == null">
+                Please select an event type
+            </h5>
+
+            <div ng-if="eventListService.getData() != null &&  !eventListService.getCurrent()"  class="panel panel-default">
+                <div class="panel-heading">
+                    <!--<form class="form-inline">
+                        <div class="form-group">
+                            <input type="search" ng-model="eventListService.filters.search.query" class="form-control" id="searchRequests" placeholder="Search">
+                        </div>
+                        <div class="form-group">
+                            <select ng-model="eventListService.filters.order" id="orderRequests" class="form-control">
+                                <optgroup label="Order by">
+                                    <option value="creationDate">Date</option>
+                                    <option value="name">Name</option>
+                                    <option value="method">Method</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </form>-->
+                </div>
+
+                <div class="panel-body">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                            <th>Result</th>
+                            <th>Details</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="event in eventListService.getData().content">
+                            <td class="col-md-1">{{event.username}}</td>
+                            <td class="col-md-2">{{event.eventDate | date:'dd-MM-yyyy HH:mm:ss'}}</td>
+                            <td class="col-md-1">{{event.eventType}}</td>
+                            <td class="col-md-1">{{event.resultType}}</td>
+                            <td class="col-md-8">{{event.entity}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="panel-footer" ng-show="pageCount() > 1">
+                    <ul class="pagination pull-right">
+                        <li ng-class="{disabled: isPrevPageDisabled()}">
+                            <a href ng-click="prevPage()" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+
+                        <li ng-repeat="n in range()" ng-class="{active: isActive(n)}">
+                            <a href ng-click="updateEventList(eventEntityType, n)">{{n+1}}</a>
+                        </li>
+
+                        <li ng-class="{disabled: isNextPageDisabled()}">
+                            <a href ng-click="nextPage()" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

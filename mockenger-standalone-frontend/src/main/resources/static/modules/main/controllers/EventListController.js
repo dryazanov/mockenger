@@ -3,12 +3,11 @@
 angular.module('mockengerClientMainApp')
     .controller('EventListController', ['$scope', '$confirm', 'eventListService',
         function($scope, $confirm, eventListService) {
-            $scope.eventEntityType = "ACCOUNT";
             $scope.eventListService = eventListService;
 
             // Get event list
             $scope.updateEventList = function(types, page, sort) {
-                eventListService.events.get({types: types, page: page, sort: sort}, function(response) {
+                eventListService.events.get({types: eventListService.getEntityType(), page: page, sort: sort}, function(response) {
                     eventListService.setCurrentPage(page);
                     eventListService.setData(response);
                 }, function (errorResponse) {
@@ -46,16 +45,14 @@ angular.module('mockengerClientMainApp')
             $scope.prevPage = function() {
                 if (eventListService.getCurrentPage() > 0) {
                     eventListService.setCurrentPage(eventListService.getCurrentPage() - 1);
-                    $scope.updateEventList($scope.eventEntityType, eventListService.getCurrentPage());
+                    $scope.updateEventList(eventListService.getCurrentPage());
                 }
             };
 
             $scope.nextPage = function() {
                 if (eventListService.getCurrentPage() < $scope.pageCount() - 1) {
                     eventListService.setCurrentPage(eventListService.getCurrentPage() + 1);
-                    $scope.updateEventList($scope.eventEntityType, eventListService.getCurrentPage());
+                    $scope.updateEventList(eventListService.getCurrentPage());
                 }
             };
-
-            $scope.updateEventList($scope.eventEntityType, 0);
 }]);
