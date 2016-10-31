@@ -24,9 +24,10 @@
                 </div>
 
                 <a href="/#/index">Home</a>
-                |
-                <a href="/#/stat">Statistics</a>
+                <!--<a href="/#/stat">Statistics</a>-->
                 <span ng-if="isSecurityMode() && isAdmin(user.role)">
+                    |
+                    <a href="/#/audit">Audit log</a>
                     |
                     <a href="/#/admin">Admin panel</a>
                 </span>

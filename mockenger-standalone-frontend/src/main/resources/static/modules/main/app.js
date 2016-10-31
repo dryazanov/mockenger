@@ -33,6 +33,10 @@ angular.module('mockengerClientMainApp', [
                         }]
                     }
                 })
+                .when('/audit', {
+                    templateUrl: '/modules/main/views/auditView.html',
+                    controller: 'AuditPageController'
+                })
                 .when('/admin', {
                     templateUrl: '/modules/main/views/adminView.html',
                     controller: 'AdminPageController'

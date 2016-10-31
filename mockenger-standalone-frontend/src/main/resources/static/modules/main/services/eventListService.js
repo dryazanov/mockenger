@@ -7,13 +7,14 @@ angular.module('mockengerClientMainApp')
             var methodGet = {
                 get: {
                     method:'GET',
-                    isArray: true
+                    isArray: false
                 }
             }
 
             var EventListService = {
                 data: null,
                 current: 0,
+                entityType: null,
 
                 getCurrentPage: function() {
                     return EventListService.current;
@@ -29,6 +30,14 @@ angular.module('mockengerClientMainApp')
 
                 setData: function(dataToSet) {
                     EventListService.data = dataToSet;
+                },
+
+                getEntityType: function() {
+                    return EventListService.entityType;
+                },
+
+                setEntityType: function(entityType) {
+                    EventListService.entityType = entityType;
                 },
 
                 events: $resource(apiEndpointsService.getEventRestUrl(), {eventId: '@eventId'}, {}, methodGet),

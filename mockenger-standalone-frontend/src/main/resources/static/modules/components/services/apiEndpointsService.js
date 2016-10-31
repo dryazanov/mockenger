@@ -17,6 +17,12 @@ angular.module('mockengerClientComponents').factory('apiEndpointsService', ['API
             },
             roles: function() {
                 return API_BASE_PATH + '/valueset/roles';
+            },
+            eventTypes: function() {
+                return API_BASE_PATH + '/valueset/eventTypes';
+            },
+            eventEntityTypes: function() {
+                return API_BASE_PATH + '/valueset/eventEntityTypes';
             }
         },
         getEventRestUrl: function() {

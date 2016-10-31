@@ -16,7 +16,9 @@ angular.module('mockengerClientMainApp')
                 requestMethods: $resource(apiEndpointsService.getValuesetRestUrl.requestMethods(), { projectId: '@projectId' }, methodGet),
                 transformerTypes: $resource(apiEndpointsService.getValuesetRestUrl.transformerTypes(), {}, methodGet),
                 headers: $resource(apiEndpointsService.getValuesetRestUrl.headers(), {}, methodGet),
-                roles: $resource(apiEndpointsService.getValuesetRestUrl.roles(), {}, methodGet)
+                roles: $resource(apiEndpointsService.getValuesetRestUrl.roles(), {}, methodGet),
+                eventTypes: $resource(apiEndpointsService.getValuesetRestUrl.eventTypes(), {}, methodGet),
+                eventEntityTypes: $resource(apiEndpointsService.getValuesetRestUrl.eventEntityTypes(), {}, methodGet)
             }
 
             return ValueSetService;

@@ -59,7 +59,7 @@ public class EventController extends AbstractController {
 
         if (types != null) {
             final List<String> typeList = types.stream()
-                    .map(type -> EventEntityType.getClassName(type))
+                    .flatMap(type -> EventEntityType.getClassNames(type).stream())
                     .filter(type -> !StringUtils.isEmpty(type))
                     .collect(Collectors.toList());
 
