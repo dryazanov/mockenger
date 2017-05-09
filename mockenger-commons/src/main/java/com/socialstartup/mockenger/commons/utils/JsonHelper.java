@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 
 /**
- * Created by Dmitry Ryazanov on 09-Sep-15.
+ * @author Dmitry Ryazanov
  */
 public class JsonHelper {
 
@@ -18,9 +18,11 @@ public class JsonHelper {
      * @return
      * @throws IOException
      */
-    public static String removeWhitespaces(String requestBody) throws IOException {
-        final ObjectMapper objectMapper = new ObjectMapper(new JsonFactory());
+    public static String removeWhitespaces(final String requestBody) throws IOException {
+		final JsonFactory jsonFactory = new JsonFactory();
+		final ObjectMapper objectMapper = new ObjectMapper(jsonFactory);
         final JsonNode jsonNode = objectMapper.readTree(requestBody);
+
         return objectMapper.writeValueAsString(jsonNode);
     }
 }

@@ -4,7 +4,6 @@ import com.socialstartup.mockenger.core.service.account.AccountService;
 import com.socialstartup.mockenger.data.model.persistent.account.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -15,6 +14,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
+
+import static org.springframework.http.ResponseEntity.noContent;
+import static org.springframework.http.ResponseEntity.notFound;
+import static org.springframework.http.ResponseEntity.ok;
+
 /**
  * @author Dmitry Ryazanov
  */
@@ -22,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @EnableResourceServer
 public class OAuth2ExtendedController extends AbstractController {
+
+	protected static final String USER_ENDPOINT = API_PATH + "/oauth/user";
 
 	@Autowired
     private DefaultTokenServices defaultTokenServices;
@@ -34,17 +41,21 @@ public class OAuth2ExtendedController extends AbstractController {
     @RequestMapping(value = REVOKE_ENDPOINT, method = RequestMethod.POST)
     public ResponseEntity revokeTokens(@RequestParam("token") final String token) {
         defaultTokenServices.revokeToken(token);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+
+        return noContent().build();
     }
 
+
     @RequestMapping(value = USER_ENDPOINT, method = RequestMethod.GET)
-    public ResponseEntity<Account> getUser(final java.security.Principal principal) {
+    public ResponseEntity getUser(final Principal principal) {
         if (((OAuth2Authentication) principal).isAuthenticated() && !StringUtils.isEmpty(principal.getName())) {
             final Account account = accountService.findByUsername(principal.getName());
+
             if (account != null) {
-                return new ResponseEntity(account, getResponseHeaders(), HttpStatus.OK);
+                return ok().headers(getResponseHeaders()).body(account);
             }
         }
-        return new ResponseEntity(HttpStatus.NOT_FOUND);
+
+        return notFound().build();
     }
 }

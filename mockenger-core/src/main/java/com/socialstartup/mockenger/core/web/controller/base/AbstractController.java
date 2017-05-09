@@ -30,7 +30,6 @@ public abstract class AbstractController {
     public static final String API_PATH = "/api";
 
 	protected static final String REVOKE_ENDPOINT = API_PATH + "/oauth/revoke";
-	protected static final String USER_ENDPOINT = API_PATH + "/oauth/user";
 
     protected static final String VALUESET_ENDPOINT = API_PATH + "/valueset";
 
