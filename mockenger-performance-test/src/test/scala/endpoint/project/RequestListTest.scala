@@ -1,4 +1,4 @@
-package test.scala.endpoint.project
+package endpoint.project
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
@@ -6,15 +6,15 @@ import io.gatling.http.Predef._
 /**
   * Created by user on 12-Feb-16.
   */
-object GroupListTest {
+object RequestListTest {
 
   def run(headers:Map[String, String], contentType:String) = {
-    exec(http("Get Group List By ProjectId")
-      .get("/projects/${project_id}/groups")
+    exec(http("Get Request List By GroupId")
+      .get("/projects/${project_id}/groups/${group_id}/requests")
       .headers(headers)
       .check(status.is(200))
       .check(headerRegex("content-type", contentType).ofType[String])
-      .check(jsonPath("$[0].id").exists.saveAs("group_id"))
+      .check(jsonPath("$..id").count.greaterThan(0))
     )
   }
 }

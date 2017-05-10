@@ -8,14 +8,15 @@ import io.gatling.http.Predef._
   */
 object WishlistTest {
 
-  def run(contentType:String) = {
+  def run(headers:Map[String, String], contentType:String) = {
     val params = Map("a" -> 2, "b" -> 2)
-    val headers = Map("Content-Type" -> contentType, "Test-header" -> "test1")
+    val additionalHeaders = Map("Content-Type" -> contentType, "Test-header" -> "test1")
+//    val mergedHeaders = headers ++ additionalHeaders.map{ case (k, v) => k -> (v + headers.getOrElse(k, "")) }
 
     exec(http("Get Wishlist with Parameters")
       .post("/REST/5571f383ab6b8c9a859507a7/customer/201889/wishlist")
       .queryParamMap(params)
-      .headers(headers)
+      .headers(additionalHeaders)
       .body(RawFileBody("GetWishlist.json")).asJSON
       .check(status.is(200),
         jsonPath("$.valid").is("ok"),

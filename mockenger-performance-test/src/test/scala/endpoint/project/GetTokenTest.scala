@@ -8,21 +8,22 @@ import io.gatling.http.Predef._
   */
 object GetTokenTest {
 
-  val url = "/oauth/token?grant_type=password"
+  val url = "/oauth/token"
+  val grantType = "password"
   val username = "admin@email.com"
   val password = "123456"
-  val authHeader = "Basic Y2xpZW50YXBwOjEyMzQ1Ng=="
+  val headers = Map("Authorization" -> "Basic Y2xpZW50YXBwOjEyMzQ1Ng==", "Content-Type" -> """application/x-www-form-urlencoded""")
 
-  def run(headers:Map[String, String], contentType:String) = {
-    exec(http("Get Token type password")
+  def run(contentType:String) = {
+    exec(http("Get Token - grant type password")
       .post(url)
+        .formParam("grant_type", grantType)
         .formParam("username", username)
         .formParam("password", password)
-        .headers(Map("Authorization" -> authHeader))
+        .headers(headers)
       .check(status.is(200))
       .check(headerRegex("content-type", contentType).ofType[String])
-      .check(jsonPath("$..access_token").exists
-        .saveAs("access_token"))
+      .check(jsonPath("$..access_token").exists.saveAs("access_token"))
     )
   }
 }
