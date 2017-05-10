@@ -61,7 +61,7 @@
                             <td class="col-md-2">{{event.eventDate | date:'dd-MM-yyyy HH:mm:ss'}}</td>
                             <td class="col-md-1">{{event.eventType}}</td>
                             <td class="col-md-1">{{event.resultType}}</td>
-                            <td class="col-md-8">{{event.entity}}</td>
+							<td>{{event.entity | json}}</td>
                         </tr>
                         </tbody>
                     </table>

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.socialstartup.mockenger.data.model.persistent.log.Event;
 import com.socialstartup.mockenger.data.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -19,8 +20,10 @@ import java.util.Optional;
 @Component
 public class EventService {
 
-    public static final int ITEMS_PER_PAGE = 5;
     public static final String DEFAULT_SORT_FIELD = "eventDate";
+
+	@Value("${mockenger.frontend.audit.log.events.per.page}")
+    public int itemsPerPage = 5;
 
     @Autowired
     private EventRepository<Event> eventRepository;
@@ -32,13 +35,13 @@ public class EventService {
 
 
     public Page<Event> findByEntityTypes(final List<String> eventClassTypes, final Integer page, final String sort) {
-        final PageRequest pageable = new PageRequest(getPage(page), ITEMS_PER_PAGE, Sort.Direction.DESC, getSortField(sort));
+        final PageRequest pageable = new PageRequest(getPage(page), itemsPerPage, Sort.Direction.DESC, getSortField(sort));
         return eventRepository.findByEntityTypeIn(eventClassTypes, pageable);
     }
 
 
     public Page<Event> findAll(final Integer page, final String sort) {
-        return eventRepository.findAll(new PageRequest(getPage(page), ITEMS_PER_PAGE, Sort.Direction.ASC, getSortField(sort)));
+        return eventRepository.findAll(new PageRequest(getPage(page), itemsPerPage, Sort.Direction.ASC, getSortField(sort)));
     }
 
 

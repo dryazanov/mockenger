@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.socialstartup.mockenger.core.service.EventService.DEFAULT_SORT_FIELD;
-import static com.socialstartup.mockenger.core.service.EventService.ITEMS_PER_PAGE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
@@ -26,13 +25,14 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
- * Created by Dmitry Ryazanov on 6/28/2015.
+ * @author Dmitry Ryazanov
  */
 public class EventServiceTest {
 
     private static final String EVENT_ID = "EVENT_ID";
+	private static final Integer ITEMS_PER_PAGE = 10;
 
-    @InjectMocks
+	@InjectMocks
     private EventService classUnderTest;
 
     @Mock
@@ -81,7 +81,7 @@ public class EventServiceTest {
 
     @Test
     public void testFindAllWithParams() {
-        final Page<Event> events = classUnderTest.findAll(ITEMS_PER_PAGE, DEFAULT_SORT_FIELD);
+        final Page<Event> events = classUnderTest.findAll(1, DEFAULT_SORT_FIELD);
 
         assertNotNull(events);
         assertEquals(1, events.getNumberOfElements());
@@ -94,7 +94,7 @@ public class EventServiceTest {
     @Test
     public void testFindByEntityTypes() {
         final List<String> className = EventEntityType.getClassNames(EventEntityType.PROJECT.name());
-        final Page<Event> events = classUnderTest.findByEntityTypes(className, ITEMS_PER_PAGE, DEFAULT_SORT_FIELD);
+        final Page<Event> events = classUnderTest.findByEntityTypes(className, 1, DEFAULT_SORT_FIELD);
 
         assertNotNull(events);
         assertEquals(1, events.getNumberOfElements());
