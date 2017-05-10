@@ -17,7 +17,6 @@ import static java.util.Optional.ofNullable;
 /**
  * @author Dmitry Ryazanov
  */
-//@Getter
 @Setter
 @ToString
 public class GenericRequest extends AbstractPersistentEntity<String> {

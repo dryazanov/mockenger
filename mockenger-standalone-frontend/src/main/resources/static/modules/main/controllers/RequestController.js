@@ -219,4 +219,44 @@ angular.module('mockengerClientMainApp')
             $scope.isRequestTabDisabled = function() {
                 return (requestListService.getCurrent().method != null && isMethodWithBody(requestListService.getCurrent().method) ? false : true);
             }
+
+            $scope.getCURL = function() {
+                return "curl -X " + requestListService.getCurrent().method + " "
+                    + "'" + groupListService.getUrlForNewRequests() + requestListService.getCurrent().path.value + $scope.getParametersAsString() + "'"
+                    + " "
+                    + $scope.getHeadersAsString()
+                    + (!$scope.isRequestTabDisabled() ? " -d '" + $scope.getBody() + "'" : '')
+            }
+
+            $scope.getBody = function() {
+            	var body = requestListService.getCurrent().body.value;
+
+            	try {
+            		return angular.toJson(angular.fromJson(body), true);
+            	} catch (err) {
+            		return body;
+            	}
+            }
+
+            $scope.getHeadersAsString = function() {
+                var result = "";
+                var headers = requestListService.getCurrent().headers.values;
+
+                for (var i = 0, l = headers.length; i < l; i++) {
+                    result += " -H '" + headers[i].key + ": " + headers[i].value + "' ";
+                }
+
+                return result;
+            }
+
+            $scope.getParametersAsString = function() {
+                var result = "";
+                var parameters = requestListService.getCurrent().parameters.values;
+
+                for (var i = 0, l = parameters.length; i < l; i++) {
+                    result += (result.length == 0 ? "?" : "&") + parameters[i].key + "=" + parameters[i].value;
+                }
+
+                return result;
+            }
 }]);

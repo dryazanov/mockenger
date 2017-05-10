@@ -79,7 +79,7 @@ var properties = {
             },
             prod: {
                 host: 'localhost',
-                port: 9000,
+                port: 15123,
                 const: {
                     ENV: 'prod',
                     SECURITY: true,

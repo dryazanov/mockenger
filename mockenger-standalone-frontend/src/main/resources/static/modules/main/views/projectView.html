@@ -85,6 +85,8 @@
                     <table class="table table-striped table-hover" ng-if="pageCount() > 0">
                         <thead>
                             <tr>
+                                <th>Info</th>
+                                <th>Hits</th>
                                 <th>Creation&nbsp;date</th>
                                 <th>Name</th>
                                 <th>Method</th>
@@ -98,6 +100,12 @@
                                     | orderBy:requestListService.getListOrder()
                                     | offset:getOffset()
                                     | limitTo:requestListService.getLimit() track by $index">
+
+                                <td class="col-md-1">
+                                    <span ng-show="!request.lastUpdateDate" class="label label-success">new</span>
+                                    <span ng-show="request.mockResponse.httpStatus == 500" class="label label-danger">!</span>
+                                </td>
+                                <td class="col-md-1">{{request.requestCounter}}</td>
 
                                 <td class="col-md-2"><a href ng-click="selectRequest($index, request)">{{request.creationDate | date:'dd-MM-yyyy HH:mm:ss'}}</a></td>
                                 <td class="col-md-2">{{request.name}}</td>
@@ -196,6 +204,12 @@
                                                                 <td>
                                                                     {{requestListService.getCurrent().uniqueCode}}
                                                                 </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="col-lg-2">
+                                                                    <label>cURL</label>
+                                                                </td>
+                                                                <td style="white-space: pre-line;">{{getCURL()}}</td>
                                                             </tr>
                                                         </table>
                                                     </div>

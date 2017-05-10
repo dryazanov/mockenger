@@ -117,6 +117,7 @@ public class RequestController extends AbstractController {
         AbstractRequest fountRequest = findRequestByIdAndUniqueCode(requestId, request.getUniqueCode());
         // Creation date can't be changed by user
         request.setCreationDate(fountRequest.getCreationDate());
+        request.setLastUpdateDate(new Date());
         // Remove whitespaces
         cleanUpRequestBody(request);
         // Re-generate checksum because values could be updated

@@ -28,6 +28,10 @@ public class AbstractRequest extends GenericRequest {
 
     private Date creationDate;
 
+    private Date lastUpdateDate;
+
     @MockResponseValidation
     private MockResponse mockResponse;
+
+	private long requestCounter;
 }
