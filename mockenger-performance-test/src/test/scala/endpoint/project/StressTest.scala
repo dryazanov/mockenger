@@ -1,5 +1,6 @@
 package test.scala.endpoint.project
 
+import endpoint.project.RequestListTest
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 
@@ -11,13 +12,18 @@ class StressTest extends Simulation {
 
 	val contentType = "application/json;charset=UTF-8"
 	val headers = Map("Content-Type" -> contentType)
+  val headersWithToken = Map("Content-Type" -> contentType, "Authorization" -> "Bearer ${access_token}")
 
 	val scn = scenario("RecordedSimulation")
-		  .randomSwitch(
-				20.0 -> ProjectListTest.run(headers, contentType),
-				30.0 -> GroupListTest.run(headers, contentType),
-				50.0 -> WishlistTest.run(contentType)
-			)
+		.exec(GetTokenTest.run(contentType))
+    .randomSwitch(
+      10.0 -> exec(
+        ProjectListTest.run(headersWithToken, contentType),
+        GroupListTest.run(headersWithToken, contentType),
+        RequestListTest.run(headersWithToken, contentType)
+      ),
+      40.0 -> WishlistTest.run(headersWithToken, contentType)
+    )
 
 	setUp(scn.inject(atOnceUsers(100)))
 //	setUp(scn.inject(atOnceUsers(10), constantUsersPerSec(10).during(5)))

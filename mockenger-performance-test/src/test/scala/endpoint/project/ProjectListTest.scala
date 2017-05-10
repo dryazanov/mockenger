@@ -12,10 +12,9 @@ object ProjectListTest {
     exec(http("Get Project List")
       .get("/projects")
       .headers(headers)
-      .check(status.is(200),
-        headerRegex("content-type", contentType).ofType[String],
-        jsonPath("$..id").count.is(3)
-      )
+      .check(status.is(200))
+      .check(headerRegex("content-type", contentType).ofType[String])
+      .check(jsonPath("$[0].id").exists.saveAs("project_id"))
     )
   }
 }

@@ -14,10 +14,9 @@ class IntegrationTest extends Simulation {
 		.inferHtmlResources(BlackList(""".*\.js""", """.*\.css""", """.*\.gif""", """.*\.jpeg""", """.*\.jpg""", """.*\.ico""", """.*\.woff""", """.*\.(t|o)tf""", """.*\.png"""), WhiteList())
 
 	val contentType = "application/json;charset=UTF-8"
-	val headers = Map("Content-Type" -> contentType)
 
 	val scn = scenario("RecordedSimulation")
-		  .exec(GetTokenTest.run(headers, contentType))
+		  .exec(GetTokenTest.run(contentType))
 			.exec({
 				val headers = Map("Content-Type" -> contentType, "Authorization" -> "Bearer ${access_token}")
 				ProjectListTest.run(headers, contentType)
