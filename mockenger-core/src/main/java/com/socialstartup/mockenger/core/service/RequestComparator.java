@@ -31,7 +31,7 @@ public class RequestComparator {
 
     private AbstractRequest persistent;
 
-	private Printer p;
+	private Printer prnt;
 
 
     /**
@@ -41,8 +41,9 @@ public class RequestComparator {
      */
     public RequestComparator(final GenericRequest incomingRequest) {
         this.incoming = incomingRequest;
-		this.p = new Printer();
+		this.prnt = new Printer();
     }
+
 
     /**
      * Compares incoming with every passed persistent
@@ -59,9 +60,10 @@ public class RequestComparator {
             }
         }
 
-        p.printSkipMock();
+        prnt.printSkipMock();
         return false;
     }
+
 
     /**
      * Compare request paths
@@ -72,7 +74,7 @@ public class RequestComparator {
 		final String incomingPath = getPath(incoming.getPath().getValue());
 		final String persistentPath = persistent.getPath().getValue();
 
-		p.printPaths(incomingPath, persistentPath);
+		prnt.printPaths(incomingPath, persistentPath);
 
         return incomingPath.equals(persistentPath);
     }
@@ -89,7 +91,7 @@ public class RequestComparator {
 
         if (allNotEmpty(incomingParams, persistentParams)) {
             incomingParams = applyTransformers(incomingParams, persistent.getParameters().getTransformers());
-            p.printParams(incomingParams, persistentParams);
+            prnt.printParams(incomingParams, persistentParams);
 
             return containsEqualEntries(incomingParams, persistentParams);
         }
@@ -108,7 +110,7 @@ public class RequestComparator {
 
         if (allNotEmpty(incomingHeaders, persistentHeaders)) {
             incomingHeaders = applyTransformers(incomingHeaders, persistent.getHeaders().getTransformers());
-            p.printHeaders(incomingHeaders, persistentHeaders);
+            prnt.printHeaders(incomingHeaders, persistentHeaders);
 
             return containsAll(incomingHeaders, persistentHeaders);
         }
@@ -129,11 +131,11 @@ public class RequestComparator {
         } else {
             // For other methods we only compare checksums
             checksum = generateCheckSum(incoming);
-            p.printChecksums(checksum, persistent.getCheckSum());
+            prnt.printChecksums(checksum, persistent.getCheckSum());
         }
 
         if (checksum.equals(persistent.getCheckSum())) {
-            p.printMockFound();
+            prnt.printMockFound();
             return true;
         }
 
@@ -151,10 +153,10 @@ public class RequestComparator {
 
 	private String transformBodyAndGetChecksum() {
 		final String body = getBody(incoming.getBody().getValue());
-		p.printBodies(body, persistent.getBody().getValue());
+		prnt.printBodies(body, persistent.getBody().getValue());
 
 		final String checksum = generateCheckSum(body);
-		p.printChecksums(checksum, persistent.getCheckSum());
+		prnt.printChecksums(checksum, persistent.getCheckSum());
 
 		return checksum;
 	}
@@ -231,37 +233,38 @@ public class RequestComparator {
 
 		private final Logger LOG = LoggerFactory.getLogger(RequestComparator.Printer.class);
 
-        void print(final String type, final String incomingData, final String persistentData) {
+
+        public void print(final String type, final String incomingData, final String persistentData) {
             LOG.debug(String.format("%s: in - %s | db - %s", type, incomingData, persistentData));
         }
 
-        void printMockFound() {
+		public void printMockFound() {
 			LOG.debug(Strings.repeat("*", 25));
 			LOG.debug("MOCK FOUND!");
 			LOG.debug(Strings.repeat("*", 25));
 		}
 
-		void printSkipMock() {
+		public void printSkipMock() {
 			LOG.debug("Mocks are not NOT equal, skip");
 		}
 
-        void printPaths(final String path1, final String path2) {
+		public void printPaths(final String path1, final String path2) {
             print("PATHS", path1, path2);
         }
 
-        void printParams(final Set<Pair> params1, final Set<Pair> params2) {
+		public void printParams(final Set<Pair> params1, final Set<Pair> params2) {
             print("PARAMETERS", params1.toString(), params2.toString());
         }
 
-        void printHeaders(final Set<Pair> headers1, final Set<Pair> headers2) {
+		public void printHeaders(final Set<Pair> headers1, final Set<Pair> headers2) {
             print("HEADERS", headers1.toString(), headers2.toString());
         }
 
-        void printBodies(final String body1, final String body2) {
+		public void printBodies(final String body1, final String body2) {
             print("BODIES", body1, body2);
         }
 
-        void printChecksums(final String checksum1, final String checksum2) {
+		public void printChecksums(final String checksum1, final String checksum2) {
             print("CHECKSUMS", checksum1, checksum2);
         }
     }
