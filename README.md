@@ -10,7 +10,7 @@
 * Install Gulp
 
 ##
-Install build dependencies from ***package.json***
+Install build dependencies from `package.json`
 ```
 # cd mockenger-standalone-frontend/
 # npm install
@@ -95,6 +95,7 @@ Run frontend
 | **Security (OAuth2)** | `--security true` | `--spring.profiles.active=security` |
 | **No security**       | `--security false` | Profile `security` deactivated by default |
 
+#
 Examples:
 ```
 # java -jar target/mockenger-standalone-<release_number>.jar --spring.profiles.active=security --mockenger.frontend.port=15123
