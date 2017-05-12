@@ -84,23 +84,22 @@ mongod --auth --dbpath /path/to/mongodb/data
     ```
 
 ##
-4) Start backend 
+4) Start frontend and backend separately
+
+Run backend
 ```
-cd mockenger-standalone/
+# cd mockenger-standalone/
+# mvn clean install
+# mvn spring-boot:run
 ```
 
+Alternatively you can run backend using generated jar file
 ```
-mvn clean install
+# cd mockenger-standalone/
+# mvn clean install
+# java -jar target/mockenger-standalone-<release_number>.jar
 ```
 
-```
-mvn spring-boot:run
-```
-
-You can also start backend application using generated jar file
-```
-java -jar target/mockenger-standalone-<release_number>.jar
-```
 Use argument ***--spring.profiles.active=security*** if you want to 
 start backend with OAuth2 security protection
 
