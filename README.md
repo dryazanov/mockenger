@@ -7,48 +7,29 @@
 
 * Install Node JS
 * Install Bower
-* Install Grunt
+* Install Gulp
 
 ##
 Install build dependencies from ***package.json***
 ```
-cd mockenger-standalone-frontend/
+# cd mockenger-standalone-frontend/
+# npm install
 ```
-
-```
-npm install
-```
-Run ***npm install*** every time when update ***package.json***
+Run `npm install` every time when update `package.json`
 
 ##
-In order to install frontend libraries taken from ***bower.json***, run
+In order to install frontend libraries taken from `bower.json`, run
 ```
-cd mockenger-standalone-frontend/
-```
-
-```
-bower install
-```
-
-##
-In order to start frontend in dev mode, run
-
-```
-grunt serve
+# cd mockenger-standalone-frontend/
+# bower install
 ```
 
 ##
 To build frontend, run
 
 ```
-grunt
-```
-
-##
-To build and start from built artifact, run
-
-```
-grunt serveDist
+# cd mockenger-standalone-frontend/
+# gulp
 ```
 
 ##
@@ -59,29 +40,30 @@ grunt serveDist
 
 2) Run mongodb
 ```
-mongod --dbpath /path/to/mongodb/data
+# mongod --dbpath /path/to/mongodb/data
 ```
 
-Use ***--auth*** flag if you created users in your mongodb for access control.
-Don't forget to update property ***spring.data.mongodb.uri*** in ***application.properties***
+Use `--auth` flag if you created users in your mongodb for access control
 ```
-mongod --auth --dbpath /path/to/mongodb/data
+# mongod --auth --dbpath /path/to/mongodb/data
 ```
+Don't forget to update property `spring.data.mongodb.uri` in `application.properties`
+
 
 ##
 3) When your mongodb is up and running you can add some data there
 
  - To restore db from the dump run
 
-    ```
-    mongorestore --db mockenger mockenger-parent/testdata/mockenger/
-    ```
+```
+# mongorestore --db mockenger mockenger-parent/testdata/mockenger/
+```
 
  - To create db dump run
 
-    ```
-    mongodump --db mockenger --out mockenger-parent/testdata/
-    ```
+```
+# mongodump --db mockenger --out mockenger-parent/testdata/
+```
 
 ##
 4) Start frontend and backend separately
@@ -106,20 +88,40 @@ Run frontend
 # gulp webSever
 ```
 
-|                 | Frontend                            | Backend                               |
-|-----------------|-------------------------------------|---------------------------------------|
-| **Environment** | `--environment development` (check gulpfile.js for more information) | Override properties `server.address`, `server.port`, `mockenger.frontend.host`, `mockenger.frontend.port` |
-| **Security**    | `--security true` | `--spring.profiles.active=security` |
-| **No security** | `--security false` | Profile `security` deactivated by default |
+##
+|                       | Frontend                            | Backend                               |
+|-----------------------|-------------------------------------|---------------------------------------|
+| **Environment**       | `--environment development` (check gulpfile.js for more information) | Override properties `server.address`, `server.port`, `mockenger.frontend.host`, `mockenger.frontend.port` |
+| **Security (OAuth2)** | `--security true` | `--spring.profiles.active=security` |
+| **No security**       | `--security false` | Profile `security` deactivated by default |
 
-
-Use argument ***--spring.profiles.active=security*** if you want to 
-start backend with OAuth2 security protection
+Examples:
+```
+# java -jar target/mockenger-standalone-<release_number>.jar --spring.profiles.active=security --mockenger.frontend.port=15123
+# gulp webServer --environment production --security true
+```
+or
+```
+# java -jar target/mockenger-standalone-<release_number>.jar --mockenger.frontend.port=12345
+# gulp webServer --environment development --security false
+```
 
 ##
-5) Open http://localhost:15123/#/
+5) Start frontend and backend together
+You need to create jar file first
+```
+# cd mockenger-standalone/
+# mvn clean install -P withFrontend
+```
+Override properties for frontent as `-Dgulp.build.security=production -Dgulp.build.security=false`
+
+After that start application with generated jar file
+```
+java -jar target/mockenger-standalone-<release_number>.jar
+```
+
 ##
-6) Use default credentials `admin@email.com/123456` for get inside
+6) If use started application with OAuth2 security, use default credentials `admin@email.com/123456` for get access
 
 ##
 ##
