@@ -100,6 +100,19 @@ Alternatively you can run backend using generated jar file
 # java -jar target/mockenger-standalone-<release_number>.jar
 ```
 
+Run frontend
+```
+# gulp
+# gulp webSever
+```
+
+|                 | Frontend                            | Backend                               |
+|-----------------|-------------------------------------|---------------------------------------|
+| **Environment** | --environment development (check gulpfile.js for more information) | set environment parameters overriding properties ***server.address***, ***server.port***, ***mockenger.frontend.host***, ***mockenger.frontend.port*** |
+| **Security**    | --security true | --spring.profiles.active=security |
+| **No security** | --security false | Profile ***security*** deactivated by default |
+
+
 Use argument ***--spring.profiles.active=security*** if you want to 
 start backend with OAuth2 security protection
 
