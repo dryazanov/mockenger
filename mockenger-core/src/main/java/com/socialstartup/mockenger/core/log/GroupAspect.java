@@ -19,7 +19,9 @@ import org.springframework.stereotype.Component;
 public class GroupAspect extends CommonAspect {
 
     @Pointcut(EVENTABLE_ANNOTATION + " && args(group))")
-    public void onGroupChanged(final Group group) {}
+    public void onGroupChanged(final Group group) {
+		// Nothing to do here
+	}
 
 
     @After("onGroupChanged(group)")

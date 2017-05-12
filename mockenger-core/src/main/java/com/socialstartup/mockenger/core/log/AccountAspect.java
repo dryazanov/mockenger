@@ -19,7 +19,9 @@ import org.springframework.stereotype.Component;
 public class AccountAspect extends CommonAspect {
 
     @Pointcut(EVENTABLE_ANNOTATION + " && args(account))")
-    public void onAccountChanged(final Account account) {}
+    public void onAccountChanged(final Account account) {
+    	// Nothing to do here
+	}
 
 
     @After("onAccountChanged(account)")

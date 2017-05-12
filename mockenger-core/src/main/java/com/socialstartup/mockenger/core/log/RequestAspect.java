@@ -19,7 +19,9 @@ import org.springframework.stereotype.Component;
 public class RequestAspect extends CommonAspect {
 
     @Pointcut(EVENTABLE_ANNOTATION + " && args(abstractRequest))")
-    public void onRequestChanged(final AbstractRequest abstractRequest) {}
+    public void onRequestChanged(final AbstractRequest abstractRequest) {
+		// Nothing to do here
+	}
 
 
     @After("onRequestChanged(abstractRequest)")
