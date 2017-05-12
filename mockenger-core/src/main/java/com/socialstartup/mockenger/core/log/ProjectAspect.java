@@ -19,7 +19,9 @@ import org.springframework.stereotype.Component;
 public class ProjectAspect extends CommonAspect {
 
     @Pointcut(EVENTABLE_ANNOTATION + " && args(project))")
-    public void onProjectChanged(final Project project) {}
+    public void onProjectChanged(final Project project) {
+		// Nothing to do here
+	}
 
 
     @After("onProjectChanged(project)")
