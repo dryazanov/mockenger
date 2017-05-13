@@ -1,8 +1,8 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
@@ -10,23 +10,25 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRe
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
+import static com.socialstartup.mockenger.core.web.controller.base.AbstractController.API_PATH;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.springframework.http.MediaType.parseMediaType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -40,11 +42,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class RequestControllerTest extends AbstractControllerTest {
 
-    private static final String ENDPOINT_TEMPLATE = AbstractController.API_PATH + "/projects/%s/groups/%s/requests/%s";
+    private static final String ENDPOINT_TEMPLATE = API_PATH + "/projects/%s/groups/%s/requests/%s";
     private static final String ENDPOINT_REQUEST = String.format(ENDPOINT_TEMPLATE, PROJECT_ID, GROUP_ID, "");
     private static final String REQUEST_NAME_UPDATED = "ABC mock-request";
+	private static final JsonFactory JSON_FACTORY = new JsonFactory();
 
-    private Project project;
+	private Project project;
     private Group group;
     private AbstractRequest request;
 
@@ -135,7 +138,7 @@ public class RequestControllerTest extends AbstractControllerTest {
     @Test
     public void testAddRequestWithInvalidData() throws Exception {
         AbstractRequest request = getNewRequest(group.getId());
-        Helper.help(this.mockMvc, project, group, request, new AddRunner());
+        Helper.help(project, group, request, new AddRunner());
 
         // Cleanup
         deleteRequest(request);
@@ -147,11 +150,25 @@ public class RequestControllerTest extends AbstractControllerTest {
 
         final int numOfMocks = 99;
         final int numOfThreadToRun = numOfMocks / ThreadLocalRandom.current().nextInt(1, 25);
-        final ExecutorService taskExecutor = Executors.newFixedThreadPool(numOfThreadToRun);
 
-        for (int i = 0; i < numOfMocks; i++) {
-            taskExecutor.execute(new RestRequestSender(project.getId(), getNewRequest(group.getId())));
-        }
+		final AbstractRequest request = getNewRequest(group.getId());
+		final ExecutorService taskExecutor = Executors.newFixedThreadPool(numOfThreadToRun);
+
+		IntStream.range(0, numOfMocks).forEach(i -> taskExecutor.execute(() -> {
+			try {
+				final ResultActions resultActions = createRequestRest(project.getId(), request.getGroupId(), request);
+				resultActions.andExpect(status().isOk());
+
+				// For debug
+                /*
+                String responseJson = resultActions.andReturn().getResponse().getContentAsString();
+                AbstractRequest mock = new ObjectMapper(new JsonFactory()).readValue(responseJson, AbstractRequest.class);
+                System.out.println("REQUEST UNIQUE CODE ID :: " + mock.getUniqueCode());
+                */
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}));
 
         // Disable new tasks from being submitted
         taskExecutor.shutdown();
@@ -164,13 +181,14 @@ public class RequestControllerTest extends AbstractControllerTest {
             taskExecutor.shutdownNow();
         }
 
-        Set<String> uniqueCodesSet = new HashSet<>(numOfMocks);
-        for (AbstractRequest abstractRequest : getAllRequests()) {
-            uniqueCodesSet.add(abstractRequest.getUniqueCode());
-        }
+        final int size = StreamSupport.stream(getAllRequests().spliterator(), true)
+				.map(r -> r.getUniqueCode())
+				.collect(Collectors.toSet())
+				.size();
 
-        assertEquals(numOfMocks, uniqueCodesSet.size());
+        assertEquals(numOfMocks, size);
     }
+
 
     @Test
     public void testSaveRequest() throws Exception {
@@ -187,8 +205,8 @@ public class RequestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testSaveRequestWithInvalidData() throws Exception {
-        AbstractRequest request = getNewRequest(group.getId());
-        ExtendedHelper.help(this.mockMvc, project, group, request, new SaveRunner());
+        AbstractRequest request = createRequest(group.getId());
+        ExtendedHelper.help(project, group, request, new SaveRunner());
 
         // Cleanup
         deleteRequest(request);
@@ -232,123 +250,113 @@ public class RequestControllerTest extends AbstractControllerTest {
 
 
 
-    private ResultActions getRequestsAllRest(String projectId, String groupId) throws Exception {
-        String endpoint = String.format(ENDPOINT_TEMPLATE, projectId, groupId, "");
-        return this.mockMvc.perform(get(endpoint).accept(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)));
+    private ResultActions getRequestsAllRest(final String projectId, final String groupId) throws Exception {
+		final String endpoint = createEndpoint(projectId, groupId, "");
+
+        return mockMvc.perform(withMediaType(get(endpoint)));
     }
 
-    private ResultActions getRequestRest(String projectId, String groupId, String requestId) throws Exception {
-        String endpoint = String.format(ENDPOINT_TEMPLATE, projectId, groupId, requestId);
-        return this.mockMvc.perform(get(endpoint).accept(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)));
+    private ResultActions getRequestRest(final String projectId, final String groupId, final String requestId) throws Exception {
+        final String endpoint = createEndpoint(projectId, groupId, requestId);
+
+        return mockMvc.perform(withMediaType(get(endpoint)));
     }
 
-    private ResultActions createRequestRest(String projectId, String groupId, AbstractRequest request) throws Exception {
-        String requestJson = new ObjectMapper(new JsonFactory()).writeValueAsString(request);
-        String endpoint = String.format(ENDPOINT_TEMPLATE, projectId, groupId, "");
-        return this.mockMvc.perform(post(endpoint).contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)).content(requestJson));
+    private ResultActions createRequestRest(final String projectId, final String groupId, final AbstractRequest request) throws Exception {
+        final String requestJson = createRequestJson(request);
+        final String endpoint = createEndpoint(projectId, groupId, "");
+
+        return mockMvc.perform(withMediaType(post(endpoint)).content(requestJson));
     }
 
-    private ResultActions updateRequestRest(String projectId, String groupId, AbstractRequest request) throws Exception {
-        String requestJson = new ObjectMapper(new JsonFactory()).writeValueAsString(request);
-        String endpoint = String.format(ENDPOINT_TEMPLATE, projectId, groupId, request.getId());
-        return this.mockMvc.perform(put(endpoint).contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)).content(requestJson));
+    private ResultActions updateRequestRest(final String projectId, final String groupId, final AbstractRequest request) throws Exception {
+        final String requestJson = createRequestJson(request);
+        final String endpoint = createEndpoint(projectId, groupId, request.getId());
+
+        return this.mockMvc.perform(withMediaType(put(endpoint)).content(requestJson));
     }
 
-    private ResultActions deleteRequestRest(String projectId, String groupId, String requestId) throws Exception {
-        String endpoint = String.format(ENDPOINT_TEMPLATE, projectId, groupId, requestId);
-        return this.mockMvc.perform(delete(endpoint).contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)));
+    private ResultActions deleteRequestRest(final String projectId, final String groupId, final String requestId) throws Exception {
+        final String endpoint = createEndpoint(projectId, groupId, requestId);
+
+        return mockMvc.perform(withMediaType(delete(endpoint)));
     }
+
+	private String createRequestJson(final AbstractRequest request) throws JsonProcessingException {
+		return new ObjectMapper(JSON_FACTORY).writeValueAsString(request);
+	}
+
+	private String createEndpoint(final String projectId, final String groupId, final String requestId) {
+		return String.format(ENDPOINT_TEMPLATE, projectId, groupId, requestId);
+	}
+
+	private MockHttpServletRequestBuilder withMediaType(final MockHttpServletRequestBuilder builder) {
+		return builder.contentType(parseMediaType(CONTENT_TYPE_JSON_UTF8));
+	}
 
 
 
     private interface Runner {
-        void run(MockMvc mockMvc, String projectId, String groupId, AbstractRequest request, String msg) throws Exception;
+        void run(String projectId, String groupId, AbstractRequest request, String msg) throws Exception;
     }
 
-    private final static class AddRunner implements Runner {
+    private abstract class AbstractRunner {
+		protected void run(final MockHttpServletRequestBuilder builder, final String requestJson, final String expectedErrorMsg) throws Exception {
+			mockMvc.perform(builder.content(requestJson))
+					.andExpect(status().isBadRequest())
+					.andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
+					.andExpect(jsonPath("$.errors", hasSize(1)))
+					.andExpect(jsonPath("$.errors[0]").value(expectedErrorMsg));
+		}
+	}
+
+    private final class AddRunner extends AbstractRunner implements Runner {
         @Override
-        public void run(MockMvc mockMvc, String projectId, String groupId, AbstractRequest request, String expectedErrorMsg) throws Exception {
-            String requestJson = new ObjectMapper(new JsonFactory()).writeValueAsString(request);
-            String endpoint = String.format(ENDPOINT_TEMPLATE, projectId, groupId, "");
-            ResultActions resultActions = mockMvc.perform(post(endpoint).contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)).content(requestJson));
-            resultActions.andExpect(status().isBadRequest())
-                    .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
-                    .andExpect(jsonPath("$.errors", hasSize(1)))
-                    .andExpect(jsonPath("$.errors[0]").value(expectedErrorMsg));
+        public void run(final String projectId, final String groupId, final AbstractRequest request, final String msg) throws Exception {
+			final String postEndpoint = createEndpoint(projectId, groupId, "");
+			run(withMediaType(post(postEndpoint)), createRequestJson(request), msg);
         }
     }
 
-    private final static class SaveRunner implements Runner {
+    private final class SaveRunner extends AbstractRunner implements Runner {
         @Override
-        public void run(MockMvc mockMvc, String projectId, String groupId, AbstractRequest request, String expectedErrorMsg) throws Exception {
-            String requestJson = new ObjectMapper(new JsonFactory()).writeValueAsString(request);
-            String endpoint = String.format(ENDPOINT_TEMPLATE, projectId, groupId, request.getId());
-            ResultActions resultActions = mockMvc.perform(put(endpoint).contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)).content(requestJson));
-            resultActions.andExpect(status().isBadRequest())
-                    .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
-                    .andExpect(jsonPath("$.errors", hasSize(1)))
-                    .andExpect(jsonPath("$.errors[0]").value(expectedErrorMsg));
+        public void run(final String projectId, final String groupId, final AbstractRequest request, final String msg) throws Exception {
+			final String putEndpoint = createEndpoint(projectId, groupId, request.getId());
+			run(withMediaType(put(putEndpoint)), createRequestJson(request), msg);
         }
     }
 
     private final static class Helper {
-        private static void help(MockMvc mockMvc, Project project, Group group, AbstractRequest request, Runner runner) throws Exception {
+        private static void help(Project project, Group group, AbstractRequest request, Runner runner) throws Exception {
             // Empty name
             request.setName("");
-            runner.run(mockMvc, project.getId(), group.getId(), request, "name: may not be null or empty");
+            runner.run(project.getId(), group.getId(), request, "name: may not be null or empty");
 
             // Name is null
             request.setName(null);
-            runner.run(mockMvc, project.getId(), group.getId(), request, "name: may not be null or empty");
+            runner.run(project.getId(), group.getId(), request, "name: may not be null or empty");
 
             // GroupId is null
-            AbstractRequest request1 = getNewRequest(group.getId());
+            final AbstractRequest request1 = getNewRequest(group.getId());
             request1.setGroupId(null);
-            runner.run(mockMvc, project.getId(), group.getId(), request1, "groupId: may not be null");
+            runner.run(project.getId(), group.getId(), request1, "groupId: may not be null");
 
             // httpStatus in the response is zero
-            AbstractRequest request2 = getNewRequest(group.getId());
+            final AbstractRequest request2 = getNewRequest(group.getId());
             request2.getMockResponse().setHttpStatus(0);
-            runner.run(mockMvc, project.getId(), group.getId(), request2, "httpStatus: must be number greater than zero");
+            runner.run(project.getId(), group.getId(), request2, "httpStatus: must be number greater than zero");
         }
     }
 
     private final static class ExtendedHelper {
-        private static void help(MockMvc mockMvc, Project project, Group group, AbstractRequest request, Runner runner) throws Exception {
-            Helper.help(mockMvc, project, group, request, runner);
+        private static void help(Project project, Group group, AbstractRequest request, Runner runner) throws Exception {
+            Helper.help(project, group, request, runner);
 
             // Wrong unique code (for save request only)
-            String uniqueWrongCode = "WRONG-1";
-            AbstractRequest request1 = getNewRequest(group.getId());
+            final String uniqueWrongCode = "WRONG-1";
+            final AbstractRequest request1 = getNewRequest(group.getId());
             request1.setUniqueCode(uniqueWrongCode);
-            runner.run(mockMvc, project.getId(), group.getId(), request1, String.format("Cannot find MockRequest with ID '%s' and unique code '%s'", request1.getId(), uniqueWrongCode));
-        }
-    }
-
-    private final class RestRequestSender implements Runnable {
-
-        private final String projectId;
-
-        private final AbstractRequest requestToSend;
-
-        public RestRequestSender(String projectId, AbstractRequest request) {
-            this.projectId = projectId;
-            this.requestToSend = request;
-        }
-
-        @Override
-        public void run() {
-            try {
-                ResultActions resultActions = createRequestRest(this.projectId, requestToSend.getGroupId(), requestToSend);
-                resultActions.andExpect(status().isOk());
-
-                // Use lines below for debug
-//                String responseJson = resultActions.andReturn().getResponse().getContentAsString();
-//                AbstractRequest mock = new ObjectMapper(new JsonFactory()).readValue(responseJson, AbstractRequest.class);
-//                System.out.println("REQUEST UNIQUE CODE ID :: " + mock.getUniqueCode());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            runner.run(project.getId(), group.getId(), request1, String.format("Cannot find MockRequest with ID '%s' and unique code '%s'", request1.getId(), uniqueWrongCode));
         }
     }
 }
