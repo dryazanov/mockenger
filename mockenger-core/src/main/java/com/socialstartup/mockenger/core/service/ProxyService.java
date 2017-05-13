@@ -20,9 +20,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -71,15 +72,15 @@ public class ProxyService {
             }
 
             // Set response status
-            mockResponse.setHttpStatus(Optional.ofNullable(response.getStatusLine())
-					.map(statusLine -> statusLine.getStatusCode())
-					.orElse(DEFAULT_RESPONSE_HTTP_STATUS));
+            mockResponse.setHttpStatus(
+            		ofNullable(response.getStatusLine())
+							.map(statusLine -> statusLine.getStatusCode())
+							.orElse(DEFAULT_RESPONSE_HTTP_STATUS));
 
-            // Set response headers
-            Stream.of(response.getAllHeaders()).forEach(header -> {
-                final Pair pair = new Pair(header.getName(), header.getValue());
-                mockResponse.getHeaders().add(pair);
-            });
+			mockResponse.getHeaders().addAll(
+					Stream.of(response.getAllHeaders())
+							.map(h -> new Pair(h.getName(), h.getValue()))
+							.collect(toList()));
 
             // Set response body
             if (response.getEntity() != null && response.getEntity().getContent() != null) {
@@ -117,11 +118,12 @@ public class ProxyService {
 		mockRequest.getParameters().getValues()
 				.forEach(pair -> requestBuilder.addParameter(pair.getKey(), pair.getValue()));
 
-		final String body = Optional.ofNullable(mockRequest.getBody()).map(b -> b.getValue()).orElse("");
+		final String body = ofNullable(mockRequest.getBody())
+				.map(b -> b.getValue())
+				.orElse("");
 
         // Set request headers (excl. headers from black-list)
-		mockRequest.getHeaders()
-				.getValues()
+		mockRequest.getHeaders().getValues()
 				.parallelStream()
 				.filter(p -> !headersToIgnore.contains(p.getKey()))
 				.filter(p -> !isContentLengthHeader(p) || isEmpty(body))
@@ -131,7 +133,7 @@ public class ProxyService {
 		try {
 			if (!isEmpty(body)) {
 				final StringEntity stringEntity = new StringEntity(body);
-				final String contentType = Optional.ofNullable(requestBuilder.getFirstHeader(CONTENT_TYPE))
+				final String contentType = ofNullable(requestBuilder.getFirstHeader(CONTENT_TYPE))
 						.map(h -> h.getValue())
 						.orElse("");
 
@@ -156,6 +158,6 @@ public class ProxyService {
 	}
 
     private boolean isContentLengthHeader(final Pair pair) {
-		return CONTENT_LENGTH.toLowerCase().equals(pair.getKey().toLowerCase());
+		return CONTENT_LENGTH.equalsIgnoreCase(pair.getKey());
 	}
 }

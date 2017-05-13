@@ -13,6 +13,7 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Heade
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Parameters;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Path;
 import com.socialstartup.mockenger.data.model.persistent.transformer.RegexpTransformer;
+import com.socialstartup.mockenger.data.repository.RequestEntityCustomRepository;
 import com.socialstartup.mockenger.data.repository.RequestEntityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,9 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Dmitry Ryazanov
@@ -35,8 +38,12 @@ public class RequestService {
      */
     private static final Logger LOG = LoggerFactory.getLogger(RequestService.class);
 
+
     @Autowired
     private RequestEntityRepository requestEntityRepository;
+
+    @Autowired
+    private RequestEntityCustomRepository requestEntityCustomRepository;
 
 
     public AbstractRequest findById(final String id) {
@@ -58,13 +65,17 @@ public class RequestService {
         return requestEntityRepository.findByGroupId(groupId);
     }
 
+	public void updateRequestCounter(final AbstractRequest entity) {
+		requestEntityCustomRepository.updateRequestCounter(entity);
+	}
+
     @Eventable
     public AbstractRequest save(final AbstractRequest entity) {
-        try {
-            return requestEntityRepository.save(entity);
-        } catch (DuplicateKeyException ex) {
-            throw new NotUniqueValueException(String.format("Request with the code '%s' already exists", entity.getUniqueCode()));
-        }
+		try {
+			return requestEntityRepository.save(entity);
+		} catch (DuplicateKeyException ex) {
+			throw new NotUniqueValueException(String.format("Request with the code '%s' already exists", entity.getUniqueCode()));
+		}
     }
 
     @Eventable

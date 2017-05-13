@@ -6,6 +6,7 @@ import com.socialstartup.mockenger.data.config.MongoDBConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Import;
                 @ComponentScan.Filter(value = OAuth2TokenManager.class, type = FilterType.ASSIGNABLE_TYPE),
                 @ComponentScan.Filter(value = AccountController.class, type = FilterType.ASSIGNABLE_TYPE)
         },
-        basePackages = {"com.socialstartup.mockenger.core.web", "com.socialstartup.mockenger.core.service"}
+        basePackages = {"com.socialstartup.mockenger.core.web", "com.socialstartup.mockenger.core.log", "com.socialstartup.mockenger.core.service"}
 )
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class TestContext {}

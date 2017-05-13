@@ -235,8 +235,8 @@ public class AbstractControllerTest {
         return request;
     }
 
-    protected void createRequest(AbstractRequest request) {
-        this.requestService.save(request);
+    protected AbstractRequest createRequest(AbstractRequest request) {
+        return this.requestService.save(request);
     }
 
     protected ResultActions sendPostRequest(String endpoint, MediaType mediaType, AbstractRequest request) throws Exception {

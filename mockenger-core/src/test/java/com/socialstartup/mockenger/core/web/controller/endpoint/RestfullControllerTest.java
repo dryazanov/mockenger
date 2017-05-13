@@ -23,10 +23,18 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
+import static com.socialstartup.mockenger.core.web.controller.base.AbstractController.API_PATH;
+import static org.springframework.http.MediaType.parseMediaType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -285,6 +293,48 @@ public class RestfullControllerTest extends AbstractControllerTest {
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors[0]").value("Invalid header 'Content-type': application/json or application/xml are only allowed in REST requests"));
     }
+
+
+	@Test
+	public void testRequestCounterUpdate() throws Exception {
+		deleteAllRequests();
+
+		final int numOfMocks = 99;
+		final int numOfThreadToRun = numOfMocks / ThreadLocalRandom.current().nextInt(1, 25);
+
+		final AbstractRequest request = createRequest(createJsonMockRequestForGet(group.getId()));
+		final String mockRequestEndpoint = String.format(API_PATH + "/projects/%s/groups/%s/requests/%s",
+				project.getId(), group.getId(), request.getId());
+		final ExecutorService taskExecutor = Executors.newFixedThreadPool(numOfThreadToRun);
+
+		IntStream.range(0, numOfMocks).forEach(i -> taskExecutor.execute(() -> {
+			try {
+				mockMvc.perform(withMediaType(get(endpoint))).andExpect(status().isOk());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}));
+
+		// Disable new tasks from being submitted
+		taskExecutor.shutdown();
+
+		try {
+			// Wait a while for existing tasks to terminate
+			taskExecutor.awaitTermination(10, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			System.out.println("Task has been interrupted: " + e.getMessage());
+			taskExecutor.shutdownNow();
+		}
+
+		mockMvc.perform(withMediaType(get(mockRequestEndpoint)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.requestCounter").value(numOfMocks));
+	}
+
+	private MockHttpServletRequestBuilder withMediaType(final MockHttpServletRequestBuilder builder) {
+		return builder.contentType(parseMediaType(CONTENT_TYPE_JSON_UTF8));
+	}
+
 
     private void createMockRequest(final AbstractRequest request, final String groupId, final String contentType,
                                    final String requestBody, final String responseBody) {
