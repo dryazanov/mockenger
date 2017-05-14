@@ -23,7 +23,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Date;
 import java.util.Set;
@@ -35,6 +35,7 @@ import java.util.stream.IntStream;
 
 import static com.socialstartup.mockenger.core.web.controller.base.AbstractController.API_PATH;
 import static org.springframework.http.MediaType.parseMediaType;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -99,6 +100,7 @@ public class RestfullControllerTest extends AbstractControllerTest {
         endpointWithRecording = String.format(ENDPOINT_TEMPLATE, groupWithRecording.getId(), REQUEST_PATH);
     }
 
+
     @After
     public void cleanup() {
         deleteProject(project);
@@ -106,66 +108,74 @@ public class RestfullControllerTest extends AbstractControllerTest {
         deleteAllRequests();
     }
 
+
     //========== POST WITH JSON =================//
 
     @Test
     public void testPostJsonRequestOk() throws Exception {
-        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
-        final String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2).replace(VALUE1, VALUE2);
-
         createRequest(createJsonMockRequestForPost(group.getId()));
 
-        this.mockMvc.perform(post(endpoint).contentType(mediaType).content(content))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
+        final String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2).replace(VALUE1, VALUE2);
+		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(content)));
+
+		mockMvc.perform(asyncDispatch(mvcResult))
+				.andExpect(status().isCreated())
+				.andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.result").value(EXPECTED_RESULT_OK));
     }
 
+
     @Test
     public void testPostJsonRequestWithBadJson() throws Exception {
-        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
+		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(REST_BAD_JSON_REQUEST)));
 
-        this.mockMvc.perform(post(endpoint).contentType(mediaType).content(REST_BAD_JSON_REQUEST))
-                .andExpect(status().isBadRequest())
+		mockMvc.perform(asyncDispatch(mvcResult))
+				.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors[0]").value("Failed to create instance of the mock-object: Cannot read json from the provided source"));
     }
 
+
     @Test
     public void testPostJsonRequestNotFound() throws Exception {
-        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
         final String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2);
+		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(content)));
 
-        this.mockMvc.perform(post(endpoint).contentType(mediaType).content(content)).andExpect(status().isNotFound());
+		mockMvc.perform(asyncDispatch(mvcResult)).andExpect(status().isNotFound());
     }
+
 
     @Test
     public void testPostJsonRequestNotFoundButCreated() throws Exception {
-        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
         final String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2);
         final String postEndpoint = String.format(ENDPOINT_TEMPLATE, groupWithRecording.getId(), REQUEST_PATH);
 
-        this.mockMvc.perform(post(postEndpoint).contentType(mediaType).content(content)).andExpect(status().isCreated());
-        this.mockMvc.perform(post(postEndpoint).contentType(mediaType).content(content)).andExpect(status().isFound());
+		final MvcResult mvcResult1 = getMvcResult(withMediaType(post(postEndpoint).content(content)));
+		mockMvc.perform(asyncDispatch(mvcResult1)).andExpect(status().isCreated());
+
+		final MvcResult mvcResult2 = getMvcResult(withMediaType(post(postEndpoint).content(content)));
+		mockMvc.perform(asyncDispatch(mvcResult2)).andExpect(status().isFound());
     }
+
 
     //========== POST WITH XML =================//
 
     @Test
     public void testPostXmlRequest() throws Exception {
-        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_XML_UTF8);
-        final String content = REST_XML_REQUEST_BODY.replace(ID1, ID2);
-
         // Prepare request to add via API
         final AbstractRequest postRequest = createXmlMockRequestForPost(groupWithRecording.getId());
         final String postEndpoint = String.format(REQUEST_PATH_API, groupWithRecording.getProjectId(), groupWithRecording.getId());
 
         // Send real request to API
-        sendPostRequest(postEndpoint, MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8), postRequest);
+        sendPostRequest(postEndpoint, parseMediaType(CONTENT_TYPE_JSON_UTF8), postRequest);
 
-        mockMvc.perform(post(endpointWithRecording).contentType(mediaType).content(content))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(CONTENT_TYPE_XML_UTF8))
-                .andExpect(xpath("/note/result").string(EXPECTED_RESULT_OK));
+
+        final String content = REST_XML_REQUEST_BODY.replace(ID1, ID2);
+		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpointWithRecording).content(content), CONTENT_TYPE_XML_UTF8));
+
+		mockMvc.perform(asyncDispatch(mvcResult))
+				.andExpect(status().isCreated())
+				.andExpect(content().contentType(CONTENT_TYPE_XML_UTF8))
+				.andExpect(xpath("/note/result").string(EXPECTED_RESULT_OK));
     }
 
 
@@ -173,32 +183,34 @@ public class RestfullControllerTest extends AbstractControllerTest {
 
     @Test
     public void testPutJsonRequestOk() throws Exception {
-        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
-        final String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2);
-
         createRequest(createJsonMockRequestForPut(group.getId()));
 
-        this.mockMvc.perform(put(endpoint).contentType(mediaType).content(content))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8.toLowerCase()))
-                .andExpect(content().string(""));
+        final String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2);
+		final MvcResult mvcResult = getMvcResult(withMediaType(put(endpoint).content(content)));
+
+		mockMvc.perform(asyncDispatch(mvcResult))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8.toLowerCase()))
+				.andExpect(content().string(""));
     }
+
 
     @Test
     public void testPutJsonRequestNotFound() throws Exception {
-        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
         final String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2);
+		final MvcResult mvcResult = getMvcResult(withMediaType(put(endpoint).content(content)));
 
-        this.mockMvc.perform(put(endpoint).contentType(mediaType).content(content)).andExpect(status().isNotFound());
+		mockMvc.perform(asyncDispatch(mvcResult)).andExpect(status().isNotFound());
     }
+
 
     @Test
     public void testPutJsonRequestWithBadJson() throws Exception {
-        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
+		final MvcResult mvcResult = getMvcResult(withMediaType(put(endpoint).content(REST_BAD_JSON_REQUEST)));
 
-        this.mockMvc.perform(put(endpoint).contentType(mediaType).content(REST_BAD_JSON_REQUEST))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors[0]").value("Failed to create instance of the mock-object: Cannot read json from the provided source"));
+		mockMvc.perform(asyncDispatch(mvcResult))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.errors[0]").value("Failed to create instance of the mock-object: Cannot read json from the provided source"));
     }
 
 
@@ -206,20 +218,21 @@ public class RestfullControllerTest extends AbstractControllerTest {
 
     @Test
     public void testPutXmlRequest() throws Exception {
-        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_XML_UTF8);
-        final String content = REST_XML_REQUEST_BODY.replace(ID1, ID2);
-
         // Prepare request to send via API
         final AbstractRequest putRequest = createXmlMockRequestForPut(groupWithRecording.getId());
         final String postEndpoint = String.format(REQUEST_PATH_API, groupWithRecording.getProjectId(), groupWithRecording.getId());
 
         // Send real request to API
-        sendPostRequest(postEndpoint, MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8), putRequest);
+        sendPostRequest(postEndpoint, parseMediaType(CONTENT_TYPE_JSON_UTF8), putRequest);
 
-        this.mockMvc.perform(put(endpointWithRecording).contentType(mediaType).content(content))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(CONTENT_TYPE_XML_UTF8.toLowerCase()))
-                .andExpect(content().string(""));
+
+        final String content = REST_XML_REQUEST_BODY.replace(ID1, ID2);
+		final MvcResult mvcResult = getMvcResult(withMediaType(put(endpointWithRecording).content(content), CONTENT_TYPE_XML_UTF8));
+
+		mockMvc.perform(asyncDispatch(mvcResult))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(CONTENT_TYPE_XML_UTF8.toLowerCase()))
+				.andExpect(content().string(""));
     }
 
 
@@ -227,34 +240,39 @@ public class RestfullControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetJsonRequestOk() throws Exception {
-        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
-
         createRequest(createJsonMockRequestForGet(group.getId()));
 
-        this.mockMvc.perform(get(endpoint).contentType(mediaType))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8.toLowerCase()))
+		final MvcResult mvcResult = getMvcResult(withMediaType(get(endpoint), CONTENT_TYPE_JSON_UTF8));
+
+		mockMvc.perform(asyncDispatch(mvcResult))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8.toLowerCase()))
                 .andExpect(jsonPath("$.result").value(EXPECTED_RESULT_OK));
     }
 
-    @Test
+
+	@Test
     public void testGetRequestNotFound() throws Exception {
-        this.mockMvc.perform(get(endpoint)).andExpect(status().isNotFound());
+		final MvcResult mvcResult = getMvcResult(get(endpoint));
+
+		mockMvc.perform(asyncDispatch(mvcResult)).andExpect(status().isNotFound());
     }
+
 
     //========== GET WITH XML =================//
 
     @Test
     public void testGetXmlRequestOk() throws Exception {
-        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_XML_UTF8);
-
         createRequest(createXmlMockRequestForGet(group.getId()));
 
-        this.mockMvc.perform(get(endpoint).contentType(mediaType))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(CONTENT_TYPE_XML_UTF8.toLowerCase()))
-                .andExpect(xpath("/note/result").string(EXPECTED_RESULT_OK));
+		final MvcResult mvcResult = getMvcResult(withMediaType(get(endpoint), CONTENT_TYPE_XML_UTF8));
+
+		mockMvc.perform(asyncDispatch(mvcResult))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(CONTENT_TYPE_XML_UTF8.toLowerCase()))
+				.andExpect(xpath("/note/result").string(EXPECTED_RESULT_OK));
     }
+
 
     //========== DELETE =================//
 
@@ -262,19 +280,25 @@ public class RestfullControllerTest extends AbstractControllerTest {
     public void testDeleteRequestOk() throws Exception {
         createRequest(createMockRequestForDelete(group.getId()));
 
-        this.mockMvc.perform(delete(endpoint)).andExpect(status().isNoContent());
+		final MvcResult mvcResult = getMvcResult(withMediaType(delete(endpoint).content("")));
+
+		mockMvc.perform(asyncDispatch(mvcResult)).andExpect(status().isNoContent());
     }
+
 
     @Test
     public void testDeleteRequestNotFound() throws Exception {
-        this.mockMvc.perform(delete(endpoint)).andExpect(status().isNotFound());
+		final MvcResult mvcResult = getMvcResult(delete(endpoint));
+
+		mockMvc.perform(asyncDispatch(mvcResult)).andExpect(status().isNotFound());
     }
+
 
     //========== POST BAD REQUEST WITH HTML =================//
 
     @Test
     public void testPostHtmlRequestNotOk() throws Exception {
-        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_HTML_UTF8);
+        final MediaType mediaType = parseMediaType(CONTENT_TYPE_HTML_UTF8);
 
         this.mockMvc.perform(post(endpoint).contentType(mediaType).content(""))
                 .andExpect(status().isBadRequest())
@@ -282,11 +306,12 @@ public class RestfullControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.errors[0]").value("Invalid header 'Content-type': application/json or application/xml are only allowed in REST requests"));
     }
 
+
     //========== PUT BAD REQUEST WITH HTML =================//
 
     @Test
     public void testPutHtmlRequestNotOk() throws Exception {
-        final MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_HTML_UTF8);
+        final MediaType mediaType = parseMediaType(CONTENT_TYPE_HTML_UTF8);
 
         this.mockMvc.perform(put(endpoint).contentType(mediaType).content(""))
                 .andExpect(status().isBadRequest())
@@ -326,13 +351,11 @@ public class RestfullControllerTest extends AbstractControllerTest {
 			taskExecutor.shutdownNow();
 		}
 
+		Thread.sleep(3000);
+
 		mockMvc.perform(withMediaType(get(mockRequestEndpoint)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.requestCounter").value(numOfMocks));
-	}
-
-	private MockHttpServletRequestBuilder withMediaType(final MockHttpServletRequestBuilder builder) {
-		return builder.contentType(parseMediaType(CONTENT_TYPE_JSON_UTF8));
 	}
 
 
