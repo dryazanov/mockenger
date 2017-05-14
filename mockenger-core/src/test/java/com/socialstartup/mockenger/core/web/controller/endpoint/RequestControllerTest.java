@@ -28,7 +28,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.springframework.http.MediaType.parseMediaType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -289,11 +288,6 @@ public class RequestControllerTest extends AbstractControllerTest {
 	private String createEndpoint(final String projectId, final String groupId, final String requestId) {
 		return String.format(ENDPOINT_TEMPLATE, projectId, groupId, requestId);
 	}
-
-	private MockHttpServletRequestBuilder withMediaType(final MockHttpServletRequestBuilder builder) {
-		return builder.contentType(parseMediaType(CONTENT_TYPE_JSON_UTF8));
-	}
-
 
 
     private interface Runner {

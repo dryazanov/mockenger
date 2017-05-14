@@ -14,6 +14,10 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 /**
  * @author Dmitry Ryazanov
@@ -41,7 +45,17 @@ public class MockSearchAspect extends CommonAspect {
 			final Object retVal = joinPoint.proceed();
 
 			if (retVal != null) {
-				requestService.updateRequestCounter((AbstractRequest) retVal);
+				final ExecutorService executorService = Executors.newSingleThreadExecutor();
+				final AbstractRequest abstractRequest = (AbstractRequest) retVal;
+
+				try {
+					executorService.submit(() -> requestService.updateRequestCounter(abstractRequest)).get();
+				} catch (ExecutionException | InterruptedException ex) {
+					log.error("Failed to update request counter for entity: " + abstractRequest, ex);
+				} finally {
+					executorService.shutdownNow();
+				}
+
                 builder.resultType(EventResultType.FOUND);
             } else {
                 builder.resultType(EventResultType.NOT_FOUND);

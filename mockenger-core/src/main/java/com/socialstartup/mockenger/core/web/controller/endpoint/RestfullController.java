@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 import static com.socialstartup.mockenger.core.web.controller.base.AbstractController.API_PATH;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -47,8 +48,8 @@ public class RestfullController extends ParentController {
      * @return
      */
     @RequestMapping(value = "/**", method = GET)
-    public ResponseEntity processGetRequest(@PathVariable String groupId, HttpServletRequest request) {
-        return doGetRequest(groupId, request);
+    public Callable<ResponseEntity> processGetRequest(@PathVariable final String groupId, final HttpServletRequest request) {
+        return () -> doGetRequest(groupId, request);
     }
 
     /**
@@ -58,8 +59,8 @@ public class RestfullController extends ParentController {
      * @return
      */
     @RequestMapping(value = "/**", method = DELETE)
-    public ResponseEntity processDeleteRequest(@PathVariable String groupId, HttpServletRequest request) {
-        return doDeleteRequest(groupId, request);
+    public Callable<ResponseEntity> processDeleteRequest(@PathVariable final String groupId, final HttpServletRequest request) {
+        return () -> doDeleteRequest(groupId, request);
     }
 
     /**
@@ -78,18 +79,19 @@ public class RestfullController extends ParentController {
      * @return
      */
     @RequestMapping(value = "/**", method = POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity processPostJsonRequest(@PathVariable final String groupId,
-												 @RequestBody final String jsonBody,
-												 final HttpServletRequest request) {
+    public Callable<ResponseEntity> processPostJsonRequest(@PathVariable final String groupId,
+														   @RequestBody final String jsonBody,
+														   final HttpServletRequest request) {
+    	return () -> {
+			final Group group = findGroupById(groupId);
 
-        final Group group = findGroupById(groupId);
-
-        try {
-            final GenericRequest mockRequest = postService.createMockRequestFromJson(group.getId(), jsonBody, request);
-            return findMockedEntities(mockRequest, group);
-        } catch (IOException e) {
-            throw new MockObjectNotCreatedException("Cannot read json from the provided source", e);
-        }
+			try {
+				final GenericRequest mockRequest = postService.createMockRequestFromJson(group.getId(), jsonBody, request);
+				return findMockedEntities(mockRequest, group);
+			} catch (IOException e) {
+				throw new MockObjectNotCreatedException("Cannot read json from the provided source", e);
+			}
+		};
     }
 
     /**
@@ -100,14 +102,15 @@ public class RestfullController extends ParentController {
      * @return
      */
     @RequestMapping(value = "/**", method = POST, consumes = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity processPostXmlRequest(@PathVariable final String groupId,
-												@RequestBody final String requestBody,
-												final HttpServletRequest request) {
+    public Callable<ResponseEntity> processPostXmlRequest(@PathVariable final String groupId,
+														  @RequestBody final String requestBody,
+														  final HttpServletRequest request) {
+    	return () -> {
+			final Group group = findGroupById(groupId);
+			final GenericRequest mockRequest = postService.createMockRequestFromXml(group.getId(), requestBody, request);
 
-        final Group group = findGroupById(groupId);
-        final GenericRequest mockRequest = postService.createMockRequestFromXml(group.getId(), requestBody, request);
-
-        return findMockedEntities(mockRequest, group);
+			return findMockedEntities(mockRequest, group);
+		};
     }
 
     /**
@@ -118,18 +121,19 @@ public class RestfullController extends ParentController {
      * @return
      */
     @RequestMapping(value = "/**", method = PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity processPutJsonRequest(@PathVariable final String groupId,
-												@RequestBody final String jsonBody,
-												final HttpServletRequest request) {
+    public Callable<ResponseEntity> processPutJsonRequest(@PathVariable final String groupId,
+														  @RequestBody final String jsonBody,
+														  final HttpServletRequest request) {
+    	return () -> {
+			final Group group = findGroupById(groupId);
 
-        final Group group = findGroupById(groupId);
-
-        try {
-            final GenericRequest mockRequest = putService.createMockRequestFromJson(group.getId(), jsonBody, request);
-            return findMockedEntities(mockRequest, group);
-        } catch (IOException e) {
-            throw new MockObjectNotCreatedException("Cannot read json from the provided source", e);
-        }
+			try {
+				final GenericRequest mockRequest = putService.createMockRequestFromJson(group.getId(), jsonBody, request);
+				return findMockedEntities(mockRequest, group);
+			} catch (IOException e) {
+				throw new MockObjectNotCreatedException("Cannot read json from the provided source", e);
+			}
+		};
     }
 
     /**
@@ -140,13 +144,14 @@ public class RestfullController extends ParentController {
      * @return
      */
     @RequestMapping(value = "/**", method = PUT, consumes = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity processPutXmlRequest(@PathVariable final String groupId,
-											   @RequestBody final String requestBody,
-											   final HttpServletRequest request) {
+    public Callable<ResponseEntity> processPutXmlRequest(@PathVariable final String groupId,
+														 @RequestBody final String requestBody,
+														 final HttpServletRequest request) {
+		return () -> {
+			final Group group = findGroupById(groupId);
+			final GenericRequest mockRequest = putService.createMockRequestFromXml(group.getId(), requestBody, request);
 
-        final Group group = findGroupById(groupId);
-		final GenericRequest mockRequest = putService.createMockRequestFromXml(group.getId(), requestBody, request);
-
-        return findMockedEntities(mockRequest, group);
+			return findMockedEntities(mockRequest, group);
+		};
     }
 }
