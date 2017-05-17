@@ -147,8 +147,8 @@ public class RequestControllerTest extends AbstractControllerTest {
     public void testAddAndSequenceGenerator() throws Exception {
         deleteAllRequests();
 
-        final int numOfMocks = 99;
-        final int numOfThreadToRun = numOfMocks / ThreadLocalRandom.current().nextInt(1, 25);
+        final int numOfMocks = 25;
+        final int numOfThreadToRun = numOfMocks / ThreadLocalRandom.current().nextInt(1, 5);
 
 		final AbstractRequest request = getNewRequest(group.getId());
 		final ExecutorService taskExecutor = Executors.newFixedThreadPool(numOfThreadToRun);
