@@ -2,6 +2,8 @@ package com.socialstartup.mockenger.core.web.filter;
 
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -20,6 +22,7 @@ import java.io.IOException;
  * @author Dmitry Ryazanov
  */
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class CORSFilter implements Filter {
 
     @Value("${mockenger.cors.filter.allow.origin}")
