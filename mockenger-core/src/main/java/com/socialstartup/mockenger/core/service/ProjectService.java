@@ -61,11 +61,11 @@ public class ProjectService {
 
 
     private Project getCloneWithIncrementedSequence(final Project project) {
-        return ProjectService.getProjectClone(project).sequence(project.getSequence() + 1).build();
+        return cloneProject(project).sequence(project.getSequence() + 1).build();
     }
 
 
-    public static Project.ProjectBuilder getProjectClone(final Project project) {
+    public static Project.ProjectBuilder cloneProject(final Project project) {
         return Project.builder()
                 .id(project.getId())
                 .name(project.getName())

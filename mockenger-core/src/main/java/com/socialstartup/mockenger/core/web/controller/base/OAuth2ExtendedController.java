@@ -9,13 +9,15 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 
+import static com.socialstartup.mockenger.core.web.controller.base.AbstractController.API_PATH;
 import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.notFound;
 import static org.springframework.http.ResponseEntity.ok;
@@ -26,9 +28,8 @@ import static org.springframework.http.ResponseEntity.ok;
 @Profile("security")
 @RestController
 @EnableResourceServer
+@RequestMapping(path = API_PATH + "/oauth")
 public class OAuth2ExtendedController extends AbstractController {
-
-	protected static final String USER_ENDPOINT = API_PATH + "/oauth/user";
 
 	@Autowired
     private DefaultTokenServices defaultTokenServices;
@@ -38,7 +39,7 @@ public class OAuth2ExtendedController extends AbstractController {
 
 
 
-    @RequestMapping(value = REVOKE_ENDPOINT, method = RequestMethod.POST)
+    @PostMapping("/revoke")
     public ResponseEntity revokeTokens(@RequestParam("token") final String token) {
         defaultTokenServices.revokeToken(token);
 
@@ -46,7 +47,7 @@ public class OAuth2ExtendedController extends AbstractController {
     }
 
 
-    @RequestMapping(value = USER_ENDPOINT, method = RequestMethod.GET)
+    @GetMapping("/user")
     public ResponseEntity getUser(final Principal principal) {
         if (((OAuth2Authentication) principal).isAuthenticated() && !StringUtils.isEmpty(principal.getName())) {
             final Account account = accountService.findByUsername(principal.getName());

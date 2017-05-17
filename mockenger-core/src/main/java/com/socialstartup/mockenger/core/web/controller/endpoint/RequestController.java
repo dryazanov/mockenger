@@ -5,31 +5,24 @@ import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.Date;
-
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 /**
  * @author Dmitry Ryazanov
  */
 @RestController
 public class RequestController extends AbstractController {
-
-    private static final String REQUESTS = PROJECT_ID_ENDPOINT + GROUP_ID_ENDPOINT + REQUESTS_ENDPOINT;
-    private static final String REQUESTID = PROJECT_ID_ENDPOINT + GROUP_ID_ENDPOINT + REQUEST_ID_ENDPOINT;
-
 
     /**
      * Gets specific mock-request by ID
@@ -39,7 +32,7 @@ public class RequestController extends AbstractController {
      * @param requestId
      * @return
      */
-    @RequestMapping(value = REQUESTID, method = GET)
+    @GetMapping(REQUEST_ID_ENDPOINT)
     public ResponseEntity getRequest(@PathVariable final String projectId,
                                      @PathVariable final String groupId,
                                      @PathVariable final String requestId) {
@@ -47,7 +40,7 @@ public class RequestController extends AbstractController {
         findProjectById(projectId);
         findGroupById(groupId);
 
-        return new ResponseEntity(findRequestById(requestId), getResponseHeaders(), HttpStatus.OK);
+        return okResponseWithDefaultHeaders(findRequestById(requestId));
     }
 
 
@@ -60,7 +53,7 @@ public class RequestController extends AbstractController {
      * @param result
      * @return HttpStatus.OK with created object in the response body
      */
-    @RequestMapping(value = REQUESTS, method = POST)
+    @PostMapping(REQUESTS_ENDPOINT)
     public ResponseEntity addRequest(@PathVariable final String projectId,
                                      @PathVariable final String groupId,
                                      @Valid @RequestBody final AbstractRequest request,
@@ -87,7 +80,7 @@ public class RequestController extends AbstractController {
         // Save
         getRequestService().save(request);
 
-        return new ResponseEntity(request, getResponseHeaders(), HttpStatus.OK);
+        return okResponseWithDefaultHeaders(request);
     }
 
     /**
@@ -99,7 +92,7 @@ public class RequestController extends AbstractController {
      * @param request
      * @return
      */
-    @RequestMapping(value = REQUESTID, method = PUT)
+    @PutMapping(REQUEST_ID_ENDPOINT)
     public ResponseEntity saveRequest(@PathVariable final String projectId,
                                       @PathVariable final String groupId,
                                       @PathVariable final String requestId,
@@ -125,7 +118,7 @@ public class RequestController extends AbstractController {
         // Save
         getRequestService().save(request);
 
-        return new ResponseEntity(request, getResponseHeaders(), HttpStatus.OK);
+        return okResponseWithDefaultHeaders(request);
     }
 
 
@@ -137,7 +130,7 @@ public class RequestController extends AbstractController {
      * @param requestId
      * @return
      */
-    @RequestMapping(value = REQUESTID, method = DELETE)
+    @DeleteMapping(REQUEST_ID_ENDPOINT)
     public ResponseEntity deleteRequest(@PathVariable final String projectId,
                                         @PathVariable final String groupId,
                                         @PathVariable final String requestId) {
@@ -146,7 +139,7 @@ public class RequestController extends AbstractController {
         findGroupById(groupId);
         getRequestService().remove(findRequestById(requestId));
 
-        return new ResponseEntity(getResponseHeaders(), HttpStatus.NO_CONTENT);
+        return noContentWithDefaultHeaders();
     }
 
 
@@ -157,13 +150,13 @@ public class RequestController extends AbstractController {
      * @param groupId
      * @return
      */
-    @RequestMapping(value = REQUESTS, method = GET)
+    @GetMapping(REQUESTS_ENDPOINT)
     public ResponseEntity getRequestList(@PathVariable final String projectId, @PathVariable final String groupId) {
         findProjectById(projectId);
 
         final Group group = findGroupById(groupId);
         final Iterable<AbstractRequest> requestList = getRequestService().findByGroupId(group.getId());
 
-        return new ResponseEntity(requestList, getResponseHeaders(), HttpStatus.OK);
+        return okResponseWithDefaultHeaders(requestList);
     }
 }

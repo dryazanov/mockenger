@@ -50,7 +50,7 @@ public class GroupService {
     }
 
 
-    public Group.GroupBuilder getGroupClone(final Group group) {
+    public static Group.GroupBuilder cloneGroup(final Group group) {
         return Group.builder()
                 .id(group.getId())
                 .projectId(group.getProjectId())
