@@ -8,12 +8,14 @@ import com.socialstartup.mockenger.core.web.exception.ObjectNotFoundException;
 import com.socialstartup.mockenger.data.model.persistent.account.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,17 +23,19 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.security.Principal;
 
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static com.socialstartup.mockenger.core.web.controller.base.AbstractController.API_PATH;
+import static java.util.Optional.ofNullable;
+import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * @author Dmitry Ryazanov
  */
 @Profile("security")
 @RestController
+@RequestMapping(path = API_PATH + "/accounts")
 public class AccountController extends AbstractController {
+
+	private static final String ACCOUNT_ID_ENDPOINT = "/{accountId}";
 
     @Autowired
     private AccountService accountService;
@@ -49,7 +53,7 @@ public class AccountController extends AbstractController {
      * @param account
      * @return
      */
-    @RequestMapping(value = ACCOUNT_ID_ENDPOINT, method = PUT)
+    @PutMapping(ACCOUNT_ID_ENDPOINT)
     public ResponseEntity saveAccount(@PathVariable final String accountId,
                                       @Valid @RequestBody final Account account,
                                       final BindingResult result) {
@@ -60,15 +64,11 @@ public class AccountController extends AbstractController {
 
         // Check if account exists
         final Account existingAccount = findAccountById(accountId);
-        final Account.AccountBuilder accountBuilder = Account.builder()
+        final Account.AccountBuilder accountBuilder = getAccountBuilder(account)
                 .id(existingAccount.getId())
-                .password(existingAccount.getPassword())
-                .username(account.getUsername())
-                .firstName(account.getFirstName())
-                .lastName(account.getLastName())
-                .role(account.getRole());
+                .password(existingAccount.getPassword());
 
-        if (!StringUtils.isEmpty(account.getPassword())) {
+        if (!isEmpty(account.getPassword())) {
             accountBuilder.password(encodePassword(account.getPassword()));
         }
 
@@ -79,7 +79,7 @@ public class AccountController extends AbstractController {
             oAuth2TokenManager.revokeTokenByUsername(existingAccount.getUsername());
         }
 
-        return new ResponseEntity(updatedAccount, getResponseHeaders(), HttpStatus.OK);
+        return okResponseWithDefaultHeaders(updatedAccount);
     }
 
 
@@ -88,7 +88,7 @@ public class AccountController extends AbstractController {
      * @param accountId
      * @return
      */
-    @RequestMapping(value = ACCOUNT_ID_ENDPOINT, method = DELETE)
+    @DeleteMapping(ACCOUNT_ID_ENDPOINT)
     public ResponseEntity deleteAccount(@PathVariable final String accountId, final Principal principal) {
         final Account account = findAccountById(accountId);
 
@@ -98,7 +98,7 @@ public class AccountController extends AbstractController {
 
         accountService.remove(account);
 
-        return new ResponseEntity(getResponseHeaders(), HttpStatus.NO_CONTENT);
+        return noContentWithDefaultHeaders();
     }
 
 
@@ -106,9 +106,9 @@ public class AccountController extends AbstractController {
      *
      * @return
      */
-    @RequestMapping(value = ACCOUNTS_ENDPOINT, method = GET)
+    @GetMapping
     public ResponseEntity getAccountList() {
-        return new ResponseEntity(accountService.findAll(), getResponseHeaders(), HttpStatus.OK);
+        return okResponseWithDefaultHeaders(accountService.findAll());
     }
 
 
@@ -118,39 +118,36 @@ public class AccountController extends AbstractController {
      * @param result
      * @return
      */
-    @RequestMapping(value = ACCOUNTS_ENDPOINT, method = POST)
+    @PostMapping
     public ResponseEntity addAccount(@Valid @RequestBody final Account account, final BindingResult result) {
         if (result.hasErrors()) {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
 
-        final Account accountBuilder = Account.builder()
-                .password(encodePassword(account.getPassword()))
-                .firstName(account.getFirstName())
-                .lastName(account.getLastName())
-                .username(account.getUsername())
-                .role(account.getRole())
-                .build();
+		final Account accountBuilder = getAccountBuilder(account)
+				.password(encodePassword(account.getPassword()))
+				.build();
 
-        return new ResponseEntity(accountService.save(accountBuilder), getResponseHeaders(), HttpStatus.OK);
+		return okResponseWithDefaultHeaders(accountService.save(accountBuilder));
     }
 
 
-    private Account findAccountById(final String accountId) {
-        final Account account = accountService.findById(accountId);
+	private Account.AccountBuilder getAccountBuilder(final Account account) {
+		return Account.builder()
+				.firstName(account.getFirstName())
+				.lastName(account.getLastName())
+				.username(account.getUsername())
+				.role(account.getRole());
+	}
 
-        if (account == null) {
-            throw new ObjectNotFoundException("Account", accountId);
-        }
 
-        return account;
+	private Account findAccountById(final String accountId) {
+    	return ofNullable(accountService.findById(accountId))
+				.orElseThrow(() -> new ObjectNotFoundException("Account", accountId));
     }
 
 
     private String encodePassword(final String password) {
-        if (!StringUtils.isEmpty(password)) {
-            return passwordEncoder.encode(password);
-        }
-        return null;
+        return !isEmpty(password) ? passwordEncoder.encode(password) : null;
     }
 }

@@ -15,10 +15,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
+import static org.springframework.http.ResponseEntity.noContent;
+import static org.springframework.http.ResponseEntity.notFound;
+import static org.springframework.http.ResponseEntity.ok;
 
 /**
  * @author Dmitry Ryazanov
@@ -29,24 +34,14 @@ public abstract class AbstractController {
 
     public static final String API_PATH = "/api";
 
-	protected static final String REVOKE_ENDPOINT = API_PATH + "/oauth/revoke";
-
-    protected static final String VALUESET_ENDPOINT = API_PATH + "/valueset";
-
-    protected static final String ACCOUNTS_ENDPOINT = API_PATH + "/accounts";
-    protected static final String ACCOUNT_ID_ENDPOINT = ACCOUNTS_ENDPOINT + "/{accountId}";
-
-    protected static final String PROJECTS_ENDPOINT = API_PATH + "/projects";
+    public static final String PROJECTS_ENDPOINT = API_PATH + "/projects";
     protected static final String PROJECT_ID_ENDPOINT = PROJECTS_ENDPOINT + "/{projectId}";
 
-    protected static final String GROUPS_ENDPOINT = "/groups";
+    protected static final String GROUPS_ENDPOINT = PROJECT_ID_ENDPOINT + "/groups";
     protected static final String GROUP_ID_ENDPOINT = GROUPS_ENDPOINT + "/{groupId}";
 
-    protected static final String REQUESTS_ENDPOINT = "/requests";
+    protected static final String REQUESTS_ENDPOINT = GROUP_ID_ENDPOINT + "/requests";
     protected static final String REQUEST_ID_ENDPOINT = REQUESTS_ENDPOINT + "/{requestId}";
-
-    protected static final String EVENTS_ENDPOINT = API_PATH + "/events";
-    protected static final String EVENT_ID_ENDPOINT = EVENTS_ENDPOINT + "/{eventId}";
 
     @Autowired
     private ProjectService projectService;
@@ -83,9 +78,10 @@ public abstract class AbstractController {
      * @return
      */
     protected Project findProjectById(final String projectId) {
-        return Optional.ofNullable(getProjectService().findById(projectId))
+        return ofNullable(getProjectService().findById(projectId))
                 .orElseThrow(() -> new ObjectNotFoundException("Project", projectId));
     }
+
 
     /**
      *
@@ -93,9 +89,10 @@ public abstract class AbstractController {
      * @return
      */
     protected Group findGroupById(final String groupId) {
-        return Optional.ofNullable(getGroupService().findById(groupId))
+        return ofNullable(getGroupService().findById(groupId))
                 .orElseThrow(() -> new ObjectNotFoundException("Group", groupId));
     }
+
 
     /**
      *
@@ -103,9 +100,10 @@ public abstract class AbstractController {
      * @return
      */
     protected AbstractRequest findRequestById(final String requestId) {
-        return Optional.ofNullable(getRequestService().findById(requestId))
+        return ofNullable(getRequestService().findById(requestId))
                 .orElseThrow(() -> new ObjectNotFoundException("MockRequest", requestId));
     }
+
 
     /**
      *
@@ -113,10 +111,11 @@ public abstract class AbstractController {
      * @return
      */
     protected AbstractRequest findRequestByIdAndUniqueCode(final String requestId, final String uniqueCode) {
-        return Optional.ofNullable(getRequestService().findByIdAndUniqueCode(requestId, uniqueCode))
+        return ofNullable(getRequestService().findByIdAndUniqueCode(requestId, uniqueCode))
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find MockRequest with ID '" +
                         requestId + "' and unique code '" + uniqueCode + "'"));
     }
+
 
     /**
      *
@@ -140,6 +139,7 @@ public abstract class AbstractController {
         }
     }
 
+
     /**
      *
      * @param mockResponse
@@ -154,4 +154,19 @@ public abstract class AbstractController {
             }
         }
     }
+
+
+	protected <T> ResponseEntity<T> okResponseWithDefaultHeaders(final T body) {
+		return ok().headers(getResponseHeaders()).body(body);
+	}
+
+
+	protected ResponseEntity noContentWithDefaultHeaders() {
+		return noContent().headers(getResponseHeaders()).build();
+	}
+
+
+	protected ResponseEntity notFoundWithDefaultHeaders() {
+		return notFound().headers(getResponseHeaders()).build();
+	}
 }

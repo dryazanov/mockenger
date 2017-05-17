@@ -8,9 +8,12 @@ import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,8 +23,8 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 
 import static com.socialstartup.mockenger.core.web.controller.base.AbstractController.API_PATH;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
@@ -29,10 +32,10 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
  * @author Dmitry Ryazanov
  */
 @RestController
-@RequestMapping(value = API_PATH + "/REST/{groupId}")
+@RequestMapping(path = API_PATH + "/REST/{groupId}/**")
 public class RestfullController extends ParentController {
 
-    @Autowired
+	@Autowired
     @Qualifier("restPostService")
     private PostService postService;
 
@@ -47,10 +50,11 @@ public class RestfullController extends ParentController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/**", method = GET)
+    @GetMapping
     public Callable<ResponseEntity> processGetRequest(@PathVariable final String groupId, final HttpServletRequest request) {
         return () -> doGetRequest(groupId, request);
     }
+
 
     /**
      *
@@ -58,18 +62,20 @@ public class RestfullController extends ParentController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/**", method = DELETE)
+    @DeleteMapping
     public Callable<ResponseEntity> processDeleteRequest(@PathVariable final String groupId, final HttpServletRequest request) {
         return () -> doDeleteRequest(groupId, request);
     }
 
+
     /**
      *
      */
-    @RequestMapping(value = "/**", method = {POST, PUT})
+    @RequestMapping(method = {POST, PUT})
     public void processPosRequest() {
         throw new BadContentTypeException("Invalid header 'Content-type': application/json or application/xml are only allowed in REST requests");
     }
+
 
     /**
      *
@@ -78,7 +84,7 @@ public class RestfullController extends ParentController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/**", method = POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = APPLICATION_JSON_VALUE)
     public Callable<ResponseEntity> processPostJsonRequest(@PathVariable final String groupId,
 														   @RequestBody final String jsonBody,
 														   final HttpServletRequest request) {
@@ -94,6 +100,7 @@ public class RestfullController extends ParentController {
 		};
     }
 
+
     /**
      *
      * @param groupId
@@ -101,7 +108,7 @@ public class RestfullController extends ParentController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/**", method = POST, consumes = MediaType.APPLICATION_XML_VALUE)
+    @PostMapping(consumes = APPLICATION_XML_VALUE)
     public Callable<ResponseEntity> processPostXmlRequest(@PathVariable final String groupId,
 														  @RequestBody final String requestBody,
 														  final HttpServletRequest request) {
@@ -113,6 +120,7 @@ public class RestfullController extends ParentController {
 		};
     }
 
+
     /**
      *
      * @param groupId
@@ -120,7 +128,7 @@ public class RestfullController extends ParentController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/**", method = PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(consumes = APPLICATION_JSON_VALUE)
     public Callable<ResponseEntity> processPutJsonRequest(@PathVariable final String groupId,
 														  @RequestBody final String jsonBody,
 														  final HttpServletRequest request) {
@@ -136,6 +144,7 @@ public class RestfullController extends ParentController {
 		};
     }
 
+
     /**
      *
      * @param groupId
@@ -143,7 +152,7 @@ public class RestfullController extends ParentController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/**", method = PUT, consumes = MediaType.APPLICATION_XML_VALUE)
+    @PutMapping(consumes = APPLICATION_XML_VALUE)
     public Callable<ResponseEntity> processPutXmlRequest(@PathVariable final String groupId,
 														 @RequestBody final String requestBody,
 														 final HttpServletRequest request) {

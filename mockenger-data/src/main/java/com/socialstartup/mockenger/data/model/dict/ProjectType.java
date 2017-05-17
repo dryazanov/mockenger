@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by Dmitry Ryazanov on 3/12/2015.
+ * @author Dmitry Ryazanov
  */
 public enum ProjectType {
     REST(Arrays.asList(RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE)),
@@ -14,20 +14,24 @@ public enum ProjectType {
 
     private final List<RequestMethod> allowedMethods;
 
-    ProjectType(List<RequestMethod> allowedMethods) {
+
+    ProjectType(final List<RequestMethod> allowedMethods) {
         this.allowedMethods = allowedMethods;
     }
+
 
     public List<RequestMethod> getAllowedMethods() {
         return allowedMethods;
     }
 
-    public static boolean contains(String value) {
+
+    public static boolean contains(final String value) {
         for (ProjectType type : ProjectType.values()) {
             if (type.name().equals(value)) {
                 return true;
             }
         }
+
         return false;
     }
 }

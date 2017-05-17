@@ -12,7 +12,6 @@ import com.socialstartup.mockenger.core.service.ProjectService;
 import com.socialstartup.mockenger.core.service.RequestService;
 import com.socialstartup.mockenger.core.service.account.AccountService;
 import com.socialstartup.mockenger.core.util.CommonUtils;
-import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.dict.EventType;
 import com.socialstartup.mockenger.data.model.dict.ProjectType;
 import com.socialstartup.mockenger.data.model.dict.RequestMethod;
@@ -50,6 +49,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import static com.socialstartup.mockenger.core.web.controller.base.AbstractController.API_PATH;
 import static org.springframework.http.MediaType.parseMediaType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
@@ -97,7 +97,7 @@ public class AbstractControllerTest {
     protected static final String ACCOUNT_PASSWORD_TEST = "pswd";
     protected static final String REQUEST_NAME_TEST = "Unit-test mock-request";
     protected static final String REQUEST_PATH = "/unit/test/mock/request";
-    protected static final String REQUEST_PATH_API = AbstractController.API_PATH + "/projects/%s/groups/%s/requests";
+    protected static final String REQUEST_PATH_API = API_PATH + "/projects/%s/groups/%s/requests";
 
     protected static final String SEMICOLON = ";";
     protected static final String CHARSET_UTF8 = "charset=UTF-8";
