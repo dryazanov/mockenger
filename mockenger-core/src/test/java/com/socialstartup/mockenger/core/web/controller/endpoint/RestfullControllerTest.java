@@ -324,8 +324,8 @@ public class RestfullControllerTest extends AbstractControllerTest {
 	public void testRequestCounterUpdate() throws Exception {
 		deleteAllRequests();
 
-		final int numOfMocks = 99;
-		final int numOfThreadToRun = numOfMocks / ThreadLocalRandom.current().nextInt(1, 25);
+		final int numOfMocks = 25;
+		final int numOfThreadToRun = numOfMocks / ThreadLocalRandom.current().nextInt(1, 5);
 
 		final AbstractRequest request = createRequest(createJsonMockRequestForGet(group.getId()));
 		final String mockRequestEndpoint = String.format(API_PATH + "/projects/%s/groups/%s/requests/%s",
