@@ -17,12 +17,13 @@ import com.socialstartup.mockenger.data.model.persistent.transformer.RegexpTrans
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Date;
 import java.util.Set;
 
-import static org.springframework.http.MediaType.parseMediaType;
+import static com.socialstartup.mockenger.core.util.CommonUtils.getCheckSum;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -92,38 +93,40 @@ public class SoapControllerTest extends AbstractControllerTest {
 
     @Test
     public void testProcessPosRequestOk() throws Exception {
-        MediaType mediaType = parseMediaType(CONTENT_TYPE_SOAP_UTF8);
-        String content = SOAP_XML_REQUEST.replace(ID1, ID2);
+        final String content = SOAP_XML_REQUEST.replace(ID1, ID2);
+		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(content), CONTENT_TYPE_SOAP_UTF8));
 
-        this.mockMvc.perform(post(endpoint).contentType(mediaType).content(content))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(CONTENT_TYPE_SOAP_UTF8.toLowerCase()))
-                .andExpect(xpath("//result").string("OK"));
+		mockMvc.perform(asyncDispatch(mvcResult))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(CONTENT_TYPE_SOAP_UTF8.toLowerCase()))
+				.andExpect(xpath("//result").string("OK"));
     }
 
     @Test
     public void testProcessPosRequestCustomContentType() throws Exception {
-        final MediaType mediaType = parseMediaType(CONTENT_TYPE_JSON_UTF8);
         final String content = SOAP_XML_REQUEST.replace(ID1, ID2);
+		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(content), CONTENT_TYPE_JSON_UTF8));
 
-		mockMvc.perform(post(endpoint).contentType(mediaType).content(content)).andExpect(status().isCreated());
+		mockMvc.perform(asyncDispatch(mvcResult)).andExpect(status().isCreated());
     }
 
     @Test
     public void testProcessPosRequestInvalidBody() throws Exception {
-        MediaType mediaType = parseMediaType(CONTENT_TYPE_SOAP_UTF8);
-        String content = SOAP_XML_REQUEST + "<invalidTag>";
+        final String content = SOAP_XML_REQUEST + "<invalidTag>";
+		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(content), CONTENT_TYPE_SOAP_UTF8));
 
-        this.mockMvc.perform(post(endpoint).contentType(mediaType).content(content))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors[0]").value("Failed to create instance of the mock-object: Cannot create SOAP message"));
+		mockMvc.perform(asyncDispatch(mvcResult))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.errors[0]").value("Failed to create instance of the mock-object: Cannot create SOAP message"));
     }
 
 
     private PostRequest createSoapMockRequest(String groupId) {
-        Set<Pair> headersSet = ImmutableSet.of(new Pair("content-type", CONTENT_TYPE_SOAP_UTF8.toLowerCase()));
+        final Set<Pair> headersSet = ImmutableSet.of(new Pair("content-type", CONTENT_TYPE_SOAP_UTF8.toLowerCase()));
+        final PostRequest postRequest = new PostRequest();
+		final Body body = new Body(ImmutableList.of(new RegexpTransformer(ID2, ID1)), SOAP_XML_REQUEST_BODY);
+		final MockResponse mockResponse = new MockResponse(200, headersSet, SOAP_XML_RESPONSE);
 
-        PostRequest postRequest = new PostRequest();
         postRequest.setGroupId(groupId);
         postRequest.setId(CommonUtils.generateUniqueId());
         postRequest.setName(REQUEST_NAME_TEST);
@@ -132,9 +135,9 @@ public class SoapControllerTest extends AbstractControllerTest {
         postRequest.setPath(new Path(REQUEST_PATH));
         postRequest.setParameters(null);
         postRequest.setHeaders(new Headers(headersSet));
-        postRequest.setBody(new Body(ImmutableList.of(new RegexpTransformer(ID2, ID1)), SOAP_XML_REQUEST_BODY));
-        postRequest.setMockResponse(new MockResponse(200, headersSet, SOAP_XML_RESPONSE));
-        postRequest.setCheckSum(CommonUtils.getCheckSum(postRequest));
+		postRequest.setBody(body);
+		postRequest.setMockResponse(mockResponse);
+        postRequest.setCheckSum(getCheckSum(postRequest));
 
         return postRequest;
     }
