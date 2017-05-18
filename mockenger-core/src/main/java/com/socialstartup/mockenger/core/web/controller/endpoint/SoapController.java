@@ -1,7 +1,6 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
 import com.socialstartup.mockenger.core.service.soap.PostService;
-import com.socialstartup.mockenger.core.web.exception.BadContentTypeException;
 import com.socialstartup.mockenger.core.web.exception.MockObjectNotCreatedException;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
@@ -9,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,27 +19,18 @@ import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
 import static com.socialstartup.mockenger.core.web.controller.base.AbstractController.API_PATH;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author Dmitry Ryazanov
  */
 @RestController
-@RequestMapping(value = API_PATH + "/SOAP/{groupId}")
+@RequestMapping(path = API_PATH + "/SOAP/{groupId}/**")
 public class SoapController extends ParentController {
 
-    @Autowired
+	@Autowired
     @Qualifier("soapPostService")
     private PostService postService;
 
-
-    /**
-     *
-     */
-    @RequestMapping(value = "/**", method = POST)
-    public void processPosRequest() {
-        throw new BadContentTypeException("Invalid header 'Content-type': application/soap+xml is only allowed in SOAP requests");
-    }
 
     /**
      *
@@ -48,7 +39,7 @@ public class SoapController extends ParentController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/**", method = POST, consumes = "application/soap+xml")
+    @PostMapping
     public ResponseEntity processPostRequest(@PathVariable final String groupId,
 											 @RequestBody final String requestBody,
 											 final HttpServletRequest request) {
