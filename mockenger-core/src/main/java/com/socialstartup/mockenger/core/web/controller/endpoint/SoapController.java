@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.soap.SOAPException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 import static com.socialstartup.mockenger.core.web.controller.base.AbstractController.API_PATH;
 
@@ -40,23 +41,24 @@ public class SoapController extends ParentController {
      * @return
      */
     @PostMapping
-    public ResponseEntity processPostRequest(@PathVariable final String groupId,
-											 @RequestBody final String requestBody,
-											 final HttpServletRequest request) {
+    public Callable<ResponseEntity> processPostRequest(@PathVariable final String groupId,
+													   @RequestBody final String requestBody,
+													   final HttpServletRequest request) {
+		return () -> {
+			final Group group = findGroupById(groupId);
 
-        final Group group = findGroupById(groupId);
+			try {
+				final String soapBody = postService.getSoapBody(requestBody);
+				final GenericRequest mockRequest = postService.createMockRequest(group.getId(), soapBody, request);
 
-        try {
-        	final String soapBody = postService.getSoapBody(requestBody);
-			final GenericRequest mockRequest = postService.createMockRequest(group.getId(), soapBody, request);
-
-			return findMockedEntities(mockRequest, group);
-        } catch (SOAPException e) {
-            throw new MockObjectNotCreatedException("Cannot create SOAP message", e);
-        } catch (TransformerException e) {
-            throw new MockObjectNotCreatedException("An error occurred during request transformation", e);
-        } catch (IOException e) {
-            throw new MockObjectNotCreatedException("Cannot read xml from the provided source", e);
-        }
+				return findMockedEntities(mockRequest, group);
+			} catch (SOAPException e) {
+				throw new MockObjectNotCreatedException("Cannot create SOAP message", e);
+			} catch (TransformerException e) {
+				throw new MockObjectNotCreatedException("An error occurred during request transformation", e);
+			} catch (IOException e) {
+				throw new MockObjectNotCreatedException("Cannot read xml from the provided source", e);
+			}
+		};
     }
 }
