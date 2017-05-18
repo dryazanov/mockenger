@@ -1,10 +1,10 @@
 package com.socialstartup.mockenger.core.web.controller.endpoint;
 
-import com.socialstartup.mockenger.core.util.CommonUtils;
 import com.socialstartup.mockenger.core.web.controller.base.AbstractController;
 import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
+import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Headers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.Date;
+
+import static com.socialstartup.mockenger.core.util.CommonUtils.getCheckSum;
+import static com.socialstartup.mockenger.core.util.CommonUtils.keysToLowercase;
 
 /**
  * @author Dmitry Ryazanov
@@ -69,21 +72,30 @@ public class RequestController extends AbstractController {
 
         // Set id to null to create new mock
         request.setId(null);
+
         // Set creation date
         request.setCreationDate(new Date());
+
         // Generate new unique code
         request.setUniqueCode(String.format("%s-%d", project.getCode(), getProjectService().getNextSequenceValue(projectId)));
+
+        // Change headers to lowercase
+		request.setHeaders(processHeaders(request.getHeaders()));
+
         // Remove whitespaces
         cleanUpRequestBody(request);
+
         // Generate checksum
-        request.setCheckSum(CommonUtils.getCheckSum(request));
+        request.setCheckSum(getCheckSum(request));
+
         // Save
         getRequestService().save(request);
 
         return okResponseWithDefaultHeaders(request);
     }
 
-    /**
+
+	/**
      * Updates existing mock-request
      *
      * @param projectId
@@ -107,14 +119,21 @@ public class RequestController extends AbstractController {
         findGroupById(groupId);
 
         // If mock found that means that id and unique code were not changed
-        AbstractRequest fountRequest = findRequestByIdAndUniqueCode(requestId, request.getUniqueCode());
+        final AbstractRequest fountRequest = findRequestByIdAndUniqueCode(requestId, request.getUniqueCode());
+
         // Creation date can't be changed by user
         request.setCreationDate(fountRequest.getCreationDate());
         request.setLastUpdateDate(new Date());
+
+		// Change headers to lowercase
+		request.setHeaders(processHeaders(request.getHeaders()));
+
         // Remove whitespaces
         cleanUpRequestBody(request);
+
         // Re-generate checksum because values could be updated
-        request.setCheckSum(CommonUtils.getCheckSum(request));
+        request.setCheckSum(getCheckSum(request));
+
         // Save
         getRequestService().save(request);
 
@@ -159,4 +178,9 @@ public class RequestController extends AbstractController {
 
         return okResponseWithDefaultHeaders(requestList);
     }
+
+
+	private Headers processHeaders(final Headers headers) {
+		return new Headers(headers.getTransformers(), keysToLowercase(headers.getValues()));
+	}
 }

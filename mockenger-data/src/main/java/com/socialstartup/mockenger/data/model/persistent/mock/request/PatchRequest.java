@@ -5,7 +5,7 @@ import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Body;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
- * Created by Dmitry Ryazanov on 3/12/2015.
+ * @author Dmitry Ryazanov
  */
 @Document
 public class PatchRequest extends AbstractRequest {

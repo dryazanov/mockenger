@@ -10,17 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
- * Created by dryazanov
+ * @author Dmitry Ryazanov
  */
-@ControllerAdvice
+@RestControllerAdvice
 public class ExceptionHandlingAdvice {
 
     private final Logger LOG = LoggerFactory.getLogger(ExceptionHandlingAdvice.class);
@@ -31,11 +28,11 @@ public class ExceptionHandlingAdvice {
      * @param ex
      * @return error message
      */
-    @ResponseBody
     @ExceptionHandler(BadContentTypeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
-    public ErrorMessage handleBadContentTypeException(BadContentTypeException ex) {
+    public ErrorMessage handleBadContentTypeException(final BadContentTypeException ex) {
         LOG.debug("BadContentTypeException has occurred", ex);
+
         return new ErrorMessage(ex.getMessage());
     }
 
@@ -45,7 +42,6 @@ public class ExceptionHandlingAdvice {
      * @param ex
      * @return error message
      */
-    @ResponseBody
     @ExceptionHandler(NotUniqueValueException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
     public ErrorMessage handleNotUniqueKeyException(NotUniqueValueException ex) {
@@ -59,59 +55,80 @@ public class ExceptionHandlingAdvice {
      * @param ex
      * @return error message
      */
-    @ResponseBody
     @ExceptionHandler(ObjectNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND) // 404
-    public ErrorMessage handleObjectNotFoundException(ObjectNotFoundException ex) {
-        String className = "";
-        if (ex.getClassName() != null) {
-            className = ex.getClassName();
-        } else {
-            className = "Item";
-        }
-        String message = String.format("%s with ID '%s' not found", className, ex.getItemId());
-        LOG.debug(message, ex);
-        return new ErrorMessage(message);
+    public ErrorMessage handleObjectNotFoundException(final ObjectNotFoundException ex) {
+        final StringBuilder sb = new StringBuilder()
+				.append(ex.getClassName() != null ? ex.getClassName() : "Item")
+				.append(" with ID '").append(ex.getItemId()).append("' not found");
+
+        LOG.debug(sb.toString(), ex);
+
+        return new ErrorMessage(sb.toString());
     }
 
-    @ResponseBody
-    @ExceptionHandler
+    @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400
-    public ErrorMessage handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+    public ErrorMessage handleHttpMessageNotReadableException(final HttpMessageNotReadableException ex) {
         LOG.error("JSON object is not readable", ex);
+
         return new ErrorMessage("Unable to process request: json is not readable");
     }
 
-    @ResponseBody
-    @ExceptionHandler
+    @ExceptionHandler(AccountDeleteException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400
-    public ErrorMessage handleAccountDeleteException(AccountDeleteException ex) {
+    public ErrorMessage handleAccountDeleteException(final AccountDeleteException ex) {
         LOG.error("", ex);
+
         return new ErrorMessage(ex.getMessage());
     }
 
-    @ResponseBody
-    @ExceptionHandler
+    @ExceptionHandler(MockObjectNotCreatedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400
-    public ErrorMessage handleMockObjectNotCreatedException(MockObjectNotCreatedException ex) {
-        String msg = "Failed to create instance of the mock-object";
+    public ErrorMessage handleMockObjectNotCreatedException(final MockObjectNotCreatedException ex) {
+        final String msg = "Failed to create instance of the mock-object";
         LOG.error(msg, ex);
+
         return new ErrorMessage(String.format("%s: %s", msg, ex.getMessage()));
     }
 
-    @ResponseBody
-    @ExceptionHandler
+    @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
-    public ErrorMessage handleIllegalArgumentException(HttpServletRequest req, IllegalArgumentException ex) {
+    public ErrorMessage handleIllegalArgumentException(final IllegalArgumentException ex) {
+		String message;
         LOG.error("IllegalArgumentException has occurred", ex);
-        return new ErrorMessage((ex == null || ex.getMessage() == null) ? "Unable to process request" : ex.getMessage());
+
+		if (ex == null || ex.getMessage() == null) {
+			message = "Unable to process request";
+		} else {
+        	if (ex.getMessage().contains("com.socialstartup.mockenger")) {
+        		message = "Illegal argument exception";
+			} else {
+				message = ex.getMessage();
+			}
+		}
+
+        return new ErrorMessage(message);
     }
 
-    @ResponseBody
-    @ExceptionHandler
+    @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)  // 500
-    public ErrorMessage handleError500(HttpServletRequest req, RuntimeException ex) {
+    public ErrorMessage handleError500(final RuntimeException ex) {
         LOG.error("RuntimeException has occurred", ex);
-        return new ErrorMessage(String.format("Internal server error: unable to process request"));
+
+        return getInternalServerErrorMessage();
     }
+
+	@ExceptionHandler(Throwable.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)  // 500
+	public ErrorMessage handleError500(final Throwable ex) {
+		LOG.error("Throwable has occurred", ex);
+
+		return getInternalServerErrorMessage();
+	}
+
+
+	private ErrorMessage getInternalServerErrorMessage() {
+		return new ErrorMessage(String.format("Internal server error: unable to process request"));
+	}
 }
