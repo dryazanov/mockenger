@@ -22,6 +22,7 @@ import org.springframework.http.MediaType;
 import java.util.Date;
 import java.util.Set;
 
+import static org.springframework.http.MediaType.parseMediaType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -76,7 +77,7 @@ public class SoapControllerTest extends AbstractControllerTest {
         super.setUp();
 
         project = createProject();
-        final Group group = createGroup();
+        final Group group = createGroup(project.getId(), true);
         createRequest(createSoapMockRequest(group.getId()));
 
         endpoint = String.format(ENDPOINT_TEMPLATE, group.getId(), REQUEST_PATH);
@@ -91,7 +92,7 @@ public class SoapControllerTest extends AbstractControllerTest {
 
     @Test
     public void testProcessPosRequestOk() throws Exception {
-        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_SOAP_UTF8);
+        MediaType mediaType = parseMediaType(CONTENT_TYPE_SOAP_UTF8);
         String content = SOAP_XML_REQUEST.replace(ID1, ID2);
 
         this.mockMvc.perform(post(endpoint).contentType(mediaType).content(content))
@@ -101,18 +102,16 @@ public class SoapControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void testProcessPosRequestInvalidContentType() throws Exception {
-        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8);
-        String content = SOAP_XML_REQUEST.replace(ID1, ID2);
+    public void testProcessPosRequestCustomContentType() throws Exception {
+        final MediaType mediaType = parseMediaType(CONTENT_TYPE_JSON_UTF8);
+        final String content = SOAP_XML_REQUEST.replace(ID1, ID2);
 
-        this.mockMvc.perform(post(endpoint).contentType(mediaType).content(content))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors[0]").value("Invalid header 'Content-type': application/soap+xml is only allowed in SOAP requests"));
+		mockMvc.perform(post(endpoint).contentType(mediaType).content(content)).andExpect(status().isCreated());
     }
 
     @Test
     public void testProcessPosRequestInvalidBody() throws Exception {
-        MediaType mediaType = MediaType.parseMediaType(CONTENT_TYPE_SOAP_UTF8);
+        MediaType mediaType = parseMediaType(CONTENT_TYPE_SOAP_UTF8);
         String content = SOAP_XML_REQUEST + "<invalidTag>";
 
         this.mockMvc.perform(post(endpoint).contentType(mediaType).content(content))

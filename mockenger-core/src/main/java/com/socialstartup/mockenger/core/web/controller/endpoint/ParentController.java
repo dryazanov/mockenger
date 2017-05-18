@@ -22,8 +22,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 import java.util.Collections;
-import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
+import static org.springframework.http.ResponseEntity.created;
 
 /**
  *
@@ -41,15 +44,19 @@ public class ParentController extends AbstractController {
     @Autowired
     private ProxyService proxyService;
 
+	@Autowired
+	private ObjectMapper objectMapper;
+
     /**
      *
      * @param groupId
      * @param request
      * @return
      */
-    protected ResponseEntity doGetRequest(String groupId, HttpServletRequest request) {
+    protected ResponseEntity doGetRequest(final String groupId, final HttpServletRequest request) {
         final Group group = findGroupById(groupId);
         final AbstractRequest mockRequest = getService.createMockRequest(group.getId(), request);
+
         return findMockedEntities(mockRequest, group);
     }
 
@@ -59,9 +66,10 @@ public class ParentController extends AbstractController {
      * @param request
      * @return
      */
-    protected ResponseEntity doDeleteRequest(String groupId, HttpServletRequest request) {
+    protected ResponseEntity doDeleteRequest(final String groupId, final HttpServletRequest request) {
         final Group group = findGroupById(groupId);
         final AbstractRequest mockRequest = deleteService.createMockRequest(group.getId(), request);
+
         return findMockedEntities(mockRequest, group);
     }
 
@@ -71,7 +79,7 @@ public class ParentController extends AbstractController {
      * @param group
      * @return
      */
-    protected ResponseEntity findMockedEntities(GenericRequest mockRequest, Group group) {
+    protected ResponseEntity findMockedEntities(final GenericRequest mockRequest, final Group group) {
         if (mockRequest == null) {
             throw new MockObjectNotCreatedException("Provided mock-request is null or empty");
         }
@@ -88,7 +96,7 @@ public class ParentController extends AbstractController {
      * @param group
      * @return
      */
-    protected ResponseEntity generateResponse(GenericRequest mockRequest, AbstractRequest mockResult, Group group) {
+    protected ResponseEntity generateResponse(final GenericRequest mockRequest, final AbstractRequest mockResult, final Group group) {
         if (mockResult != null) {
             final MockResponse mockResponse = createMockResponse(mockResult);
 			final HttpHeaders headers = getHttpHeaders(mockRequest, mockResponse);
@@ -99,7 +107,7 @@ public class ParentController extends AbstractController {
             return processRecording(group, mockRequest);
         }
 
-        return new ResponseEntity<>(null, getResponseHeaders(), HttpStatus.NOT_FOUND);
+        return notFoundWithDefaultHeaders();
     }
 
 
@@ -128,7 +136,7 @@ public class ParentController extends AbstractController {
 
         getRequestService().save(abstractRequest);
 
-        return new ResponseEntity<Object>(mockRequest, getResponseHeaders(), HttpStatus.CREATED);
+        return created(URI.create("")).headers(getResponseHeaders()).body(mockRequest);
     }
 
 
@@ -141,7 +149,7 @@ public class ParentController extends AbstractController {
 
 
 	private MockResponse createMockResponse(final AbstractRequest mockResult) {
-        return Optional.ofNullable(mockResult.getMockResponse()).orElse(createResponse302());
+        return ofNullable(mockResult.getMockResponse()).orElse(createResponse302());
     }
 
 
@@ -154,7 +162,7 @@ public class ParentController extends AbstractController {
 		final String message = "The mock you are looking for does exist but the response object is null";
 
 		try {
-			return new ObjectMapper().writeValueAsString(new Message(message));
+			return objectMapper.writeValueAsString(new Message(message));
 		} catch (JsonProcessingException e) {
 			LOG.warn("Can't convert message '" + message + "' to json. Message will be send as a plain text", e);
 		}

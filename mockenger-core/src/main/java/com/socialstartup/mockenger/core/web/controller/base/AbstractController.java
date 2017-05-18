@@ -1,6 +1,5 @@
 package com.socialstartup.mockenger.core.web.controller.base;
 
-import com.socialstartup.mockenger.commons.utils.JsonHelper;
 import com.socialstartup.mockenger.core.service.GroupService;
 import com.socialstartup.mockenger.core.service.HttpHeadersService;
 import com.socialstartup.mockenger.core.service.ProjectService;
@@ -16,14 +15,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
+import static com.socialstartup.mockenger.commons.utils.JsonHelper.removeWhitespaces;
 import static java.util.Optional.ofNullable;
 import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.notFound;
 import static org.springframework.http.ResponseEntity.ok;
+import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * @author Dmitry Ryazanov
@@ -122,7 +122,7 @@ public abstract class AbstractController {
      * @param mockRequest
      */
     protected void cleanUpRequestBody(final GenericRequest mockRequest) {
-        if (mockRequest.getBody() != null && !StringUtils.isEmpty(mockRequest.getBody().getValue())) {
+        if (mockRequest.getBody() != null && !isEmpty(mockRequest.getBody().getValue())) {
             final String body = mockRequest.getBody().getValue().trim();
 
             if (body.startsWith("{") && body.endsWith("}")) {
@@ -147,7 +147,7 @@ public abstract class AbstractController {
     protected void cleanUpResponseBody(final MockResponse mockResponse) {
         if (mockResponse != null && mockResponse.getBody() != null) {
             try {
-                final String newBody = JsonHelper.removeWhitespaces(mockResponse.getBody());
+                final String newBody = removeWhitespaces(mockResponse.getBody());
                 mockResponse.setBody(newBody);
             } catch (IOException e) {
                 LOG.warn("Cannot remove whitespaces from response body (JSON)", e);
