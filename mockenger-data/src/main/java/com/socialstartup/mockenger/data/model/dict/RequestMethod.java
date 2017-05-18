@@ -15,9 +15,7 @@ public enum RequestMethod {
     PUT,
     PATCH,
     DELETE,
-    OPTIONS,
-    TRACE,
-    CONNECT;
+    OPTIONS;
 
     public static Map<String, String> getValueSet() {
 		return Arrays.stream(RequestMethod.values()).collect(Collectors.toMap(m -> m.name(), m -> m.name()));

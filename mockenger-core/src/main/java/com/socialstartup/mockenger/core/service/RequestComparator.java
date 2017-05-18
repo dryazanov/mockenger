@@ -1,7 +1,6 @@
 package com.socialstartup.mockenger.core.service;
 
 import com.google.common.base.Strings;
-import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
@@ -9,18 +8,21 @@ import com.socialstartup.mockenger.data.model.persistent.transformer.AbstractMap
 import com.socialstartup.mockenger.data.model.persistent.transformer.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.socialstartup.mockenger.core.util.CommonUtils.allNotEmpty;
 import static com.socialstartup.mockenger.core.util.CommonUtils.containsAll;
 import static com.socialstartup.mockenger.core.util.CommonUtils.containsEqualEntries;
 import static com.socialstartup.mockenger.core.util.CommonUtils.generateCheckSum;
+import static com.socialstartup.mockenger.data.model.dict.RequestMethod.PATCH;
+import static com.socialstartup.mockenger.data.model.dict.RequestMethod.POST;
+import static com.socialstartup.mockenger.data.model.dict.RequestMethod.PUT;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * @author Dmitry Ryazanov
@@ -67,7 +69,7 @@ public class RequestComparator {
 
     /**
      * Compare request paths
-
+	 *
      * @return
      */
     private boolean comparePaths() {
@@ -82,7 +84,7 @@ public class RequestComparator {
 
     /**
      * Compare request parameters
-
+	 *
      * @return
      */
     private boolean compareParameters() {
@@ -101,7 +103,7 @@ public class RequestComparator {
 
     /**
      * Compare request headers
-
+	 *
      * @return
      */
     private boolean compareHeaders() {
@@ -146,7 +148,7 @@ public class RequestComparator {
 	private boolean isHttpMethodWithBody(final GenericRequest request) {
 		return ofNullable(request)
 				.map(GenericRequest::getMethod)
-				.map(m -> m.equals(RequestMethod.POST) || m.equals(RequestMethod.PUT))
+				.map(m -> m.equals(POST) || m.equals(PUT) || m.equals(PATCH))
 				.orElse(false);
 	}
 
@@ -163,10 +165,10 @@ public class RequestComparator {
 
 
     private Set<Pair> applyTransformers(final Set<Pair> pairsToBeTransformed, final List<Transformer> transformers) {
-        if (!CollectionUtils.isEmpty(transformers)) {
+        if (!isEmpty(transformers)) {
 			return pairsToBeTransformed.stream()
 					.map(pair -> transformAndGet(pair, transformers))
-					.collect(Collectors.toSet());
+					.collect(toSet());
         }
 
         return pairsToBeTransformed;
@@ -205,7 +207,7 @@ public class RequestComparator {
 		final String path = ofNullable(initialPath).orElse("");
 		final List<Transformer> transformers = persistent.getPath().getTransformers();
 
-		if (!CollectionUtils.isEmpty(transformers)) {
+		if (!isEmpty(transformers)) {
 			return transformString(initialPath, transformers);
 		}
 
@@ -217,7 +219,7 @@ public class RequestComparator {
 		final String body = ofNullable(initialBody).orElse("");
 		final List<Transformer> transformers = persistent.getBody().getTransformers();
 
-		if (!CollectionUtils.isEmpty(transformers)) {
+		if (!isEmpty(transformers)) {
 			return transformString(body, transformers);
 		}
 

@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toSet;
 import static org.springframework.util.DigestUtils.md5DigestAsHex;
 
 /**
@@ -170,4 +171,8 @@ public class CommonUtils {
         }
         return Sets.difference(set1, set2).isEmpty();
     }
+
+	public static Set<Pair> keysToLowercase(final Set<Pair> set) {
+		return set.stream().map(p -> new Pair(p.getKey().toLowerCase(), p.getValue())).collect(toSet());
+	}
 }
