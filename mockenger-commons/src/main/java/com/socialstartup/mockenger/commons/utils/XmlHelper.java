@@ -31,6 +31,16 @@ import static javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION;
  */
 public class XmlHelper {
 
+	public static String removeWhitespaces(final String requestBody) {
+		final String body = requestBody.trim().replaceAll(">\\s+<", "><");
+
+		if (body.startsWith("<?xml")) {
+			return body.substring(body.indexOf("?>") + 2);
+		}
+
+		return body;
+	}
+
     public static SOAPMessage soapToXmlConverter(final Source source) throws SOAPException, IOException {
         final SOAPMessage soapMessage = createSOAPMessage(null, null);
 

@@ -1,5 +1,7 @@
 package com.socialstartup.mockenger.core.web.controller.base;
 
+import com.socialstartup.mockenger.commons.utils.JsonHelper;
+import com.socialstartup.mockenger.commons.utils.XmlHelper;
 import com.socialstartup.mockenger.core.service.GroupService;
 import com.socialstartup.mockenger.core.service.HttpHeadersService;
 import com.socialstartup.mockenger.core.service.ProjectService;
@@ -9,16 +11,13 @@ import com.socialstartup.mockenger.data.model.persistent.mock.group.Group;
 import com.socialstartup.mockenger.data.model.persistent.mock.project.Project;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
-import com.socialstartup.mockenger.data.model.persistent.mock.response.MockResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
-
-import static com.socialstartup.mockenger.commons.utils.JsonHelper.removeWhitespaces;
+import static com.socialstartup.mockenger.core.util.CommonUtils.isStartEndWith;
 import static java.util.Optional.ofNullable;
 import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.notFound;
@@ -33,6 +32,7 @@ public abstract class AbstractController {
     private final Logger LOG = LoggerFactory.getLogger(AbstractController.class);
 
     public static final String API_PATH = "/api";
+    public static final String MOCK_HTTP_TYPE_PATH = API_PATH + "/HTTP";
 
     public static final String PROJECTS_ENDPOINT = API_PATH + "/projects";
     protected static final String PROJECT_ID_ENDPOINT = PROJECTS_ENDPOINT + "/{projectId}";
@@ -121,40 +121,31 @@ public abstract class AbstractController {
      *
      * @param mockRequest
      */
-    protected void cleanUpRequestBody(final GenericRequest mockRequest) {
-        if (mockRequest.getBody() != null && !isEmpty(mockRequest.getBody().getValue())) {
-            final String body = mockRequest.getBody().getValue().trim();
+    protected GenericRequest cleanUpRequestBody(final GenericRequest mockRequest) {
+        if (mockRequest.getBody() != null) {
+            final String body = mockRequest.getBody().getValue();
 
-            if (body.startsWith("{") && body.endsWith("}")) {
-                try {
-                    final String jsonBody = getRequestService().prepareRequestJsonBody(body);
-                    mockRequest.getBody().setValue(jsonBody);
-                } catch (IOException e) {
-                    LOG.warn("Cannot remove whitespaces from JSON", e);
-                }
-            } else {
-                final String xmlBody = getRequestService().prepareRequestXmlBody(body);
-                mockRequest.getBody().setValue(xmlBody);
-            }
+			if (!isEmpty(body)) {
+				mockRequest.getBody().setValue(removeWhitespaces(body));
+			}
         }
+
+        return mockRequest;
     }
 
+    protected String removeWhitespaces(final String body) {
+    	try {
+			if (isStartEndWith(body.trim(), "{", "}")) {
+				return JsonHelper.removeWhitespaces(body);
+			} else if (isStartEndWith(body.trim(), "<", ">")) {
+				return XmlHelper.removeWhitespaces(body);
+			}
+		} catch (Exception e) {
+    		LOG.warn("Cannot remove whitespaces from the string", e);
+		}
 
-    /**
-     *
-     * @param mockResponse
-     */
-    protected void cleanUpResponseBody(final MockResponse mockResponse) {
-        if (mockResponse != null && mockResponse.getBody() != null) {
-            try {
-                final String newBody = removeWhitespaces(mockResponse.getBody());
-                mockResponse.setBody(newBody);
-            } catch (IOException e) {
-                LOG.warn("Cannot remove whitespaces from response body (JSON)", e);
-            }
-        }
-    }
-
+		return body;
+	}
 
 	protected <T> ResponseEntity<T> okResponseWithDefaultHeaders(final T body) {
 		return ok().headers(getResponseHeaders()).body(body);

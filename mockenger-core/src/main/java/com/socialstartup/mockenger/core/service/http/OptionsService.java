@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Created by Dmitry Ryazanov on 3/24/2015.
+ * @author Dmitry Ryazanov
  */
 @Component
 public class OptionsService extends RequestService {
-    public OptionsRequest createMockRequest(String groupId, HttpServletRequest request) {
+    public OptionsRequest createMockRequest(final String groupId, final HttpServletRequest request) {
         return (OptionsRequest) fillUpEntity(new OptionsRequest(), groupId, request);
     }
 }

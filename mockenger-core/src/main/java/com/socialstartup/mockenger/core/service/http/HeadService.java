@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Created by Dmitry Ryazanov on 3/24/2015.
+ * @author Dmitry Ryazanov
  */
 @Component
 public class HeadService extends RequestService {
-    public HeadRequest createMockRequest(String groupId, HttpServletRequest request) {
+    public HeadRequest createMockRequest(final String groupId, final HttpServletRequest request) {
         return (HeadRequest) fillUpEntity(new HeadRequest(), groupId, request);
     }
 }
