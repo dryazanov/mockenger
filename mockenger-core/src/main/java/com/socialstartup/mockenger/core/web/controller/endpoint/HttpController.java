@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.Callable;
 
-import static com.socialstartup.mockenger.core.web.controller.base.AbstractController.API_PATH;
+import static com.socialstartup.mockenger.core.web.controller.base.AbstractController.MOCK_HTTP_TYPE_PATH;
 import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
 import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
 
@@ -32,7 +32,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
  * @author Dmitry Ryazanov
  */
 @RestController
-@RequestMapping(path = API_PATH + "/HTTP/{groupId}/**")
+@RequestMapping(path = MOCK_HTTP_TYPE_PATH + "/{groupId}/**")
 public class HttpController extends ParentController {
 
     @Autowired
@@ -80,9 +80,7 @@ public class HttpController extends ParentController {
 			final Group group = findGroupById(groupId);
 			final GenericRequest mockRequest = postService.createGenericRequest(group.getId(), requestBody, request);
 
-			cleanUpRequestBody(mockRequest);
-
-			return findMockedEntities(mockRequest, group);
+			return findMockedEntities(cleanUpRequestBody(mockRequest), group);
 		};
 	}
 
@@ -102,7 +100,7 @@ public class HttpController extends ParentController {
 			final Group group = findGroupById(groupId);
 			final GenericRequest mockRequest = putService.createMockRequest(group.getId(), requestBody, request);
 
-			return findMockedEntities(mockRequest, group);
+			return findMockedEntities(cleanUpRequestBody(mockRequest), group);
 		};
 	}
 
@@ -168,7 +166,7 @@ public class HttpController extends ParentController {
 			final Group group = findGroupById(groupId);
 			final GenericRequest mockRequest = patchService.createMockRequest(group.getId(), requestBody, request);
 
-			return findMockedEntities(mockRequest, group);
+			return findMockedEntities(cleanUpRequestBody(mockRequest), group);
 		};
     }
 }

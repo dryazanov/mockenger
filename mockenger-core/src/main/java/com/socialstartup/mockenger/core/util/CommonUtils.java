@@ -7,7 +7,6 @@ import com.socialstartup.mockenger.data.model.dict.RequestMethod;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.GenericRequest;
 import com.socialstartup.mockenger.data.model.persistent.mock.request.part.Pair;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +15,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.util.DigestUtils.md5DigestAsHex;
+import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * @author Dmitry Ryazanov
@@ -27,7 +27,7 @@ public class CommonUtils {
     }
 
     public static String getCheckSum(final GenericRequest abstractRequest) {
-        if (abstractRequest.getBody() != null && !StringUtils.isEmpty(abstractRequest.getBody().getValue())) {
+        if (abstractRequest.getBody() != null && !isEmpty(abstractRequest.getBody().getValue())) {
             return generateCheckSum(abstractRequest.getBody().getValue());
         }
 
@@ -53,7 +53,7 @@ public class CommonUtils {
         final StringBuilder sb = new StringBuilder();
 
         for (final String argument : args) {
-            if (!StringUtils.isEmpty(argument)) {
+            if (!isEmpty(argument)) {
                 sb.append(argument);
             }
         }
@@ -174,5 +174,9 @@ public class CommonUtils {
 
 	public static Set<Pair> keysToLowercase(final Set<Pair> set) {
 		return set.stream().map(p -> new Pair(p.getKey().toLowerCase(), p.getValue())).collect(toSet());
+	}
+
+	public static boolean isStartEndWith(final String text, final String start, final String end) {
+    	return isEmpty(text) ? false : text.startsWith(start) && text.endsWith(end);
 	}
 }
