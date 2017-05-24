@@ -9,5 +9,5 @@ import org.springframework.context.annotation.Profile;
  */
 @Profile("security")
 @Configuration
-@Import({ResourceServerConfiguration.class, AuthorizationServerConfiguration.class})
+@Import({OAuth2ResourceServerConfig.class, AuthorizationServerConfiguration.class})
 public class OAuth2ServerConfiguration {}

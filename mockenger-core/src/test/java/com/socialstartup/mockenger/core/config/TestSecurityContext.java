@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 
@@ -29,4 +31,9 @@ public class TestSecurityContext {
     public TokenStore getTokenStore() {
         return inMemoryTokenStore;
     }
+
+	@Bean
+	public PasswordEncoder encoder() {
+		return new BCryptPasswordEncoder();
+	}
 }
