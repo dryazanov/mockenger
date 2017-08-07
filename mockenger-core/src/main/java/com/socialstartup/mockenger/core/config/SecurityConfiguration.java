@@ -57,11 +57,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.requestMatcher(new OrRequestMatcher(getRequestMatchers()))
 
 				.authorizeRequests()
-				.antMatchers("/index.html").permitAll()
 				.antMatchers(API_PATH + "/oauth/revoke").authenticated()
 				.antMatchers(API_PATH + "/oauth/user").authenticated()
 				.antMatchers(API_PATH + "/oauth/token").permitAll()
-//				.antMatchers(API_PATH + "/REST/**", API_PATH + "/SOAP/**", API_PATH + "/HTTP/**").permitAll()
 
 				.antMatchers(HttpMethod.GET, API_PATH + "/projects/**", API_PATH + "/valueset/**", API_PATH + "/events/**")
 				.hasAnyAuthority(RoleType.USER.name(), RoleType.MANAGER.name(), RoleType.ADMIN.name())
