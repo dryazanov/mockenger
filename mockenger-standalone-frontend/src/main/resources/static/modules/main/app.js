@@ -45,7 +45,7 @@ angular.module('mockengerClientMainApp', [
                     redirectTo: '/index'
                 });
 
-            if (String(SECURITY) == 'true') {
+            if (String(SECURITY) === 'true') {
                 $routeProvider
                     .when('/login', {
                         template: ' ',

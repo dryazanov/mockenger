@@ -151,7 +151,7 @@ gulp.task('ngConstants', function () {
 });
 
 
-gulp.task('webServer', ['ngConstants'], function() {
+gulp.task('webServer', function() {
     var environmentArg = getArgument('environment');
     var envConfig = (environmentArg[0] !== undefined && environmentArg[1] === 'production') ? properties.env.prod : properties.env.dev;
 
