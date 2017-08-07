@@ -15,7 +15,7 @@ Install build dependencies from `package.json`
 # cd mockenger-standalone-frontend/
 # npm install
 ```
-Run `npm install` every time when update `package.json`
+Run `npm install` every time when updating `package.json`
 
 ##
 In order to install frontend libraries taken from `bower.json`, run
@@ -25,7 +25,7 @@ In order to install frontend libraries taken from `bower.json`, run
 ```
 
 ##
-To build frontend, run
+To build the frontend, run
 
 ```
 # cd mockenger-standalone-frontend/
@@ -70,22 +70,24 @@ Don't forget to update property `spring.data.mongodb.uri` in `application.proper
 
 Run backend
 ```
-# cd mockenger-standalone/
+# cd mockenger-parent/
 # mvn clean install
-# mvn spring-boot:run
+# cd ../mockenger-standalone/
+# mvn spring-boot:run -Drun.arguments="--mockenger.frontend.port=15123"
 ```
 
 Alternatively you can run backend using generated jar file
 ```
-# cd mockenger-standalone/
+# cd mockenger-parent/
 # mvn clean install
-# java -jar target/mockenger-standalone-<release_number>.jar
+# cd ../mockenger-standalone/target/
+# java -jar mockenger-standalone-<release_number>.jar --mockenger.frontend.port=15123
 ```
 
 Run frontend
 ```
 # gulp
-# gulp webSever
+# gulp webServer --security false
 ```
 
 ##
@@ -114,7 +116,7 @@ You need to create jar file first
 # cd mockenger-standalone/
 # mvn clean install -P withFrontend
 ```
-Override properties for frontent as `-Dgulp.build.security=production -Dgulp.build.security=false`
+Override properties for frontend as `-Dgulp.build.security=production -Dgulp.build.security=false`
 
 After that start application with generated jar file
 ```

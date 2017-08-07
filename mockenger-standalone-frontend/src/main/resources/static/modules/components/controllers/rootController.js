@@ -15,7 +15,7 @@ angular.module('mockengerClientComponents')
             }
 
             $scope.isSecurityMode = function() {
-                return (String(SECURITY) == 'true');
+                return (String(SECURITY) === 'true');
             }
 
             $scope.isAdmin = function(role) {
