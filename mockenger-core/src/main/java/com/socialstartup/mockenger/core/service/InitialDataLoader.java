@@ -86,17 +86,17 @@ public class InitialDataLoader implements CommandLineRunner {
 		String username;
 
 		while ((username = scanner.nextLine()).isEmpty()) {
-			prnt.print("Enter username: ");
+			prnt.print("Enter username for your new account: ");
 		}
 
-		prnt.print("Enter password: ");
+		prnt.print("And password, please: ");
 		final String password = scanner.next();
 
 
 		LOG.info("Remove all the accounts");
 		accountService.removeAll();
 
-		LOG.info("Create default 'admin' user");
+		LOG.info("Create an account");
 		accountService.save(Account.builder()
 				.username(username)
 				.password(passwordEncoder.encode(password))
