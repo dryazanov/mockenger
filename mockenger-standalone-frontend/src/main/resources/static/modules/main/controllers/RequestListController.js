@@ -65,6 +65,8 @@ angular.module('mockengerClientMainApp')
                             $scope.showRedMessage(errorResponse);
                         });
                     }
+                }, function() {
+                	// cancel
                 });
             };
 

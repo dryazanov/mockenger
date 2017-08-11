@@ -1,38 +1,48 @@
-<div class="well well-sm">
-
+<nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="media col-md-3">
             <img src="assets/images/logo.png" />
         </div>
 
         <div class="col-md-9">
-            <h3>
-                <div class="pull-right" ng-if="user.username">
-                    <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li class="well-sm">{{user.firstName}} {{user.lastName}}</li>
-                        <li role="separator" class="divider"></li>
-                        <li class="well-sm">
-                            <button type="button" class="btn btn-warning btn-sm" ng-click="signOut()">
-                                <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
-                                Sign out
-                            </button>
-                        </li>
-                    </ul>
-                </div>
+			<h3>
+				<ul class="nav navbar-nav">
+						<a href="/#/index">Home</a>
+						<!--<a href="/#/stat">Statistics</a>-->
+						<span ng-if="isSecurityMode() && isAdmin(user.role)">
+							|
+							<a href="/#/audit">Audit log</a>
+							|
+							<a href="/#/admin">Admin panel</a>
+						</span>
+				</ul>
 
-                <a href="/#/index">Home</a>
-                <!--<a href="/#/stat">Statistics</a>-->
-                <span ng-if="isSecurityMode() && isAdmin(user.role)">
-                    |
-                    <a href="/#/audit">Audit log</a>
-                    |
-                    <a href="/#/admin">Admin panel</a>
-                </span>
-            </h3>
-            <div class="clearfix"></div>
+				<ul class="nav navbar-nav navbar-right">
+					<li>
+						<button type="button" class="btn btn-sm btn-warning" ng-click="changeTheme()">
+							<span class="glyphicon glyphicon-lamp" aria-hidden="true"></span>
+						</button>
+					</li>
+					<li>&nbsp;</li>
+					<li class="dropdown">
+						<div ng-if="user.username">
+							<button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li class="well-sm">{{user.firstName}} {{user.lastName}}</li>
+								<li role="separator" class="divider"></li>
+								<li class="well-sm">
+									<button type="button" class="btn btn-warning btn-sm" ng-click="signOut()">
+										<span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+										Sign out
+									</button>
+								</li>
+							</ul>
+						</div>
+					</li>
+				</ul>
+			</h3>
         </div>
     </div>
-</div>
+</nav>

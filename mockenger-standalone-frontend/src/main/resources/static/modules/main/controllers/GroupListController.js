@@ -61,6 +61,8 @@ angular.module('mockengerClientMainApp')
                             confirmService.hideDialog();
                         });
                     }
-                });
+                }, function() {
+					// cancel
+				});
             }
 }]);

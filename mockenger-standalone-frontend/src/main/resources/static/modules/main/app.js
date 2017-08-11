@@ -14,8 +14,11 @@ angular.module('mockengerClientMainApp', [
         'angular-confirm',
         'ngProgress'
     ])
-    .config(['$locationProvider', '$routeProvider', '$httpProvider', 'ngToastProvider', 'SECURITY',
-        function ($locationProvider, $routeProvider, $httpProvider, ngToastProvider, SECURITY) {
+    .config(['$locationProvider', '$routeProvider', '$httpProvider', '$qProvider', 'ngToastProvider', 'SECURITY',
+        function ($locationProvider, $routeProvider, $httpProvider, $qProvider, ngToastProvider, SECURITY) {
+        	$locationProvider.hashPrefix("");
+        	$qProvider.errorOnUnhandledRejections(false);
+
             //$locationProvider.html5Mode(true);
             $routeProvider
                 .when('/index', {
@@ -69,8 +72,12 @@ angular.module('mockengerClientMainApp', [
                 timeout: 4000
             });
     }])
-    .run(function($rootScope, $confirmModalDefaults, ngProgressFactory) {
+    .run(function($rootScope, $confirmModalDefaults, $cookies, ngProgressFactory) {
         $rootScope.progressbar = ngProgressFactory.createInstance();
         $rootScope.progressbar.setHeight('10px');
         $confirmModalDefaults.templateUrl = '/modules/main/views/confirm.html';
+
+		if ($cookies.get('ui-theme') !== undefined) {
+        	$('#dark-theme').attr('rel', 'stylesheet');
+		}
     });

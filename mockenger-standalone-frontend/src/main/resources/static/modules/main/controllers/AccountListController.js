@@ -24,7 +24,9 @@ angular.module('mockengerClientMainApp')
                     }, function(errorResponse) {
                         $scope.showRedMessage(errorResponse);
                     });
-                });
+                }, function() {
+					// cancel
+				});
             }
 
             $scope.updateAccountList();

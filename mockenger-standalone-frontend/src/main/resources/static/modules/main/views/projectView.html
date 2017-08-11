@@ -29,7 +29,7 @@
                             <button class="btn-primary btn-xs" ng-click="editGroup(group)">
                                 <span class="glyphicon glyphicon-cog"></span>
                             </button>
-                            <button class="btn-primary btn-xs" ng-click="deleteGroup($index, group)">
+                            <button class="btn-danger btn-xs" ng-click="deleteGroup($index, group)">
                                 <span class="glyphicon glyphicon-trash"></span>
                             </button>
                         </div>
@@ -102,7 +102,7 @@
                                     | limitTo:requestListService.getLimit() track by $index">
 
                                 <td class="col-md-1">
-                                    <span ng-show="!request.lastUpdateDate" class="label label-success">new</span>
+                                    <span ng-show="!request.lastUpdateDate && request.requestCounter == 0" class="label label-success">new</span>
                                     <span ng-show="request.mockResponse.httpStatus == 500" class="label label-danger">!</span>
                                 </td>
                                 <td class="col-md-1">{{request.requestCounter}}</td>
@@ -110,9 +110,9 @@
                                 <td class="col-md-2"><a href ng-click="selectRequest($index, request)">{{request.creationDate | date:'dd-MM-yyyy HH:mm:ss'}}</a></td>
                                 <td class="col-md-2">{{request.name}}</td>
                                 <td class="col-md-2">{{request.method}}</td>
-                                <td class="col-md-8">@{{request.path.value}}</td>
+                                <td class="col-md-8">/{{request.path.value}}</td>
                                 <td class="col-md-1" ng-if="isManagerOrAdmin(user.role)">
-                                    <button class="btn-primary btn-xs" ng-click="deleteRequest(request)">
+                                    <button class="btn-danger btn-xs" ng-click="deleteRequest(request)">
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </button>
                                 </td>
@@ -169,8 +169,8 @@
                                 <div class="container-fluid">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <tabset>
-                                                <tab heading="#">
+                                            <uib-tabset>
+                                                <uib-tab heading="#">
                                                     <br/>
                                                     <div class="form-group" ng-class="getErrorStyle(mockRequestForm.requestName)">
                                                         <label for="url">Name</label>
@@ -213,8 +213,8 @@
                                                             </tr>
                                                         </table>
                                                     </div>
-                                                </tab>
-                                                <tab heading="Path">
+                                                </uib-tab>
+                                                <uib-tab heading="Path">
                                                     <br/>
                                                     <div class="form-group">
                                                         <label for="url">Path</label>
@@ -264,8 +264,8 @@
                                                             </tr>
                                                         </table>
                                                     </div>
-                                                </tab>
-                                                <tab heading="Parameters">
+                                                </uib-tab>
+                                                <uib-tab heading="Parameters">
                                                     <br/>
                                                     <div class="form-group">
                                                         <label for="url">Parameters</label>
@@ -322,8 +322,8 @@
                                                             </tr>
                                                         </table>
                                                     </div>
-                                                </tab>
-                                                <tab heading="Headers">
+                                                </uib-tab>
+                                                <uib-tab heading="Headers">
                                                     <br/>
                                                     <div class="form-group">
                                                         <label for="url">Headers</label>
@@ -331,7 +331,7 @@
                                                             <tr ng-repeat="requestHeader in requestListService.getCurrent().headers.values track by $index">
                                                                 <td class="col-lg-6">
                                                                     <input type="text" ng-model="requestHeader.key"
-                                                                           typeahead="header for header in headerList | filter:$viewValue | limitTo:10"
+                                                                           uib-typeahead="header for header in headerList | filter:$viewValue | limitTo:10"
                                                                            class="form-control" aria-describedby="sizing-addon1" placeholder="Header name">
                                                                 </td>
                                                                 <td class="col-lg-6">
@@ -381,8 +381,8 @@
                                                             </tr>
                                                         </table>
                                                     </div>
-                                                </tab>
-                                                <tab heading="Request" disable="isRequestTabDisabled()">
+                                                </uib-tab>
+                                                <uib-tab heading="Request" disable="isRequestTabDisabled()">
                                                     <br/>
                                                     <div class="form-group">
                                                         <label>Transformers</label>
@@ -426,8 +426,8 @@
                                                             </tr>
                                                         </table>
                                                     </div>
-                                                </tab>
-                                                <tab heading="Response">
+                                                </uib-tab>
+                                                <uib-tab heading="Response">
                                                     <br/>
                                                     <div class="form-group">
                                                         <label for="url">Headers</label>
@@ -435,7 +435,7 @@
                                                             <tr ng-repeat="responseHeader in requestListService.getCurrent().mockResponse.headers track by $index">
                                                                 <td class="col-lg-6">
                                                                     <input type="text" ng-model="responseHeader.key"
-                                                                           typeahead="header for header in headerList | filter:$viewValue | limitTo:10"
+                                                                           uib-typeahead="header for header in headerList | filter:$viewValue | limitTo:10"
                                                                            class="form-control" aria-describedby="sizing-addon1" placeholder="Header name">
                                                                 </td>
                                                                 <td class="col-lg-6">
@@ -493,8 +493,8 @@
                                                             </tr>
                                                         </table>
                                                     </div>
-                                                </tab>
-                                            </tabset>
+                                                </uib-tab>
+                                            </uib-tabset>
                                         </div>
                                     </div>
                                 </div>
@@ -543,8 +543,8 @@
                         <label for="recording">Record incoming requests</label>
                         <div class="form-group">
                             <div class="btn-group" id="recording">
-                                <label class="btn btn-primary" ng-model="groupToSave.recording" btn-radio="true">Yes</label>
-                                <label class="btn btn-primary" ng-model="groupToSave.recording" btn-radio="false">&nbsp;No&nbsp;</label>
+                                <label class="btn btn-primary" ng-model="groupToSave.recording" uib-btn-radio="true">Yes</label>
+                                <label class="btn btn-primary" ng-model="groupToSave.recording" uib-btn-radio="false">&nbsp;No&nbsp;</label>
                             </div>
                         </div>
                     </div>
@@ -553,8 +553,8 @@
                         <label for="recording">Forward incoming requests</label>
                         <div class="form-group">
                             <div class="btn-group" id="forwarding">
-                                <label class="btn btn-primary" ng-model="groupToSave.forwarding" btn-radio="true">Yes</label>
-                                <label class="btn btn-primary" ng-model="groupToSave.forwarding" btn-radio="false">&nbsp;No&nbsp;</label>
+                                <label class="btn btn-primary" ng-model="groupToSave.forwarding" uib-btn-radio="true">Yes</label>
+                                <label class="btn btn-primary" ng-model="groupToSave.forwarding" uib-btn-radio="false">&nbsp;No&nbsp;</label>
                             </div>
                         </div>
                     </div>

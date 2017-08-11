@@ -7,17 +7,18 @@ angular.module('mockengerClientMainApp')
             $scope.password = "";
 
             $scope.doSignIn = function() {
-                tokenService.getAccessToken($scope.username, $scope.password, function(data, status, headers, config) {
+                tokenService.getAccessToken($scope.username, $scope.password, function(data) {
                     $cookies.put('accessToken', data.access_token);
                     $cookies.put('refreshToken', data.refresh_token);
 
-                    $http.get(apiEndpointsService.getUserData()).success(function(data) {
-                        $cookies.put('user', angular.toJson(data));
-                        $location.path('/index');
-                    }).error(function(data, status, headers, config) {
-                        $scope.showRedMessage({data: data});
-                    });
-                }, function(data, status, headers, config) {
+                    $http.get(apiEndpointsService.getUserData())
+						.then(function onSuccess(response) {
+							$cookies.put('user', angular.toJson(response.data));
+							$location.path('/index');
+						}, function onError(response) {
+							$scope.showRedMessage({data: response.data});
+						});
+                }, function(data) {
                     $scope.showRedMessage({data: data});
                 });
             }

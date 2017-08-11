@@ -15,11 +15,11 @@ var minifyCss = require('gulp-clean-css');
 var lazypipe = require('lazypipe');
 var ngConstant = require('gulp-ng-constant');
 var webserver = require('gulp-webserver');
+var gnf = require('gulp-npm-files');
+var runSequence = require('run-sequence');
 
 var fs = require('fs');
 var parseString = require('xml2js').parseString;
-
-
 
 
 // Returns current version number of the project from the pom.xml
@@ -102,7 +102,6 @@ gulp.task('minifyAndUpdateIndexRef', ['ngConstants'], function () {
   return gulp.src(properties.project.source + 'index.html')
     .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
     .pipe(gulpif('*.js', ngAnnotate()))
-    .pipe(gulpif('*.js', removeUseStrict()))
     .pipe(gulpif('*.js', uglify()))
     .pipe(gulpif('*.css', autoprefixer({
         browsers: ['last 2 versions'],
@@ -115,6 +114,12 @@ gulp.task('minifyAndUpdateIndexRef', ['ngConstants'], function () {
 });
 
 
+gulp.task('copyNpmDependencies', function() {
+	return gulp.src(gnf(null, './package.json'), {base:'./'})
+		.pipe(gulp.dest(properties.project.source));
+});
+
+
 gulp.task('copyViews', function() {
     return gulp.src([properties.project.source + 'modules/main/views/*.html'])
         .pipe(gulp.dest(properties.project.dest + 'modules/main/views/'))
@@ -122,7 +127,7 @@ gulp.task('copyViews', function() {
 
 
 gulp.task('copyFonts', function() {
-    return gulp.src([properties.project.source + 'libs/bootstrap/fonts/*'])
+    return gulp.src([properties.project.source + 'node_modules/bootstrap/fonts/*'])
         .pipe(gulp.dest(properties.project.dest + 'assets/fonts/'))
 });
 
@@ -166,9 +171,11 @@ gulp.task('webServer', function() {
 
 
 
-gulp.task('default', [
-    'minifyAndUpdateIndexRef',
-    'copyViews',
-    'copyFonts',
-    'copyImages'
-])
+gulp.task('default', ['copyNpmDependencies'], function(callback) {
+	runSequence('minifyAndUpdateIndexRef', [
+		'copyViews',
+		'copyFonts',
+		'copyImages'
+	],
+	callback);
+});
