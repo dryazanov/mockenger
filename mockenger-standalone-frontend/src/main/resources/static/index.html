@@ -12,13 +12,19 @@
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/x-icon" />
     <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon" />
 
+	<!-- build:css assets/styles/light/bootstrap.css -->
+	<link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css" id="light-theme" />
+	<!-- endbuild -->
+
+	<!-- build:css assets/styles/dark/bootstrap.css -->
+	<link rel="stylesheet alternate" href="assets/styles/dark/bootstrap.css" id="dark-theme" />
+	<!-- endbuild -->
+
     <!-- build:css assets/styles/vendor.css -->
-    <!-- bower:css -->
-    <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="libs/ngtoast/dist/ngToast.css" />
-    <link rel="stylesheet" href="libs/ngProgress/ngProgress.css" />
-    <!-- endbower -->
+    <link rel="stylesheet" href="node_modules/ng-toast/dist/ngToast.css" />
+    <link rel="stylesheet" href="node_modules/ngprogress-npm/ngProgress.css" />
     <!-- endbuild -->
+
     <!-- build:css assets/styles/main.css -->
     <link rel="stylesheet" href="assets/styles/main.css">
     <!-- endbuild -->
@@ -30,8 +36,8 @@
 
 <body ng-controller="rootController">
 <!--[if lt IE 9]>
-<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
-    your browser</a> to improve your experience.</p>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser.
+	Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 <![endif]-->
 <toast></toast>
 <div ng-show="app.env === 'dev'" class="development" ng-cloak=""></div>
@@ -44,23 +50,29 @@
         </div>
     </div>
 </footer>
+<script type="text/javascript">
+// Prevent console error for module.exports
+if (window && !window.module) {
+	window.module = {
+		exports: undefined
+	};
+}
+</script>
 <!-- build:js scripts/vendor.js -->
-<!-- bower:js -->
-<script src="libs/jquery/dist/jquery.js"></script>
-<script src="libs/angular/angular.js"></script>
-<script src="libs/angular-cookies/angular-cookies.js"></script>
-<script src="libs/angular-messages/angular-messages.js"></script>
-<script src="libs/angular-resource/angular-resource.js"></script>
-<script src="libs/angular-route/angular-route.js"></script>
-<script src="libs/angular-sanitize/angular-sanitize.js"></script>
-<script src="libs/angular-touch/angular-touch.js"></script>
-<script src="libs/angular-animate/angular-animate.js"></script>
-<script src="libs/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-<script src="libs/angular-confirm-modal/angular-confirm.min.js"></script>
-<script src="libs/bootstrap/dist/js/bootstrap.js"></script>
-<script src="libs/ngtoast/dist/ngToast.js"></script>
-<script src="libs/ngProgress/build/ngProgress.js"></script>
-<!-- endbower -->
+<script src="node_modules/jquery/dist/jquery.js"></script>
+<script src="node_modules/angular/angular.js"></script>
+<script src="node_modules/angular-cookies/angular-cookies.js"></script>
+<script src="node_modules/angular-messages/angular-messages.js"></script>
+<script src="node_modules/angular-resource/angular-resource.js"></script>
+<script src="node_modules/angular-route/angular-route.js"></script>
+<script src="node_modules/angular-sanitize/angular-sanitize.js"></script>
+<script src="node_modules/angular-touch/angular-touch.js"></script>
+<script src="node_modules/angular-animate/angular-animate.js"></script>
+<script src="node_modules/angular-ui-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="node_modules/angular-confirm/angular-confirm.js"></script>
+<script src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
+<script src="node_modules/ng-toast/dist/ngToast.js"></script>
+<script src="node_modules/ngprogress-npm/build/ngprogress.js"></script>
 <!-- endbuild -->
 
 <!-- build:js scripts/mockengerComponents.js -->

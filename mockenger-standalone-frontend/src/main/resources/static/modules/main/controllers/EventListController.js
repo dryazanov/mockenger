@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('mockengerClientMainApp')
-    .controller('EventListController', ['$scope', '$confirm', 'eventListService',
-        function($scope, $confirm, eventListService) {
+    .controller('EventListController', ['$scope', 'eventListService',
+        function($scope, eventListService) {
             $scope.eventListService = eventListService;
 
             // Get event list

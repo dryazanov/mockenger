@@ -1,8 +1,10 @@
 'use strict';
 
 angular.module('mockengerClientComponents')
-    .controller('rootController', ['$rootScope', '$scope', '$http', '$location', 'ngToast', 'ngProgressFactory', 'ENV', 'SECURITY', 'APP_VERSION', 'BUILD_DATE',
-        function ($rootScope, $scope, $http, $location, ngToast, ngProgressFactory, ENV, SECURITY, APP_VERSION, BUILD_DATE) {
+    .controller('rootController', ['$rootScope', '$scope', '$http', '$location', '$cookies',
+    		'ngToast', 'ngProgressFactory', 'ENV', 'SECURITY', 'APP_VERSION', 'BUILD_DATE',
+
+        function ($rootScope, $scope, $http, $location, $cookies, ngToast, ngProgressFactory, ENV, SECURITY, APP_VERSION, BUILD_DATE) {
 
             $scope.app = {
                 env: ENV,
@@ -12,6 +14,22 @@ angular.module('mockengerClientComponents')
 
             $scope.signOut = function() {
                 $location.path('/logout');
+            }
+
+            $scope.changeTheme = function() {
+            	var darkTheme = $('#dark-theme');
+
+            	if (darkTheme.attr('rel') === 'stylesheet alternate') {
+            		darkTheme.attr('rel', 'stylesheet');
+
+            		var expireDate = new Date();
+            		expireDate.setDate(expireDate.getYear() + 10);
+
+            		$cookies.put('ui-theme', 'dark', {'expires': expireDate});
+            	} else {
+            		darkTheme.attr('rel', 'stylesheet alternate');
+            		$cookies.remove('ui-theme');
+            	}
             }
 
             $scope.isSecurityMode = function() {

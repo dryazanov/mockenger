@@ -58,7 +58,9 @@ angular.module('mockengerClientMainApp')
                     if (source != null && source[index] != null) {
                         source.splice(index, 1);
                     }
-                });
+                }, function() {
+					// cancel
+				});
             }
 
             $scope.addRequestHeader = function() {
@@ -90,6 +92,8 @@ angular.module('mockengerClientMainApp')
                     if (source != null && source[index] != null) {
                         source.splice(index, 1);
                     }
+                }, function() {
+                	// cancel
                 });
             }
 
@@ -132,7 +136,9 @@ angular.module('mockengerClientMainApp')
                     if (source != null && source[index] != null) {
                         source.splice(index, 1);
                     }
-                });
+                }, function() {
+					// cancel
+				});
             }
 
             var isNameOk = function(name) {

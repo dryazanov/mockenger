@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('mockengerClientMainApp').factory('loginService', ['$modal', function($modal) {
+angular.module('mockengerClientMainApp').factory('loginService', ['$uibModal', function($uibModal) {
 
     var LoginService = {
         showSignInForm: function(scope) {
-            $modal.open({
+            $uibModal.open({
                 templateUrl: '/modules/main/views/loginForm.html',
                 controller: 'LoginController',
                 backdrop : 'static',

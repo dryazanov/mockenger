@@ -55,7 +55,9 @@ angular.module('mockengerClientMainApp')
                     }, function(errorResponse) {
                         $scope.showRedMessage(errorResponse);
                     });
-                });
+                }, function() {
+					// cancel
+				});
             };
 
             $scope.saveProject = function(project) {

@@ -18,7 +18,12 @@ angular.module('mockengerClientMainApp')
                         data: "username=" + username + "&password=" + password,
                         headers: headers
                     };
-                    $http(params).success(successCallback).error(errorCallback);
+                    $http(params)
+						.then(function onSuccess(response) {
+							successCallback(response.data);
+						}, function onError(response) {
+							errorCallback(response.data);
+						});
                 },
 
                 getRefreshToken: function(deferred) {
@@ -27,13 +32,14 @@ angular.module('mockengerClientMainApp')
                         url: apiEndpointsService.getOAuth2RefreshTokenUrl() + "&refresh_token=" + $cookies.get('refreshToken'),
                         headers: headers
                     }
-                    $http(params).success(function(data) {
-                        $cookies.put('accessToken', data.access_token);
-                        deferred.resolve();
-                    }).error(function() {
-                        $location.path('/login');
-                        deferred.reject();
-                    });
+                    $http(params)
+                   		.then(function onSuccess(response) {
+							$cookies.put('accessToken', response.data.access_token);
+							deferred.resolve();
+						}, function onError(response) {
+							$location.path('/login');
+							deferred.reject();
+						});
                 }
             };
 

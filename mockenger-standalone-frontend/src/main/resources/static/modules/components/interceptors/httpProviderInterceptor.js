@@ -25,8 +25,9 @@ angular.module('mockengerClientComponents')
                     $rootScope.progressbar.complete();
 
                     if (response != null && response.status == 401) {
-                        if (response.data.error == 'invalid_token') {
+                        if (response.data.error == 'invalid_token' || response.data.error == 'unauthorized') {
                             var msg = response.data.error_description;
+
                             if (msg.indexOf("Access token expired") >= 0 || msg.indexOf("Invalid access token") >= 0) {
                                 var deferred = $q.defer();
 

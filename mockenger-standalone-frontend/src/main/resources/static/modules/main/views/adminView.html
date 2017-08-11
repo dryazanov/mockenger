@@ -21,7 +21,7 @@
                             <button class="btn-primary btn-xs" ng-click="editAccount(account)">
                                 <span class="glyphicon glyphicon-cog"></span>
                             </button>
-                            <button class="btn-primary btn-xs" ng-click="deleteAccount(account)">
+                            <button class="btn-danger btn-xs" ng-click="deleteAccount(account)">
                                 <span class="glyphicon glyphicon-trash"></span>
                             </button>
                         </div>
@@ -127,7 +127,7 @@
                         <label for="roles">Roles</label>
                         <div class="form-group">
                             <div class="btn-group" id="roles">
-                                <label ng-repeat="role in roles" class="btn btn-primary" btn-radio="'{{role}}'" ng-model="currentAccount.role">{{role}}</label>
+                                <label ng-repeat="role in roles" class="btn btn-primary" uib-btn-radio="'{{role}}'" ng-model="currentAccount.role">{{role}}</label>
                             </div>
                         </div>
                     </div>
