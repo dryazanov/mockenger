@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -48,38 +49,45 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(accountService).passwordEncoder(passwordEncoder);
     }
 
+
 	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http
-				.csrf().disable()
-				.formLogin().disable()
+	public void configure(final WebSecurity web) throws Exception {
+		web.ignoring()
+			.antMatchers("/", "/index.html", "/assets/**", "/scripts/**", "/modules/**");
+	}
 
-				.requestMatcher(new OrRequestMatcher(getRequestMatchers()))
 
-				.authorizeRequests()
-				.antMatchers(API_PATH + "/oauth/revoke").authenticated()
-				.antMatchers(API_PATH + "/oauth/user").authenticated()
-				.antMatchers(API_PATH + "/oauth/token").permitAll()
+	@Override
+	protected void configure(final HttpSecurity http) throws Exception {
+		http.csrf().disable()
+			.formLogin().disable()
 
-				.antMatchers(HttpMethod.GET, API_PATH + "/projects/**", API_PATH + "/valueset/**", API_PATH + "/events/**")
-				.hasAnyAuthority(RoleType.USER.name(), RoleType.MANAGER.name(), RoleType.ADMIN.name())
+			.requestMatcher(new OrRequestMatcher(getRequestMatchers()))
 
-				.antMatchers(HttpMethod.DELETE, API_PATH + "/projects/**")
-				.hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
+			.authorizeRequests()
+			.antMatchers(API_PATH + "/oauth/revoke").authenticated()
+			.antMatchers(API_PATH + "/oauth/user").authenticated()
+			.antMatchers(API_PATH + "/oauth/token").permitAll()
 
-				.antMatchers(HttpMethod.POST, API_PATH + "/projects/**")
-				.hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
+			.antMatchers(HttpMethod.GET, API_PATH + "/projects/**", API_PATH + "/valueset/**", API_PATH + "/events/**")
+			.hasAnyAuthority(RoleType.USER.name(), RoleType.MANAGER.name(), RoleType.ADMIN.name())
 
-				.antMatchers(HttpMethod.PUT, API_PATH + "/projects/**")
-				.hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
+			.antMatchers(HttpMethod.DELETE, API_PATH + "/projects/**")
+			.hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
 
-				.antMatchers(HttpMethod.GET, API_PATH + "/valueset/roles")
-				.hasAuthority(RoleType.ADMIN.name())
+			.antMatchers(HttpMethod.POST, API_PATH + "/projects/**")
+			.hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
 
-				.antMatchers(API_PATH + "/accounts/**")
-				.hasAnyAuthority(RoleType.ADMIN.name())
+			.antMatchers(HttpMethod.PUT, API_PATH + "/projects/**")
+			.hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
 
-				.anyRequest().permitAll();
+			.antMatchers(HttpMethod.GET, API_PATH + "/valueset/roles")
+			.hasAuthority(RoleType.ADMIN.name())
+
+			.antMatchers(API_PATH + "/accounts/**")
+			.hasAnyAuthority(RoleType.ADMIN.name())
+
+			.anyRequest().permitAll();
 
 	}
 
