@@ -124,13 +124,8 @@ java -jar mockenger-standalone-<release_number>.jar --spring.profiles.active=ini
 ##
 ##
 **API response codes**
-
 GET: 200 - Request has succeeded, return object or array of objects in the response body 404 - Resource not found
-
 POST/PUT: 200 - Request has succeeded, return added/updated object in the response body
-
 DELETE: 204 - Request has succeeded, no content in the response body
-
 REQUEST ERROR: 400 - Bad request, data from user is not valid. Error description in the response body
-
 INTERNAL ERROR: 500 - Technical error. Error description in the response body
