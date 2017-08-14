@@ -5,10 +5,16 @@
   "private": true,
   "main": "index.html",
   "scripts": {
+    "build:dev": "gulp --environment development --security false",
+    "build:prod": "gulp --environment production --security false",
+    "build:dev:security": "gulp --environment development --security true",
+    "build:prod:security": "gulp --environment production --security true",
+
     "dev": "gulp --environment development --security false && gulp webServer",
-    "dev:security": "gulp --environment development --security true && gulp webServer",
     "prod": "gulp --environment production --security false && gulp webServer",
+    "dev:security": "gulp --environment development --security true && gulp webServer",
     "prod:security": "gulp --environment production --security true && gulp webServer",
+
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {

@@ -5,9 +5,8 @@
 ##
 **Frontend install**
 
-* Install Node JS
-* Install Bower
-* Install Gulp
+* [Install Node JS](https://nodejs.org)
+
 
 ##
 Install build dependencies from `package.json`
@@ -17,19 +16,13 @@ Install build dependencies from `package.json`
 ```
 Run `npm install` every time when updating `package.json`
 
-##
-In order to install frontend libraries taken from `bower.json`, run
-```
-# cd mockenger-standalone-frontend/
-# bower install
-```
 
 ##
 To build the frontend, run
 
 ```
 # cd mockenger-standalone-frontend/
-# gulp
+# npm run dev
 ```
 
 ##
@@ -113,18 +106,20 @@ or
 5) Start frontend and backend together
 You need to create jar file first
 ```
-# cd mockenger-standalone/
+# cd mockenger-parent/
 # mvn clean install -P withFrontend
 ```
-Override properties for frontend as `-Dgulp.build.security=production -Dgulp.build.security=false`
+
+Override properties for frontend as `-Dgulp.build.environment=production -Dgulp.build.security=false`
+
 
 After that start application with generated jar file
 ```
-java -jar target/mockenger-standalone-<release_number>.jar
+java -jar mockenger-standalone-<release_number>.jar --spring.profiles.active=init,security --spring.config.location=file:<path_to_config>/application.properties
 ```
 
 ##
-6) If use started application with OAuth2 security, use default credentials `admin@email.com/123456` for get access
+6) If use started application with OAuth2 security, use default credentials `admin@email.com/123456` to get access
 
 ##
 ##
