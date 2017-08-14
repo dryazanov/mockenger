@@ -2,11 +2,10 @@ target
 .idea
 .tmp
 
-**/src/main/resources/static/node_modules
-
-frontend/.dist
-frontend/node_modules
+node_modules
+frontend/.dest
 frontend/package-lock.json
+ngConstants.js
 
 *.log
 *.iml

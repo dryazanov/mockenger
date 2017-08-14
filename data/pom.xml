@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>mockenger</artifactId>
-        <groupId>com.socialstartup</groupId>
+        <groupId>org.mockenger</groupId>
         <version>0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -14,7 +14,7 @@
     <dependencies>
         <!-- Module Dependencies -->
         <dependency>
-            <groupId>com.socialstartup</groupId>
+            <groupId>org.mockenger</groupId>
             <artifactId>utils</artifactId>
             <version>${project.version}</version>
         </dependency>

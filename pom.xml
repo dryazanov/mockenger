@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.socialstartup</groupId>
+    <groupId>org.mockenger</groupId>
     <artifactId>mockenger</artifactId>
     <name>Mockenger</name>
     <description>Mock server</description>
