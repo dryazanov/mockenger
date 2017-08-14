@@ -11,7 +11,7 @@
 ##
 Install build dependencies from `package.json`
 ```
-# cd mockenger-standalone-frontend/
+# cd frontend/
 # npm install
 ```
 Run `npm install` every time when updating `package.json`
@@ -21,7 +21,7 @@ Run `npm install` every time when updating `package.json`
 To build the frontend, run
 
 ```
-# cd mockenger-standalone-frontend/
+# cd frontend/
 # npm run dev
 ```
 
@@ -49,13 +49,13 @@ Don't forget to update property `spring.data.mongodb.uri` in `application.proper
  - To restore db from the dump run
 
 ```
-# mongorestore --db mockenger mockenger-parent/testdata/mockenger/
+# mongorestore --db mockenger testdata/mockenger/
 ```
 
  - To create db dump run
 
 ```
-# mongodump --db mockenger --out mockenger-parent/testdata/
+# mongodump --db mockenger --out testdata/
 ```
 
 ##
@@ -63,7 +63,7 @@ Don't forget to update property `spring.data.mongodb.uri` in `application.proper
 
 Run backend
 ```
-# cd mockenger-parent/
+# cd mockenger/
 # mvn clean install
 # cd ../mockenger-standalone/
 # mvn spring-boot:run -Drun.arguments="--mockenger.frontend.port=15123"
@@ -71,7 +71,7 @@ Run backend
 
 Alternatively you can run backend using generated jar file
 ```
-# cd mockenger-parent/
+# cd mockenger/
 # mvn clean install
 # cd ../mockenger-standalone/target/
 # java -jar mockenger-standalone-<release_number>.jar --mockenger.frontend.port=15123
@@ -106,8 +106,8 @@ or
 5) Start frontend and backend together
 You need to create jar file first
 ```
-# cd mockenger-parent/
-# mvn clean install -P withFrontend
+# cd mockenger/
+# mvn clean install -DskipTests -P withFrontend
 ```
 
 Override properties for frontend as `-Dgulp.build.environment=production -Dgulp.build.security=false`

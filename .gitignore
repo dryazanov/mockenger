@@ -1,11 +1,12 @@
 target
 .idea
 .tmp
-node_modules
 
-#Maaan, be careful with this one
-**/src/main/resources/static/libs
+**/src/main/resources/static/node_modules
+
+frontend/.dist
+frontend/node_modules
+frontend/package-lock.json
 
 *.log
 *.iml
-dist
