@@ -1,37 +1,28 @@
-# Mockenger #
+# Mockenger
 [![Build Status](https://semaphoreci.com/api/v1/dryazanov/mockenger/branches/develop/badge.svg)](https://semaphoreci.com/dryazanov/mockenger)
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/4cfcf88539ba49be8ed773807b312405)](https://www.codacy.com/app/dryazanov/mockenger)
-##
-##
-**Frontend install**
-
-* [Install Node JS](https://nodejs.org)
 
 
-##
-Install build dependencies from `package.json`
-```
-# cd frontend/
-# npm install
-```
-Run `npm install` every time when updating `package.json`
+## For users
 
-
-##
-To build the frontend, run
-
-```
-# cd frontend/
-# npm run dev
+* [Install](https://www.mongodb.com) MongoDB
+* [Download](https://github.com/dryazanov/mockenger/releases/latest) runable jar
+* Create configuration file ([example](https://github.com/dryazanov/mockenger/blob/develop/examples/user.properties))
+* Run!
+```shell
+# java -jar mockenger-vX.X.jar --spring.config.location=/path/to/your/config/user.properties
 ```
 
-##
-##
-**Backend install and run**
 
-1) Install mongodb
+## For developers
 
-2) Run mongodb
+* [Install](https://nodejs.org) Node JS
+* [Install](https://gulpjs.com/) Gulp
+* [Install](https://www.mongodb.com) MongoDB
+
+#### Run frontend and backend separately
+
+* Start MongoDb
 ```
 # mongod --dbpath /path/to/mongodb/data
 ```
@@ -40,90 +31,42 @@ Use `--auth` flag if you created users in your mongodb for access control
 ```
 # mongod --auth --dbpath /path/to/mongodb/data
 ```
-Don't forget to update property `spring.data.mongodb.uri` in `application.properties`
-
-
-##
-3) When your mongodb is up and running you can add some data there
-
- - To restore db from the dump run
-
-```
-# mongorestore --db mockenger testdata/mockenger/
-```
-
- - To create db dump run
-
-```
-# mongodump --db mockenger --out testdata/
-```
-
-##
-4) Start frontend and backend separately
-
-Run backend
+* Update `/core/src/main/resources/application.properties`
+* Run java backend with maven
 ```
 # cd mockenger/
-# mvn clean install
-# cd ../mockenger-standalone/
-# mvn spring-boot:run -Drun.arguments="--frontend.port=15123"
+# mvn clean install -DskipTests
+# cd standalone/
+# mvn spring-boot:run
 ```
 
 Alternatively you can run backend using generated jar file
 ```
 # cd mockenger/
-# mvn clean install
-# cd ../mockenger-standalone/target/
-# java -jar mockenger-standalone-<release_number>.jar --frontend.port=15123
+# mvn clean install -DskipTests
+# java -jar standalone/target/mockenger-vX.X.jar --spring.config.location=/path/to/your/config/application.properties
 ```
 
-Run frontend
+For the frontend there are three options defined in `package.json` - `build`, `server`, `build:and:start:server`. Use one of them with `npm`, for example:
 ```
-# gulp
-# gulp webServer --security false
+# cd frontend/
+# npm run build:and:start:server
 ```
+In the file `gulpfile.js` you can set you own properties for server's host and port 
 
-##
-|                       | Frontend                            | Backend                               |
-|-----------------------|-------------------------------------|---------------------------------------|
-| **Environment**       | `--environment development` (check gulpfile.js for more information) | Override properties `server.address`, `server.port`, `frontend.host`, `frontend.port` |
-| **Security (OAuth2)** | `--security true` | `--spring.profiles.active=security` |
-| **No security**       | `--security false` | Profile `security` deactivated by default |
 
-#
-Examples:
-```
-# java -jar target/mockenger-standalone-<release_number>.jar --spring.profiles.active=security --frontend.port=15123
-# gulp webServer --environment production --security true
-```
-or
-```
-# java -jar target/mockenger-standalone-<release_number>.jar --frontend.port=12345
-# gulp webServer --environment development --security false
-```
-
-##
-5) Start frontend and backend together
-You need to create jar file first
+#### Run frontend and backend together
+* Start MongoDb
+* Create runable jar and run it
 ```
 # cd mockenger/
 # mvn clean install -DskipTests -P withFrontend
-```
-
-Override properties for frontend as `-Dgulp.build.environment=production -Dgulp.build.security=false`
-
-
-After that start application with generated jar file
-```
-java -jar mockenger-standalone-<release_number>.jar --spring.profiles.active=init,security --spring.config.location=file:<path_to_config>/application.properties
+# java -jar standalone/target/mockenger-vX.X.jar --spring.config.location=/path/to/your/config/application.properties
 ```
 
 ##
-6) If use started application with OAuth2 security, use default credentials `admin@email.com/123456` to get access
 
-##
-##
-**API response codes**
+## API response codes
 GET: 200 - Request has succeeded, return object or array of objects in the response body 404 - Resource not found
 
 POST/PUT: 200 - Request has succeeded, return added/updated object in the response body
