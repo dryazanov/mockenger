@@ -9,7 +9,12 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>standalone</artifactId>
+    <artifactId>mockenger-standalone</artifactId>
+
+    <properties>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>dd-MM-yyyy HH:mm</maven.build.timestamp.format>
+    </properties>
 
     <dependencies>
         <!-- Module Dependencies -->
@@ -98,6 +103,9 @@
                         <goals>
                             <goal>repackage</goal>
                         </goals>
+                        <configuration>
+                            <finalName>mockenger-${project.version}</finalName>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

@@ -66,7 +66,7 @@ Run backend
 # cd mockenger/
 # mvn clean install
 # cd ../mockenger-standalone/
-# mvn spring-boot:run -Drun.arguments="--mockenger.frontend.port=15123"
+# mvn spring-boot:run -Drun.arguments="--frontend.port=15123"
 ```
 
 Alternatively you can run backend using generated jar file
@@ -74,7 +74,7 @@ Alternatively you can run backend using generated jar file
 # cd mockenger/
 # mvn clean install
 # cd ../mockenger-standalone/target/
-# java -jar mockenger-standalone-<release_number>.jar --mockenger.frontend.port=15123
+# java -jar mockenger-standalone-<release_number>.jar --frontend.port=15123
 ```
 
 Run frontend
@@ -86,19 +86,19 @@ Run frontend
 ##
 |                       | Frontend                            | Backend                               |
 |-----------------------|-------------------------------------|---------------------------------------|
-| **Environment**       | `--environment development` (check gulpfile.js for more information) | Override properties `server.address`, `server.port`, `mockenger.frontend.host`, `mockenger.frontend.port` |
+| **Environment**       | `--environment development` (check gulpfile.js for more information) | Override properties `server.address`, `server.port`, `frontend.host`, `frontend.port` |
 | **Security (OAuth2)** | `--security true` | `--spring.profiles.active=security` |
 | **No security**       | `--security false` | Profile `security` deactivated by default |
 
 #
 Examples:
 ```
-# java -jar target/mockenger-standalone-<release_number>.jar --spring.profiles.active=security --mockenger.frontend.port=15123
+# java -jar target/mockenger-standalone-<release_number>.jar --spring.profiles.active=security --frontend.port=15123
 # gulp webServer --environment production --security true
 ```
 or
 ```
-# java -jar target/mockenger-standalone-<release_number>.jar --mockenger.frontend.port=12345
+# java -jar target/mockenger-standalone-<release_number>.jar --frontend.port=12345
 # gulp webServer --environment development --security false
 ```
 

@@ -22,7 +22,7 @@ public class EventService {
 
     public static final String DEFAULT_SORT_FIELD = "eventDate";
 
-	@Value("${mockenger.frontend.audit.log.events.per.page}")
+	@Value("${frontend.audit.log.events.per.page}")
     public int itemsPerPage = 5;
 
     @Autowired

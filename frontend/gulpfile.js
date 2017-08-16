@@ -1,5 +1,6 @@
 // require
 var gulp = require('gulp');
+var htmlReplace = require('gulp-html-replace');
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var removeUseStrict = require("gulp-remove-use-strict");
@@ -63,43 +64,29 @@ var getArgument = function(option) {
 
 // Create properties
 var properties = {
-        env: {
-            dev: {
-                host: 'localhost',
-                port: 15123,
-                const: {
-                    ENV: 'dev',
-                    SECURITY: true,
-                    SECRET_KEY: 'Y2xpZW50YXBwOjEyMzQ1Ng==',
-                    API_BASE_PATH: 'http://localhost:8080/api',
-                    APP_VERSION: parseVersionFromPomXml(),
-                    REQUESTS_PER_PAGE: 10,
-                    BUILD_DATE: new Date()
-                }
-            },
-            prod: {
-                host: 'localhost',
-                port: 15123,
-                const: {
-                    ENV: 'prod',
-                    SECURITY: true,
-                    SECRET_KEY: 'Y2xpZW50YXBwOjEyMzQ1Ng==',
-                    API_BASE_PATH: 'http://localhost:9000/api',
-                    APP_VERSION: parseVersionFromPomXml(),
-                    REQUESTS_PER_PAGE: 20,
-                    BUILD_DATE: new Date()
-                }
-            }
-        },
-        project: {
-            source: 'src/main/resources/static/',
-            dest: parseBuildDirFromPomXml() + '/'
-        }
+	host: 'localhost',
+	port: 15123,
+	backend: {
+		url: 'http://localhost:8080',
+	},
+	project: {
+		source: 'src/main/resources/static/',
+		dest: parseBuildDirFromPomXml() + '/'
+	}
 }
 
 
-gulp.task('minifyAndUpdateIndexRef', ['ngConstants'], function () {
+gulp.task('minifyAndUpdateIndexRef', function () {
+  var args = getArgument('standalone');
+  var backendUrl = (args[0] !== undefined && args[1] === 'true') ? properties.backend.url : '';
+
   return gulp.src(properties.project.source + 'index.html')
+  	.pipe(htmlReplace({
+  		'const': {
+  			src: null,
+  			tpl: '<script src="' + backendUrl + '/modules/components/constants.js"></script>'
+  		}
+  	}))
     .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))
     .pipe(gulpif('*.js', ngAnnotate()))
     .pipe(gulpif('*.js', uglify()))
@@ -138,32 +125,11 @@ gulp.task('copyImages', function() {
 });
 
 
-gulp.task('ngConstants', function () {
-    console.log(process.argv);
-
-    var securityArg = getArgument('security');
-    var environmentArg = getArgument('environment');
-    var envConfig = (environmentArg[0] !== undefined && environmentArg[1] === 'production') ? properties.env.prod.const : properties.env.dev.const;
-    envConfig.SECURITY = (securityArg[0] === undefined || (String(securityArg[1]) != 'true' && String(securityArg[1]) != 'false')) ? true : securityArg[1];
-
-    return ngConstant({
-        constants: envConfig,
-        name: 'mockengerClientComponents',
-        wrap: false,
-        stream: true
-    })
-    .pipe(gulp.dest(properties.project.source + 'modules/components/'));
-});
-
-
 gulp.task('webServer', function() {
-    var environmentArg = getArgument('environment');
-    var envConfig = (environmentArg[0] !== undefined && environmentArg[1] === 'production') ? properties.env.prod : properties.env.dev;
-
-    return gulp.src(properties.project.source)
+    return gulp.src(properties.project.dest)
         .pipe(webserver({
-            host: envConfig['host'],
-            port: envConfig['port'],
+            host: properties.host,
+            port: properties.port,
             livereload: true,
             open: true
         }));

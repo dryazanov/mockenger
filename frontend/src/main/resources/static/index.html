@@ -58,6 +58,7 @@ if (window && !window.module) {
 	};
 }
 </script>
+
 <!-- build:js scripts/vendor.js -->
 <script src="node_modules/jquery/dist/jquery.js"></script>
 <script src="node_modules/angular/angular.js"></script>
@@ -75,9 +76,11 @@ if (window && !window.module) {
 <script src="node_modules/ngprogress-npm/build/ngprogress.js"></script>
 <!-- endbuild -->
 
+<!-- build:const -->
+<script src="/modules/components/constants.js"></script>
+<!-- endbuild -->
+
 <!-- build:js scripts/mockengerComponents.js -->
-<script src="modules/components/mockengerClientComponents.js"></script>
-<script src="modules/components/ngConstants.js"></script>
 <script src="modules/components/filters/offsetFilter.js"></script>
 <script src="modules/components/services/apiEndpointsService.js"></script>
 <script src="modules/components/controllers/rootController.js"></script>

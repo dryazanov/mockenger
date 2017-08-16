@@ -1,5 +1,6 @@
 package org.mockenger.core.config;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -18,4 +19,10 @@ public class TestPropertyContext {
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
+
+
+	@Bean(name = "constantsBean")
+	public String getConstants(final ApplicationContext applicationContext) {
+		return "";
+	}
 }
