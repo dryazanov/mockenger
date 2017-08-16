@@ -1,0 +1,11 @@
+target
+.idea
+.tmp
+
+node_modules
+frontend/.dest
+frontend/package-lock.json
+ngConstants.js
+
+*.log
+*.iml

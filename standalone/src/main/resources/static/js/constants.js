@@ -1,0 +1,9 @@
+angular.module('mockengerClientComponents', []);
+angular.module('mockengerClientComponents', [])
+.constant('ENV', '%s')
+.constant('SECURITY', '%b')
+.constant('SECRET_KEY', '%s')
+.constant('API_BASE_PATH', '%s')
+.constant('APP_VERSION', '%s')
+.constant('REQUESTS_PER_PAGE', %d)
+.constant('BUILD_DATE', '%s');

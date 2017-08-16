@@ -1,0 +1,83 @@
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+a {
+    color: #34A8CF;
+    /*text-decoration: underline;*/
+}
+
+a.list-group-item, button.list-group-item {
+    text-decoration: none;
+}
+
+label {
+    color: #F5AD42;
+}
+
+.table > thead > tr > th {
+    color: #F5AD42;
+}
+
+.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+    background-color: #49515a;
+}
+
+.nav-tabs > li > a {
+    text-decoration: none;
+}
+
+.form-control {
+    background-color: #DDDDDD;
+}
+
+/* ==========================================================================
+Hide ng-cloak on page load, https://docs.angularjs.org/api/ng/directive/ngCloak
+========================================================================== */
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+    display: none !important;
+}
+
+/* ==========================================================================
+Developement Ribbon
+========================================================================== */
+.development {
+    position: absolute;
+    width: 75px;
+    height: 75px;
+    top: 0;
+    left: 0;
+    border: 0;
+    z-index: 1001;
+    background-image: url("../images/development_ribbon.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+/* ==========================================================================
+Browser Upgrade Prompt
+========================================================================== */
+.browserupgrade {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    background-color: #f5f5f5;
+}
+
+.container-fluid .text-muted {
+    margin: 20px 0;
+}
