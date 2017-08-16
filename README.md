@@ -10,16 +10,17 @@
 * Create configuration file ([example](https://github.com/dryazanov/mockenger/blob/develop/examples/user.properties))
 * Run!
 ```shell
-# java -jar mockenger-vX.X.jar --spring.config.location=/path/to/your/config/user.properties
+> java -jar mockenger-vX.X.jar --spring.config.location=/path/to/your/config/user.properties
 ```
 
-
+- - - -
 ## For developers
 
 * [Install](https://nodejs.org) Node JS
 * [Install](https://gulpjs.com/) Gulp
 * [Install](https://www.mongodb.com) MongoDB
 
+##
 #### Run frontend and backend separately
 
 * Start MongoDb
@@ -54,7 +55,7 @@ For the frontend there are three options defined in `package.json` - `build`, `s
 ```
 In the file `gulpfile.js` you can set you own properties for server's host and port 
 
-
+##
 #### Run frontend and backend together
 * Start MongoDb
 * Create runable jar and run it
@@ -64,9 +65,8 @@ In the file `gulpfile.js` you can set you own properties for server's host and p
 # java -jar standalone/target/mockenger-vX.X.jar --spring.config.location=/path/to/your/config/application.properties
 ```
 
-##
-
-## API response codes
+- - - -
+### API response codes
 GET: 200 - Request has succeeded, return object or array of objects in the response body 404 - Resource not found
 
 POST/PUT: 200 - Request has succeeded, return added/updated object in the response body
