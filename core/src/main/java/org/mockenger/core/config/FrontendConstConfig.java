@@ -42,9 +42,6 @@ public class FrontendConstConfig {
 	public String getConstants(final ApplicationContext applicationContext) {
 		final Resource resource = applicationContext.getResource("classpath:static/js/constants.js");
 
-		System.out.println(appVersion);
-		System.out.println("!!!:" + buildTimestamp);
-
 		InputStream is = null;
 
 		try {
