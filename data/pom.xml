@@ -15,7 +15,7 @@
         <!-- Module Dependencies -->
         <dependency>
             <groupId>org.mockenger</groupId>
-            <artifactId>utils</artifactId>
+            <artifactId>mockenger-utils</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
