@@ -5,14 +5,9 @@
   "private": true,
   "main": "index.html",
   "scripts": {
-    "build:dev": "gulp --environment development --security false",
-    "build:prod": "gulp --environment production --security false",
-    "build:dev:security": "gulp --environment development --security true",
-    "build:prod:security": "gulp --environment production --security true",
-    "dev": "gulp --environment development --security false && gulp webServer",
-    "prod": "gulp --environment production --security false && gulp webServer",
-    "dev:security": "gulp --environment development --security true && gulp webServer",
-    "prod:security": "gulp --environment production --security true && gulp webServer",
+    "build": "gulp --standalone true",
+    "server": "gulp webServer",
+    "build:and:start:server": "gulp --standalone true && gulp webServer",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
@@ -27,6 +22,7 @@
     "gulp-exports": "0.0.3",
     "gulp-filter": "^4.0.0",
     "gulp-html-minifier": "^0.1.8",
+    "gulp-html-replace": "^1.6.2",
     "gulp-htmlmin": "^3.0.0",
     "gulp-if": "^2.0.1",
     "gulp-inject": "^4.1.0",
