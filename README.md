@@ -9,49 +9,48 @@
 * [Download](https://github.com/dryazanov/mockenger/releases/latest) runable jar
 * Create configuration file ([example](https://github.com/dryazanov/mockenger/blob/develop/examples/user.properties))
 * Run!
-```shell
-> java -jar mockenger-vX.X.jar --spring.config.location=/path/to/your/config/user.properties
+```
+java -jar mockenger-vX.X.jar --spring.config.location=/path/to/your/config/user.properties
 ```
 
-- - - -
 ## For developers
 
 * [Install](https://nodejs.org) Node JS
 * [Install](https://gulpjs.com/) Gulp
 * [Install](https://www.mongodb.com) MongoDB
 
-##
+
 #### Run frontend and backend separately
 
 * Start MongoDb
 ```
-# mongod --dbpath /path/to/mongodb/data
+mongod --dbpath /path/to/mongodb/data
 ```
 
 Use `--auth` flag if you created users in your mongodb for access control
 ```
-# mongod --auth --dbpath /path/to/mongodb/data
+mongod --auth --dbpath /path/to/mongodb/data
 ```
 * Update `/core/src/main/resources/application.properties`
 * Run java backend with maven
 ```
-# cd mockenger/
-# mvn clean install -DskipTests
-# cd standalone/
-# mvn spring-boot:run
+cd mockenger/
+mvn clean install -DskipTests
+cd standalone/
+mvn spring-boot:run
 ```
 
 Alternatively you can run backend using generated jar file
 ```
-# cd mockenger/
-# mvn clean install -DskipTests
-# java -jar standalone/target/mockenger-vX.X.jar --spring.config.location=/path/to/your/config/application.properties
+cd mockenger/
+mvn clean install -DskipTests
+java -jar standalone/target/mockenger-vX.X.jar --spring.config.location=/path/to/your/config/application.properties
 ```
 
 For the frontend there are three options defined in `package.json` - `build`, `server`, `build:and:start:server`. Use one of them with `npm`, for example:
 ```
-# cd frontend/
-# npm run build:and:start:server
+cd frontend/
+npm run build:and:start:server
 ```
 In the file `gulpfile.js` you can set you own properties for server's host and port 
 
@@ -60,9 +59,9 @@ In the file `gulpfile.js` you can set you own properties for server's host and p
 * Start MongoDb
 * Create runable jar and run it
 ```
-# cd mockenger/
-# mvn clean install -DskipTests -P withFrontend
-# java -jar standalone/target/mockenger-vX.X.jar --spring.config.location=/path/to/your/config/application.properties
+cd mockenger/
+mvn clean install -DskipTests -P withFrontend
+java -jar standalone/target/mockenger-vX.X.jar --spring.config.location=/path/to/your/config/application.properties
 ```
 
 - - - -
