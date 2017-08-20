@@ -1,7 +1,6 @@
 package org.mockenger.core.web.filter;
 
 import org.mockenger.data.model.dict.RequestMethod;
-import org.mockenger.core.web.controller.base.AbstractController;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -16,9 +15,14 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 
-import static org.mockenger.data.model.dict.RequestMethod.OPTIONS;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static org.mockenger.core.web.controller.base.AbstractController.API_PATH;
+import static org.mockenger.data.model.dict.ProjectType.HTTP;
+import static org.mockenger.data.model.dict.ProjectType.REST;
+import static org.mockenger.data.model.dict.ProjectType.SOAP;
+import static org.mockenger.data.model.dict.RequestMethod.OPTIONS;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN;
@@ -47,27 +51,37 @@ public class CORSFilter implements Filter {
         // Nothing to do
     }
 
+
     @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
                          final FilterChain filterChain) throws IOException, ServletException {
 
         final HttpServletResponse response = (HttpServletResponse) servletResponse;
+        final HttpServletRequest request = (HttpServletRequest) servletRequest;
+        final boolean isMockRequest = isMockRequest(request);
 
-        response.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, ALLOW_ORIGIN);
-        response.setHeader(ACCESS_CONTROL_ALLOW_METHODS, arrayToCommaDelimitedString(RequestMethod.values()));
-        response.setHeader(ACCESS_CONTROL_MAX_AGE, MAX_AGE);
-        response.setHeader(ACCESS_CONTROL_ALLOW_HEADERS, ALLOW_HEADERS);
+		if (!isMockRequest) {
+			response.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, ALLOW_ORIGIN);
+			response.setHeader(ACCESS_CONTROL_ALLOW_METHODS, arrayToCommaDelimitedString(RequestMethod.values()));
+			response.setHeader(ACCESS_CONTROL_MAX_AGE, MAX_AGE);
+			response.setHeader(ACCESS_CONTROL_ALLOW_HEADERS, ALLOW_HEADERS);
+		}
 
-        if (isOptionsRequestForHttpMock((HttpServletRequest) servletRequest)) {
+        if (OPTIONS.name().equalsIgnoreCase(request.getMethod()) && !isMockRequest) {
             response.setStatus(SC_OK);
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
         }
     }
 
-	private boolean isOptionsRequestForHttpMock(final HttpServletRequest servletRequest) {
-		return OPTIONS.name().equalsIgnoreCase(servletRequest.getMethod()) && !servletRequest.getRequestURI().startsWith(AbstractController.MOCK_HTTP_TYPE_PATH);
+
+	private boolean isMockRequest(final HttpServletRequest request) {
+		return Arrays.asList(REST, SOAP, HTTP)
+				.stream()
+				.filter(s -> request.getRequestURI().startsWith(API_PATH + "/" + s + "/"))
+				.count() > 0;
 	}
+
 
 	@Override
     public void destroy() {
