@@ -50,9 +50,9 @@ angular.module('mockengerClientMainApp')
                         $scope.showRedMessage({data: {errors: new Array('Delete process aborted. Cannot find request in the list')}});
                     } else {
                         var paramsToSend = {
-                            projectId: projectListService.getCurrent().id,
-                            groupId: groupListService.getCurrent().id,
-                            requestId: requestToDelete.id
+                            projectCode: projectListService.getCurrent().code,
+                            groupCode: groupListService.getCurrent().code,
+                            requestCode: requestToDelete.code
                         };
                         requestService.ajax.delete(paramsToSend, function(response, getResponseHeaders) {
                             $scope.showGreenMessage('Mock-request <b>' + requestToDelete.name + '</b> deleted');

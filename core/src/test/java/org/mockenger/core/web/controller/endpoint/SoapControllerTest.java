@@ -2,7 +2,9 @@ package org.mockenger.core.web.controller.endpoint;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import org.mockenger.core.util.CommonUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockenger.core.web.controller.base.AbstractController;
 import org.mockenger.data.model.dict.RequestMethod;
 import org.mockenger.data.model.persistent.mock.group.Group;
@@ -14,14 +16,12 @@ import org.mockenger.data.model.persistent.mock.request.part.Pair;
 import org.mockenger.data.model.persistent.mock.request.part.Path;
 import org.mockenger.data.model.persistent.mock.response.MockResponse;
 import org.mockenger.data.model.persistent.transformer.RegexpTransformer;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Date;
 import java.util.Set;
 
+import static org.mockenger.core.util.CommonUtils.generateUniqueId;
 import static org.mockenger.core.util.CommonUtils.getCheckSum;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -40,35 +40,29 @@ public class SoapControllerTest extends AbstractControllerTest {
     private static final String ID1 = "200000000001";
     private static final String ID2 = "100000000002";
 
-    protected static final String SOAP_XML_REQUEST_BODY = new StringBuilder()
-            .append("<S:Body xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">")
-            .append("<ns3:DataRequestElement xmlns:ns3=\"http://www.af-klm.com/services/passenger/data-v1/xsd\">")
-            .append("<identificationNumber>")
-            .append(ID1)
-            .append("</identificationNumber>")
-            .append("</ns3:DataRequestElement>")
-            .append("</S:Body>")
-            .toString();
+    protected static final String SOAP_XML_REQUEST_BODY = "<S:Body xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+			"<ns3:DataRequestElement xmlns:ns3=\"http://www.af-klm.com/services/passenger/data-v1/xsd\">" +
+			"<identificationNumber>" +
+			ID1 +
+			"</identificationNumber>" +
+			"</ns3:DataRequestElement>" +
+			"</S:Body>";
 
-    protected static final String SOAP_XML_REQUEST = new StringBuilder()
-            .append("<?xml version='1.0' encoding='UTF-8'?>")
-            .append("<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">")
-            .append("<S:Header/>")
-            .append(SOAP_XML_REQUEST_BODY)
-            .append("</S:Envelope>")
-            .toString();
+    protected static final String SOAP_XML_REQUEST = "<?xml version='1.0' encoding='UTF-8'?>" +
+			"<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+			"<S:Header/>" +
+			SOAP_XML_REQUEST_BODY +
+			"</S:Envelope>";
 
-    protected static final String SOAP_XML_RESPONSE = new StringBuilder()
-            .append("<?xml version='1.0' encoding='UTF-8'?>")
-            .append("<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">")
-            .append("<S:Header/>")
-            .append("<S:Body>")
-            .append("<ns3:DataResponseElement xmlns:ns3=\"http://www.af-klm.com/services/passenger/data-v1/xsd\">")
-            .append("<result>OK</result>")
-            .append("</ns3:DataResponseElement>")
-            .append("</S:Body>")
-            .append("</S:Envelope>")
-            .toString();
+    protected static final String SOAP_XML_RESPONSE = "<?xml version='1.0' encoding='UTF-8'?>" +
+			"<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+			"<S:Header/>" +
+			"<S:Body>" +
+			"<ns3:DataResponseElement xmlns:ns3=\"http://www.af-klm.com/services/passenger/data-v1/xsd\">" +
+			"<result>OK</result>" +
+			"</ns3:DataResponseElement>" +
+			"</S:Body>" +
+			"</S:Envelope>";
 
     private Project project;
     private String endpoint;
@@ -81,7 +75,7 @@ public class SoapControllerTest extends AbstractControllerTest {
         final Group group = createGroup(project.getId(), true);
         createRequest(createSoapMockRequest(group.getId()));
 
-        endpoint = String.format(ENDPOINT_TEMPLATE, group.getId(), REQUEST_PATH);
+        endpoint = String.format(ENDPOINT_TEMPLATE, group.getCode(), REQUEST_PATH);
     }
 
     @After
@@ -121,14 +115,16 @@ public class SoapControllerTest extends AbstractControllerTest {
     }
 
 
-    private PostRequest createSoapMockRequest(String groupId) {
+    private PostRequest createSoapMockRequest(final String groupId) {
         final Set<Pair> headersSet = ImmutableSet.of(new Pair("content-type", CONTENT_TYPE_SOAP_UTF8.toLowerCase()));
         final PostRequest postRequest = new PostRequest();
 		final Body body = new Body(ImmutableList.of(new RegexpTransformer(ID2, ID1)), SOAP_XML_REQUEST_BODY);
 		final MockResponse mockResponse = new MockResponse(200, headersSet, SOAP_XML_RESPONSE);
+		final String id = generateUniqueId();
 
+		postRequest.setId(id);
         postRequest.setGroupId(groupId);
-        postRequest.setId(CommonUtils.generateUniqueId());
+		postRequest.setCode(PROJECT_CODE + "-" + GROUP_CODE +  "-" + id);
         postRequest.setName(REQUEST_NAME_TEST);
         postRequest.setMethod(RequestMethod.POST);
         postRequest.setCreationDate(new Date());

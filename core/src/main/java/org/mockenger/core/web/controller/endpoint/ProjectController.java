@@ -21,15 +21,15 @@ import javax.validation.Valid;
 @RestController
 public class ProjectController extends AbstractController {
 
-    /**
-     *
-     * @param projectId
-     * @return
-     */
-    @GetMapping(PROJECT_ID_ENDPOINT)
-    public ResponseEntity getProject(@PathVariable final String projectId) {
-        return okResponseWithDefaultHeaders(findProjectById(projectId));
-    }
+	/**
+	 *
+	 * @param projectCode
+	 * @return
+	 */
+	@GetMapping(PROJECT_CODE_ENDPOINT)
+	public ResponseEntity getProjectByCode(@PathVariable final String projectCode) {
+		return okResponseWithDefaultHeaders(findProjectByCode(projectCode));
+	}
 
 
     /**
@@ -62,13 +62,13 @@ public class ProjectController extends AbstractController {
 
     /**
      *
-     * @param projectId
+     * @param projectCode
      * @param project
      * @param result
      * @return
      */
-    @PutMapping(PROJECT_ID_ENDPOINT)
-    public ResponseEntity saveProject(@PathVariable final String projectId,
+    @PutMapping(PROJECT_CODE_ENDPOINT)
+    public ResponseEntity saveProject(@PathVariable final String projectCode,
                                       @Valid @RequestBody final Project project,
                                       final BindingResult result) {
 
@@ -77,9 +77,9 @@ public class ProjectController extends AbstractController {
         }
 
         // Check if project exists
-        findProjectById(projectId);
+        final Project existingProject = findProjectByCode(projectCode);
 
-        if (!projectId.equals(project.getId())) {
+        if (!existingProject.getId().equals(project.getId())) {
             throw new IllegalArgumentException("Project IDs in the URL and in the payload are not equals");
         }
 
@@ -89,12 +89,12 @@ public class ProjectController extends AbstractController {
 
     /**
      *
-     * @param projectId
+     * @param projectCode
      * @return
      */
-    @DeleteMapping(PROJECT_ID_ENDPOINT)
-    public ResponseEntity deleteProject(@PathVariable final String projectId) {
-        getProjectService().remove(findProjectById(projectId));
+    @DeleteMapping(PROJECT_CODE_ENDPOINT)
+    public ResponseEntity deleteProject(@PathVariable final String projectCode) {
+        getProjectService().remove(findProjectByCode(projectCode));
 
         return noContentWithDefaultHeaders();
     }

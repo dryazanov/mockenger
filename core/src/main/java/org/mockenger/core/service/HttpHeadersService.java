@@ -4,7 +4,6 @@ import org.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.mockenger.data.model.persistent.mock.request.part.Pair;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -12,16 +11,20 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
+
 /**
  * @author Dmitry Ryazanov
  */
 @Component
 public class HttpHeadersService {
 
-    public static final String CONTENT_TYPE_KEY = HttpHeaders.CONTENT_TYPE.toLowerCase();
+    public static final String CONTENT_TYPE_KEY = CONTENT_TYPE.toLowerCase();
     public static final String CHARSET_UTF_8 = "charset=UTF-8";
-    public static final String MEDIA_TYPE_JSON = MediaType.APPLICATION_JSON_VALUE + ";" + CHARSET_UTF_8;
-    public static final String MEDIA_TYPE_XML = MediaType.APPLICATION_XML_VALUE + ";" + CHARSET_UTF_8;
+    public static final String MEDIA_TYPE_JSON = APPLICATION_JSON_VALUE + ";" + CHARSET_UTF_8;
+    public static final String MEDIA_TYPE_XML = APPLICATION_XML_VALUE + ";" + CHARSET_UTF_8;
 
     @Value("#{'${mockenger.mock.response.ignore.headers}'.split(',')}")
     private List<String> headersToIgnore;
@@ -34,7 +37,7 @@ public class HttpHeadersService {
         final HttpHeaders headers = new HttpHeaders();
 
         // Default content-type
-        headers.set(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_JSON);
+        headers.set(CONTENT_TYPE, MEDIA_TYPE_JSON);
         return headers;
     }
 
@@ -66,7 +69,7 @@ public class HttpHeadersService {
 		if (!CollectionUtils.isEmpty(headerValues)) {
 			headerValues.parallelStream()
 					.filter(pair -> pair.getKey().equals(CONTENT_TYPE_KEY))
-					.filter(pair -> pair.getValue().contains(MediaType.APPLICATION_XML_VALUE))
+					.filter(pair -> pair.getValue().contains(APPLICATION_XML_VALUE))
 					.forEach(pair -> headers.set(CONTENT_TYPE_KEY, MEDIA_TYPE_XML));
 		}
 

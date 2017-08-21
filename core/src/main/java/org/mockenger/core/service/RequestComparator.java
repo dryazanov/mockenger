@@ -12,16 +12,16 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.mockenger.core.util.CommonUtils.allNotEmpty;
-import static org.mockenger.core.util.CommonUtils.containsAll;
+import static org.mockenger.core.util.CommonUtils.containsAllIgnoreCase;
 import static org.mockenger.core.util.CommonUtils.containsEqualEntries;
 import static org.mockenger.core.util.CommonUtils.generateCheckSum;
 import static org.mockenger.data.model.dict.RequestMethod.PATCH;
 import static org.mockenger.data.model.dict.RequestMethod.POST;
 import static org.mockenger.data.model.dict.RequestMethod.PUT;
-import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -33,7 +33,7 @@ public class RequestComparator {
 
     private AbstractRequest persistent;
 
-	private Printer prnt;
+	final private Printer printer;
 
 
     /**
@@ -43,7 +43,7 @@ public class RequestComparator {
      */
     public RequestComparator(final GenericRequest incomingRequest) {
         this.incoming = incomingRequest;
-		this.prnt = new Printer();
+		this.printer = new Printer();
     }
 
 
@@ -62,7 +62,7 @@ public class RequestComparator {
             }
         }
 
-        prnt.printSkipMock();
+        printer.printSkipMock();
         return false;
     }
 
@@ -76,7 +76,7 @@ public class RequestComparator {
 		final String incomingPath = getPath(incoming.getPath().getValue());
 		final String persistentPath = persistent.getPath().getValue();
 
-		prnt.printPaths(incomingPath, persistentPath);
+		printer.printPaths(incomingPath, persistentPath);
 
         return incomingPath.equals(persistentPath);
     }
@@ -93,7 +93,7 @@ public class RequestComparator {
 
         if (allNotEmpty(incomingParams, persistentParams)) {
             incomingParams = applyTransformers(incomingParams, persistent.getParameters().getTransformers());
-            prnt.printParams(incomingParams, persistentParams);
+            printer.printParams(incomingParams, persistentParams);
 
             return containsEqualEntries(incomingParams, persistentParams);
         }
@@ -112,9 +112,9 @@ public class RequestComparator {
 
         if (allNotEmpty(incomingHeaders, persistentHeaders)) {
             incomingHeaders = applyTransformers(incomingHeaders, persistent.getHeaders().getTransformers());
-            prnt.printHeaders(incomingHeaders, persistentHeaders);
+            printer.printHeaders(incomingHeaders, persistentHeaders);
 
-            return containsAll(incomingHeaders, persistentHeaders);
+            return containsAllIgnoreCase(incomingHeaders, persistentHeaders);
         }
 
         return true;
@@ -133,11 +133,11 @@ public class RequestComparator {
         } else {
             // For other methods we only compare checksums
             checksum = generateCheckSum(incoming);
-            prnt.printChecksums(checksum, persistent.getCheckSum());
+            printer.printChecksums(checksum, persistent.getCheckSum());
         }
 
         if (checksum.equals(persistent.getCheckSum())) {
-            prnt.printMockFound();
+            printer.printMockFound();
             return true;
         }
 
@@ -155,10 +155,10 @@ public class RequestComparator {
 
 	private String transformBodyAndGetChecksum() {
 		final String body = getBody(incoming.getBody().getValue());
-		prnt.printBodies(body, persistent.getBody().getValue());
+		printer.printBodies(body, persistent.getBody().getValue());
 
 		final String checksum = generateCheckSum(body);
-		prnt.printChecksums(checksum, persistent.getCheckSum());
+		printer.printChecksums(checksum, persistent.getCheckSum());
 
 		return checksum;
 	}

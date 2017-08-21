@@ -24,12 +24,12 @@ public class GroupController extends AbstractController {
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @return
      */
-    @GetMapping(GROUP_ID_ENDPOINT)
-    public ResponseEntity getGroupById(@PathVariable final String groupId) {
-        return okResponseWithDefaultHeaders(findGroupById(groupId));
+    @GetMapping(GROUP_CODE_ENDPOINT)
+    public ResponseEntity getGroupByCode(@PathVariable final String groupCode) {
+        return okResponseWithDefaultHeaders(findGroupByCode(groupCode));
     }
 
 
@@ -45,20 +45,20 @@ public class GroupController extends AbstractController {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
 
-        final Group groupToAdd = GroupService.cloneGroup(group).id(null).build();
+        final Group groupCandidate = GroupService.cloneGroup(group).id(null).build();
 
-        return okResponseWithDefaultHeaders(getGroupService().save(groupToAdd));
+        return okResponseWithDefaultHeaders(getGroupService().save(groupCandidate));
     }
 
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @param group
      * @return
      */
-    @PutMapping(GROUP_ID_ENDPOINT)
-    public ResponseEntity saveGroup(@PathVariable final String groupId,
+    @PutMapping(GROUP_CODE_ENDPOINT)
+    public ResponseEntity saveGroup(@PathVariable final String groupCode,
                                     @Valid @RequestBody final Group group,
                                     final BindingResult result) {
 
@@ -67,24 +67,27 @@ public class GroupController extends AbstractController {
         }
 
         // Check if group exists
-        findGroupById(groupId);
+        final Group existingGroup = findGroupByCode(groupCode);
+		final Group groupCandidate = GroupService.cloneGroup(group)
+				.code(existingGroup.getCode())
+				.build();
 
-        if (!groupId.equals(group.getId())) {
+        if (!existingGroup.getId().equals(group.getId())) {
             throw new IllegalArgumentException("Group IDs in the URL and in the payload are not equals");
         }
 
-        return okResponseWithDefaultHeaders(getGroupService().save(group));
+        return okResponseWithDefaultHeaders(getGroupService().save(groupCandidate));
     }
 
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @return
      */
-    @DeleteMapping(GROUP_ID_ENDPOINT)
-    public ResponseEntity deleteGroup(@PathVariable final String groupId) {
-        getGroupService().remove(findGroupById(groupId));
+    @DeleteMapping(GROUP_CODE_ENDPOINT)
+    public ResponseEntity deleteGroup(@PathVariable final String groupCode) {
+        getGroupService().remove(findGroupByCode(groupCode));
 
         return noContentWithDefaultHeaders();
     }
@@ -92,12 +95,12 @@ public class GroupController extends AbstractController {
 
     /**
      *
-     * @param projectId
+     * @param projectCode
      * @return
      */
 	@GetMapping(GROUPS_ENDPOINT)
-    public ResponseEntity getGroupList(@PathVariable final String projectId) {
-        final Project project = findProjectById(projectId);
+    public ResponseEntity getGroupList(@PathVariable final String projectCode) {
+        final Project project = findProjectByCode(projectCode);
         final Iterable<Group> groupList = getGroupService().findByProjectId(project.getId());
 
         return okResponseWithDefaultHeaders(groupList);

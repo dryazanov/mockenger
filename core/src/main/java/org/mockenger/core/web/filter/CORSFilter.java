@@ -15,7 +15,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.stream.Stream;
 
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.mockenger.core.web.controller.base.AbstractController.API_PATH;
@@ -76,8 +76,7 @@ public class CORSFilter implements Filter {
 
 
 	private boolean isMockRequest(final HttpServletRequest request) {
-		return Arrays.asList(REST, SOAP, HTTP)
-				.stream()
+		return Stream.of(REST, SOAP, HTTP)
 				.filter(s -> request.getRequestURI().startsWith(API_PATH + "/" + s + "/"))
 				.count() > 0;
 	}

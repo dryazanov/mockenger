@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * This class class was created for only one purpose -
@@ -34,7 +35,7 @@ public class OAuth2TokenManager {
         if (!StringUtils.isEmpty(username)) {
             getTokens(username)
                     .stream()
-                    .filter(oAuth2AccessToken -> oAuth2AccessToken != null)
+                    .filter(Objects::nonNull)
                     .forEach(oAuth2AccessToken -> {
                         tokenStore.removeAccessToken(oAuth2AccessToken);
                         tokenStore.removeRefreshToken(oAuth2AccessToken.getRefreshToken());

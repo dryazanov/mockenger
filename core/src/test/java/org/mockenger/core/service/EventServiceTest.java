@@ -1,19 +1,19 @@
 package org.mockenger.core.service;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.mockenger.data.model.dict.EventEntityType;
 import org.mockenger.data.model.persistent.log.Event;
 import org.mockenger.data.repository.EventRepository;
-import org.junit.Before;
-import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
-import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
@@ -45,7 +45,7 @@ public class EventServiceTest {
     public void init() {
         initMocks(this);
 
-        final List<Event> eventList = Arrays.asList(eventMock);
+        final List<Event> eventList = singletonList(eventMock);
         final PageImpl<Event> events = new PageImpl<>(eventList);
 
         when(eventMock.getId()).thenReturn(EVENT_ID);

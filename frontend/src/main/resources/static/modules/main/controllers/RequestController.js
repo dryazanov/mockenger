@@ -35,6 +35,39 @@ angular.module('mockengerClientMainApp')
                 return (method === 'POST' || method === 'PUT' || method === 'PATCH');
             }
 
+            $scope.cmOptions = {
+            	lineNumbers: false,
+            	lineWrapping : true,
+            	mode: 'javascript'
+            }
+
+//            $scope.isSomething = true;
+
+            $scope.codemirrorLoaded = function(_editor){
+                // Editor part
+                var _doc = _editor.getDoc();
+                _editor.focus();
+
+                // Options
+                _editor.setOption('lineNumbers', false);
+                //_editor.setOption('firstLineNumber', 10);
+                _editor.setOption('lineWrapping', true);
+                _editor.setOption('mode', 'xml');
+                _editor.setOption('autoRefresh', true);
+
+                // Load without click
+				setTimeout(function() {
+					console.log('refresh');
+					_editor.refresh();
+				}, 2000);
+
+                //_doc.markClean();
+
+                // Events
+//                _editor.on("beforeChange", function(){ ... });
+//                _editor.on("change", function(){ ... });
+              };
+
             $scope.selectMethod = function(method) {
                 requestListService.getCurrent().method = method;
             }
@@ -174,11 +207,13 @@ angular.module('mockengerClientMainApp')
                 }
 
                 var requestParams = {
-                    projectId: projectListService.getCurrent().id,
-                    groupId: groupListService.getCurrent().id
+                    projectCode: projectListService.getCurrent().code,
+                    groupCode: groupListService.getCurrent().code
                 }
+
                 if (request.id != null) {
-                    requestParams['requestId'] = request.id;
+                    requestParams.requestCode = request.code;
+
                     requestService.ajax.update(requestParams, request, function() {
                         $scope.showGreenMessage('Mock-request <b>' + request.name + '</b> successfully updated');
                     }, function(errorResponse) {
@@ -227,8 +262,12 @@ angular.module('mockengerClientMainApp')
             }
 
             $scope.getCURL = function() {
-                return "curl -X " + requestListService.getCurrent().method + " "
-                    + "'" + groupListService.getUrlForNewRequests() + requestListService.getCurrent().path.value + $scope.getParametersAsString() + "'"
+                return "curl -i -X " + requestListService.getCurrent().method + " "
+                    + "'" +
+                    	(groupListService.getUrlForNewRequests()
+                    	+ requestListService.getCurrent().path.value
+                    	+ $scope.getParametersAsString())
+					+ "'"
                     + " "
                     + $scope.getHeadersAsString()
                     + (!$scope.isRequestTabDisabled() ? " -d '" + $scope.getBody() + "'" : '')

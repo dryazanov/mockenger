@@ -29,16 +29,16 @@ angular.module('mockengerClientComponents').factory('apiEndpointsService', ['API
             return API_BASE_PATH + '/events/:eventId';
         },
         getProjectRestUrl: function() {
-            return API_BASE_PATH + '/projects/:projectId';
+            return API_BASE_PATH + '/projects/:projectCode';
         },
         getAccountRestUrl: function() {
             return API_BASE_PATH + '/accounts/:accountId';
         },
         getGroupRestUrl: function() {
-            return restUrls.getProjectRestUrl() + '/groups/:groupId';
+            return restUrls.getProjectRestUrl() + '/groups/:groupCode';
         },
         getRequestRestUrl: function() {
-            return restUrls.getGroupRestUrl() + '/requests/:requestId';
+            return restUrls.getGroupRestUrl() + '/requests/:requestCode';
         },
         getOAuth2AccessTokenUrl: function() {
             return API_BASE_PATH + '/oauth/token?grant_type=password';

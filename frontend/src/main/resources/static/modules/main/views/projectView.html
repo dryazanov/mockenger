@@ -79,8 +79,13 @@
                     <div ng-if="pageCount() <= 0">
                         <h4>No results found</h4>
                         <br/>
-                        <h5>Please use <b>Create request</b> button to add new request</h5>
-                        <h5>Alternatively, you can switch on <b>Recording</b> on the group level and send your requests to <b>{{groupListService.getUrlForNewRequests()}}</b></h5>
+                        <p>
+							Would you like to <a href="" ng-click="createRequest()">create</a> one?
+						</p>
+                        <p>
+							Alternatively, you can switch on <i  class="text-danger">Recording</i> for the group
+							and send your requests to <i class="text-danger">{{groupListService.getUrlForNewRequests()}}</i>
+						</p>
                     </div>
                     <table class="table table-striped table-hover" ng-if="pageCount() > 0">
                         <thead>
@@ -187,7 +192,7 @@
                                                             </tr>
                                                         </table>
                                                     </div>
-                                                    <div class="form-group">
+                                                    <div class="form-group" ng-if="requestListService.getCurrent().id">
                                                         <table class="table">
                                                             <tr>
                                                                 <td class="col-lg-2">
@@ -202,7 +207,7 @@
                                                                     <label>Request unique code</label>
                                                                 </td>
                                                                 <td>
-                                                                    {{requestListService.getCurrent().uniqueCode}}
+                                                                    {{requestListService.getCurrent().code}}
                                                                 </td>
                                                             </tr>
                                                             <tr>
@@ -223,15 +228,17 @@
                                                                 <td>
                                                                     <div class="input-group">
                                                                         <div class="input-group-btn">
-                                                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-                                                                                    aria-haspopup="true" aria-expanded="false">{{requestListService.getCurrent().method}} <span class="caret"></span></button>
+                                                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+																				{{requestListService.getCurrent().method}} <span class="caret"></span>
+																			</button>
                                                                             <ul class="dropdown-menu">
                                                                                 <li ng-repeat="method in requestMethods">
                                                                                     <a href ng-click="selectMethod(method)">{{method}}</a>
                                                                                 </li>
                                                                             </ul>
                                                                         </div>
-                                                                        <input type="text" name="url" id="url" ng-model="requestListService.getCurrent().path.value"
+																		<span class="input-group-addon">/</span>
+                                                                        <input name="url" id="url" ng-model="requestListService.getCurrent().path.value"
                                                                                class="form-control" aria-describedby="sizing-addon1" placeholder="Path">
                                                                     </div>
                                                                 </td>
@@ -532,13 +539,22 @@
                     </div>
                     <div class="form-group" ng-if="urlToSendRequests != null">
                         <label>URL for requests</label>
-                        <pre>{{urlToSendRequests}}</pre>
+                        <p>{{urlToSendRequests}}</p>
                     </div>
                     <div class="form-group" ng-class="getErrorStyle(groupForm.name)">
                         <label for="name">Name</label>
-                        <input type="text" name="name" id="name" ng-model="groupToSave.name" class="form-control" required>
+                        <input name="name" id="name" ng-model="groupToSave.name" class="form-control" required>
                         <p ng-show="hasError(groupForm.name)" class="help-block">Group name is required</p>
                     </div>
+					<div class="form-group" ng-class="getErrorStyle(groupForm.code)">
+						<label for="code">Group code</label>
+						<input name="code" id="code" ng-model="groupToSave.code"
+							   ng-pattern="/^[a-zA-Z0-9]+$/" ng-disabled="groupToSave.id != null"  class="form-control" required>
+						<div ng-show="hasError(groupForm.code)">
+							<p ng-show="groupForm.code.$error.required" class="help-block">Code is required</p>
+							<p ng-show="groupForm.code.$error.pattern" class="help-block">Only letters and numbers allowed</p>
+						</div>
+					</div>
                     <div class="form-group">
                         <label for="recording">Record incoming requests</label>
                         <div class="form-group">

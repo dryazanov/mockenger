@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface RequestEntityRepository extends CrudRepository<AbstractRequest, String> {
 
-    AbstractRequest findByIdAndUniqueCode(String requestId, String uniqueCode);
+	AbstractRequest findByCode(String code);
 
     List<AbstractRequest> findByGroupId(String groupId);
 

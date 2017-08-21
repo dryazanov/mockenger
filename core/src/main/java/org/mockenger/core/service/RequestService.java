@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -51,9 +52,9 @@ public class RequestService {
     }
 
 
-    public AbstractRequest findByIdAndUniqueCode(final String id, final String code) {
-        return requestEntityRepository.findByIdAndUniqueCode(id, code);
-    }
+	public AbstractRequest findByCode(final String code) {
+		return requestEntityRepository.findByCode(code);
+	}
 
 
     public Iterable<AbstractRequest> findAll() {
@@ -74,7 +75,7 @@ public class RequestService {
 		try {
 			return requestEntityRepository.save(entity);
 		} catch (DuplicateKeyException ex) {
-			throw new NotUniqueValueException(String.format("Request with the code '%s' already exists", entity.getUniqueCode()));
+			throw new NotUniqueValueException(String.format("Request with the code '%s' already exists", entity.getCode()));
 		}
     }
 
@@ -98,9 +99,9 @@ public class RequestService {
 
 
     public AbstractRequest findMockedEntities(final GenericRequest mockRequest) {
-        List<AbstractRequest> entities = requestEntityRepository.findByGroupIdAndMethod(mockRequest.getGroupId(), mockRequest.getMethod());
+        final List<AbstractRequest> entities = requestEntityRepository.findByGroupIdAndMethod(mockRequest.getGroupId(), mockRequest.getMethod());
 
-        if (entities != null && entities.size() > 0) {
+        if (!CollectionUtils.isEmpty(entities)) {
             return doFilter(mockRequest, entities);
         }
 
@@ -110,7 +111,7 @@ public class RequestService {
 
     public GenericRequest fillUpEntity(final GenericRequest mockRequest, final String groupId, final HttpServletRequest request) {
         final Path path = new Path(HttpUtils.getUrlPath(request));
-        final Headers headers = new Headers(HttpUtils.getHeaders(request, false));
+        final Headers headers = new Headers(HttpUtils.getHeaders(request, true));
         final Parameters parameters = new Parameters(HttpUtils.getParameterMap(request));
 
         mockRequest.setGroupId(groupId);

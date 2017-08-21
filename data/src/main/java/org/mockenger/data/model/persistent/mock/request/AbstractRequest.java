@@ -23,8 +23,8 @@ public class AbstractRequest extends GenericRequest {
     @NotBlank(message = "name: may not be null or empty")
     private String name;
 
-    @Indexed(name = "unique_code_1", unique = true, collection = "request")
-    private String uniqueCode;
+    @Indexed(name = "code_1", unique = true, collection = "request")
+    private String code;
 
     private Date creationDate;
 

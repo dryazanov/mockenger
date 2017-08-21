@@ -10,5 +10,7 @@ import java.util.List;
  */
 public interface GroupEntityRepository extends CrudRepository<Group, String> {
 
+    Group findByCode(String groupCode);
+
     List<Group> findByProjectId(String projectId);
 }

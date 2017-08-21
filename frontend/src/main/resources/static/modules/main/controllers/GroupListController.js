@@ -21,12 +21,13 @@ angular.module('mockengerClientMainApp')
             $scope.loadGroupRequests = function(group) {
                 requestListService.setCurrent(null);
                 groupListService.setCurrent(group);
-                groupListService.setUrlForNewRequests(API_BASE_PATH + "/" + projectListService.getCurrent().type + "/" + group.id + "/");
+                groupListService.setUrlForNewRequests(API_BASE_PATH + "/" + projectListService.getCurrent().type + "/" + group.code + "/");
 
                 var paramsToSend = {
-                    projectId: projectListService.getCurrent().id,
-                    groupId: groupListService.getCurrent().id
+                    projectCode: projectListService.getCurrent().code,
+                    groupCode: groupListService.getCurrent().code
                 };
+
                 requestListService.ajax.query(paramsToSend, function(response, getResponseHeaders) {
                     requestListService.setData(response);
                 }, function (errorResponse) {
@@ -47,7 +48,7 @@ angular.module('mockengerClientMainApp')
                     text: "Do you really want to delete group '" + group.name + "' with all its mocks?"
                 }).then(function() {
                     if (groupListService.getData() != null && groupListService.getData()[index] != null) {
-                        groupService.ajax.delete({projectId: projectListService.getCurrent(), groupId: group.id}, function(response, getResponseHeaders) {
+                        groupService.ajax.delete({projectCode: projectListService.getCurrent().code, groupCode: group.code}, function(response, getResponseHeaders) {
                             if (group == groupListService.getCurrent()) {
                                 groupListService.setCurrent(null);
                                 requestListService.setData(null);

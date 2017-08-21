@@ -7,7 +7,6 @@ import org.mockenger.core.service.http.PostService;
 import org.mockenger.core.service.http.PutService;
 import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
-import org.mockenger.core.web.controller.base.AbstractController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.Callable;
 
+import static org.mockenger.core.web.controller.base.AbstractController.MOCK_HTTP_TYPE_PATH;
 import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
 import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
 
@@ -32,7 +32,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
  * @author Dmitry Ryazanov
  */
 @RestController
-@RequestMapping(path = AbstractController.MOCK_HTTP_TYPE_PATH + "/{groupId}/**")
+@RequestMapping(path = MOCK_HTTP_TYPE_PATH + "/{groupCode}/**")
 public class HttpController extends ParentController {
 
     @Autowired
@@ -55,29 +55,29 @@ public class HttpController extends ParentController {
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @param request
      * @return
      */
     @GetMapping
-    public Callable<ResponseEntity> processGetRequest(@PathVariable final String groupId, final HttpServletRequest request) {
-        return () -> doGetRequest(groupId, request);
+    public Callable<ResponseEntity> processGetRequest(@PathVariable final String groupCode, final HttpServletRequest request) {
+        return () -> doGetRequest(groupCode, request);
     }
 
 
 	/**
 	 *
-	 * @param groupId
+	 * @param groupCode
 	 * @param requestBody
 	 * @param request
 	 * @return
 	 */
 	@PostMapping
-	public Callable<ResponseEntity> processPostRequest(@PathVariable final String groupId,
+	public Callable<ResponseEntity> processPostRequest(@PathVariable final String groupCode,
 													   @RequestBody final String requestBody,
 													   final HttpServletRequest request) {
 		return () -> {
-			final Group group = findGroupById(groupId);
+			final Group group = findGroupByCode(groupCode);
 			final GenericRequest mockRequest = postService.createGenericRequest(group.getId(), requestBody, request);
 
 			return findMockedEntities(cleanUpRequestBody(mockRequest), group);
@@ -87,17 +87,17 @@ public class HttpController extends ParentController {
 
 	/**
 	 *
-	 * @param groupId
+	 * @param groupCode
 	 * @param requestBody
 	 * @param request
 	 * @return
 	 */
 	@PutMapping
-	public Callable<ResponseEntity> processPutRequest(@PathVariable final String groupId,
+	public Callable<ResponseEntity> processPutRequest(@PathVariable final String groupCode,
 													  @RequestBody final String requestBody,
 													  final HttpServletRequest request) {
 		return () -> {
-			final Group group = findGroupById(groupId);
+			final Group group = findGroupByCode(groupCode);
 			final GenericRequest mockRequest = putService.createMockRequest(group.getId(), requestBody, request);
 
 			return findMockedEntities(cleanUpRequestBody(mockRequest), group);
@@ -107,26 +107,26 @@ public class HttpController extends ParentController {
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @param request
      * @return
      */
     @DeleteMapping
-    public Callable<ResponseEntity> processDeleteRequest(@PathVariable final String groupId, final HttpServletRequest request) {
-        return () -> doDeleteRequest(groupId, request);
+    public Callable<ResponseEntity> processDeleteRequest(@PathVariable final String groupCode, final HttpServletRequest request) {
+        return () -> doDeleteRequest(groupCode, request);
     }
 
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @param request
      * @return
      */
     @RequestMapping(method = HEAD)
-    public Callable<ResponseEntity> processHeadRequest(@PathVariable final String groupId, final HttpServletRequest request) {
+    public Callable<ResponseEntity> processHeadRequest(@PathVariable final String groupCode, final HttpServletRequest request) {
     	return () -> {
-			final Group group = findGroupById(groupId);
+			final Group group = findGroupByCode(groupCode);
 			final GenericRequest mockRequest = headService.createMockRequest(group.getId(), request);
 
 			return findMockedEntities(mockRequest, group);
@@ -136,14 +136,14 @@ public class HttpController extends ParentController {
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @param request
      * @return
      */
     @RequestMapping(method = OPTIONS)
-    public Callable<ResponseEntity> processOptionsRequest(@PathVariable final String groupId, final HttpServletRequest request) {
+    public Callable<ResponseEntity> processOptionsRequest(@PathVariable final String groupCode, final HttpServletRequest request) {
     	return () -> {
-			final Group group = findGroupById(groupId);
+			final Group group = findGroupByCode(groupCode);
 			final GenericRequest mockRequest = optionsService.createMockRequest(group.getId(), request);
 
 			return findMockedEntities(mockRequest, group);
@@ -153,17 +153,17 @@ public class HttpController extends ParentController {
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @param requestBody
      * @param request
      * @return
      */
     @PatchMapping
-    public Callable<ResponseEntity> processPatchRequest(@PathVariable final String groupId,
+    public Callable<ResponseEntity> processPatchRequest(@PathVariable final String groupCode,
 														@RequestBody final String requestBody,
 														final HttpServletRequest request) {
     	return () -> {
-			final Group group = findGroupById(groupId);
+			final Group group = findGroupByCode(groupCode);
 			final GenericRequest mockRequest = patchService.createMockRequest(group.getId(), requestBody, request);
 
 			return findMockedEntities(cleanUpRequestBody(mockRequest), group);

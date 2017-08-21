@@ -22,7 +22,7 @@ angular.module('mockengerClientMainApp').controller('ProjectPageController', ['$
         $scope.getTransformerTypes();
         $scope.getHeaders();
 
-        groupListService.ajax.query({projectId: currentProject.id}, function(response, getResponseHeaders) {
+        groupListService.ajax.query({projectCode: currentProject.code}, function(response, getResponseHeaders) {
             groupListService.setData(response);
         }, function (errorResponse) {
             $scope.showRedMessage(errorResponse);

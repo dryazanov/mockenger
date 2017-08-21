@@ -17,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
-import static org.mockenger.core.util.CommonUtils.isStartEndWith;
+import java.util.Objects;
+
+import static org.mockenger.core.util.CommonUtils.startAndEndsWith;
 import static java.util.Optional.ofNullable;
 import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.notFound;
@@ -35,13 +37,13 @@ public abstract class AbstractController {
     public static final String MOCK_HTTP_TYPE_PATH = API_PATH + "/HTTP";
 
     public static final String PROJECTS_ENDPOINT = API_PATH + "/projects";
-    protected static final String PROJECT_ID_ENDPOINT = PROJECTS_ENDPOINT + "/{projectId}";
+    protected static final String PROJECT_CODE_ENDPOINT = PROJECTS_ENDPOINT + "/{projectCode}";
 
-    protected static final String GROUPS_ENDPOINT = PROJECT_ID_ENDPOINT + "/groups";
-    protected static final String GROUP_ID_ENDPOINT = GROUPS_ENDPOINT + "/{groupId}";
+    protected static final String GROUPS_ENDPOINT = PROJECT_CODE_ENDPOINT + "/groups";
+    protected static final String GROUP_CODE_ENDPOINT = GROUPS_ENDPOINT + "/{groupCode}";
 
-    protected static final String REQUESTS_ENDPOINT = GROUP_ID_ENDPOINT + "/requests";
-    protected static final String REQUEST_ID_ENDPOINT = REQUESTS_ENDPOINT + "/{requestId}";
+    protected static final String REQUESTS_ENDPOINT = GROUP_CODE_ENDPOINT + "/requests";
+    protected static final String REQUEST_CODE_ENDPOINT = REQUESTS_ENDPOINT + "/{requestCode}";
 
     @Autowired
     private ProjectService projectService;
@@ -83,38 +85,37 @@ public abstract class AbstractController {
     }
 
 
-    /**
-     *
-     * @param groupId
-     * @return
-     */
-    protected Group findGroupById(final String groupId) {
-        return ofNullable(getGroupService().findById(groupId))
-                .orElseThrow(() -> new ObjectNotFoundException("Group", groupId));
-    }
+	/**
+	 *
+	 * @param projectCode
+	 * @return
+	 */
+	protected Project findProjectByCode(final String projectCode) {
+		return ofNullable(getProjectService().findByCode(projectCode))
+				.orElseThrow(() -> new ObjectNotFoundException("Project", projectCode));
+	}
 
 
-    /**
-     *
-     * @param requestId
-     * @return
-     */
-    protected AbstractRequest findRequestById(final String requestId) {
-        return ofNullable(getRequestService().findById(requestId))
-                .orElseThrow(() -> new ObjectNotFoundException("MockRequest", requestId));
-    }
+	/**
+	 *
+	 * @param groupCode
+	 * @return
+	 */
+	protected Group findGroupByCode(final String groupCode) {
+		return ofNullable(getGroupService().findByCode(groupCode))
+				.orElseThrow(() -> new ObjectNotFoundException("Group", groupCode));
+	}
 
 
-    /**
-     *
-     * @param requestId
-     * @return
-     */
-    protected AbstractRequest findRequestByIdAndUniqueCode(final String requestId, final String uniqueCode) {
-        return ofNullable(getRequestService().findByIdAndUniqueCode(requestId, uniqueCode))
-                .orElseThrow(() -> new IllegalArgumentException("Cannot find MockRequest with ID '" +
-                        requestId + "' and unique code '" + uniqueCode + "'"));
-    }
+	/**
+	 *
+	 * @param requestCode
+	 * @return
+	 */
+	protected AbstractRequest findRequestByCode(final String requestCode) {
+		return ofNullable(getRequestService().findByCode(requestCode))
+				.orElseThrow(() -> new ObjectNotFoundException("MockRequest", requestCode));
+	}
 
 
     /**
@@ -122,7 +123,7 @@ public abstract class AbstractController {
      * @param mockRequest
      */
     protected GenericRequest cleanUpRequestBody(final GenericRequest mockRequest) {
-        if (mockRequest.getBody() != null) {
+        if (Objects.nonNull(mockRequest.getBody())) {
             final String body = mockRequest.getBody().getValue();
 
 			if (!isEmpty(body)) {
@@ -135,9 +136,9 @@ public abstract class AbstractController {
 
     protected String removeWhitespaces(final String body) {
     	try {
-			if (isStartEndWith(body.trim(), "{", "}")) {
+			if (startAndEndsWith(body.trim(), "{", "}")) {
 				return JsonHelper.removeWhitespaces(body);
-			} else if (isStartEndWith(body.trim(), "<", ">")) {
+			} else if (startAndEndsWith(body.trim(), "<", ">")) {
 				return XmlHelper.removeWhitespaces(body);
 			}
 		} catch (Exception e) {

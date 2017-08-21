@@ -31,6 +31,11 @@ public class ProjectService {
     }
 
 
+	public Project findByCode(final String code) {
+		return projectEntityRepository.findByCode(code);
+	}
+
+
     @Eventable
     public Project save(final Project entity) {
         try {

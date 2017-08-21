@@ -116,6 +116,7 @@ public class CommonUtils {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -139,9 +140,46 @@ public class CommonUtils {
      * @param set2
      * @return
      */
-    public static boolean containsAll(final Set<Pair> set1, final Set<Pair> set2) {
-        return set1.containsAll(set2);
+    public static boolean containsAllIgnoreCase(final Set<Pair> set1, final Set<Pair> set2) {
+		for (final Pair pair : set2) {
+			if (!containsIgnoreCase(set1, pair)) {
+				return false;
+			}
+		}
+
+		return true;
     }
+
+
+	/**
+	 * Checks if set contains pair, ignoring cases
+	 *
+	 * @param set
+	 * @param pair1
+	 * @return
+	 */
+	public static boolean containsIgnoreCase(final Set<Pair> set, final Pair pair1) {
+		for (final Pair pair2 : set) {
+			if (pair1.getKey().equalsIgnoreCase(pair2.getKey())
+					&& pair1.getValue().equalsIgnoreCase(pair2.getValue())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
+	/**
+	 * Checks if set1 contains all the entities from set2
+	 *
+	 * @param set1
+	 * @param set2
+	 * @return
+	 */
+	public static boolean containsAll(final Set<Pair> set1, final Set<Pair> set2) {
+		return set1.containsAll(set2);
+	}
 
 
     /**
@@ -155,6 +193,7 @@ public class CommonUtils {
         if (map1 == null || map2 == null) {
             return false;
         }
+
         return Maps.difference(map1, map2).areEqual();
     }
 
@@ -169,6 +208,7 @@ public class CommonUtils {
         if (set1 == null || set2 == null) {
             return false;
         }
+
         return Sets.difference(set1, set2).isEmpty();
     }
 
@@ -176,7 +216,7 @@ public class CommonUtils {
 		return set.stream().map(p -> new Pair(p.getKey().toLowerCase(), p.getValue())).collect(toSet());
 	}
 
-	public static boolean isStartEndWith(final String text, final String start, final String end) {
-    	return isEmpty(text) ? false : text.startsWith(start) && text.endsWith(end);
+	public static boolean startAndEndsWith(final String text, final String start, final String end) {
+    	return !isEmpty(text) && (text.startsWith(start) && text.endsWith(end));
 	}
 }

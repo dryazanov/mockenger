@@ -129,6 +129,6 @@ public class ExceptionHandlingAdvice {
 
 
 	private ErrorMessage getInternalServerErrorMessage() {
-		return new ErrorMessage(String.format("Internal server error: unable to process request"));
+		return new ErrorMessage("Internal server error: unable to process request");
 	}
 }

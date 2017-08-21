@@ -1,13 +1,10 @@
 package org.mockenger.core.web.controller.endpoint;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockenger.core.web.controller.base.AbstractController;
 import org.mockenger.data.model.dict.ProjectType;
 import org.mockenger.data.model.persistent.mock.project.Project;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -15,6 +12,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.springframework.http.MediaType.parseMediaType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -29,9 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ProjectControllerTest extends AbstractControllerTest {
 
     private static final String ENDPOINT_PROJECT = AbstractController.API_PATH + "/projects/";
-
     private static final String PROJECT_NAME_UPDATED = "ABC project";
-
     private static final String PROJECT_WITH_WRONG_TYPE = "{\"name\":\"ABC project\",\"type\":\"WRONG\"}";
 
 
@@ -46,7 +42,7 @@ public class ProjectControllerTest extends AbstractControllerTest {
     @Test
     public void testGetProject() throws Exception {
         final Project project = createProject();
-        final ResultActions resultActions = getProjectRest(project.getId());
+        final ResultActions resultActions = getProjectRest(project.getCode());
 
         resultActions.andExpect(status().isOk())
             .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
@@ -69,12 +65,12 @@ public class ProjectControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetProjectNotFound() throws Exception {
-        final ResultActions resultActions = getProjectRest(PROJECT_ID);
+        final ResultActions resultActions = getProjectRest(PROJECT_CODE);
 
         resultActions.andExpect(status().isNotFound())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]").value("Project with ID '" + PROJECT_ID + "' not found"));
+                .andExpect(jsonPath("$.errors[0]").value("Project with ID '" + PROJECT_CODE + "' not found"));
     }
 
     @Test
@@ -110,7 +106,7 @@ public class ProjectControllerTest extends AbstractControllerTest {
     public void testAddProjectWithWrongType() throws Exception {
         final ResultActions resultActions =  this.mockMvc.perform(
                 post(ENDPOINT_PROJECT)
-                        .contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8))
+                        .contentType(parseMediaType(CONTENT_TYPE_JSON_UTF8))
                         .content(PROJECT_WITH_WRONG_TYPE));
 
         resultActions.andExpect(status().isBadRequest())
@@ -125,19 +121,22 @@ public class ProjectControllerTest extends AbstractControllerTest {
 
         // Expect response status 200
         final ResultActions resultActions1 = createProjectRest(project1);
+
         resultActions1.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.id").value(not(project1.getId())));
 
         // Expect response status 500
         final ResultActions resultActions2 = createProjectRest(project1);
+
         resultActions2.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors[0]").value(String.format("Project with the code '%s' already exist", project1.getCode())));
 
         // Expect response status 200
-        final Project project2 = getProjectBuilder().code(PROJECT_CODE_TEST + "1").build();
+        final Project project2 = getProjectBuilder().code(PROJECT_CODE + "1").build();
         final ResultActions resultActions3 = createProjectRest(project2);
+
         resultActions3.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.id").value(not(project2.getId())));
@@ -194,7 +193,7 @@ public class ProjectControllerTest extends AbstractControllerTest {
     @Test
     public void testDeleteProject() throws Exception {
         final Project project = createProject();
-        final ResultActions resultActions = deleteProjectRest(project.getId());
+        final ResultActions resultActions = deleteProjectRest(project.getCode());
 
         resultActions.andExpect(status().isNoContent())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
@@ -220,25 +219,39 @@ public class ProjectControllerTest extends AbstractControllerTest {
 
 
     private ResultActions getProjectAllRest() throws Exception {
-        return this.mockMvc.perform(get(ENDPOINT_PROJECT).accept(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)));
+        return this.mockMvc.perform(
+        		get(ENDPOINT_PROJECT)
+						.accept(parseMediaType(CONTENT_TYPE_JSON_UTF8)));
     }
 
-    private ResultActions getProjectRest(String projectId) throws Exception {
-        return this.mockMvc.perform(get(ENDPOINT_PROJECT + projectId).accept(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)));
+    private ResultActions getProjectRest(final String projectCode) throws Exception {
+        return this.mockMvc.perform(
+        		get(ENDPOINT_PROJECT + projectCode)
+						.accept(parseMediaType(CONTENT_TYPE_JSON_UTF8)));
     }
 
-    private ResultActions createProjectRest(Project project) throws Exception {
-        String projectJson = new ObjectMapper(new JsonFactory()).writeValueAsString(project);
-        return this.mockMvc.perform(post(ENDPOINT_PROJECT).contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)).content(projectJson));
+    private ResultActions createProjectRest(final Project project) throws Exception {
+		final String projectJson = objectMapper.writeValueAsString(project);
+
+        return this.mockMvc.perform(
+        		post(ENDPOINT_PROJECT)
+						.contentType(parseMediaType(CONTENT_TYPE_JSON_UTF8))
+						.content(projectJson));
     }
 
-    private ResultActions updateProjectRest(Project project) throws Exception {
-        String projectJson = new ObjectMapper(new JsonFactory()).writeValueAsString(project);
-        return this.mockMvc.perform(put(ENDPOINT_PROJECT + project.getId()).contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)).content(projectJson));
+    private ResultActions updateProjectRest(final Project project) throws Exception {
+        final String projectJson = objectMapper.writeValueAsString(project);
+
+        return this.mockMvc.perform(
+        		put(ENDPOINT_PROJECT + project.getCode())
+						.contentType(parseMediaType(CONTENT_TYPE_JSON_UTF8))
+						.content(projectJson));
     }
 
-    private ResultActions deleteProjectRest(String projectId) throws Exception {
-        return this.mockMvc.perform(delete(ENDPOINT_PROJECT + projectId).contentType(MediaType.parseMediaType(CONTENT_TYPE_JSON_UTF8)));
+    private ResultActions deleteProjectRest(final String projectCode) throws Exception {
+        return this.mockMvc.perform(
+        		delete(ENDPOINT_PROJECT + projectCode)
+						.contentType(parseMediaType(CONTENT_TYPE_JSON_UTF8)));
     }
 
 

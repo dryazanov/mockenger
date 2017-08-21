@@ -26,7 +26,7 @@ angular.module('mockengerClientMainApp').factory('groupListService', ['$resource
             GroupListService.current = currentToSet;
         },
 
-        ajax: $resource(apiEndpointsService.getGroupRestUrl(), {groupId: '@groupId'}, {}),
+        ajax: $resource(apiEndpointsService.getGroupRestUrl(), {groupCode: '@groupCode'}, {}),
 
         addGroupToList: function(group) {
             if (GroupListService.data == null) {

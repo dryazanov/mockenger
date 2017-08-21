@@ -1,18 +1,25 @@
 'use strict';
 
 angular.module('mockengerClientMainApp')
-    .controller('GroupController',['$scope', 'projectListService', 'groupService', 'groupListService', 'API_BASE_PATH',
-        function ($scope, projectListService, groupService, groupListService, API_BASE_PATH) {
+    .controller('GroupController',['$scope', '$filter', 'projectListService', 'groupService', 'groupListService', 'API_BASE_PATH',
+        function ($scope, $filter, projectListService, groupService, groupListService, API_BASE_PATH) {
             var groupModal = $('#groupModal');
             $scope.groupToSave = {};
             $scope.urlToSendRequests = null;
+
+            // Change value to uppercase in the field 'groupToSave.code'
+			$scope.$watch('groupToSave.code', function(value) {
+				if (value != null) {
+					$scope.groupToSave.code = $filter('uppercase')(value);
+				}
+			});
 
             $scope.$on('openGroupModal', function(event, group) {
                 if (group.id == null) {
                     $scope.urlToSendRequests = null;
                     $scope.groupToSave = group;
                 } else {
-                    $scope.urlToSendRequests = API_BASE_PATH + "/" + projectListService.getCurrent().type + "/" + group.id + "/"
+                    $scope.urlToSendRequests = API_BASE_PATH + "/" + projectListService.getCurrent().type + "/" + group.code + "/"
                     $scope.groupToSave = {};
                     angular.copy(group, $scope.groupToSave);
                 }
@@ -21,9 +28,16 @@ angular.module('mockengerClientMainApp')
             });
 
             $scope.saveGroup = function(group) {
+            	var requestParams = {
+					projectCode: projectListService.getCurrent().code,
+				}
+
                 if (group.id != null) {
-                    groupService.ajax.update({groupId: group.id}, group, function(response, getResponseHeaders) {
+					requestParams.groupCode = group.code;
+
+                    groupService.ajax.update(requestParams, group, function(response, getResponseHeaders) {
                         groupModal.modal('hide');
+
                         for (var i = 0, l = groupListService.getData().length; i < l; i++) {
                             if (groupListService.getData()[i].id == response.id) {
                                 groupListService.getData()[i] = response;

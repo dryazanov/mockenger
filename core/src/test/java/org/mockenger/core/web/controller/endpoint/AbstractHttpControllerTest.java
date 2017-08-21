@@ -2,6 +2,10 @@ package org.mockenger.core.web.controller.endpoint;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.mockenger.core.util.CommonUtils;
 import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.model.persistent.mock.project.Project;
@@ -18,16 +22,13 @@ import org.mockenger.data.model.persistent.mock.response.MockResponse;
 import org.mockenger.data.model.persistent.transformer.KeyValueTransformer;
 import org.mockenger.data.model.persistent.transformer.RegexpTransformer;
 import org.mockenger.data.model.persistent.transformer.Transformer;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Date;
 import java.util.Set;
 
 import static org.mockenger.core.util.CommonUtils.generateCheckSum;
+import static org.mockenger.core.util.CommonUtils.generateUniqueId;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -54,24 +55,20 @@ public abstract class AbstractHttpControllerTest extends AbstractControllerTest 
 	protected static final String REST_JSON_RESPONSE_BODY = "{\"result\":\"OK\"}";
 	protected static final String REST_BAD_JSON_REQUEST = "{\"json\":\"is\",\"bad\"}";
 
-	protected static final String REST_XML_REQUEST_BODY = new StringBuilder()
-			.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
-			.append("<note>")
-			.append("<id>").append(ID1).append("</id>")
-			.append("<dynamicValue>").append(VALUE1).append("</dynamicValue>")
-			.append("<to>Tove</to>")
-			.append("<from>Jani</from>")
-			.append("<heading>Reminder</heading>")
-			.append("<body>Don't forget me this weekend!</body>")
-			.append("</note>")
-			.toString();
+	protected static final String REST_XML_REQUEST_BODY = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+			"<note>" +
+			"<id>" + ID1 + "</id>" +
+			"<dynamicValue>" + VALUE1 + "</dynamicValue>" +
+			"<to>Tove</to>" +
+			"<from>Jani</from>" +
+			"<heading>Reminder</heading>" +
+			"<body>Don't forget me this weekend!</body>" +
+			"</note>";
 
-	protected static final String REST_XML_RESPONSE_BODY = new StringBuilder()
-			.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
-			.append("<note>")
-			.append("<result>OK</result>")
-			.append("</note>")
-			.toString();
+	protected static final String REST_XML_RESPONSE_BODY = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+			"<note>" +
+			"<result>OK</result>" +
+			"</note>";
 
 	protected Project project;
 	protected Group group;
@@ -85,11 +82,11 @@ public abstract class AbstractHttpControllerTest extends AbstractControllerTest 
 		super.setUp();
 
 		project = createProject(true);
-		group = createGroup(false);
+		group = createGroup(true, false);
 		groupWithRecording = createGroup(project.getId(), true);
 
-		endpoint = String.format(getEndpointTemplate(), group.getId(), REQUEST_PATH);
-		endpointWithRecording = String.format(getEndpointTemplate(), groupWithRecording.getId(), REQUEST_PATH);
+		endpoint = String.format(getEndpointTemplate(), group.getCode(), REQUEST_PATH);
+		endpointWithRecording = String.format(getEndpointTemplate(), groupWithRecording.getCode(), REQUEST_PATH);
 	}
 
 
@@ -99,7 +96,6 @@ public abstract class AbstractHttpControllerTest extends AbstractControllerTest 
 		deleteAllGroups();
 		deleteAllRequests();
 	}
-
 
 
 	@Test
@@ -193,10 +189,12 @@ public abstract class AbstractHttpControllerTest extends AbstractControllerTest 
 	protected void createMockRequest(final AbstractRequest request, final String groupId, final String contentType,
 								   final String requestBody, final String responseBody) {
 
+		final String id = generateUniqueId();
 		final Set<Pair> headersSet = ImmutableSet.of(new Pair("content-type", contentType));
 
+		request.setId(id);
 		request.setGroupId(groupId);
-		request.setId(CommonUtils.generateUniqueId());
+		request.setCode(PROJECT_CODE + "-" + GROUP_CODE +  "-" + id);
 		request.setName(REQUEST_NAME_TEST);
 		request.setCreationDate(new Date());
 		request.setPath(new Path(REQUEST_PATH));
@@ -236,11 +234,11 @@ public abstract class AbstractHttpControllerTest extends AbstractControllerTest 
 		return putRequest;
 	}
 
-	protected GetRequest createJsonMockRequestForGet(String groupId) {
+	protected GetRequest createJsonMockRequestForGet(final String groupId) {
 		final GetRequest getRequest = new GetRequest();
 
 		createMockRequest(getRequest, groupId, CONTENT_TYPE_JSON_UTF8.toLowerCase(), null, REST_JSON_RESPONSE_BODY);
-		getRequest.setCheckSum(CommonUtils.generateCheckSum(getRequest));
+		getRequest.setCheckSum(generateCheckSum(getRequest));
 
 		return getRequest;
 	}
@@ -251,7 +249,7 @@ public abstract class AbstractHttpControllerTest extends AbstractControllerTest 
 		createMockRequest(deleteRequest, groupId, null, null, null);
 		deleteRequest.getMockResponse().setHttpStatus(204);
 		deleteRequest.getMockResponse().setHeaders(null);
-		deleteRequest.setCheckSum(CommonUtils.generateCheckSum(deleteRequest));
+		deleteRequest.setCheckSum(generateCheckSum(deleteRequest));
 
 		return deleteRequest;
 	}

@@ -78,7 +78,7 @@ var properties = {
 
 gulp.task('minifyAndUpdateIndexRef', function () {
   var args = getArgument('standalone');
-  var backendUrl = (args[0] !== undefined && args[1] === 'true') ? properties.backend.url : '';
+  var backendUrl = (args[0] !== undefined && args[0] === 'true') ? properties.backend.url : '';
 
   return gulp.src(properties.project.source + 'index.html')
   	.pipe(htmlReplace({

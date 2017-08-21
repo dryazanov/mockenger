@@ -30,35 +30,35 @@ public class RequestController extends AbstractController {
     /**
      * Gets specific mock-request by ID
      *
-     * @param projectId
-     * @param groupId
-     * @param requestId
+     * @param projectCode
+     * @param groupCode
+     * @param requestCode
      * @return
      */
-    @GetMapping(REQUEST_ID_ENDPOINT)
-    public ResponseEntity getRequest(@PathVariable final String projectId,
-                                     @PathVariable final String groupId,
-                                     @PathVariable final String requestId) {
+    @GetMapping(REQUEST_CODE_ENDPOINT)
+    public ResponseEntity getRequest(@PathVariable final String projectCode,
+                                     @PathVariable final String groupCode,
+                                     @PathVariable final String requestCode) {
 
-        findProjectById(projectId);
-        findGroupById(groupId);
+        findProjectByCode(projectCode);
+        findGroupByCode(groupCode);
 
-        return okResponseWithDefaultHeaders(findRequestById(requestId));
+        return okResponseWithDefaultHeaders(findRequestByCode(requestCode));
     }
 
 
     /**
      * Creates mock-request
      *
-     * @param projectId
-     * @param groupId
+     * @param projectCode
+     * @param groupCode
      * @param request
      * @param result
      * @return HttpStatus.OK with created object in the response body
      */
     @PostMapping(REQUESTS_ENDPOINT)
-    public ResponseEntity addRequest(@PathVariable final String projectId,
-                                     @PathVariable final String groupId,
+    public ResponseEntity addRequest(@PathVariable final String projectCode,
+                                     @PathVariable final String groupCode,
                                      @Valid @RequestBody final AbstractRequest request,
                                      final BindingResult result) {
 
@@ -66,9 +66,9 @@ public class RequestController extends AbstractController {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
 
-        // TODO: Maybe we can create validation with the chain: check request -> check group -> check project
-        final Project project = findProjectById(projectId);
-        findGroupById(groupId);
+        // TODO: Maybe it make sense to create validation with the chain: check request -> check group -> check project
+        final Project project = findProjectByCode(projectCode);
+        final Group group = findGroupByCode(groupCode);
 
         // Set id to null to create new mock
         request.setId(null);
@@ -77,7 +77,10 @@ public class RequestController extends AbstractController {
         request.setCreationDate(new Date());
 
         // Generate new unique code
-        request.setUniqueCode(String.format("%s-%d", project.getCode(), getProjectService().getNextSequenceValue(projectId)));
+		final long nextSequenceValue = getProjectService().getNextSequenceValue(project.getId());
+		final String code = String.format("%s-%s-%d", project.getCode(), group.getCode(), nextSequenceValue);
+
+		request.setCode(code);
 
         // Change headers to lowercase
 		request.setHeaders(processHeaders(request.getHeaders()));
@@ -98,16 +101,16 @@ public class RequestController extends AbstractController {
 	/**
      * Updates existing mock-request
      *
-     * @param projectId
-     * @param groupId
-     * @param requestId
+     * @param projectCode
+     * @param groupCode
+     * @param requestCode
      * @param request
      * @return
      */
-    @PutMapping(REQUEST_ID_ENDPOINT)
-    public ResponseEntity saveRequest(@PathVariable final String projectId,
-                                      @PathVariable final String groupId,
-                                      @PathVariable final String requestId,
+    @PutMapping(REQUEST_CODE_ENDPOINT)
+    public ResponseEntity saveRequest(@PathVariable final String projectCode,
+                                      @PathVariable final String groupCode,
+                                      @PathVariable final String requestCode,
                                       @Valid @RequestBody final AbstractRequest request,
                                       final BindingResult result) {
 
@@ -115,14 +118,18 @@ public class RequestController extends AbstractController {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
 
-        findProjectById(projectId);
-        findGroupById(groupId);
+        findProjectByCode(projectCode);
+        findGroupByCode(groupCode);
 
-        // If mock found that means that id and unique code were not changed
-        final AbstractRequest fountRequest = findRequestByIdAndUniqueCode(requestId, request.getUniqueCode());
+        // If mock is found that means that id and unique code were not changed
+        final AbstractRequest existingRequest = findRequestByCode(requestCode);
+
+		if (!existingRequest.getId().equals(request.getId())) {
+			throw new IllegalArgumentException("MockRequest IDs in the URL and in the payload are not equals");
+		}
 
         // Creation date can't be changed by user
-        request.setCreationDate(fountRequest.getCreationDate());
+        request.setCreationDate(existingRequest.getCreationDate());
         request.setLastUpdateDate(new Date());
 
 		// Change headers to lowercase
@@ -144,19 +151,19 @@ public class RequestController extends AbstractController {
     /**
      * Deletes existing mock-request
      *
-     * @param projectId
-     * @param groupId
-     * @param requestId
+     * @param projectCode
+     * @param groupCode
+     * @param requestCode
      * @return
      */
-    @DeleteMapping(REQUEST_ID_ENDPOINT)
-    public ResponseEntity deleteRequest(@PathVariable final String projectId,
-                                        @PathVariable final String groupId,
-                                        @PathVariable final String requestId) {
+    @DeleteMapping(REQUEST_CODE_ENDPOINT)
+    public ResponseEntity deleteRequest(@PathVariable final String projectCode,
+                                        @PathVariable final String groupCode,
+                                        @PathVariable final String requestCode) {
 
-        findProjectById(projectId);
-        findGroupById(groupId);
-        getRequestService().remove(findRequestById(requestId));
+        findProjectByCode(projectCode);
+        findGroupByCode(groupCode);
+        getRequestService().remove(findRequestByCode(requestCode));
 
         return noContentWithDefaultHeaders();
     }
@@ -165,15 +172,15 @@ public class RequestController extends AbstractController {
     /**
      * Gets all the mock-request by provided group ID
      *
-     * @param projectId
-     * @param groupId
+     * @param projectCode
+     * @param groupCode
      * @return
      */
     @GetMapping(REQUESTS_ENDPOINT)
-    public ResponseEntity getRequestList(@PathVariable final String projectId, @PathVariable final String groupId) {
-        findProjectById(projectId);
+    public ResponseEntity getRequestList(@PathVariable final String projectCode, @PathVariable final String groupCode) {
+        findProjectByCode(projectCode);
 
-        final Group group = findGroupById(groupId);
+        final Group group = findGroupByCode(groupCode);
         final Iterable<AbstractRequest> requestList = getRequestService().findByGroupId(group.getId());
 
         return okResponseWithDefaultHeaders(requestList);

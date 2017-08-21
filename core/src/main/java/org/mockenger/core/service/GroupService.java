@@ -1,13 +1,15 @@
 package org.mockenger.core.service;
 
 import com.google.common.collect.ImmutableList;
+import org.mockenger.core.web.exception.NotUniqueValueException;
 import org.mockenger.data.model.persistent.log.Eventable;
 import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.repository.GroupEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import static java.util.Optional.ofNullable;
 
 /**
  * Created by Dmitry Ryazanov on 3/20/2015.
@@ -27,19 +29,30 @@ public class GroupService {
     }
 
 
+	public Group findByCode(final String code) {
+		return groupEntityRepository.findByCode(code);
+	}
+
+
     public Iterable<Group> findAll() {
-        return Optional.ofNullable(groupEntityRepository.findAll()).orElse(ImmutableList.of());
+        return ofNullable(groupEntityRepository.findAll())
+				.orElse(ImmutableList.of());
     }
 
 
     public Iterable<Group> findByProjectId(final String projectId) {
-        return Optional.ofNullable(groupEntityRepository.findByProjectId(projectId)).orElse(ImmutableList.of());
+        return ofNullable(groupEntityRepository.findByProjectId(projectId))
+				.orElse(ImmutableList.of());
     }
 
 
     @Eventable
     public Group save(final Group entity) {
-        return groupEntityRepository.save(entity);
+		try {
+        	return groupEntityRepository.save(entity);
+		} catch (DuplicateKeyException ex) {
+			throw new NotUniqueValueException(String.format("Group with the code '%s' already exists", entity.getCode()));
+		}
     }
 
 
@@ -54,6 +67,7 @@ public class GroupService {
         return Group.builder()
                 .id(group.getId())
                 .projectId(group.getProjectId())
+				.code(group.getCode())
                 .name(group.getName())
                 .recording(group.isRecording())
                 .forwarding(group.isForwarding())

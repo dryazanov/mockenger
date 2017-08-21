@@ -24,7 +24,7 @@ angular.module('mockengerClientMainApp').factory('projectListService', ['$resour
 
         ajax: $resource(
             apiEndpointsService.getProjectRestUrl(), {
-                projectId: '@projectId'
+                projectCode: '@projectCode'
             }, {
                 update: {
                     method:'PUT'

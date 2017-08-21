@@ -1,14 +1,13 @@
 package org.mockenger.core.web.controller.endpoint;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockenger.core.util.CommonUtils;
 import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.mockenger.data.model.persistent.mock.request.GetRequest;
 import org.mockenger.data.model.persistent.mock.request.PostRequest;
 import org.mockenger.data.model.persistent.mock.request.PutRequest;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockenger.core.web.controller.base.AbstractController;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -18,6 +17,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
+import static java.lang.String.format;
+import static org.mockenger.core.util.CommonUtils.getCheckSum;
+import static org.mockenger.core.web.controller.base.AbstractController.API_PATH;
 import static org.springframework.http.MediaType.parseMediaType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -33,13 +35,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class RestfullControllerTest extends AbstractHttpControllerTest {
 
-    private static final String ENDPOINT_TEMPLATE = AbstractController.API_PATH + "/REST/%s/%s";
+    private static final String ENDPOINT_TEMPLATE = API_PATH + "/REST/%s/%s";
 
 	private static final String READ_JSON_ERROR_MESSAGE = "Failed to create instance of the mock-object: " +
 			"Cannot read json from the provided source";
 
 	private static final String INVALID_CONTENT_TYPE_ERROR_MESSAGE = "Invalid header 'Content-type': " +
 			"application/json or application/xml are only allowed in REST requests";
+
+	private static final String MOCK_REQUEST_ENDPOINT = REQUEST_PATH_API + "/%s";
 
 
 	@Before
@@ -81,7 +85,7 @@ public class RestfullControllerTest extends AbstractHttpControllerTest {
     @Test
     public void testPostJsonRequestNotFoundButCreated() throws Exception {
         final String content = REST_JSON_REQUEST_BODY.replace(ID1, ID2);
-        final String postEndpoint = String.format(getEndpointTemplate(), groupWithRecording.getId(), REQUEST_PATH);
+        final String postEndpoint = format(getEndpointTemplate(), groupWithRecording.getCode(), REQUEST_PATH);
 
 		final MvcResult mvcResult1 = getMvcResult(withMediaType(post(postEndpoint).content(content)));
 		mockMvc.perform(asyncDispatch(mvcResult1)).andExpect(status().isCreated());
@@ -95,7 +99,7 @@ public class RestfullControllerTest extends AbstractHttpControllerTest {
     public void testPostXmlRequest() throws Exception {
         // Prepare request to add via API
         final AbstractRequest postRequest = createXmlMockRequestForPost(groupWithRecording.getId());
-        final String postEndpoint = String.format(REQUEST_PATH_API, groupWithRecording.getProjectId(), groupWithRecording.getId());
+        final String postEndpoint = format(REQUEST_PATH_API, project.getCode(), groupWithRecording.getCode());
 
         // Send real request to API
         sendPostRequest(postEndpoint, parseMediaType(CONTENT_TYPE_JSON_UTF8), postRequest);
@@ -139,7 +143,7 @@ public class RestfullControllerTest extends AbstractHttpControllerTest {
     public void testPutXmlRequest() throws Exception {
         // Prepare request to send via API
         final AbstractRequest putRequest = createXmlMockRequestForPut(groupWithRecording.getId());
-        final String postEndpoint = String.format(REQUEST_PATH_API, groupWithRecording.getProjectId(), groupWithRecording.getId());
+        final String postEndpoint = format(REQUEST_PATH_API, project.getCode(), groupWithRecording.getCode());
 
         // Send real request to API
         sendPostRequest(postEndpoint, parseMediaType(CONTENT_TYPE_JSON_UTF8), putRequest);
@@ -230,8 +234,7 @@ public class RestfullControllerTest extends AbstractHttpControllerTest {
 		final int numOfThreadToRun = numOfMocks / ThreadLocalRandom.current().nextInt(1, 5);
 
 		final AbstractRequest request = createRequest(createJsonMockRequestForGet(group.getId()));
-		final String mockRequestEndpoint = String.format(AbstractController.API_PATH + "/projects/%s/groups/%s/requests/%s",
-				project.getId(), group.getId(), request.getId());
+		final String mockRequestEndpoint = format(MOCK_REQUEST_ENDPOINT, project.getCode(), group.getCode(), request.getCode());
 		final ExecutorService taskExecutor = Executors.newFixedThreadPool(numOfThreadToRun);
 
 		IntStream.range(0, numOfMocks).forEach(i -> taskExecutor.execute(() -> {
@@ -267,29 +270,28 @@ public class RestfullControllerTest extends AbstractHttpControllerTest {
 	}
 
 
-    private PostRequest createXmlMockRequestForPost(String groupId) {
+    private PostRequest createXmlMockRequestForPost(final String groupId) {
         final PostRequest postRequest = new PostRequest();
 
         createMockRequest(postRequest, groupId, CONTENT_TYPE_XML_UTF8.toLowerCase(), REST_XML_REQUEST_BODY, REST_XML_RESPONSE_BODY);
-        postRequest.setCheckSum(CommonUtils.getCheckSum(postRequest));
+        postRequest.setCheckSum(getCheckSum(postRequest));
         postRequest.getMockResponse().setHttpStatus(201);
-        postRequest.getMockResponse().setHeaders(null);
 
         return postRequest;
     }
 
 
-    private PutRequest createXmlMockRequestForPut(String groupId) {
+    private PutRequest createXmlMockRequestForPut(final String groupId) {
         final PutRequest putRequest = new PutRequest();
 
         createMockRequest(putRequest, groupId, CONTENT_TYPE_XML_UTF8.toLowerCase(), REST_XML_REQUEST_BODY, null);
-        putRequest.setCheckSum(CommonUtils.getCheckSum(putRequest));
+        putRequest.setCheckSum(getCheckSum(putRequest));
 
         return putRequest;
     }
 
 
-    private GetRequest createXmlMockRequestForGet(String groupId) {
+    private GetRequest createXmlMockRequestForGet(final String groupId) {
         final GetRequest getRequest = new GetRequest();
 
         createMockRequest(getRequest, groupId, CONTENT_TYPE_XML_UTF8.toLowerCase(), null, REST_XML_RESPONSE_BODY);

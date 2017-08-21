@@ -49,12 +49,12 @@ public class ParentController extends AbstractController {
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @param request
      * @return
      */
-    protected ResponseEntity doGetRequest(final String groupId, final HttpServletRequest request) {
-        final Group group = findGroupById(groupId);
+    protected ResponseEntity doGetRequest(final String groupCode, final HttpServletRequest request) {
+        final Group group = findGroupByCode(groupCode);
         final AbstractRequest mockRequest = getService.createMockRequest(group.getId(), request);
 
         return findMockedEntities(mockRequest, group);
@@ -62,12 +62,12 @@ public class ParentController extends AbstractController {
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @param request
      * @return
      */
-    protected ResponseEntity doDeleteRequest(final String groupId, final HttpServletRequest request) {
-        final Group group = findGroupById(groupId);
+    protected ResponseEntity doDeleteRequest(final String groupCode, final HttpServletRequest request) {
+        final Group group = findGroupByCode(groupCode);
         final AbstractRequest mockRequest = deleteService.createMockRequest(group.getId(), request);
 
         return findMockedEntities(mockRequest, group);
@@ -127,7 +127,7 @@ public class ParentController extends AbstractController {
 	private ResponseEntity processRecording(final Group group, final GenericRequest mockRequest) {
 		final AbstractRequest abstractRequest = getRequestService().toAbstractRequest(mockRequest);
 
-		abstractRequest.setUniqueCode(getUniqueCode(group.getProjectId()));
+		abstractRequest.setCode(getUniqueCode(group.getProjectId()));
         cleanUpRequestBody(abstractRequest);
 
         if (group.isForwarding()) {
