@@ -90,12 +90,13 @@ public class InitialDataLoader implements CommandLineRunner {
 	private void initAccounts() {
 		String username;
 
-		while ((username = scanner.nextLine()).isEmpty()) {
+		do {
 			prnt.print("Enter username for your new account: ");
 		}
+		while ((username = scanner.nextLine()).isEmpty());
 
 		prnt.print("And password, please: ");
-		final String password = scanner.next();
+		final String password = scanner.nextLine();
 
 
 		LOG.info("Remove all the accounts");
@@ -149,7 +150,7 @@ public class InitialDataLoader implements CommandLineRunner {
 			prnt.print(outputText);
 		}
 
-		if (CONFIRM_STEP.equalsIgnoreCase(scanner.next())) {
+		if (CONFIRM_STEP.equalsIgnoreCase(scanner.nextLine())) {
 			doer.doNext();
 		} else {
 			skipper.doNext();
