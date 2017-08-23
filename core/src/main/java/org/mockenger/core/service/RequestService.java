@@ -3,12 +3,14 @@ package org.mockenger.core.service;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import org.mockenger.commons.utils.JsonHelper;
+import org.mockenger.commons.utils.XmlHelper;
 import org.mockenger.core.util.CommonUtils;
 import org.mockenger.core.util.HttpUtils;
 import org.mockenger.core.web.exception.NotUniqueValueException;
 import org.mockenger.data.model.persistent.log.Eventable;
 import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
+import org.mockenger.data.model.persistent.mock.request.part.Body;
 import org.mockenger.data.model.persistent.mock.request.part.Headers;
 import org.mockenger.data.model.persistent.mock.request.part.Parameters;
 import org.mockenger.data.model.persistent.mock.request.part.Path;
@@ -27,6 +29,10 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
+import static org.mockenger.core.util.CommonUtils.startAndEndsWith;
+import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * @author Dmitry Ryazanov
@@ -70,6 +76,7 @@ public class RequestService {
 		requestEntityCustomRepository.updateRequestCounter(entity);
 	}
 
+
     @Eventable
     public AbstractRequest save(final AbstractRequest entity) {
 		try {
@@ -83,6 +90,7 @@ public class RequestService {
     public void remove(final AbstractRequest entity) {
         requestEntityRepository.delete(entity);
     }
+
 
     public String prepareRequestXmlBody(final String requestBody) {
         final String body = new RegexpTransformer(">\\s+<", "><").transform(requestBody.trim());
@@ -162,4 +170,55 @@ public class RequestService {
         return null;
     }
 
+
+	/**
+	 *
+	 * @param mockRequest
+	 */
+	public String cleanUpRequestBody(final GenericRequest mockRequest) {
+		return ofNullable(mockRequest)
+				.map(GenericRequest::getBody)
+				.map(Body::getValue)
+				.filter(s -> !isEmpty(s))
+				.map(s -> removeWhitespaces(s))
+				.orElse("");
+	}
+
+	public String removeWhitespaces(final String body) {
+		try {
+			if (startAndEndsWith(body.trim(), "{", "}")) {
+				return JsonHelper.removeWhitespaces(body);
+			} else if (startAndEndsWith(body.trim(), "<", ">")) {
+				return XmlHelper.removeWhitespaces(body);
+			}
+		} catch (Exception e) {
+			LOG.warn("Cannot remove whitespaces from the string", e);
+		}
+
+		return body;
+	}
+
+
+    public GenericRequest getCleanCopy(final GenericRequest genericRequest) {
+		final String cleanRequestBody = cleanUpRequestBody(genericRequest);
+		final Body build = Body.builder().value(cleanRequestBody).build();
+
+		return cloneRequest(genericRequest).body(build).build();
+	}
+
+
+	/**
+	 *
+	 * @param genericRequest
+	 * @return
+	 */
+	public static GenericRequest.GenericRequestBuilder cloneRequest(final GenericRequest genericRequest) {
+		return GenericRequest.builder()
+				.groupId(genericRequest.getGroupId())
+				.method(genericRequest.getMethod())
+				.path(genericRequest.getPath())
+				.parameters(genericRequest.getParameters())
+				.headers(genericRequest.getHeaders())
+				.body(genericRequest.getBody());
+	}
 }

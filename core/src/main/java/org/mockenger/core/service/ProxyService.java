@@ -107,11 +107,14 @@ public class ProxyService {
             throw new IllegalArgumentException();
         }
 
-		final String uri = new StringBuilder(baseHost)
+		final String uri = new StringBuilder()
+				.append(baseHost)
 				.append(baseHost.endsWith("/") ? "" : "/")
 				.append(mockRequest.getPath().getValue())
 				.toString();
+
         final RequestBuilder requestBuilder = RequestBuilder.create(mockRequest.getMethod().name());
+
 		requestBuilder.setUri(uri);
 
 		// Set request parameters
@@ -123,17 +126,20 @@ public class ProxyService {
 				.orElse("");
 
         // Set request headers (excl. headers from black-list)
-		mockRequest.getHeaders().getValues()
-				.parallelStream()
-				.filter(p -> !headersToIgnore.contains(p.getKey()))
+		mockRequest.getHeaders()
+				.getValues()
+				.stream()
+				.filter(p -> !ignoreHeader(p))
 				.filter(p -> !isContentLengthHeader(p) || isEmpty(body))
-				.forEach(pair -> requestBuilder.addHeader(pair.getKey(), pair.getValue()));
+				.forEach(pair -> {
+					requestBuilder.addHeader(pair.getKey(), pair.getValue());
+				});
 
 		// Set request body, if present
 		try {
 			if (!isEmpty(body)) {
 				final StringEntity stringEntity = new StringEntity(body);
-				final String contentType = ofNullable(requestBuilder.getFirstHeader(CONTENT_TYPE))
+				final String contentType = ofNullable(requestBuilder.getFirstHeader(CONTENT_TYPE.toLowerCase()))
 						.map(Header::getValue)
 						.orElse("");
 
@@ -149,6 +155,10 @@ public class ProxyService {
 
         return requestBuilder.build();
     }
+
+	private boolean ignoreHeader(final Pair p) {
+		return headersToIgnore.contains(p.getKey().toLowerCase());
+	}
 
 	private RequestConfig createRequestConfig() {
 		return RequestConfig.custom()

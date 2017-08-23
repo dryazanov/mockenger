@@ -1,7 +1,5 @@
 package org.mockenger.core.web.controller.base;
 
-import org.mockenger.commons.utils.JsonHelper;
-import org.mockenger.commons.utils.XmlHelper;
 import org.mockenger.core.service.GroupService;
 import org.mockenger.core.service.HttpHeadersService;
 import org.mockenger.core.service.ProjectService;
@@ -10,21 +8,16 @@ import org.mockenger.core.web.exception.ObjectNotFoundException;
 import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.model.persistent.mock.project.Project;
 import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
-import org.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Objects;
-
-import static org.mockenger.core.util.CommonUtils.startAndEndsWith;
 import static java.util.Optional.ofNullable;
 import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.notFound;
 import static org.springframework.http.ResponseEntity.ok;
-import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * @author Dmitry Ryazanov
@@ -118,36 +111,6 @@ public abstract class AbstractController {
 	}
 
 
-    /**
-     *
-     * @param mockRequest
-     */
-    protected GenericRequest cleanUpRequestBody(final GenericRequest mockRequest) {
-        if (Objects.nonNull(mockRequest.getBody())) {
-            final String body = mockRequest.getBody().getValue();
-
-			if (!isEmpty(body)) {
-				mockRequest.getBody().setValue(removeWhitespaces(body));
-			}
-        }
-
-        return mockRequest;
-    }
-
-    protected String removeWhitespaces(final String body) {
-    	try {
-			if (startAndEndsWith(body.trim(), "{", "}")) {
-				return JsonHelper.removeWhitespaces(body);
-			} else if (startAndEndsWith(body.trim(), "<", ">")) {
-				return XmlHelper.removeWhitespaces(body);
-			}
-		} catch (Exception e) {
-    		LOG.warn("Cannot remove whitespaces from the string", e);
-		}
-
-		return body;
-	}
-
 	protected <T> ResponseEntity<T> okResponseWithDefaultHeaders(final T body) {
 		return ok().headers(getResponseHeaders()).body(body);
 	}
@@ -160,5 +123,19 @@ public abstract class AbstractController {
 
 	protected ResponseEntity notFoundWithDefaultHeaders() {
 		return notFound().headers(getResponseHeaders()).build();
+	}
+
+
+	protected String getUniqueCode(final Group group) {
+		final String projectId = group.getProjectId();
+		final Project project = ofNullable(findProjectById(projectId)).orElseThrow(() -> new ObjectNotFoundException("Project", projectId));
+
+		return getUniqueCode(project, group);
+	}
+
+	protected String getUniqueCode(final Project project, final Group group) {
+		final long nextSequenceValue = getProjectService().getNextSequenceValue(project.getId());
+
+		return String.format("%s-%s-%d", project.getCode(), group.getCode(), nextSequenceValue);
 	}
 }

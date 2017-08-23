@@ -4,6 +4,7 @@ import org.mockenger.core.web.controller.base.AbstractController;
 import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.model.persistent.mock.project.Project;
 import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
+import org.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.mockenger.data.model.persistent.mock.request.part.Headers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -77,19 +78,16 @@ public class RequestController extends AbstractController {
         request.setCreationDate(new Date());
 
         // Generate new unique code
-		final long nextSequenceValue = getProjectService().getNextSequenceValue(project.getId());
-		final String code = String.format("%s-%s-%d", project.getCode(), group.getCode(), nextSequenceValue);
-
-		request.setCode(code);
+		request.setCode(getUniqueCode(project, group));
 
         // Change headers to lowercase
 		request.setHeaders(processHeaders(request.getHeaders()));
 
         // Remove whitespaces
-        cleanUpRequestBody(request);
+		final GenericRequest requestClone = getRequestService().getCleanCopy(request);
 
-        // Generate checksum
-        request.setCheckSum(getCheckSum(request));
+		// Re-generate checksum because values could be updated
+		request.setCheckSum(getCheckSum(requestClone));
 
         // Save
         getRequestService().save(request);
@@ -136,10 +134,10 @@ public class RequestController extends AbstractController {
 		request.setHeaders(processHeaders(request.getHeaders()));
 
         // Remove whitespaces
-        cleanUpRequestBody(request);
+		final GenericRequest requestClone = getRequestService().getCleanCopy(request);
 
         // Re-generate checksum because values could be updated
-        request.setCheckSum(getCheckSum(request));
+        request.setCheckSum(getCheckSum(requestClone));
 
         // Save
         getRequestService().save(request);

@@ -79,8 +79,11 @@ public class HttpController extends ParentController {
 		return () -> {
 			final Group group = findGroupByCode(groupCode);
 			final GenericRequest mockRequest = postService.createGenericRequest(group.getId(), requestBody, request);
+			final String cleanRequestBody = getRequestService().cleanUpRequestBody(mockRequest);
 
-			return findMockedEntities(cleanUpRequestBody(mockRequest), group);
+			mockRequest.getBody().setValue(cleanRequestBody);
+
+			return findMockedEntities(mockRequest, group);
 		};
 	}
 
@@ -99,8 +102,11 @@ public class HttpController extends ParentController {
 		return () -> {
 			final Group group = findGroupByCode(groupCode);
 			final GenericRequest mockRequest = putService.createMockRequest(group.getId(), requestBody, request);
+			final String cleanRequestBody = getRequestService().cleanUpRequestBody(mockRequest);
 
-			return findMockedEntities(cleanUpRequestBody(mockRequest), group);
+			mockRequest.getBody().setValue(cleanRequestBody);
+
+			return findMockedEntities(mockRequest, group);
 		};
 	}
 
@@ -165,8 +171,11 @@ public class HttpController extends ParentController {
     	return () -> {
 			final Group group = findGroupByCode(groupCode);
 			final GenericRequest mockRequest = patchService.createMockRequest(group.getId(), requestBody, request);
+			final String cleanRequestBody = getRequestService().cleanUpRequestBody(mockRequest);
 
-			return findMockedEntities(cleanUpRequestBody(mockRequest), group);
+			mockRequest.getBody().setValue(cleanRequestBody);
+
+			return findMockedEntities(mockRequest, group);
 		};
     }
 }
