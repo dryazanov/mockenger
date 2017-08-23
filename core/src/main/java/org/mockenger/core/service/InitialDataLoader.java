@@ -53,20 +53,25 @@ public class InitialDataLoader implements CommandLineRunner {
 	@Override
 	public void run(final String... arguments) throws Exception {
 		prnt.println("!!!ATTENTION!!!");
-		prnt.println("You have activated initial data loader. Some of the next steps might break you data. So, think twice and create backup");
+		prnt.println("You've activated initial data loader. Some of the next steps might corrupt your data. So, think twice and create backup.");
 		prnt.println();
-		prnt.println("Please type '" + CONFIRM_STEP + "' every time you want to process, or type any other character to skip the step");
+		prnt.println("Please type '" + CONFIRM_STEP + "' every time you want to proceed, or type any other character to skip the step.");
+		prnt.println();
 		prnt.print("Do you really want to start initialization process? ");
 
 		try {
 			nextStep(null, () -> {
-				nextStep("Replace all the existing accounts with the default one? ", () -> initAccounts());
-				nextStep("Replace all the existing projects, groups and requests with initial data? ", () -> initProjectAndGroup());
-				nextStep("Do you want to remove all the events? ", () -> removeEvents());
+				nextStep("Replace all the existing accounts with the default one? ", this::initAccounts);
+				nextStep("Replace all the existing projects, groups and requests with initial data? ", this::initProjectAndGroup);
+				nextStep("Do you want to remove all the events? ", this::removeEvents);
 				nextStep("Initialization has been finished. Do you want to start application? ",
 						() -> LOG.info("Initialization finished, starting application..."),
 						() -> System.exit(0));
-			}, () -> prnt.println("Initialization process skipped"));
+			}, () -> {
+				prnt.println("Initialization process has been skipped.");
+				prnt.println();
+				prnt.println("Starting application");
+			});
 
 		} catch (Exception e){
 			LOG.warn("Something went wrong and it is not possible to read from the command line");
@@ -124,6 +129,7 @@ public class InitialDataLoader implements CommandLineRunner {
 		groupService.save(Group.builder()
 				.name("Default group")
 				.projectId(projectId)
+				.code("GRP")
 				.recording(true)
 				.forwarding(false)
 				.build());
