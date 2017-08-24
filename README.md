@@ -1,5 +1,5 @@
 # Mockenger
-[![Build Status](https://semaphoreci.com/api/v1/dryazanov/mockenger/branches/develop/badge.svg)](https://semaphoreci.com/dryazanov/mockenger)
+[![Build Status](https://semaphoreci.com/api/v1/dryazanov/mockenger-2/branches/develop/badge.svg)](https://semaphoreci.com/dryazanov/mockenger-2)
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/4cfcf88539ba49be8ed773807b312405)](https://www.codacy.com/app/dryazanov/mockenger)
 
 
