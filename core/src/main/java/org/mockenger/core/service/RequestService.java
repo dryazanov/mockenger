@@ -32,6 +32,8 @@ import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 import static org.mockenger.core.util.CommonUtils.startAndEndsWith;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 import static org.springframework.util.StringUtils.isEmpty;
 
 /**
@@ -120,7 +122,10 @@ public class RequestService {
     public GenericRequest fillUpEntity(final GenericRequest mockRequest, final String groupId, final HttpServletRequest request) {
         final Path path = new Path(HttpUtils.getUrlPath(request));
         final Headers headers = new Headers(HttpUtils.getHeaders(request, true));
-        final Parameters parameters = new Parameters(HttpUtils.getParameterMap(request));
+		final boolean isURLEncodedForm = ofNullable(request.getHeader(CONTENT_TYPE))
+				.map(h -> h.equalsIgnoreCase(APPLICATION_FORM_URLENCODED_VALUE))
+				.orElse(false);
+		final Parameters parameters = new Parameters((isURLEncodedForm ? null : HttpUtils.getParameterMap(request)));
 
         mockRequest.setGroupId(groupId);
         mockRequest.setPath(path);

@@ -14,6 +14,7 @@ angular.module('mockengerClientMainApp')
             var REGEXP = 'REGEXP';
             var KEY_VALUE = 'KEY_VALUE';
             var XPATH = 'XPATH';
+            var APPLICATION_FORM_URLENCODED_VALUE = 'application/x-www-form-urlencoded';
 
             $scope.bodyTransformerTypes = new Array(REGEXP, XPATH);
 
@@ -154,6 +155,7 @@ angular.module('mockengerClientMainApp')
                     $scope.showRedMessage({data: {errors: new Array('Field <b>Name</b> is required')}});
                     return false;
                 }
+
                 return true;
             }
 
@@ -162,6 +164,7 @@ angular.module('mockengerClientMainApp')
                     $scope.showRedMessage({data: {errors: new Array('Field <b>HTTP status code</b> is required')}});
                     return false;
                 }
+
                 return true;
             }
 
@@ -170,6 +173,7 @@ angular.module('mockengerClientMainApp')
                     $scope.showRedMessage({data: {errors: new Array('<b>Method</b> may not be null or empty')}});
                     return false;
                 }
+
                 return true;
             }
 
@@ -177,6 +181,7 @@ angular.module('mockengerClientMainApp')
                 if (!isNameOk(request.name) || !isResponseDataOk(request.mockResponse) || !isHttpMethodOk(request.method)) {
                     return;
                 }
+
                 if (!isMethodWithBody(request.method)) {
                     request.body = null;
                 }
@@ -289,47 +294,49 @@ angular.module('mockengerClientMainApp')
 			// cURL
 			// ================
             $scope.getCURL = function() {
-                return "curl -i -X " + requestListService.getCurrent().method + " \\\n " +
+				return "curl -i -X " + requestListService.getCurrent().method + " \\\n " +
 					(
-						groupListService.getUrlForNewRequests()
-						+ requestListService.getCurrent().path.value
-						+ $scope.getParametersAsString()
+						'\'' +
+						groupListService.getUrlForNewRequests() +
+						requestListService.getCurrent().path.value +
+						$scope.getParametersAsString() +
+						'\''
 					)
-                    + $scope.getHeadersAsString()
-                    + (!$scope.isRequestTabDisabled() ? " \\\n -d '" + $scope.getBody() + "'" : '')
-            }
+					+ $scope.getHeadersAsString()
+					+ (!$scope.isRequestTabDisabled() ? " \\\n -d '" + $scope.getBody() + "'" : '')
+			}
 
-            $scope.getBody = function() {
-            	var body = requestListService.getCurrent().body.value;
+			$scope.getBody = function() {
+				var body = requestListService.getCurrent().body.value;
 
-            	try {
-            		return angular.toJson(angular.fromJson(body), true);
-            	} catch (err) {
-            		return body;
-            	}
-            }
+				try {
+					return angular.toJson(angular.fromJson(body), true);
+				} catch (err) {
+					return body;
+				}
+			}
 
-            $scope.getHeadersAsString = function() {
-                var result = "";
-                var headers = $scope.getRequestHeaders();
+			$scope.getHeadersAsString = function() {
+				var result = "";
+				var headers = $scope.getRequestHeaders();
 
-                for (var i = 0, l = headers.length; i < l; i++) {
-                    result += " \\\n -H '" + headers[i].key + ": " + headers[i].value + "'";
-                }
+				for (var i = 0, l = headers.length; i < l; i++) {
+					result += " \\\n -H '" + headers[i].key + ": " + headers[i].value + "'";
+				}
 
-                return result;
-            }
+				return result;
+			}
 
-            $scope.getParametersAsString = function() {
-                var result = "";
-                var parameters = $scope.getParams();
+			$scope.getParametersAsString = function() {
+				var result = "";
+				var parameters = $scope.getParams();
 
-                for (var i = 0, l = parameters.length; i < l; i++) {
-                    result += (result.length == 0 ? "?" : "&") + parameters[i].key + "=" + parameters[i].value;
-                }
+				for (var i = 0, l = parameters.length; i < l; i++) {
+					result += (result.length == 0 ? "?" : "&") + parameters[i].key + "=" + window.encodeURIComponent(parameters[i].value);
+				}
 
-                return result;
-            }
+				return result;
+			}
 
 
             // ================
