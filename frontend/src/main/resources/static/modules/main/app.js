@@ -13,7 +13,7 @@ angular.module('mockengerClientMainApp', [
         'ui.bootstrap',
         'angular-confirm',
         'ngProgress',
-        'ui.codemirror'
+        'ui.codemirror',
     ])
     .config(['$locationProvider', '$routeProvider', '$httpProvider', '$qProvider', 'ngToastProvider', 'SECURITY',
         function ($locationProvider, $routeProvider, $httpProvider, $qProvider, ngToastProvider, SECURITY) {

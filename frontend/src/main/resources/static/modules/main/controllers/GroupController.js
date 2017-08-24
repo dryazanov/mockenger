@@ -58,4 +58,10 @@ angular.module('mockengerClientMainApp')
                     });
                 }
             };
+
+            $scope.generateGroupCode = function() {
+            	if ($scope.groupToSave.name.length > 0) {
+            		$scope.groupToSave.code = $scope.groupToSave.name.replace(/[aeiou\s]/ig, '');
+            	}
+            }
 }]);
