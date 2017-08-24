@@ -24,13 +24,14 @@ import java.util.Map;
 import static org.mockenger.core.util.HttpUtils.getListOfHeaders;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
+import static org.mockenger.core.web.controller.base.AbstractController.API_PATH;
 
 
 /**
  * @author Dmitry Ryazanov
  */
 @RestController
-@RequestMapping(path = AbstractController.API_PATH + "/valueset")
+@RequestMapping(path = API_PATH + "/valueset")
 public class ValueSetController extends AbstractController {
 
     @Autowired
@@ -122,7 +123,7 @@ public class ValueSetController extends AbstractController {
 	@GetMapping("/eventEntityTypes")
 	public ResponseEntity getEventEntityTypes() {
 		final Map<String, String> entityTypes = Arrays.stream(EventEntityType.values())
-				.collect(toMap(e -> e.name(), e -> e.getTypeName()));
+				.collect(toMap(Enum::name, EventEntityType::getTypeName));
 
 		return okResponseWithDefaultHeaders(ImmutableList.of(entityTypes));
 	}

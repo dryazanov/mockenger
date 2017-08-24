@@ -6,4 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 /**
  * @author Dmitry Ryazanov
  */
-public interface ProjectEntityRepository extends CrudRepository<Project, String> {}
+public interface ProjectEntityRepository extends CrudRepository<Project, String> {
+
+	Project findByCode(String projectCode);
+}

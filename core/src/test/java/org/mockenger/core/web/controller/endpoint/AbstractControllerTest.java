@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.runner.RunWith;
 import org.mockenger.core.config.TestContext;
 import org.mockenger.core.config.TestPropertyContext;
 import org.mockenger.core.service.EventService;
@@ -11,7 +14,6 @@ import org.mockenger.core.service.GroupService;
 import org.mockenger.core.service.ProjectService;
 import org.mockenger.core.service.RequestService;
 import org.mockenger.core.service.account.AccountService;
-import org.mockenger.core.util.CommonUtils;
 import org.mockenger.data.model.dict.EventType;
 import org.mockenger.data.model.dict.ProjectType;
 import org.mockenger.data.model.dict.RequestMethod;
@@ -29,10 +31,6 @@ import org.mockenger.data.model.persistent.transformer.KeyValueTransformer;
 import org.mockenger.data.model.persistent.transformer.RegexpTransformer;
 import org.mockenger.data.model.persistent.transformer.Transformer;
 import org.mockenger.data.model.persistent.transformer.XPathTransformer;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.runner.RunWith;
-import org.mockenger.core.web.controller.base.AbstractController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -46,10 +44,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import static org.mockenger.core.util.CommonUtils.generateUniqueId;
+import static org.mockenger.core.util.CommonUtils.getCheckSum;
+import static org.mockenger.core.web.controller.base.AbstractController.API_PATH;
 import static org.springframework.http.MediaType.parseMediaType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
@@ -83,13 +83,18 @@ public class AbstractControllerTest {
     private EventService eventService;
 
 
+	protected final ObjectMapper objectMapper = new ObjectMapper(new JsonFactory());
+
     protected MockMvc mockMvc;
 
     protected static final String PROJECT_ID = "PROJECT_ID";
+    protected static final String PROJECT_CODE = "PRJCT";
     protected static final String GROUP_ID = "GROUP_ID";
+    protected static final String GROUP_CODE = "GRP";
     protected static final String REQUEST_ID = "REQUEST_ID";
+    protected static final String REQUEST_CODE = "RQST";
     protected static final String PROJECT_NAME_TEST = "Unit-test project";
-    protected static final String PROJECT_CODE_TEST = "UTCODE";
+//    protected static final String PROJECT_CODE_TEST = "UTCODE";
     protected static final String GROUP_NAME_TEST = "Unit-test group";
     protected static final String ACCOUNT_FIRST_NAME_TEST = "First name";
     protected static final String ACCOUNT_LAST_NAME_TEST = "Last name";
@@ -97,7 +102,7 @@ public class AbstractControllerTest {
     protected static final String ACCOUNT_PASSWORD_TEST = "pswd";
     protected static final String REQUEST_NAME_TEST = "Unit-test mock-request";
     protected static final String REQUEST_PATH = "/unit/test/mock/request";
-    protected static final String REQUEST_PATH_API = AbstractController.API_PATH + "/projects/%s/groups/%s/requests";
+    protected static final String REQUEST_PATH_API = API_PATH + "/projects/%s/groups/%s/requests";
 
     protected static final String SEMICOLON = ";";
     protected static final String CHARSET_UTF8 = "charset=UTF-8";
@@ -155,8 +160,8 @@ public class AbstractControllerTest {
     }
 
     protected Project.ProjectBuilder getProjectBuilder(final boolean useRandomCode) {
-        final String id = CommonUtils.generateUniqueId();
-        final String code = PROJECT_CODE_TEST + (useRandomCode ? "-" + id  : "");
+        final String id = generateUniqueId();
+        final String code = PROJECT_CODE + (useRandomCode ? id.toUpperCase() : "");
 
         return Project.builder()
                 .id(id)
@@ -178,10 +183,7 @@ public class AbstractControllerTest {
     }
 
     protected void deleteAllGroups() {
-        Iterator<Group> iterator = getAllGroups().iterator();
-        while (iterator.hasNext()) {
-            deleteGroup(iterator.next());
-        }
+        getAllGroups().forEach(this::deleteGroup);
     }
 
     protected void deleteGroup(final Group group) {
@@ -189,28 +191,39 @@ public class AbstractControllerTest {
     }
 
     protected Group createGroup() {
-        return createGroup(true);
+        return createGroup(true, true);
     }
 
-    protected Group createGroup(final boolean recording) {
+	protected Group createGroup(final boolean useRandomCode) {
+		return createGroup(useRandomCode, true);
+	}
+
+    protected Group createGroup(final boolean useRandomCode, final boolean recording) {
         return groupService.save(
-                getGroupBuilder().recording(recording).build()
+        		getGroupBuilder(useRandomCode).recording(recording).build()
         );
     }
 
     protected Group createGroup(final String projectId, final boolean recording) {
         return groupService.save(
-                getGroupBuilder().projectId(projectId).recording(recording).build()
+                getGroupBuilder(true).projectId(projectId).recording(recording).build()
         );
     }
 
     protected Group.GroupBuilder getGroupBuilder() {
-        return Group.builder()
-                .id(CommonUtils.generateUniqueId())
-                .projectId(PROJECT_ID)
-                .name(GROUP_NAME_TEST)
-                .recording(true);
+        return getGroupBuilder(false);
     }
+
+	protected Group.GroupBuilder getGroupBuilder(final boolean useRandomCode) {
+		final String code = GROUP_CODE + (useRandomCode ? generateUniqueId().toUpperCase() : "");
+
+		return Group.builder()
+				.id(generateUniqueId())
+				.projectId(PROJECT_ID)
+				.code(code)
+				.name(GROUP_NAME_TEST)
+				.recording(true);
+	}
 
     // ===============
     // REQUEST HELPERS
@@ -234,32 +247,35 @@ public class AbstractControllerTest {
         this.requestService.remove(request);
     }
 
-    protected AbstractRequest createRequest(String groupId) {
-        AbstractRequest request = getNewRequest(groupId);
-        this.requestService.save(request);
+    protected AbstractRequest createRequest(final String groupId) {
+        final AbstractRequest request = getNewRequest(groupId);
+
+        requestService.save(request);
+
         return request;
     }
 
-    protected AbstractRequest createRequest(AbstractRequest request) {
-        return this.requestService.save(request);
+    protected AbstractRequest createRequest(final AbstractRequest request) {
+        return requestService.save(request);
     }
 
-    protected ResultActions sendPostRequest(String endpoint, MediaType mediaType, AbstractRequest request) throws Exception {
-        String requestJson = new ObjectMapper(new JsonFactory()).writeValueAsString(request);
-        return this.mockMvc.perform(post(endpoint).contentType(mediaType).content(requestJson));
+    protected ResultActions sendPostRequest(final String endpoint, final MediaType mediaType, final AbstractRequest request) throws Exception {
+        final String requestJson = objectMapper.writeValueAsString(request);
+
+        return mockMvc.perform(post(endpoint).contentType(mediaType).content(requestJson));
     }
 
-    protected static AbstractRequest getNewRequest(String groupId) {
-        AbstractRequest request = new AbstractRequest();
-        List<Transformer> mapTransformers = ImmutableList.of(new KeyValueTransformer());
-        List<Transformer> transformers = ImmutableList.of(new RegexpTransformer(), new XPathTransformer());
-        Set<Pair> headersSet = ImmutableSet.of(new Pair("header1", "H1"), new Pair("header2", "H2"));
-        Set<Pair> paramsSet = ImmutableSet.of(new Pair("A", "1"), new Pair("b", "2"));
+    protected static AbstractRequest getNewRequest(final String groupId) {
+        final AbstractRequest request = new AbstractRequest();
+        final List<Transformer> mapTransformers = ImmutableList.of(new KeyValueTransformer());
+        final List<Transformer> transformers = ImmutableList.of(new RegexpTransformer(), new XPathTransformer());
+        final Set<Pair> headersSet = ImmutableSet.of(new Pair("header1", "H1"), new Pair("header2", "H2"));
+        final Set<Pair> paramsSet = ImmutableSet.of(new Pair("A", "1"), new Pair("b", "2"));
+        final String id = generateUniqueId();
 
-        String id = CommonUtils.generateUniqueId();
         request.setId(id);
         request.setGroupId(groupId);
-        request.setUniqueCode(PROJECT_CODE_TEST + id);
+        request.setCode(PROJECT_CODE + "-" + GROUP_CODE +  "-" + id);
         request.setName(REQUEST_NAME_TEST);
         request.setMethod(RequestMethod.POST);
         request.setCreationDate(new Date());
@@ -268,7 +284,7 @@ public class AbstractControllerTest {
         request.setHeaders(new Headers(mapTransformers, headersSet));
         request.setBody(new Body(transformers, MOCK_REQUEST_BODY));
         request.setMockResponse(new MockResponse(200, headersSet, MOCK_RESPONSE_BODY));
-        request.setCheckSum(CommonUtils.getCheckSum(request));
+        request.setCheckSum(getCheckSum(request));
 
         return request;
     }

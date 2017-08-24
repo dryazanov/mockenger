@@ -12,7 +12,8 @@ angular.module('mockengerClientMainApp', [
         'ngToast',
         'ui.bootstrap',
         'angular-confirm',
-        'ngProgress'
+        'ngProgress',
+        'ui.codemirror',
     ])
     .config(['$locationProvider', '$routeProvider', '$httpProvider', '$qProvider', 'ngToastProvider', 'SECURITY',
         function ($locationProvider, $routeProvider, $httpProvider, $qProvider, ngToastProvider, SECURITY) {
@@ -25,14 +26,15 @@ angular.module('mockengerClientMainApp', [
                     templateUrl: '/modules/main/views/indexView.html',
                     controller: 'IndexPageController'
                 })
-                .when('/project/:projectId', {
+                .when('/project/:projectCode', {
                     templateUrl: '/modules/main/views/projectView.html',
                     controller: 'ProjectPageController',
                     resolve: {
                         currentProject: ['$route', 'projectListService', function($route, projectListService) {
-                            var projectId = $route.current.params.projectId;
-                            projectListService.projectId = projectId;
-                            return projectListService.ajax.get({projectId : projectId});
+                            var projectCode = $route.current.params.projectCode;
+                            projectListService.projectCode = projectCode;
+
+                            return projectListService.ajax.get({projectCode : projectCode});
                         }]
                     }
                 })

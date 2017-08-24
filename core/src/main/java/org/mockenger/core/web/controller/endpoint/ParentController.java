@@ -9,7 +9,6 @@ import org.mockenger.core.web.controller.base.AbstractController;
 import org.mockenger.core.web.exception.MockObjectNotCreatedException;
 import org.mockenger.data.model.dto.Message;
 import org.mockenger.data.model.persistent.mock.group.Group;
-import org.mockenger.data.model.persistent.mock.project.Project;
 import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.mockenger.data.model.persistent.mock.response.MockResponse;
@@ -49,12 +48,12 @@ public class ParentController extends AbstractController {
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @param request
      * @return
      */
-    protected ResponseEntity doGetRequest(final String groupId, final HttpServletRequest request) {
-        final Group group = findGroupById(groupId);
+    protected ResponseEntity doGetRequest(final String groupCode, final HttpServletRequest request) {
+        final Group group = findGroupByCode(groupCode);
         final AbstractRequest mockRequest = getService.createMockRequest(group.getId(), request);
 
         return findMockedEntities(mockRequest, group);
@@ -62,12 +61,12 @@ public class ParentController extends AbstractController {
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @param request
      * @return
      */
-    protected ResponseEntity doDeleteRequest(final String groupId, final HttpServletRequest request) {
-        final Group group = findGroupById(groupId);
+    protected ResponseEntity doDeleteRequest(final String groupCode, final HttpServletRequest request) {
+        final Group group = findGroupByCode(groupCode);
         final AbstractRequest mockRequest = deleteService.createMockRequest(group.getId(), request);
 
         return findMockedEntities(mockRequest, group);
@@ -127,8 +126,7 @@ public class ParentController extends AbstractController {
 	private ResponseEntity processRecording(final Group group, final GenericRequest mockRequest) {
 		final AbstractRequest abstractRequest = getRequestService().toAbstractRequest(mockRequest);
 
-		abstractRequest.setUniqueCode(getUniqueCode(group.getProjectId()));
-        cleanUpRequestBody(abstractRequest);
+		abstractRequest.setCode(getUniqueCode(group));
 
         if (group.isForwarding()) {
 			abstractRequest.setMockResponse(proxyService.forwardRequest(abstractRequest, group.getForwardTo()));
@@ -138,14 +136,6 @@ public class ParentController extends AbstractController {
 
         return created(URI.create("")).headers(getResponseHeaders()).body(mockRequest);
     }
-
-
-	private String getUniqueCode(final String projectId) {
-		final Project project = findProjectById(projectId);
-		final long nextSequenceValue = getProjectService().getNextSequenceValue(projectId);
-
-		return project.getCode() + "-" + nextSequenceValue;
-	}
 
 
 	private MockResponse createMockResponse(final AbstractRequest mockResult) {

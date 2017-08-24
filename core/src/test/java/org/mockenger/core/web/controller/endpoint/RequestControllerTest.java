@@ -1,16 +1,14 @@
 package org.mockenger.core.web.controller.endpoint;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.mockenger.data.model.dict.RequestMethod;
-import org.mockenger.data.model.persistent.mock.group.Group;
-import org.mockenger.data.model.persistent.mock.project.Project;
-import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockenger.core.web.controller.base.AbstractController;
+import org.mockenger.data.model.dict.RequestMethod;
+import org.mockenger.data.model.persistent.mock.group.Group;
+import org.mockenger.data.model.persistent.mock.project.Project;
+import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -42,9 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class RequestControllerTest extends AbstractControllerTest {
 
     private static final String ENDPOINT_TEMPLATE = AbstractController.API_PATH + "/projects/%s/groups/%s/requests/%s";
-    private static final String ENDPOINT_REQUEST = String.format(ENDPOINT_TEMPLATE, PROJECT_ID, GROUP_ID, "");
     private static final String REQUEST_NAME_UPDATED = "ABC mock-request";
-	private static final JsonFactory JSON_FACTORY = new JsonFactory();
 
 	private Project project;
     private Group group;
@@ -70,22 +66,23 @@ public class RequestControllerTest extends AbstractControllerTest {
     @Test
     public void testGetRequest() throws Exception {
         // Happy flow
-        testGetRequestOk(project.getId(), group.getId(), request);
+        testGetRequestOk(project.getCode(), group, request);
 
         // Not found, because requestId is null
-        testGetRequestNotOk(project.getId(), group.getId());
+        testGetRequestNotOk(project.getCode(), group.getCode());
 
         // Not found, because requestId is incorrect
-        testGetRequestNotOk(project.getId(), group.getId(), REQUEST_ID);
+        testGetRequestNotOk(project.getCode(), group.getCode(), REQUEST_CODE);
     }
 
-    private void testGetRequestOk(String projectId, String groupId, AbstractRequest request) throws Exception {
-        ResultActions resultActions = getRequestRest(projectId, groupId, request.getId());
+    private void testGetRequestOk(final String projectCode, final Group group, final AbstractRequest request) throws Exception {
+        final ResultActions resultActions = getRequestRest(projectCode, group.getCode(), request.getCode());
+
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.id").value(request.getId()))
                 .andExpect(jsonPath("$.name").value(REQUEST_NAME_TEST))
-                .andExpect(jsonPath("$.groupId").value(groupId))
+                .andExpect(jsonPath("$.groupId").value(group.getId()))
                 .andExpect(jsonPath("$.method").value(RequestMethod.POST.name()))
                 .andExpect(jsonPath("$.creationDate", notNullValue()))
                 .andExpect(jsonPath("$.path.value").value(REQUEST_PATH))
@@ -101,34 +98,36 @@ public class RequestControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.mockResponse.body").value(MOCK_RESPONSE_BODY));
     }
 
-    private void testGetRequestNotOk(String projectId, String groupId) throws Exception {
-        ResultActions resultActions = getRequestRest(projectId, groupId, null);
+    private void testGetRequestNotOk(final String projectCode, final String groupCode) throws Exception {
+        final ResultActions resultActions = getRequestRest(projectCode, groupCode, null);
+
         resultActions.andExpect(status().isNotFound())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
                 .andExpect(jsonPath("$.errors[0]").value("MockRequest with ID 'null' not found"));
     }
 
-    private void testGetRequestNotOk(String projectId, String groupId, String requestId) throws Exception {
-        ResultActions resultActions = getRequestRest(projectId, groupId, requestId);
+    private void testGetRequestNotOk(final String projectCode, final String groupCode, final String requestCode) throws Exception {
+        final ResultActions resultActions = getRequestRest(projectCode, groupCode, requestCode);
+
         resultActions.andExpect(status().isNotFound())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]").value("MockRequest with ID '" + REQUEST_ID + "' not found"));
+                .andExpect(jsonPath("$.errors[0]").value("MockRequest with ID '" + REQUEST_CODE + "' not found"));
     }
 
     @Test
     public void testAddRequest() throws Exception {
-        ResultActions resultActions = null;
+        ResultActions resultActions;
 
         // Expect response status 200
-        resultActions = createRequestRest(project.getId(), group.getId(), request);
+        resultActions = createRequestRest(project.getCode(), group.getCode(), request);
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.id").value(not(request.getId())));
 
         // Expect response status 200
-        resultActions = createRequestRest(project.getId(), group.getId(), request);
+        resultActions = createRequestRest(project.getCode(), group.getCode(), request);
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.id").value(not(request.getId())));
@@ -155,7 +154,7 @@ public class RequestControllerTest extends AbstractControllerTest {
 
 		IntStream.range(0, numOfMocks).forEach(i -> taskExecutor.execute(() -> {
 			try {
-				final ResultActions resultActions = createRequestRest(project.getId(), request.getGroupId(), request);
+				final ResultActions resultActions = createRequestRest(project.getCode(), group.getCode(), request);
 				resultActions.andExpect(status().isOk());
 
 				// For debug
@@ -181,7 +180,7 @@ public class RequestControllerTest extends AbstractControllerTest {
         }
 
         final int size = StreamSupport.stream(getAllRequests().spliterator(), true)
-				.map(r -> r.getUniqueCode())
+				.map(AbstractRequest::getCode)
 				.collect(Collectors.toSet())
 				.size();
 
@@ -194,7 +193,8 @@ public class RequestControllerTest extends AbstractControllerTest {
         request.setName(REQUEST_NAME_UPDATED);
 
         // Expect response status 200
-        ResultActions resultActions = updateRequestRest(project.getId(), group.getId(), request);
+        final ResultActions resultActions = updateRequestRest(project.getCode(), group.getCode(), request);
+
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.id").value(request.getId()));
@@ -204,8 +204,9 @@ public class RequestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testSaveRequestWithInvalidData() throws Exception {
-        AbstractRequest request = createRequest(group.getId());
-        ExtendedHelper.help(project, group, request, new SaveRunner());
+        final AbstractRequest request = createRequest(group.getId());
+
+        Helper.help(project, group, request, new SaveRunner());
 
         // Cleanup
         deleteRequest(request);
@@ -213,8 +214,11 @@ public class RequestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testDeleteRequest() throws Exception {
-        ResultActions resultActions = deleteRequestRest(project.getId(), group.getId(), request.getId());
-        resultActions.andExpect(status().isNoContent()).andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
+        final ResultActions resultActions = deleteRequestRest(project.getCode(), group.getCode(), request.getCode());
+
+        resultActions.andExpect(status().isNoContent())
+				.andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8));
+
         assertNull(getRequest(request.getId()));
     }
 
@@ -223,7 +227,8 @@ public class RequestControllerTest extends AbstractControllerTest {
         // Cleanup first
         deleteAllRequests();
 
-        ResultActions resultActions = getRequestsAllRest(project.getId(), group.getId());
+        final ResultActions resultActions = getRequestsAllRest(project.getCode(), group.getCode());
+
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$", hasSize(0)));
@@ -234,11 +239,16 @@ public class RequestControllerTest extends AbstractControllerTest {
         // Cleanup first
         deleteAllRequests();
 
-        createRequestRest(project.getId(), group.getId(), getNewRequest(group.getId()));
-        createRequestRest(project.getId(), group.getId(), getNewRequest(group.getId()));
-        createRequestRest(project.getId(), group.getId(), getNewRequest(group.getId()));
+        IntStream.range(1, 4).forEach(i -> {
+			try {
+				createRequestRest(project.getCode(), group.getCode(), getNewRequest(group.getId()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
 
-        ResultActions resultActions = getRequestsAllRest(project.getId(), group.getId());
+        final ResultActions resultActions = getRequestsAllRest(project.getCode(), group.getCode());
+
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$", hasSize(3)))
@@ -249,44 +259,44 @@ public class RequestControllerTest extends AbstractControllerTest {
 
 
 
-    private ResultActions getRequestsAllRest(final String projectId, final String groupId) throws Exception {
-		final String endpoint = createEndpoint(projectId, groupId, "");
+    private ResultActions getRequestsAllRest(final String projectCode, final String groupCode) throws Exception {
+		final String endpoint = createEndpoint(projectCode, groupCode, "");
 
         return mockMvc.perform(withMediaType(get(endpoint)));
     }
 
-    private ResultActions getRequestRest(final String projectId, final String groupId, final String requestId) throws Exception {
-        final String endpoint = createEndpoint(projectId, groupId, requestId);
+    private ResultActions getRequestRest(final String projectCode, final String groupCode, final String requestCode) throws Exception {
+        final String endpoint = createEndpoint(projectCode, groupCode, requestCode);
 
         return mockMvc.perform(withMediaType(get(endpoint)));
     }
 
-    private ResultActions createRequestRest(final String projectId, final String groupId, final AbstractRequest request) throws Exception {
+    private ResultActions createRequestRest(final String projectCode, final String groupCode, final AbstractRequest request) throws Exception {
         final String requestJson = createRequestJson(request);
-        final String endpoint = createEndpoint(projectId, groupId, "");
+        final String endpoint = createEndpoint(projectCode, groupCode, "");
 
         return mockMvc.perform(withMediaType(post(endpoint)).content(requestJson));
     }
 
-    private ResultActions updateRequestRest(final String projectId, final String groupId, final AbstractRequest request) throws Exception {
+    private ResultActions updateRequestRest(final String projectCode, final String groupCode, final AbstractRequest request) throws Exception {
         final String requestJson = createRequestJson(request);
-        final String endpoint = createEndpoint(projectId, groupId, request.getId());
+        final String endpoint = createEndpoint(projectCode, groupCode, request.getCode());
 
         return this.mockMvc.perform(withMediaType(put(endpoint)).content(requestJson));
     }
 
-    private ResultActions deleteRequestRest(final String projectId, final String groupId, final String requestId) throws Exception {
-        final String endpoint = createEndpoint(projectId, groupId, requestId);
+    private ResultActions deleteRequestRest(final String projectCode, final String groupCode, final String requestCode) throws Exception {
+        final String endpoint = createEndpoint(projectCode, groupCode, requestCode);
 
         return mockMvc.perform(withMediaType(delete(endpoint)));
     }
 
 	private String createRequestJson(final AbstractRequest request) throws JsonProcessingException {
-		return new ObjectMapper(JSON_FACTORY).writeValueAsString(request);
+		return objectMapper.writeValueAsString(request);
 	}
 
-	private String createEndpoint(final String projectId, final String groupId, final String requestId) {
-		return String.format(ENDPOINT_TEMPLATE, projectId, groupId, requestId);
+	private String createEndpoint(final String projectCode, final String groupCode, final String requestCode) {
+		return String.format(ENDPOINT_TEMPLATE, projectCode, groupCode, requestCode);
 	}
 
 
@@ -306,51 +316,41 @@ public class RequestControllerTest extends AbstractControllerTest {
 
     private final class AddRunner extends AbstractRunner implements Runner {
         @Override
-        public void run(final String projectId, final String groupId, final AbstractRequest request, final String msg) throws Exception {
-			final String postEndpoint = createEndpoint(projectId, groupId, "");
+        public void run(final String projectCode, final String groupCode, final AbstractRequest request, final String msg) throws Exception {
+			final String postEndpoint = createEndpoint(projectCode, groupCode, "");
+
 			run(withMediaType(post(postEndpoint)), createRequestJson(request), msg);
         }
     }
 
     private final class SaveRunner extends AbstractRunner implements Runner {
         @Override
-        public void run(final String projectId, final String groupId, final AbstractRequest request, final String msg) throws Exception {
-			final String putEndpoint = createEndpoint(projectId, groupId, request.getId());
+        public void run(final String projectCode, final String groupCode, final AbstractRequest request, final String msg) throws Exception {
+			final String putEndpoint = createEndpoint(projectCode, groupCode, request.getCode());
+
 			run(withMediaType(put(putEndpoint)), createRequestJson(request), msg);
         }
     }
 
     private final static class Helper {
-        private static void help(Project project, Group group, AbstractRequest request, Runner runner) throws Exception {
+        private static void help(final Project project, final Group group, final AbstractRequest request, final Runner runner) throws Exception {
             // Empty name
             request.setName("");
-            runner.run(project.getId(), group.getId(), request, "name: may not be null or empty");
+            runner.run(project.getCode(), group.getCode(), request, "name: may not be null or empty");
 
             // Name is null
             request.setName(null);
-            runner.run(project.getId(), group.getId(), request, "name: may not be null or empty");
+            runner.run(project.getCode(), group.getCode(), request, "name: may not be null or empty");
 
             // GroupId is null
             final AbstractRequest request1 = getNewRequest(group.getId());
             request1.setGroupId(null);
-            runner.run(project.getId(), group.getId(), request1, "groupId: may not be null");
+            runner.run(project.getCode(), group.getCode(), request1, "groupId: may not be null");
 
             // httpStatus in the response is zero
             final AbstractRequest request2 = getNewRequest(group.getId());
             request2.getMockResponse().setHttpStatus(0);
-            runner.run(project.getId(), group.getId(), request2, "httpStatus: must be number greater than zero");
-        }
-    }
-
-    private final static class ExtendedHelper {
-        private static void help(Project project, Group group, AbstractRequest request, Runner runner) throws Exception {
-            Helper.help(project, group, request, runner);
-
-            // Wrong unique code (for save request only)
-            final String uniqueWrongCode = "WRONG-1";
-            final AbstractRequest request1 = getNewRequest(group.getId());
-            request1.setUniqueCode(uniqueWrongCode);
-            runner.run(project.getId(), group.getId(), request1, String.format("Cannot find MockRequest with ID '%s' and unique code '%s'", request1.getId(), uniqueWrongCode));
+            runner.run(project.getCode(), group.getCode(), request2, "httpStatus: must be number greater than zero");
         }
     }
 }

@@ -27,7 +27,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Import({CoreConfiguration.class, FrontendConstConfig.class, SecurityConfiguration.class, OAuth2ServerConfiguration.class})
 public class MockengerConfig extends WebMvcConfigurerAdapter {
 
-    private TokenStore inMemoryTokenStore = new InMemoryTokenStore();
+    private final TokenStore inMemoryTokenStore = new InMemoryTokenStore();
 
 
 	@Override

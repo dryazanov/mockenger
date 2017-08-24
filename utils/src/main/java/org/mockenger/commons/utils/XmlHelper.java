@@ -32,7 +32,10 @@ import static javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION;
 public class XmlHelper {
 
 	public static String removeWhitespaces(final String requestBody) {
-		final String body = requestBody.trim().replaceAll(">\\s+<", "><");
+		final String body = requestBody.trim()
+				.replaceAll("<![ \\r\\n\\t]*(--([^\\-]|[\\r\\n]|-[^\\-])*--[ \\r\\n\\t]*)>", "")
+				.replaceAll("[ \\r\\n\\t]+xmlns", " xmlns")
+				.replaceAll(">\\s+<", "><");
 
 		if (body.startsWith("<?xml")) {
 			return body.substring(body.indexOf("?>") + 2);

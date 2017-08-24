@@ -1,14 +1,17 @@
 package org.mockenger.data.model.persistent.mock.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.mockenger.data.model.dict.RequestMethod;
 import org.mockenger.data.model.persistent.base.AbstractPersistentEntity;
 import org.mockenger.data.model.persistent.mock.request.part.Body;
 import org.mockenger.data.model.persistent.mock.request.part.Headers;
 import org.mockenger.data.model.persistent.mock.request.part.Parameters;
 import org.mockenger.data.model.persistent.mock.request.part.Path;
-import lombok.Setter;
-import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
 
@@ -18,7 +21,10 @@ import static java.util.Optional.ofNullable;
  * @author Dmitry Ryazanov
  */
 @Setter
+@Builder
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class GenericRequest extends AbstractPersistentEntity<String> {
 
 	@NotNull(message = "groupId: may not be null")

@@ -4,7 +4,6 @@ import org.mockenger.core.service.soap.PostService;
 import org.mockenger.core.web.exception.MockObjectNotCreatedException;
 import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
-import org.mockenger.core.web.controller.base.AbstractController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +19,13 @@ import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
+import static org.mockenger.core.web.controller.base.AbstractController.API_PATH;
+
 /**
  * @author Dmitry Ryazanov
  */
 @RestController
-@RequestMapping(path = AbstractController.API_PATH + "/SOAP/{groupId}/**")
+@RequestMapping(path = API_PATH + "/SOAP/{groupCode}/**")
 public class SoapController extends ParentController {
 
 	@Autowired
@@ -34,17 +35,17 @@ public class SoapController extends ParentController {
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @param requestBody
      * @param request
      * @return
      */
     @PostMapping
-    public Callable<ResponseEntity> processPostRequest(@PathVariable final String groupId,
+    public Callable<ResponseEntity> processPostRequest(@PathVariable final String groupCode,
 													   @RequestBody final String requestBody,
 													   final HttpServletRequest request) {
 		return () -> {
-			final Group group = findGroupById(groupId);
+			final Group group = findGroupByCode(groupCode);
 
 			try {
 				final String soapBody = postService.getSoapBody(requestBody);

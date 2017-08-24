@@ -2,7 +2,6 @@ package org.mockenger.core.config;
 
 import org.mockenger.core.service.account.AccountService;
 import org.mockenger.data.model.dict.RoleType;
-import org.mockenger.core.web.controller.base.AbstractController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,13 +19,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
+import static org.mockenger.core.web.controller.base.AbstractController.API_PATH;
 import static org.mockenger.data.model.dict.ProjectType.HTTP;
 import static org.mockenger.data.model.dict.ProjectType.REST;
 import static org.mockenger.data.model.dict.ProjectType.SOAP;
-import static java.util.stream.Collectors.toList;
 
 /**
  * @author Dmitry Ryazanov
@@ -65,26 +65,26 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.requestMatcher(new OrRequestMatcher(getRequestMatchers()))
 
 			.authorizeRequests()
-			.antMatchers(AbstractController.API_PATH + "/oauth/revoke").authenticated()
-			.antMatchers(AbstractController.API_PATH + "/oauth/user").authenticated()
-			.antMatchers(AbstractController.API_PATH + "/oauth/token").permitAll()
+			.antMatchers(API_PATH + "/oauth/revoke").authenticated()
+			.antMatchers(API_PATH + "/oauth/user").authenticated()
+			.antMatchers(API_PATH + "/oauth/token").permitAll()
 
-			.antMatchers(HttpMethod.GET, AbstractController.API_PATH + "/projects/**", AbstractController.API_PATH + "/valueset/**", AbstractController.API_PATH + "/events/**")
+			.antMatchers(HttpMethod.GET, API_PATH + "/projects/**", API_PATH + "/valueset/**", API_PATH + "/events/**")
 			.hasAnyAuthority(RoleType.USER.name(), RoleType.MANAGER.name(), RoleType.ADMIN.name())
 
-			.antMatchers(HttpMethod.DELETE, AbstractController.API_PATH + "/projects/**")
+			.antMatchers(HttpMethod.DELETE, API_PATH + "/projects/**")
 			.hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
 
-			.antMatchers(HttpMethod.POST, AbstractController.API_PATH + "/projects/**")
+			.antMatchers(HttpMethod.POST, API_PATH + "/projects/**")
 			.hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
 
-			.antMatchers(HttpMethod.PUT, AbstractController.API_PATH + "/projects/**")
+			.antMatchers(HttpMethod.PUT, API_PATH + "/projects/**")
 			.hasAnyAuthority(RoleType.MANAGER.name(), RoleType.ADMIN.name())
 
-			.antMatchers(HttpMethod.GET, AbstractController.API_PATH + "/valueset/roles")
+			.antMatchers(HttpMethod.GET, API_PATH + "/valueset/roles")
 			.hasAuthority(RoleType.ADMIN.name())
 
-			.antMatchers(AbstractController.API_PATH + "/accounts/**")
+			.antMatchers(API_PATH + "/accounts/**")
 			.hasAnyAuthority(RoleType.ADMIN.name())
 
 			.anyRequest().permitAll();
@@ -92,8 +92,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	}
 
 	private List<RequestMatcher> getRequestMatchers() {
-		return Arrays.asList(REST, SOAP, HTTP).stream()
-				.map(v -> new AntPathRequestMatcher(AbstractController.API_PATH + "/" + v + "/**"))
+		return Stream.of(REST, SOAP, HTTP)
+				.map(v -> new AntPathRequestMatcher(API_PATH + "/" + v + "/**"))
 				.collect(toList());
 	}
 

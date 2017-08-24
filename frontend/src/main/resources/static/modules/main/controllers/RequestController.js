@@ -4,15 +4,17 @@ angular.module('mockengerClientMainApp')
     .controller('RequestController',[
         '$scope',
         '$confirm',
+        '$timeout',
         'projectListService',
         'groupListService',
         'requestService',
         'requestListService',
 
-        function ($scope, $confirm, projectListService, groupListService, requestService, requestListService) {
+        function ($scope, $confirm, $timeout, projectListService, groupListService, requestService, requestListService) {
             var REGEXP = 'REGEXP';
             var KEY_VALUE = 'KEY_VALUE';
             var XPATH = 'XPATH';
+            var APPLICATION_FORM_URLENCODED_VALUE = 'application/x-www-form-urlencoded';
 
             $scope.bodyTransformerTypes = new Array(REGEXP, XPATH);
 
@@ -44,17 +46,18 @@ angular.module('mockengerClientMainApp')
             }
 
             $scope.addParameter = function() {
-                if (requestListService.getCurrent().parameters.values == null) {
+                if ($scope.getParams() == null) {
                     requestListService.getCurrent().parameters.values = [];
                 }
-                pushKeyValuePair(requestListService.getCurrent().parameters.values);
+
+                pushKeyValuePair($scope.getParams());
             }
 
             $scope.deleteParameter = function(index) {
                 $confirm({
                     text: "Do you really want to delete this parameter?"
                 }).then(function() {
-                    var source = requestListService.getCurrent().parameters.values;
+                    var source = $scope.getParams();
                     if (source != null && source[index] != null) {
                         source.splice(index, 1);
                     }
@@ -64,10 +67,11 @@ angular.module('mockengerClientMainApp')
             }
 
             $scope.addRequestHeader = function() {
-                if (requestListService.getCurrent().headers.values == null) {
+                if ($scope.getRequestHeaders() == null) {
                     requestListService.getCurrent().headers.values = [];
                 }
-                pushKeyValuePair(requestListService.getCurrent().headers.values);
+
+                pushKeyValuePair($scope.getRequestHeaders());
             }
 
             $scope.addResponseHeader = function() {
@@ -82,6 +86,7 @@ angular.module('mockengerClientMainApp')
                         requestListService.getCurrent().mockResponse.headers = [];
                     }
                 }
+
                 pushKeyValuePair(requestListService.getCurrent().mockResponse.headers);
             }
 
@@ -102,6 +107,7 @@ angular.module('mockengerClientMainApp')
                 if (requestListService.getCurrent().path.transformers == null) {
                     requestListService.getCurrent().path.transformers = [];
                 }
+
                 addTransformer(requestListService.getCurrent().path.transformers, REGEXP);
             }
 
@@ -110,6 +116,7 @@ angular.module('mockengerClientMainApp')
                 if (requestListService.getCurrent().parameters.transformers == null) {
                     requestListService.getCurrent().parameters.transformers = [];
                 }
+
                 addTransformer(requestListService.getCurrent().parameters.transformers, KEY_VALUE);
             }
 
@@ -118,6 +125,7 @@ angular.module('mockengerClientMainApp')
                 if (requestListService.getCurrent().headers.transformers == null) {
                     requestListService.getCurrent().headers.transformers = [];
                 }
+
                 addTransformer(requestListService.getCurrent().headers.transformers, KEY_VALUE);
             }
 
@@ -126,6 +134,7 @@ angular.module('mockengerClientMainApp')
                 if (requestListService.getCurrent().body.transformers == null) {
                     requestListService.getCurrent().body.transformers = [];
                 }
+
                 addTransformer(requestListService.getCurrent().body.transformers, REGEXP);
             }
 
@@ -146,6 +155,7 @@ angular.module('mockengerClientMainApp')
                     $scope.showRedMessage({data: {errors: new Array('Field <b>Name</b> is required')}});
                     return false;
                 }
+
                 return true;
             }
 
@@ -154,6 +164,7 @@ angular.module('mockengerClientMainApp')
                     $scope.showRedMessage({data: {errors: new Array('Field <b>HTTP status code</b> is required')}});
                     return false;
                 }
+
                 return true;
             }
 
@@ -162,6 +173,7 @@ angular.module('mockengerClientMainApp')
                     $scope.showRedMessage({data: {errors: new Array('<b>Method</b> may not be null or empty')}});
                     return false;
                 }
+
                 return true;
             }
 
@@ -169,16 +181,19 @@ angular.module('mockengerClientMainApp')
                 if (!isNameOk(request.name) || !isResponseDataOk(request.mockResponse) || !isHttpMethodOk(request.method)) {
                     return;
                 }
+
                 if (!isMethodWithBody(request.method)) {
                     request.body = null;
                 }
 
                 var requestParams = {
-                    projectId: projectListService.getCurrent().id,
-                    groupId: groupListService.getCurrent().id
+                    projectCode: projectListService.getCurrent().code,
+                    groupCode: groupListService.getCurrent().code
                 }
+
                 if (request.id != null) {
-                    requestParams['requestId'] = request.id;
+                    requestParams.requestCode = request.code;
+
                     requestService.ajax.update(requestParams, request, function() {
                         $scope.showGreenMessage('Mock-request <b>' + request.name + '</b> successfully updated');
                     }, function(errorResponse) {
@@ -223,46 +238,182 @@ angular.module('mockengerClientMainApp')
             }
 
             $scope.isRequestTabDisabled = function() {
-                return (requestListService.getCurrent().method != null && isMethodWithBody(requestListService.getCurrent().method) ? false : true);
+                return ($scope.getMethod() != null && isMethodWithBody($scope.getMethod()) ? false : true);
             }
 
+            $scope.getMethod = function() {
+            	return requestListService.getCurrent().method;
+            }
+
+            $scope.getParams = function() {
+				return requestListService.getCurrent().parameters.values;
+			}
+
+			$scope.getRequestHeaders = function() {
+				return requestListService.getCurrent().headers.values;
+			}
+
+			// ================
+			// Clipboard
+			// ================
+			$scope.clipboard = null;
+			$scope.clipboardMessage = {};
+
+			$scope.clipboardInit = function() {
+				$scope.clipboard = new window.Clipboard('.curlCommand');
+
+				$scope.clipboard.on('success', function(e) {
+					$scope.clipboardMessage = {
+						failure : false,
+						text: 'Copied'
+					};
+
+					$timeout(function() {
+						$scope.clipboardMessage = {};
+					}, 3000);
+
+					e.clearSelection();
+				});
+
+				$scope.clipboard.on('error', function(e) {
+					$scope.clipboardMessage = {
+						failure : true,
+						text: 'Can\'t copy to clipboard'
+					};
+
+					$timeout(function() {
+						$scope.clipboardMessage = {};
+					}, 3000);
+				});
+			}
+
+			$scope.clipboardInit();
+
+
+			// ================
+			// cURL
+			// ================
             $scope.getCURL = function() {
-                return "curl -X " + requestListService.getCurrent().method + " "
-                    + "'" + groupListService.getUrlForNewRequests() + requestListService.getCurrent().path.value + $scope.getParametersAsString() + "'"
-                    + " "
-                    + $scope.getHeadersAsString()
-                    + (!$scope.isRequestTabDisabled() ? " -d '" + $scope.getBody() + "'" : '')
-            }
+				return "curl -i -X " + requestListService.getCurrent().method + " \\\n " +
+					(
+						'\'' +
+						groupListService.getUrlForNewRequests() +
+						requestListService.getCurrent().path.value +
+						$scope.getParametersAsString() +
+						'\''
+					)
+					+ $scope.getHeadersAsString()
+					+ (!$scope.isRequestTabDisabled() ? " \\\n -d '" + $scope.getBody() + "'" : '')
+			}
 
-            $scope.getBody = function() {
-            	var body = requestListService.getCurrent().body.value;
+			$scope.getBody = function() {
+				var body = requestListService.getCurrent().body.value;
 
-            	try {
-            		return angular.toJson(angular.fromJson(body), true);
-            	} catch (err) {
-            		return body;
-            	}
-            }
+				try {
+					return angular.toJson(angular.fromJson(body), true);
+				} catch (err) {
+					return body;
+				}
+			}
 
-            $scope.getHeadersAsString = function() {
-                var result = "";
-                var headers = requestListService.getCurrent().headers.values;
+			$scope.getHeadersAsString = function() {
+				var result = "";
+				var headers = $scope.getRequestHeaders();
 
-                for (var i = 0, l = headers.length; i < l; i++) {
-                    result += " -H '" + headers[i].key + ": " + headers[i].value + "' ";
-                }
+				for (var i = 0, l = headers.length; i < l; i++) {
+					result += " \\\n -H '" + headers[i].key + ": " + headers[i].value + "'";
+				}
 
-                return result;
-            }
+				return result;
+			}
 
-            $scope.getParametersAsString = function() {
-                var result = "";
-                var parameters = requestListService.getCurrent().parameters.values;
+			$scope.getParametersAsString = function() {
+				var result = "";
+				var parameters = $scope.getParams();
 
-                for (var i = 0, l = parameters.length; i < l; i++) {
-                    result += (result.length == 0 ? "?" : "&") + parameters[i].key + "=" + parameters[i].value;
-                }
+				for (var i = 0, l = parameters.length; i < l; i++) {
+					result += (result.length == 0 ? "?" : "&") + parameters[i].key + "=" + window.encodeURIComponent(parameters[i].value);
+				}
 
-                return result;
-            }
+				return result;
+			}
+
+
+            // ================
+			// PRETTY PRINT
+			// ================
+			$scope.prettyModel = {
+				Request: {
+					xml : false,
+					json: false
+				},
+				Response: {
+					xml : false,
+					json: false
+				}
+			}
+
+			$scope.prettify = function(model, type) {
+				$scope.prettyModel[model].xml = false;
+				$scope.prettyModel[model].json = false;
+				$scope.prettyModel[model][type] = true;
+
+				$scope['cmMode' + model] = (type === 'json' ? 'javascript' : type);
+				$scope['modeChanged' + model]();
+
+				try {
+					if (model === 'Request') {
+						requestListService.getCurrent().body.value = $.format(requestListService.getCurrent().body.value, {method: type});
+					} else if (model === 'Response') {
+						requestListService.getCurrent().mockResponse.body = $.format(requestListService.getCurrent().mockResponse.body, {method: type});
+					}
+				} catch (err) {
+					// do nothing
+				}
+			}
+
+
+			// ================
+			// CODE MIRROR
+			// ================
+			$scope.updateCmEditor = function(type) {
+				$scope['cmRefresh' + type] = true;
+				$scope['cmEditor' + type].refresh();
+			}
+
+			$scope.onRequestTabClick = function() {
+				setTimeout(function() {
+					$scope.updateCmEditor('Request');
+				}, 100);
+			};
+
+			$scope.onResponseTabClick = function() {
+				setTimeout(function() {
+					$scope.updateCmEditor('Response');
+				}, 100);
+			};
+
+			$scope.getCodeMirrorOptions = function(type) {
+				return {
+					lineNumbers: true,
+					indentWithTabs: false,
+					lineWrapping: true,
+					autoRefresh: true,
+
+					onLoad: function(_editor) {
+						$scope['cmRefresh' + type] = false;
+						$scope['cmEditor' + type] = _editor;
+						$scope['modeChanged' + type] = function() {
+							_editor.setOption("mode", $scope['cmMode' + type].toLowerCase());
+						};
+					}
+				};
+			}
+
+			$scope.cmEditorRequest = null;
+			$scope.cmEditorResponse = null;
+			$scope.cmModeRequest = 'scheme';
+			$scope.cmModeResponse = 'scheme';
+			$scope.cmOptionRequest = $scope.getCodeMirrorOptions('Request');
+			$scope.cmOptionResponse = $scope.getCodeMirrorOptions('Response');
 }]);

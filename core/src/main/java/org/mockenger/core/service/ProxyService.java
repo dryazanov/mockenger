@@ -1,18 +1,20 @@
 package org.mockenger.core.service;
 
-import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
-import org.mockenger.data.model.persistent.mock.request.part.Pair;
-import org.mockenger.data.model.persistent.mock.response.MockResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
+import org.mockenger.data.model.persistent.mock.request.part.Body;
+import org.mockenger.data.model.persistent.mock.request.part.Pair;
+import org.mockenger.data.model.persistent.mock.response.MockResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -32,15 +34,13 @@ import static org.springframework.util.StringUtils.isEmpty;
 /**
  * @author Dmitry Ryazanov
  */
+@Slf4j
 @Component
 public class ProxyService {
 
-	private final Logger LOG = LoggerFactory.getLogger(ProxyService.class);
-
 	private static final int TIMEOUT = 60;
-    private final int DEFAULT_RESPONSE_HTTP_STATUS = 500;
 
-    @Value("#{'${mockenger.proxy.request.ignore.headers}'.split(',')}")
+	@Value("#{'${mockenger.proxy.request.ignore.headers}'.split(',')}")
     private List<String> headersToIgnore;
 
 
@@ -72,10 +72,10 @@ public class ProxyService {
             }
 
             // Set response status
-            mockResponse.setHttpStatus(
+			mockResponse.setHttpStatus(
             		ofNullable(response.getStatusLine())
-							.map(statusLine -> statusLine.getStatusCode())
-							.orElse(DEFAULT_RESPONSE_HTTP_STATUS));
+							.map(StatusLine::getStatusCode)
+							.orElse(500));
 
 			mockResponse.getHeaders().addAll(
 					Stream.of(response.getAllHeaders())
@@ -84,14 +84,14 @@ public class ProxyService {
 
             // Set response body
             if (response.getEntity() != null && response.getEntity().getContent() != null) {
-                final String responseBody = IOUtils.toString(response.getEntity().getContent());
+                final String responseBody = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
                 mockResponse.setBody(responseBody);
             }
 
             return mockResponse;
 
         } catch (IOException e) {
-            LOG.error("Forwarding process failed for request '" + mockRequest.getName()
+            log.error("Forwarding process failed for request '" + mockRequest.getName()
 					+ "' with path '" + mockRequest.getPath().getValue() + "'", e);
         }
 
@@ -107,11 +107,14 @@ public class ProxyService {
             throw new IllegalArgumentException();
         }
 
-		final String uri = new StringBuilder(baseHost)
+		final String uri = new StringBuilder()
+				.append(baseHost)
 				.append(baseHost.endsWith("/") ? "" : "/")
 				.append(mockRequest.getPath().getValue())
 				.toString();
+
         final RequestBuilder requestBuilder = RequestBuilder.create(mockRequest.getMethod().name());
+
 		requestBuilder.setUri(uri);
 
 		// Set request parameters
@@ -119,22 +122,25 @@ public class ProxyService {
 				.forEach(pair -> requestBuilder.addParameter(pair.getKey(), pair.getValue()));
 
 		final String body = ofNullable(mockRequest.getBody())
-				.map(b -> b.getValue())
+				.map(Body::getValue)
 				.orElse("");
 
         // Set request headers (excl. headers from black-list)
-		mockRequest.getHeaders().getValues()
-				.parallelStream()
-				.filter(p -> !headersToIgnore.contains(p.getKey()))
+		mockRequest.getHeaders()
+				.getValues()
+				.stream()
+				.filter(p -> !ignoreHeader(p))
 				.filter(p -> !isContentLengthHeader(p) || isEmpty(body))
-				.forEach(pair -> requestBuilder.addHeader(pair.getKey(), pair.getValue()));
+				.forEach(pair -> {
+					requestBuilder.addHeader(pair.getKey(), pair.getValue());
+				});
 
 		// Set request body, if present
 		try {
 			if (!isEmpty(body)) {
 				final StringEntity stringEntity = new StringEntity(body);
-				final String contentType = ofNullable(requestBuilder.getFirstHeader(CONTENT_TYPE))
-						.map(h -> h.getValue())
+				final String contentType = ofNullable(requestBuilder.getFirstHeader(CONTENT_TYPE.toLowerCase()))
+						.map(Header::getValue)
 						.orElse("");
 
 				if (!isEmpty(contentType)) {
@@ -144,11 +150,15 @@ public class ProxyService {
 				requestBuilder.setEntity(stringEntity);
 			}
 		} catch (UnsupportedEncodingException e) {
-			LOG.error("An error occurred during the request's body preparation", e);
+			log.error("An error occurred during the request's body preparation", e);
 		}
 
         return requestBuilder.build();
     }
+
+	private boolean ignoreHeader(final Pair p) {
+		return headersToIgnore.contains(p.getKey().toLowerCase());
+	}
 
 	private RequestConfig createRequestConfig() {
 		return RequestConfig.custom()

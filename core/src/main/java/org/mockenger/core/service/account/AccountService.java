@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
+import static java.util.Collections.singletonList;
 
 /**
  * @author Dmitry Ryazanov
@@ -62,6 +62,6 @@ public class AccountService implements UserDetailsService {
             throw new UsernameNotFoundException("Username '" + username + "' not found");
         }
 
-        return new User(username, account.getPassword(), Arrays.asList(account.getRole()));
+        return new User(username, account.getPassword(), singletonList(account.getRole()));
     }
 }

@@ -25,7 +25,7 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
 @Import({MongoDBConfiguration.class, SecurityConfiguration.class, OAuth2ServerConfiguration.class})
 public class TestSecurityContext {
 
-    private TokenStore inMemoryTokenStore = new InMemoryTokenStore();
+    private final TokenStore inMemoryTokenStore = new InMemoryTokenStore();
 
     @Bean
     public TokenStore getTokenStore() {

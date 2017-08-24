@@ -79,8 +79,13 @@
                     <div ng-if="pageCount() <= 0">
                         <h4>No results found</h4>
                         <br/>
-                        <h5>Please use <b>Create request</b> button to add new request</h5>
-                        <h5>Alternatively, you can switch on <b>Recording</b> on the group level and send your requests to <b>{{groupListService.getUrlForNewRequests()}}</b></h5>
+                        <p>
+							Would you like to <a href="" ng-click="createRequest()">create</a> one?
+						</p>
+                        <p>
+							Alternatively, you can switch on <i  class="text-danger">Recording</i> for the group
+							and send your requests to <i class="text-danger">{{groupListService.getUrlForNewRequests()}}</i>
+						</p>
                     </div>
                     <table class="table table-striped table-hover" ng-if="pageCount() > 0">
                         <thead>
@@ -187,7 +192,7 @@
                                                             </tr>
                                                         </table>
                                                     </div>
-                                                    <div class="form-group">
+                                                    <div class="form-group" ng-if="requestListService.getCurrent().id">
                                                         <table class="table">
                                                             <tr>
                                                                 <td class="col-lg-2">
@@ -202,14 +207,22 @@
                                                                     <label>Request unique code</label>
                                                                 </td>
                                                                 <td>
-                                                                    {{requestListService.getCurrent().uniqueCode}}
+                                                                    {{requestListService.getCurrent().code}}
                                                                 </td>
                                                             </tr>
                                                             <tr>
                                                                 <td class="col-lg-2">
                                                                     <label>cURL</label>
                                                                 </td>
-                                                                <td>{{getCURL()}}</td>
+																<td>
+																	<textarea readonly="true" class="form-control" id="curlCommand"
+																			  aria-describedby="sizing-addon1" rows="10">{{getCURL()}}</textarea>
+
+																	<button class="curlCommand btn-warning btn-sm" data-clipboard-target="#curlCommand">
+																		<span class="glyphicon glyphicon-duplicate"></span> Copy to clipboard
+																	</button>
+																	<span ng-class="{'text-danger': clipboardMessage.failure}">{{clipboardMessage.text}}</span>
+																</td>
                                                             </tr>
                                                         </table>
                                                     </div>
@@ -223,15 +236,17 @@
                                                                 <td>
                                                                     <div class="input-group">
                                                                         <div class="input-group-btn">
-                                                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-                                                                                    aria-haspopup="true" aria-expanded="false">{{requestListService.getCurrent().method}} <span class="caret"></span></button>
+                                                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+																				{{requestListService.getCurrent().method}} <span class="caret"></span>
+																			</button>
                                                                             <ul class="dropdown-menu">
                                                                                 <li ng-repeat="method in requestMethods">
                                                                                     <a href ng-click="selectMethod(method)">{{method}}</a>
                                                                                 </li>
                                                                             </ul>
                                                                         </div>
-                                                                        <input type="text" name="url" id="url" ng-model="requestListService.getCurrent().path.value"
+																		<span class="input-group-addon">/</span>
+                                                                        <input name="url" id="url" ng-model="requestListService.getCurrent().path.value"
                                                                                class="form-control" aria-describedby="sizing-addon1" placeholder="Path">
                                                                     </div>
                                                                 </td>
@@ -273,7 +288,7 @@
                                                             <tr ng-repeat="parameter in requestListService.getCurrent().parameters.values track by $index">
                                                                 <td class="col-lg-6">
                                                                     <input type="text" ng-model="parameter.key" class="form-control"
-                                                                           aria-describedby="sizing-addon1" placeholder="Name">
+                                                                           aria-describedby="sizing-addon1" placeholder="Parameter">
                                                                 </td>
                                                                 <td class="col-lg-6">
                                                                     <input type="text" ng-model="parameter.value" class="form-control"
@@ -299,15 +314,15 @@
                                                             <tr ng-repeat="paramTransformer in requestListService.getCurrent().parameters.transformers">
                                                                 <td class="col-lg-4">
                                                                     <input type="text" ng-model="paramTransformer.key" class="form-control"
-                                                                           aria-describedby="sizing-addon1" placeholder="Key">
+                                                                           aria-describedby="sizing-addon1" placeholder="Parameter name">
                                                                 </td>
                                                                 <td class="col-lg-4">
                                                                     <input type="text" ng-model="paramTransformer.pattern" class="form-control"
-                                                                           aria-describedby="sizing-addon1" placeholder="Pattern">
+                                                                           aria-describedby="sizing-addon1" placeholder="Value pattern">
                                                                 </td>
                                                                 <td class="col-lg-4">
                                                                     <input type="text" ng-model="paramTransformer.replacement" class="form-control"
-                                                                           aria-describedby="sizing-addon1" placeholder="Replacement">
+                                                                           aria-describedby="sizing-addon1" placeholder="Value replacement">
                                                                 </td>
                                                                 <td class="col-lg-1" ng-if="isManagerOrAdmin(user.role)">
                                                                     <button class="btn-danger btn-sm" ng-click="deleteTransformer($index, requestListService.getCurrent().parameters.transformers)">
@@ -358,15 +373,15 @@
                                                             <tr ng-repeat="headerTransformer in requestListService.getCurrent().headers.transformers">
                                                                 <td class="col-lg-4">
                                                                     <input type="text" ng-model="headerTransformer.key" class="form-control"
-                                                                           aria-describedby="sizing-addon1" placeholder="Key">
+                                                                           aria-describedby="sizing-addon1" placeholder="Header name">
                                                                 </td>
                                                                 <td class="col-lg-4">
                                                                     <input type="text" ng-model="headerTransformer.pattern" class="form-control"
-                                                                           aria-describedby="sizing-addon1" placeholder="Pattern">
+                                                                           aria-describedby="sizing-addon1" placeholder="Value pattern">
                                                                 </td>
                                                                 <td class="col-lg-4">
                                                                     <input type="text" ng-model="headerTransformer.replacement" class="form-control"
-                                                                           aria-describedby="sizing-addon1" placeholder="Replacement">
+                                                                           aria-describedby="sizing-addon1" placeholder="Value replacement">
                                                                 </td>
                                                                 <td class="col-lg-1" ng-if="isManagerOrAdmin(user.role)">
                                                                     <button class="btn-danger btn-sm" ng-click="deleteTransformer($index, requestListService.getCurrent().headers.transformers)">
@@ -382,7 +397,7 @@
                                                         </table>
                                                     </div>
                                                 </uib-tab>
-                                                <uib-tab heading="Request" disable="isRequestTabDisabled()">
+                                                <uib-tab heading="Request body" disable="isRequestTabDisabled()" ng-click="onRequestTabClick()">
                                                     <br/>
                                                     <div class="form-group">
                                                         <label>Transformers</label>
@@ -417,29 +432,36 @@
 
                                                     <div class="form-group">
                                                         <label for="requestBody">Request body</label>
-                                                        <table class="table">
-                                                            <tr>
-                                                                <td>
-                                                                    <textarea ng-model="requestListService.getCurrent().body.value" name="requestBody" id="requestBody"
-                                                                              class="form-control" aria-describedby="sizing-addon1" rows="10"></textarea>
-                                                                </td>
-                                                            </tr>
-                                                        </table>
+														<section class="section-table">
+															<textarea ui-codemirror="cmOptionRequest" ui-refresh="cmRefreshRequest"
+																	  ng-model="requestListService.getCurrent().body.value"
+																	  name="requestBody" id="requestBody" class="form-control"
+																	  aria-describedby="sizing-addon1" rows="30"></textarea>
+
+															<button class="btn btn-sm btn-primary" ng-class="{'btn-warning' : prettyModel.Request.xml}"
+																	ng-click="prettify('Request', 'xml')" type="button">
+																<span class="glyphicon glyphicon-list-alt"></span> XML
+															</button>
+															<button class="btn btn-sm btn-primary"  ng-class="{'btn-warning' : prettyModel.Request.json}"
+																	ng-click="prettify('Request', 'json')" type="button">
+																<span class="glyphicon glyphicon-list-alt"></span> JSON
+															</button>
+														</section>
                                                     </div>
                                                 </uib-tab>
-                                                <uib-tab heading="Response">
+                                                <uib-tab heading="Response" ng-click="onResponseTabClick()">
                                                     <br/>
                                                     <div class="form-group">
                                                         <label for="url">Headers</label>
                                                         <table class="table">
                                                             <tr ng-repeat="responseHeader in requestListService.getCurrent().mockResponse.headers track by $index">
                                                                 <td class="col-lg-6">
-                                                                    <input type="text" ng-model="responseHeader.key"
+                                                                    <input ng-model="responseHeader.key"
                                                                            uib-typeahead="header for header in headerList | filter:$viewValue | limitTo:10"
                                                                            class="form-control" aria-describedby="sizing-addon1" placeholder="Header name">
                                                                 </td>
                                                                 <td class="col-lg-6">
-                                                                    <input type="text" ng-model="responseHeader.value" class="form-control"
+                                                                    <input ng-model="responseHeader.value" class="form-control"
                                                                            aria-describedby="sizing-addon1" placeholder="Value">
                                                                 </td>
                                                                 <td ng-if="isManagerOrAdmin(user.role)">
@@ -461,18 +483,10 @@
                                                         <table class="table">
                                                             <tr>
                                                                 <td>
-                                                                    <!--<div class="input-group-btn">
-                                                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-                                                                                aria-haspopup="true" aria-expanded="false">{{requestListService.getCurrent().method}} <span class="caret"></span></button>
-                                                                        <ul class="dropdown-menu">
-                                                                            <li ng-repeat="method in requestMethods">
-                                                                                <a href ng-click="selectMethod(method)">{{method}}</a>
-                                                                            </li>
-                                                                        </ul>
-                                                                    </div>-->
-                                                                    <input type="text" name="httpStatus" id="httpStatus" class="form-control"
+                                                                    <input name="httpStatus" id="httpStatus" class="form-control"
                                                                            ng-model="requestListService.getCurrent().mockResponse.httpStatus"
                                                                            aria-describedby="sizing-addon1" ng-pattern="/^[0-9]{3}$/" required>
+
                                                                     <div ng-show="hasError(mockRequestForm.httpStatus)">
                                                                         <p ng-show="mockRequestForm.httpStatus.$error.required" class="help-block">HTTP status code is required</p>
                                                                         <p ng-show="mockRequestForm.httpStatus.$error.pattern" class="help-block">Must be 3 digits long</p>
@@ -482,17 +496,24 @@
                                                         </table>
                                                     </div>
 
-                                                    <div class="form-group">
-                                                        <label for="responseBody">Response body</label>
-                                                        <table class="table">
-                                                            <tr>
-                                                                <td>
-                                                                    <textarea ng-model="requestListService.getCurrent().mockResponse.body" name="responseBody" id="responseBody"
-                                                                              class="form-control" aria-describedby="sizing-addon1" rows="10"></textarea>
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                    </div>
+													<div class="form-group">
+														<label for="responseBody">Response body</label>
+														<section class="section-table">
+															<textarea ui-codemirror="cmOptionResponse" ui-refresh="cmRefreshResponse"
+																	  ng-model="requestListService.getCurrent().mockResponse.body"
+																	  name="responseBody" id="responseBody" class="form-control"
+																	  aria-describedby="sizing-addon1" rows="10"></textarea>
+
+															<button class="btn btn-sm btn-primary" ng-class="{'btn-warning' : prettyModel.Response.xml}"
+																	ng-click="prettify('Response', 'xml')" type="button">
+																<span class="glyphicon glyphicon-list-alt"></span> XML
+															</button>
+															<button class="btn btn-sm btn-primary"  ng-class="{'btn-warning' : prettyModel.Response.json}"
+																	ng-click="prettify('Response', 'json')" type="button">
+																<span class="glyphicon glyphicon-list-alt"></span> JSON
+															</button>
+														</section>
+													</div>
                                                 </uib-tab>
                                             </uib-tabset>
                                         </div>
@@ -532,13 +553,23 @@
                     </div>
                     <div class="form-group" ng-if="urlToSendRequests != null">
                         <label>URL for requests</label>
-                        <pre>{{urlToSendRequests}}</pre>
+                        <p>{{urlToSendRequests}}</p>
                     </div>
                     <div class="form-group" ng-class="getErrorStyle(groupForm.name)">
                         <label for="name">Name</label>
-                        <input type="text" name="name" id="name" ng-model="groupToSave.name" class="form-control" required>
+                        <input name="name" id="name" ng-model="groupToSave.name" class="form-control" required>
                         <p ng-show="hasError(groupForm.name)" class="help-block">Group name is required</p>
                     </div>
+					<div class="form-group" ng-class="getErrorStyle(groupForm.code)">
+						<label for="code">Group code</label>
+						<input name="code" id="code" ng-model="groupToSave.code"
+							   ng-pattern="/^[a-zA-Z0-9]+$/" ng-disabled="groupToSave.id != null"  class="form-control" required>
+						<a href ng-click="generateGroupCode()" ng-if="groupToSave.id == null && groupToSave.name">Generate code</a>
+						<div ng-show="hasError(groupForm.code)">
+							<p ng-show="groupForm.code.$error.required" class="help-block">Code is required</p>
+							<p ng-show="groupForm.code.$error.pattern" class="help-block">Only letters and numbers allowed</p>
+						</div>
+					</div>
                     <div class="form-group">
                         <label for="recording">Record incoming requests</label>
                         <div class="form-group">

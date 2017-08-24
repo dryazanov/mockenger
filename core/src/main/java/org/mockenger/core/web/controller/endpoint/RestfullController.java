@@ -6,7 +6,6 @@ import org.mockenger.core.web.exception.BadContentTypeException;
 import org.mockenger.core.web.exception.MockObjectNotCreatedException;
 import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
-import org.mockenger.core.web.controller.base.AbstractController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
+import static org.mockenger.core.web.controller.base.AbstractController.API_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -32,7 +32,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
  * @author Dmitry Ryazanov
  */
 @RestController
-@RequestMapping(path = AbstractController.API_PATH + "/REST/{groupId}/**")
+@RequestMapping(path = API_PATH + "/REST/{groupCode}/**")
 public class RestfullController extends ParentController {
 
 	@Autowired
@@ -46,25 +46,25 @@ public class RestfullController extends ParentController {
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @param request
      * @return
      */
     @GetMapping
-    public Callable<ResponseEntity> processGetRequest(@PathVariable final String groupId, final HttpServletRequest request) {
-        return () -> doGetRequest(groupId, request);
+    public Callable<ResponseEntity> processGetRequest(@PathVariable final String groupCode, final HttpServletRequest request) {
+        return () -> doGetRequest(groupCode, request);
     }
 
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @param request
      * @return
      */
     @DeleteMapping
-    public Callable<ResponseEntity> processDeleteRequest(@PathVariable final String groupId, final HttpServletRequest request) {
-        return () -> doDeleteRequest(groupId, request);
+    public Callable<ResponseEntity> processDeleteRequest(@PathVariable final String groupCode, final HttpServletRequest request) {
+        return () -> doDeleteRequest(groupCode, request);
     }
 
 
@@ -79,21 +79,23 @@ public class RestfullController extends ParentController {
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @param jsonBody
      * @param request
      * @return
      */
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
-    public Callable<ResponseEntity> processPostJsonRequest(@PathVariable final String groupId,
+    public Callable<ResponseEntity> processPostJsonRequest(@PathVariable final String groupCode,
 														   @RequestBody final String jsonBody,
 														   final HttpServletRequest request) {
     	return () -> {
-			final Group group = findGroupById(groupId);
+			final Group group = findGroupByCode(groupCode);
 
 			try {
 				final GenericRequest mockRequest = postService.createMockRequestFromJson(group.getId(), jsonBody, request);
-				return findMockedEntities(mockRequest, group);
+				ResponseEntity responseEntity = findMockedEntities(mockRequest, group);
+				System.out.println(responseEntity.getBody());
+				return responseEntity;
 			} catch (IOException e) {
 				throw new MockObjectNotCreatedException("Cannot read json from the provided source", e);
 			}
@@ -103,17 +105,17 @@ public class RestfullController extends ParentController {
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @param requestBody
      * @param request
      * @return
      */
     @PostMapping(consumes = APPLICATION_XML_VALUE)
-    public Callable<ResponseEntity> processPostXmlRequest(@PathVariable final String groupId,
+    public Callable<ResponseEntity> processPostXmlRequest(@PathVariable final String groupCode,
 														  @RequestBody final String requestBody,
 														  final HttpServletRequest request) {
     	return () -> {
-			final Group group = findGroupById(groupId);
+			final Group group = findGroupByCode(groupCode);
 			final GenericRequest mockRequest = postService.createMockRequestFromXml(group.getId(), requestBody, request);
 
 			return findMockedEntities(mockRequest, group);
@@ -123,17 +125,17 @@ public class RestfullController extends ParentController {
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @param jsonBody
      * @param request
      * @return
      */
     @PutMapping(consumes = APPLICATION_JSON_VALUE)
-    public Callable<ResponseEntity> processPutJsonRequest(@PathVariable final String groupId,
+    public Callable<ResponseEntity> processPutJsonRequest(@PathVariable final String groupCode,
 														  @RequestBody final String jsonBody,
 														  final HttpServletRequest request) {
     	return () -> {
-			final Group group = findGroupById(groupId);
+			final Group group = findGroupByCode(groupCode);
 
 			try {
 				final GenericRequest mockRequest = putService.createMockRequestFromJson(group.getId(), jsonBody, request);
@@ -147,17 +149,17 @@ public class RestfullController extends ParentController {
 
     /**
      *
-     * @param groupId
+     * @param groupCode
      * @param requestBody
      * @param request
      * @return
      */
     @PutMapping(consumes = APPLICATION_XML_VALUE)
-    public Callable<ResponseEntity> processPutXmlRequest(@PathVariable final String groupId,
+    public Callable<ResponseEntity> processPutXmlRequest(@PathVariable final String groupCode,
 														 @RequestBody final String requestBody,
 														 final HttpServletRequest request) {
 		return () -> {
-			final Group group = findGroupById(groupId);
+			final Group group = findGroupByCode(groupCode);
 			final GenericRequest mockRequest = putService.createMockRequestFromXml(group.getId(), requestBody, request);
 
 			return findMockedEntities(mockRequest, group);

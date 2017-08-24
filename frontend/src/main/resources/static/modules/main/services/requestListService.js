@@ -86,8 +86,8 @@ angular.module('mockengerClientMainApp')
                 },
 
                 ajax: $resource(apiEndpointsService.getRequestRestUrl(), {
-                        groupId: '@groupId',
-                        projectId: '@projectId'
+                        groupCode: '@groupCode',
+                        projectCode: '@projectCode'
                     }, {}
                 ),
 

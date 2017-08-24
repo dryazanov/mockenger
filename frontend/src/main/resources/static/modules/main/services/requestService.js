@@ -4,9 +4,9 @@ angular.module('mockengerClientMainApp').factory('requestService', ['$resource',
 
     var RequestService = {
         ajax: $resource(apiEndpointsService.getRequestRestUrl(), {
-                requestId: '@requestId',
-                groupId: '@groupId',
-                projectId: '@projectId'
+                requestCode: '@requestCode',
+                groupCode: '@groupCode',
+                projectCode: '@projectCode'
             }, {
                 update: {
                     method:'PUT'

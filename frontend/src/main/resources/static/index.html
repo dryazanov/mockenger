@@ -27,6 +27,7 @@
 
     <!-- build:css assets/styles/main.css -->
     <link rel="stylesheet" href="assets/styles/main.css">
+	<link rel="stylesheet" href="assets/styles/codemirror.css">
     <!-- endbuild -->
 
     <!--[if lt IE 9]>
@@ -59,7 +60,12 @@ if (window && !window.module) {
 }
 </script>
 
+
 <!-- build:js scripts/vendor.js -->
+<script src="assets/js/codemirror/codemirror.js"></script>
+<script src="assets/js/codemirror/xml.js"></script>
+<script src="assets/js/codemirror/javascript.js"></script>
+
 <script src="node_modules/jquery/dist/jquery.js"></script>
 <script src="node_modules/angular/angular.js"></script>
 <script src="node_modules/angular-cookies/angular-cookies.js"></script>
@@ -70,14 +76,17 @@ if (window && !window.module) {
 <script src="node_modules/angular-touch/angular-touch.js"></script>
 <script src="node_modules/angular-animate/angular-animate.js"></script>
 <script src="node_modules/angular-ui-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="node_modules/angular-ui-codemirror/src/ui-codemirror.js"></script>
 <script src="node_modules/angular-confirm/angular-confirm.js"></script>
 <script src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
 <script src="node_modules/ng-toast/dist/ngToast.js"></script>
 <script src="node_modules/ngprogress-npm/build/ngprogress.js"></script>
+<script src="node_modules/clipboard/dist/clipboard.min.js"></script>
+<script src="assets/js/jquery.format.js"></script>
 <!-- endbuild -->
 
 <!-- build:const -->
-<script src="/modules/components/constants.js"></script>
+<script src="//localhost:8080/modules/components/constants.js"></script>
 <!-- endbuild -->
 
 <!-- build:js scripts/mockengerComponents.js -->

@@ -49,7 +49,7 @@ angular.module('mockengerClientMainApp')
                 $confirm({
                     text: "Do you really want to delete project '" + project.name + "' with all its groups and mocks?"
                 }).then(function() {
-                    projectListService.ajax.delete({projectId: project.id}, function(response, getResponseHeaders) {
+                    projectListService.ajax.delete({projectCode: project.code}, function(response, getResponseHeaders) {
                         $scope.getProjects();
                         $scope.showGreenMessage('Project <b>' + project.name + '</b> deleted');
                     }, function(errorResponse) {
@@ -62,7 +62,7 @@ angular.module('mockengerClientMainApp')
 
             $scope.saveProject = function(project) {
                 if (project.id != null) {
-                    projectListService.ajax.update({projectId: project.id}, project, function(response, getResponseHeaders) {
+                    projectListService.ajax.update({projectCode: project.code}, project, function(response, getResponseHeaders) {
                         projectModal.modal('hide');
                         $scope.getProjects();
                         $scope.showGreenMessage('Project <b>' + project.name + '</b> successfully updated');
