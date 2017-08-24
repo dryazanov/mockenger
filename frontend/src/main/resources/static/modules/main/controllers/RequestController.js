@@ -291,9 +291,11 @@ angular.module('mockengerClientMainApp')
             $scope.getCURL = function() {
                 return "curl -i -X " + requestListService.getCurrent().method + " \\\n " +
 					(
-						groupListService.getUrlForNewRequests()
-						+ requestListService.getCurrent().path.value
-						+ $scope.getParametersAsString()
+						'\'' +
+						groupListService.getUrlForNewRequests() +
+						requestListService.getCurrent().path.value +
+						$scope.getParametersAsString() +
+						'\''
 					)
                     + $scope.getHeadersAsString()
                     + (!$scope.isRequestTabDisabled() ? " \\\n -d '" + $scope.getBody() + "'" : '')
@@ -325,7 +327,7 @@ angular.module('mockengerClientMainApp')
                 var parameters = $scope.getParams();
 
                 for (var i = 0, l = parameters.length; i < l; i++) {
-                    result += (result.length == 0 ? "?" : "&") + parameters[i].key + "=" + parameters[i].value;
+                    result += (result.length == 0 ? "?" : "&") + parameters[i].key + "=" + window.encodeURIComponent(parameters[i].value);
                 }
 
                 return result;
