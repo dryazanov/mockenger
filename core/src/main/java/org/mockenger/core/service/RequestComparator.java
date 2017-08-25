@@ -78,7 +78,13 @@ public class RequestComparator {
 
 		printer.printPaths(incomingPath, persistentPath);
 
-        return incomingPath.equals(persistentPath);
+        if (incomingPath.equals(persistentPath)) {
+			incoming.getPath().setValue(incomingPath);
+
+			return true;
+		}
+
+        return false;
     }
 
 
@@ -95,7 +101,11 @@ public class RequestComparator {
             incomingParams = applyTransformers(incomingParams, persistent.getParameters().getTransformers());
             printer.printParams(incomingParams, persistentParams);
 
-            return containsEqualEntries(incomingParams, persistentParams);
+            if (!containsEqualEntries(incomingParams, persistentParams)) {
+            	return false;
+			}
+
+			incoming.getParameters().setValues(incomingParams);
         }
 
         return true;
