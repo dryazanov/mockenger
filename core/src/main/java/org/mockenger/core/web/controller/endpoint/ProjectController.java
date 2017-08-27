@@ -38,7 +38,7 @@ public class ProjectController extends AbstractController {
      */
     @GetMapping(PROJECTS_ENDPOINT)
     public ResponseEntity getProjectList() {
-        return okResponseWithDefaultHeaders(getProjectService().findAll());
+        return okResponseWithDefaultHeaders(projectService.findAll());
     }
 
 
@@ -56,7 +56,7 @@ public class ProjectController extends AbstractController {
 
         final Project projectToAdd = ProjectService.cloneProject(project).id(null).build();
 
-        return okResponseWithDefaultHeaders(getProjectService().save(projectToAdd));
+        return okResponseWithDefaultHeaders(projectService.save(projectToAdd));
     }
 
 
@@ -83,7 +83,7 @@ public class ProjectController extends AbstractController {
             throw new IllegalArgumentException("Project IDs in the URL and in the payload are not equals");
         }
 
-        return okResponseWithDefaultHeaders(getProjectService().save(project));
+        return okResponseWithDefaultHeaders(projectService.save(project));
     }
 
 
@@ -94,7 +94,7 @@ public class ProjectController extends AbstractController {
      */
     @DeleteMapping(PROJECT_CODE_ENDPOINT)
     public ResponseEntity deleteProject(@PathVariable final String projectCode) {
-        getProjectService().remove(findProjectByCode(projectCode));
+        projectService.remove(findProjectByCode(projectCode));
 
         return noContentWithDefaultHeaders();
     }

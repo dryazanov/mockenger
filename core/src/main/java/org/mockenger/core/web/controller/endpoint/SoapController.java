@@ -42,7 +42,7 @@ public class SoapController extends ParentController {
      */
     @PostMapping
     public Callable<ResponseEntity> processPostRequest(@PathVariable final String groupCode,
-													   @RequestBody final String requestBody,
+													   @RequestBody(required = false) final String requestBody,
 													   final HttpServletRequest request) {
 		return () -> {
 			final Group group = findGroupByCode(groupCode);

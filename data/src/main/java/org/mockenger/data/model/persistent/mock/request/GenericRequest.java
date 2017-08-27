@@ -3,6 +3,7 @@ package org.mockenger.data.model.persistent.mock.request;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
@@ -15,11 +16,10 @@ import org.mockenger.data.model.persistent.mock.request.part.Path;
 
 import javax.validation.constraints.NotNull;
 
-import static java.util.Optional.ofNullable;
-
 /**
  * @author Dmitry Ryazanov
  */
+@Getter
 @Setter
 @Builder
 @ToString
@@ -38,37 +38,10 @@ public class GenericRequest extends AbstractPersistentEntity<String> {
 
 	protected Parameters parameters;
 
-    protected Body body;
+	protected Body body;
 
 	@JsonIgnore
 	private String checkSum;
-
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public RequestMethod getMethod() {
-        return this.method;
-    }
-
-    public Path getPath() {
-        return ofNullable(path).orElse(new Path());
-    }
-
-    public Headers getHeaders() {
-        return ofNullable(headers).orElse(new Headers());
-    }
-
-    public Parameters getParameters() {
-        return ofNullable(parameters).orElse(new Parameters());
-    }
-
-    public Body getBody() {
-        return ofNullable(body).orElse(new Body());
-    }
-
-	public String getCheckSum() {
-		return checkSum;
-	}
 }
+
+

@@ -11,9 +11,13 @@ import org.springframework.util.CollectionUtils;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
+import static org.mockenger.core.util.MockRequestUtils.getBodyValue;
+import static org.mockenger.core.util.MockRequestUtils.getParamValues;
+import static org.mockenger.core.util.MockRequestUtils.getPathValue;
 import static org.springframework.util.DigestUtils.md5DigestAsHex;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -26,26 +30,31 @@ public class CommonUtils {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
-    public static String getCheckSum(final GenericRequest abstractRequest) {
-        if (abstractRequest.getBody() != null && !isEmpty(abstractRequest.getBody().getValue())) {
-            return generateCheckSum(abstractRequest.getBody().getValue());
-        }
+    public static String getCheckSum(final GenericRequest genericRequest) {
+    	final String body = getBodyValue(genericRequest);
 
-        return generateCheckSum(abstractRequest);
+		return (body.length() > 0 ? generateCheckSum(body) : generateCheckSum(genericRequest));
     }
 
 
     public static String generateCheckSum(final GenericRequest genericRequest) {
-		final String path = genericRequest.getPath().getValue();
-		final Set<Pair> params = genericRequest.getParameters().getValues();
+		final String path = getPathValue(genericRequest);
+		final Set<Pair> paramValues = getParamValues(genericRequest);
 		final RequestMethod method = genericRequest.getMethod();
 
-		return generateCheckSum(path + joinParams(params) + method);
+		return generateCheckSum(path + joinParams(paramValues) + method);
     }
 
 
-    private static String joinParams(final Set<Pair> params) {
-		return params.stream().map(p -> p.getKey() + p.getValue()).collect(Collectors.joining());
+	private static String joinParams(final Set<Pair> params) {
+		return joinParams(params, "", "");
+	}
+
+
+    public static String joinParams(final Set<Pair> params, final String keyValueDelimiter, final String parametersDelimiter) {
+		return params.stream()
+				.map(p -> p.getKey() + keyValueDelimiter + p.getValue())
+				.collect(joining(parametersDelimiter));
 	}
 
 
@@ -63,9 +72,10 @@ public class CommonUtils {
 
 
     public static String generateCheckSum(final String source) {
-        if (source == null) {
+        if (isNull(source)) {
             return "";
         }
+
         return md5DigestAsHex(source.getBytes(Charsets.UTF_8));
     }
 

@@ -1,7 +1,6 @@
 package org.mockenger.core.service.rest;
 
 import org.mockenger.core.service.RequestService;
-import org.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.mockenger.data.model.persistent.mock.request.PostRequest;
 import org.mockenger.data.model.persistent.mock.request.part.Body;
 import org.springframework.stereotype.Component;
@@ -10,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
+import static org.mockenger.core.util.MockRequestUtils.prepareJsonBody;
+import static org.mockenger.core.util.MockRequestUtils.prepareXmlBody;
 import static org.springframework.util.StringUtils.isEmpty;
 
 /**
@@ -26,10 +27,11 @@ public class PostService extends RequestService {
      * @return
      * @throws IOException
      */
-    public GenericRequest createMockRequestFromJson(final String groupId, final String requestBody,
+    public PostRequest createMockRequestFromJson(final String groupId, final String requestBody,
 													final HttpServletRequest request) throws IOException {
 
-        final String preparedBody = (isEmpty(requestBody) ? "" : prepareRequestJsonBody(requestBody));
+        final String preparedBody = (isEmpty(requestBody) ? "" : prepareJsonBody(requestBody));
+
         return createRequest(groupId, preparedBody, request);
     }
 
@@ -42,8 +44,8 @@ public class PostService extends RequestService {
      * @return
      * @throws TransformerException
      */
-    public GenericRequest createMockRequestFromXml(final String groupId, final String requestBody, final HttpServletRequest request) {
-        return createRequest(groupId, prepareRequestXmlBody(requestBody), request);
+    public PostRequest createMockRequestFromXml(final String groupId, final String requestBody, final HttpServletRequest request) {
+        return createRequest(groupId, prepareXmlBody(requestBody), request);
     }
 
 
@@ -54,7 +56,7 @@ public class PostService extends RequestService {
 	 * @param request
 	 * @return
 	 */
-	private GenericRequest createRequest(final String groupId, final String requestBody, final HttpServletRequest request) {
+	private PostRequest createRequest(final String groupId, final String requestBody, final HttpServletRequest request) {
         return fillUpEntity(new PostRequest(new Body(requestBody)), groupId, request);
     }
 }

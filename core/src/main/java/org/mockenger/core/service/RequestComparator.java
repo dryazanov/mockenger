@@ -3,7 +3,11 @@ package org.mockenger.core.service;
 import com.google.common.base.Strings;
 import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
+import org.mockenger.data.model.persistent.mock.request.part.Body;
+import org.mockenger.data.model.persistent.mock.request.part.Headers;
 import org.mockenger.data.model.persistent.mock.request.part.Pair;
+import org.mockenger.data.model.persistent.mock.request.part.Parameters;
+import org.mockenger.data.model.persistent.mock.request.part.Path;
 import org.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
 import org.mockenger.data.model.persistent.transformer.Transformer;
 import org.slf4j.Logger;
@@ -12,16 +16,21 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.mockenger.core.util.CommonUtils.allNotEmpty;
 import static org.mockenger.core.util.CommonUtils.containsAllIgnoreCase;
 import static org.mockenger.core.util.CommonUtils.containsEqualEntries;
 import static org.mockenger.core.util.CommonUtils.generateCheckSum;
-import static org.mockenger.data.model.dict.RequestMethod.PATCH;
-import static org.mockenger.data.model.dict.RequestMethod.POST;
-import static org.mockenger.data.model.dict.RequestMethod.PUT;
+import static org.mockenger.core.util.MockRequestUtils.getBody;
+import static org.mockenger.core.util.MockRequestUtils.getBodyValue;
+import static org.mockenger.core.util.MockRequestUtils.getHeaderValues;
+import static org.mockenger.core.util.MockRequestUtils.getHeaders;
+import static org.mockenger.core.util.MockRequestUtils.getParamValues;
+import static org.mockenger.core.util.MockRequestUtils.getParameters;
+import static org.mockenger.core.util.MockRequestUtils.getPath;
+import static org.mockenger.core.util.MockRequestUtils.getPathValue;
+import static org.mockenger.core.util.MockRequestUtils.isHttpMethodWithBody;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -63,6 +72,7 @@ public class RequestComparator {
         }
 
         printer.printSkipMock();
+
         return false;
     }
 
@@ -73,12 +83,19 @@ public class RequestComparator {
      * @return
      */
     private boolean comparePaths() {
-		final String incomingPath = getPath(incoming.getPath().getValue());
-		final String persistentPath = persistent.getPath().getValue();
+		final Path persistentPath = getPath(persistent);
+		final List<Transformer> transformers = persistentPath.getTransformers();
+		final String incomingPath = applyPathTransformers(getPathValue(incoming), transformers);
 
-		printer.printPaths(incomingPath, persistentPath);
+		printer.printPaths(incomingPath, persistentPath.getValue());
 
-        return incomingPath.equals(persistentPath);
+        if (incomingPath.equals(persistentPath.getValue())) {
+			incoming.getPath().setValue(incomingPath);
+
+			return true;
+		}
+
+        return false;
     }
 
 
@@ -88,11 +105,12 @@ public class RequestComparator {
      * @return
      */
     private boolean compareParameters() {
-        Set<Pair> incomingParams = incoming.getParameters().getValues();
-        final Set<Pair> persistentParams = persistent.getParameters().getValues();
+		final Parameters persistParams = getParameters(persistent);
+		final Set<Pair> persistentParams = persistParams.getValues();
+        Set<Pair> incomingParams = getParamValues(incoming);
 
         if (allNotEmpty(incomingParams, persistentParams)) {
-            incomingParams = applyTransformers(incomingParams, persistent.getParameters().getTransformers());
+            incomingParams = applyTransformers(incomingParams, persistParams.getTransformers());
             printer.printParams(incomingParams, persistentParams);
 
             return containsEqualEntries(incomingParams, persistentParams);
@@ -107,14 +125,16 @@ public class RequestComparator {
      * @return
      */
     private boolean compareHeaders() {
-        Set<Pair> incomingHeaders = incoming.getHeaders().getValues();
-        final Set<Pair> persistentHeaders = persistent.getHeaders().getValues();
+		final Headers persistHeaders = getHeaders(persistent);
+		final Set<Pair> persistHeaderValues = persistHeaders.getValues();
+        final Set<Pair> incomingHeaders = getHeaderValues(incoming);
 
-        if (allNotEmpty(incomingHeaders, persistentHeaders)) {
-            incomingHeaders = applyTransformers(incomingHeaders, persistent.getHeaders().getTransformers());
-            printer.printHeaders(incomingHeaders, persistentHeaders);
+        if (allNotEmpty(incomingHeaders, persistHeaderValues)) {
+            final Set<Pair> transformedHeaders = applyTransformers(incomingHeaders, persistHeaders.getTransformers());
 
-            return containsAllIgnoreCase(incomingHeaders, persistentHeaders);
+            printer.printHeaders(transformedHeaders, persistHeaderValues);
+
+            return containsAllIgnoreCase(transformedHeaders, persistHeaderValues);
         }
 
         return true;
@@ -138,6 +158,7 @@ public class RequestComparator {
 
         if (checksum.equals(persistent.getCheckSum())) {
             printer.printMockFound();
+
             return true;
         }
 
@@ -145,19 +166,12 @@ public class RequestComparator {
     }
 
 
-	private boolean isHttpMethodWithBody(final GenericRequest request) {
-		return ofNullable(request)
-				.map(GenericRequest::getMethod)
-				.map(m -> m.equals(POST) || m.equals(PUT) || m.equals(PATCH))
-				.orElse(false);
-	}
-
-
 	private String transformBodyAndGetChecksum() {
-		final String body = getBody(incoming.getBody().getValue());
-		printer.printBodies(body, persistent.getBody().getValue());
+		final Body persistBody = getBody(persistent);
+		final String incomingBody = applyBodyTransformers(getBodyValue(incoming), persistBody.getTransformers());
+		final String checksum = generateCheckSum(incomingBody);
 
-		final String checksum = generateCheckSum(body);
+		printer.printBodies(incomingBody, persistBody.getValue());
 		printer.printChecksums(checksum, persistent.getCheckSum());
 
 		return checksum;
@@ -203,22 +217,16 @@ public class RequestComparator {
 	}
 
 
-	private String getPath(final String initialPath) {
-		final String path = ofNullable(initialPath).orElse("");
-		final List<Transformer> transformers = persistent.getPath().getTransformers();
-
+	private String applyPathTransformers(final String path, final List<Transformer> transformers) {
 		if (!isEmpty(transformers)) {
-			return transformString(initialPath, transformers);
+			return transformString(path, transformers);
 		}
 
 		return path;
 	}
 
 
-	private String getBody(final String initialBody) {
-		final String body = ofNullable(initialBody).orElse("");
-		final List<Transformer> transformers = persistent.getBody().getTransformers();
-
+	private String applyBodyTransformers(final String body, final List<Transformer> transformers) {
 		if (!isEmpty(transformers)) {
 			return transformString(body, transformers);
 		}
@@ -233,21 +241,21 @@ public class RequestComparator {
 	 */
 	private final class Printer {
 
-		private final Logger LOG = LoggerFactory.getLogger(RequestComparator.Printer.class);
+		private final Logger log = LoggerFactory.getLogger(RequestComparator.Printer.class);
 
 
         public void print(final String type, final String incomingData, final String persistentData) {
-            LOG.debug(String.format("%s: in - %s | db - %s", type, incomingData, persistentData));
+            log.debug(String.format("%s: in - %s | db - %s", type, incomingData, persistentData));
         }
 
 		public void printMockFound() {
-			LOG.debug(Strings.repeat("*", 25));
-			LOG.debug("MOCK FOUND!");
-			LOG.debug(Strings.repeat("*", 25));
+			log.debug(Strings.repeat("*", 25));
+			log.debug("MOCK FOUND!");
+			log.debug(Strings.repeat("*", 25));
 		}
 
 		public void printSkipMock() {
-			LOG.debug("Mocks are not NOT equal, skip");
+			log.debug("Mocks are not NOT equal, skip");
 		}
 
 		public void printPaths(final String path1, final String path2) {

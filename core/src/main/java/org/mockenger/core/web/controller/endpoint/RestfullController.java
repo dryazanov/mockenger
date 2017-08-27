@@ -86,16 +86,15 @@ public class RestfullController extends ParentController {
      */
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
     public Callable<ResponseEntity> processPostJsonRequest(@PathVariable final String groupCode,
-														   @RequestBody final String jsonBody,
+														   @RequestBody(required = false) final String jsonBody,
 														   final HttpServletRequest request) {
     	return () -> {
 			final Group group = findGroupByCode(groupCode);
 
 			try {
 				final GenericRequest mockRequest = postService.createMockRequestFromJson(group.getId(), jsonBody, request);
-				ResponseEntity responseEntity = findMockedEntities(mockRequest, group);
-				System.out.println(responseEntity.getBody());
-				return responseEntity;
+
+				return findMockedEntities(mockRequest, group);
 			} catch (IOException e) {
 				throw new MockObjectNotCreatedException("Cannot read json from the provided source", e);
 			}
@@ -112,7 +111,7 @@ public class RestfullController extends ParentController {
      */
     @PostMapping(consumes = APPLICATION_XML_VALUE)
     public Callable<ResponseEntity> processPostXmlRequest(@PathVariable final String groupCode,
-														  @RequestBody final String requestBody,
+														  @RequestBody(required = false) final String requestBody,
 														  final HttpServletRequest request) {
     	return () -> {
 			final Group group = findGroupByCode(groupCode);
@@ -132,13 +131,14 @@ public class RestfullController extends ParentController {
      */
     @PutMapping(consumes = APPLICATION_JSON_VALUE)
     public Callable<ResponseEntity> processPutJsonRequest(@PathVariable final String groupCode,
-														  @RequestBody final String jsonBody,
+														  @RequestBody(required = false) final String jsonBody,
 														  final HttpServletRequest request) {
     	return () -> {
 			final Group group = findGroupByCode(groupCode);
 
 			try {
 				final GenericRequest mockRequest = putService.createMockRequestFromJson(group.getId(), jsonBody, request);
+				
 				return findMockedEntities(mockRequest, group);
 			} catch (IOException e) {
 				throw new MockObjectNotCreatedException("Cannot read json from the provided source", e);
@@ -156,7 +156,7 @@ public class RestfullController extends ParentController {
      */
     @PutMapping(consumes = APPLICATION_XML_VALUE)
     public Callable<ResponseEntity> processPutXmlRequest(@PathVariable final String groupCode,
-														 @RequestBody final String requestBody,
+														 @RequestBody(required = false) final String requestBody,
 														 final HttpServletRequest request) {
 		return () -> {
 			final Group group = findGroupByCode(groupCode);

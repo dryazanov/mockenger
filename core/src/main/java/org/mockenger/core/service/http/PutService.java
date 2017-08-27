@@ -8,15 +8,11 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Created by Dmitry Ryazanov on 3/24/2015.
+ * @author Dmitry Ryazanov
  */
 @Component(value = "httpPutService")
 public class PutService extends RequestService {
-
-    public PutRequest createMockRequest(String groupId, String requestBody, HttpServletRequest request) {
-        // TODO: Think about the best way to store requestBody. Now we store requestBody as it is,
-        // TODO: maybe we should replace whitespaces or encode somehow.
-        Body body = new Body(requestBody);
-        return (PutRequest) fillUpEntity(new PutRequest(body), groupId, request);
+    public PutRequest createMockRequest(final String groupId, final String requestBody, final HttpServletRequest request) {
+		return createMockRequest(new PutRequest(new Body(requestBody)), groupId, request);
     }
 }

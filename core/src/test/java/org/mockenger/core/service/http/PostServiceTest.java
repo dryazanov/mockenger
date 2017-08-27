@@ -1,13 +1,14 @@
 package org.mockenger.core.service.http;
 
-import org.mockenger.core.service.AbstractServiceTest;
-import org.mockenger.data.model.dict.RequestMethod;
-import org.mockenger.data.model.persistent.mock.request.PostRequest;
 import org.junit.Test;
+import org.mockenger.core.service.AbstractServiceTest;
+import org.mockenger.data.model.persistent.mock.request.PostRequest;
 import org.mockito.InjectMocks;
 
+import static org.mockenger.data.model.dict.RequestMethod.POST;
+
 /**
- * Created by Dmitry Ryazanov on 6/18/2015.
+ * @author Dmitry Ryazanov
  */
 public class PostServiceTest extends AbstractServiceTest {
 
@@ -16,7 +17,8 @@ public class PostServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCreateMockRequest() {
-        PostRequest postRequest = classUnderTest.createMockRequest(GROUP_ID, JSON_DATA, httpServletRequestMock);
-        checkEntityWithBody(postRequest, RequestMethod.POST, JSON_DATA);
+        final PostRequest postRequest = classUnderTest.createGenericRequest(GROUP_ID, JSON_DATA, httpServletRequestMock);
+
+        checkEntityWithBody(postRequest, POST, JSON_DATA);
     }
 }

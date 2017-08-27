@@ -3,7 +3,6 @@ package org.mockenger.core.web.controller.endpoint;
 import org.mockenger.core.web.controller.base.AbstractController;
 import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.model.persistent.mock.project.Project;
-import org.mockenger.core.service.GroupService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+
+import static org.mockenger.core.service.GroupService.cloneGroup;
 
 /**
  * @author Dmitry Ryazanov
@@ -45,9 +46,9 @@ public class GroupController extends AbstractController {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
 
-        final Group groupCandidate = GroupService.cloneGroup(group).id(null).build();
+        final Group groupCandidate = cloneGroup(group).id(null).build();
 
-        return okResponseWithDefaultHeaders(getGroupService().save(groupCandidate));
+        return okResponseWithDefaultHeaders(groupService.save(groupCandidate));
     }
 
 
@@ -68,7 +69,7 @@ public class GroupController extends AbstractController {
 
         // Check if group exists
         final Group existingGroup = findGroupByCode(groupCode);
-		final Group groupCandidate = GroupService.cloneGroup(group)
+		final Group groupCandidate = cloneGroup(group)
 				.code(existingGroup.getCode())
 				.build();
 
@@ -76,7 +77,7 @@ public class GroupController extends AbstractController {
             throw new IllegalArgumentException("Group IDs in the URL and in the payload are not equals");
         }
 
-        return okResponseWithDefaultHeaders(getGroupService().save(groupCandidate));
+        return okResponseWithDefaultHeaders(groupService.save(groupCandidate));
     }
 
 
@@ -87,7 +88,7 @@ public class GroupController extends AbstractController {
      */
     @DeleteMapping(GROUP_CODE_ENDPOINT)
     public ResponseEntity deleteGroup(@PathVariable final String groupCode) {
-        getGroupService().remove(findGroupByCode(groupCode));
+        groupService.remove(findGroupByCode(groupCode));
 
         return noContentWithDefaultHeaders();
     }
@@ -101,7 +102,7 @@ public class GroupController extends AbstractController {
 	@GetMapping(GROUPS_ENDPOINT)
     public ResponseEntity getGroupList(@PathVariable final String projectCode) {
         final Project project = findProjectByCode(projectCode);
-        final Iterable<Group> groupList = getGroupService().findByProjectId(project.getId());
+        final Iterable<Group> groupList = groupService.findByProjectId(project.getId());
 
         return okResponseWithDefaultHeaders(groupList);
     }

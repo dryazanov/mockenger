@@ -4,6 +4,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.builder.Input;
+import org.xmlunit.diff.Diff;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -91,5 +94,14 @@ public class XmlHelper {
 		}
 
 		return messageFactory.createMessage();
+	}
+
+
+	public static Diff getDiff(final String xml1, final String xml2) {
+		return DiffBuilder.compare(Input.fromString(xml1))
+				.withTest(Input.fromString(xml2))
+				.ignoreWhitespace()
+				.ignoreComments()
+				.build();
 	}
 }

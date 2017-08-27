@@ -5,6 +5,7 @@ import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.model.persistent.mock.project.Project;
 import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
+import org.mockenger.data.model.persistent.mock.request.part.Body;
 import org.mockenger.data.model.persistent.mock.request.part.Headers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -18,9 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.Date;
+import java.util.SortedSet;
 
+import static java.util.Objects.isNull;
 import static org.mockenger.core.util.CommonUtils.getCheckSum;
+import static org.mockenger.core.util.CommonUtils.joinParams;
 import static org.mockenger.core.util.CommonUtils.keysToLowercase;
+import static org.mockenger.core.util.HttpUtils.getParameterSortedSet;
+import static org.mockenger.core.util.MockRequestUtils.getBodyValue;
+import static org.mockenger.core.util.MockRequestUtils.getCleanCopy;
+import static org.mockenger.core.util.MockRequestUtils.isURLEncodedForm;
 
 /**
  * @author Dmitry Ryazanov
@@ -67,7 +75,6 @@ public class RequestController extends AbstractController {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
 
-        // TODO: Maybe it make sense to create validation with the chain: check request -> check group -> check project
         final Project project = findProjectByCode(projectCode);
         final Group group = findGroupByCode(groupCode);
 
@@ -80,19 +87,13 @@ public class RequestController extends AbstractController {
         // Generate new unique code
 		request.setCode(getUniqueCode(project, group));
 
+		final Headers requestHeaders = request.getHeaders();
+
         // Change headers to lowercase
-		request.setHeaders(processHeaders(request.getHeaders()));
+		request.setHeaders(processHeaders(requestHeaders));
 
-        // Remove whitespaces
-		final GenericRequest requestClone = getRequestService().getCleanCopy(request);
-
-		// Re-generate checksum because values could be updated
-		request.setCheckSum(getCheckSum(requestClone));
-
-        // Save
-        getRequestService().save(request);
-
-        return okResponseWithDefaultHeaders(request);
+        return okResponseWithDefaultHeaders(
+        		processBodyAndSave(request, isURLEncodedForm(requestHeaders)));
     }
 
 
@@ -130,19 +131,13 @@ public class RequestController extends AbstractController {
         request.setCreationDate(existingRequest.getCreationDate());
         request.setLastUpdateDate(new Date());
 
+		final Headers requestHeaders = request.getHeaders();
+
 		// Change headers to lowercase
-		request.setHeaders(processHeaders(request.getHeaders()));
+		request.setHeaders(processHeaders(requestHeaders));
 
-        // Remove whitespaces
-		final GenericRequest requestClone = getRequestService().getCleanCopy(request);
-
-        // Re-generate checksum because values could be updated
-        request.setCheckSum(getCheckSum(requestClone));
-
-        // Save
-        getRequestService().save(request);
-
-        return okResponseWithDefaultHeaders(request);
+		return okResponseWithDefaultHeaders(
+				processBodyAndSave(request, isURLEncodedForm(requestHeaders)));
     }
 
 
@@ -161,7 +156,7 @@ public class RequestController extends AbstractController {
 
         findProjectByCode(projectCode);
         findGroupByCode(groupCode);
-        getRequestService().remove(findRequestByCode(requestCode));
+        requestService.remove(findRequestByCode(requestCode));
 
         return noContentWithDefaultHeaders();
     }
@@ -179,7 +174,7 @@ public class RequestController extends AbstractController {
         findProjectByCode(projectCode);
 
         final Group group = findGroupByCode(groupCode);
-        final Iterable<AbstractRequest> requestList = getRequestService().findByGroupId(group.getId());
+        final Iterable<AbstractRequest> requestList = requestService.findByGroupId(group.getId());
 
         return okResponseWithDefaultHeaders(requestList);
     }
@@ -187,5 +182,29 @@ public class RequestController extends AbstractController {
 
 	private Headers processHeaders(final Headers headers) {
 		return new Headers(headers.getTransformers(), keysToLowercase(headers.getValues()));
+	}
+
+
+	private GenericRequest processBodyAndSave(final AbstractRequest request, final boolean isURLEncodedForm) {
+		if (isURLEncodedForm) {
+			final SortedSet sortedSet = getParameterSortedSet(getBodyValue(request));
+			final String joinedParams = joinParams(sortedSet, "=", "&");
+
+			if (isNull(request.getBody())) {
+				request.setBody(new Body());
+			}
+
+			request.getBody().setValue(joinedParams);
+			request.setCheckSum(getCheckSum(request));
+		} else {
+			// Remove whitespaces
+			final GenericRequest requestClone = getCleanCopy(request);
+
+			// Re-generate checksum because values could be updated
+			request.setCheckSum(getCheckSum(requestClone));
+		}
+
+		// Save
+		return requestService.save(request);
 	}
 }

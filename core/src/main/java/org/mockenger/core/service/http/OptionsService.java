@@ -12,6 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class OptionsService extends RequestService {
     public OptionsRequest createMockRequest(final String groupId, final HttpServletRequest request) {
-        return (OptionsRequest) fillUpEntity(new OptionsRequest(), groupId, request);
+        return fillUpEntity(new OptionsRequest(), groupId, request);
     }
 }

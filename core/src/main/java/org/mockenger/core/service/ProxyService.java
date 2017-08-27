@@ -12,7 +12,6 @@ import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
-import org.mockenger.data.model.persistent.mock.request.part.Body;
 import org.mockenger.data.model.persistent.mock.request.part.Pair;
 import org.mockenger.data.model.persistent.mock.response.MockResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,8 +23,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
+import static org.mockenger.core.util.MockRequestUtils.getBodyValue;
+import static org.mockenger.core.util.MockRequestUtils.getHeaderValues;
+import static org.mockenger.core.util.MockRequestUtils.getParamValues;
+import static org.mockenger.core.util.MockRequestUtils.getPathValue;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -84,19 +88,20 @@ public class ProxyService {
 
             // Set response body
             if (response.getEntity() != null && response.getEntity().getContent() != null) {
-                final String responseBody = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+                final String responseBody = IOUtils.toString(response.getEntity().getContent(), UTF_8);
                 mockResponse.setBody(responseBody);
             }
 
             return mockResponse;
 
         } catch (IOException e) {
-            log.error("Forwarding process failed for request '" + mockRequest.getName()
-					+ "' with path '" + mockRequest.getPath().getValue() + "'", e);
+            log.error(String.format("Forwarding process failed for request '%s' with path '%s'",
+					mockRequest.getName(), getPathValue(mockRequest)), e);
         }
 
         return new MockResponse();
     }
+
 
 	/**
      *
@@ -110,7 +115,7 @@ public class ProxyService {
 		final String uri = new StringBuilder()
 				.append(baseHost)
 				.append(baseHost.endsWith("/") ? "" : "/")
-				.append(mockRequest.getPath().getValue())
+				.append(getPathValue(mockRequest))
 				.toString();
 
         final RequestBuilder requestBuilder = RequestBuilder.create(mockRequest.getMethod().name());
@@ -118,22 +123,17 @@ public class ProxyService {
 		requestBuilder.setUri(uri);
 
 		// Set request parameters
-		mockRequest.getParameters().getValues()
+		getParamValues(mockRequest)
 				.forEach(pair -> requestBuilder.addParameter(pair.getKey(), pair.getValue()));
 
-		final String body = ofNullable(mockRequest.getBody())
-				.map(Body::getValue)
-				.orElse("");
+		final String body = getBodyValue(mockRequest);
 
         // Set request headers (excl. headers from black-list)
-		mockRequest.getHeaders()
-				.getValues()
+		getHeaderValues(mockRequest)
 				.stream()
 				.filter(p -> !ignoreHeader(p))
 				.filter(p -> !isContentLengthHeader(p) || isEmpty(body))
-				.forEach(pair -> {
-					requestBuilder.addHeader(pair.getKey(), pair.getValue());
-				});
+				.forEach(pair -> requestBuilder.addHeader(pair.getKey(), pair.getValue()));
 
 		// Set request body, if present
 		try {
@@ -156,9 +156,11 @@ public class ProxyService {
         return requestBuilder.build();
     }
 
+
 	private boolean ignoreHeader(final Pair p) {
 		return headersToIgnore.contains(p.getKey().toLowerCase());
 	}
+
 
 	private RequestConfig createRequestConfig() {
 		return RequestConfig.custom()
@@ -166,6 +168,7 @@ public class ProxyService {
 				.setConnectionRequestTimeout(TIMEOUT * 1000)
 				.setSocketTimeout(TIMEOUT * 1000).build();
 	}
+
 
     private boolean isContentLengthHeader(final Pair pair) {
 		return CONTENT_LENGTH.equalsIgnoreCase(pair.getKey());

@@ -2,6 +2,7 @@ package org.mockenger.core.web.controller.endpoint;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.mockenger.core.service.ProxyService;
 import org.mockenger.core.service.common.DeleteService;
 import org.mockenger.core.service.common.GetService;
@@ -12,8 +13,6 @@ import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.mockenger.data.model.persistent.mock.response.MockResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,17 +21,20 @@ import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
-import java.util.Collections;
+import java.util.Objects;
 
+import static java.util.Collections.EMPTY_SET;
+import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
+import static org.mockenger.core.util.MockRequestUtils.toAbstractRequest;
+import static org.springframework.http.HttpStatus.FOUND;
 import static org.springframework.http.ResponseEntity.created;
 
 /**
  *
  */
+@Slf4j
 public class ParentController extends AbstractController {
-
-    private final Logger LOG = LoggerFactory.getLogger(ProxyService.class);
 
     @Autowired
     private GetService getService;
@@ -79,11 +81,11 @@ public class ParentController extends AbstractController {
      * @return
      */
     protected ResponseEntity findMockedEntities(final GenericRequest mockRequest, final Group group) {
-        if (mockRequest == null) {
+        if (Objects.isNull(mockRequest)) {
             throw new MockObjectNotCreatedException("Provided mock-request is null or empty");
         }
 
-        final AbstractRequest mockResult = getRequestService().findMockedEntities(mockRequest);
+        final AbstractRequest mockResult = requestService.findMockedEntities(mockRequest);
 
 		return generateResponse(mockRequest, mockResult, group);
     }
@@ -96,7 +98,7 @@ public class ParentController extends AbstractController {
      * @return
      */
     protected ResponseEntity generateResponse(final GenericRequest mockRequest, final AbstractRequest mockResult, final Group group) {
-        if (mockResult != null) {
+        if (nonNull(mockResult)) {
             final MockResponse mockResponse = createMockResponse(mockResult);
 			final HttpHeaders headers = getHttpHeaders(mockRequest, mockResponse);
 			final HttpStatus httpStatus = HttpStatus.valueOf(mockResponse.getHttpStatus());
@@ -115,7 +117,7 @@ public class ParentController extends AbstractController {
 
 		if (!CollectionUtils.isEmpty(mockResponse.getHeaders())) {
 			return httpHeadersService.createHeaders(mockResponse.getHeaders());
-		} else if (mockRequest.getHeaders() != null) {
+		} else if (nonNull(mockRequest.getHeaders())) {
 			return httpHeadersService.updateContentTypeHeader(mockRequest, headers);
 		}
 
@@ -124,15 +126,17 @@ public class ParentController extends AbstractController {
 
 
 	private ResponseEntity processRecording(final Group group, final GenericRequest mockRequest) {
-		final AbstractRequest abstractRequest = getRequestService().toAbstractRequest(mockRequest);
+		final AbstractRequest abstractRequest = toAbstractRequest(mockRequest);
 
 		abstractRequest.setCode(getUniqueCode(group));
 
         if (group.isForwarding()) {
-			abstractRequest.setMockResponse(proxyService.forwardRequest(abstractRequest, group.getForwardTo()));
+			final MockResponse mockResponse = proxyService.forwardRequest(abstractRequest, group.getForwardTo());
+
+			abstractRequest.setMockResponse(mockResponse);
         }
 
-        getRequestService().save(abstractRequest);
+        requestService.save(abstractRequest);
 
         return created(URI.create("")).headers(getResponseHeaders()).body(mockRequest);
     }
@@ -144,7 +148,7 @@ public class ParentController extends AbstractController {
 
 
     private MockResponse createResponse302() {
-        return new MockResponse(HttpStatus.FOUND.value(), Collections.emptySet(), get302ResponseMessage());
+        return new MockResponse(FOUND.value(), EMPTY_SET, get302ResponseMessage());
     }
 
 
@@ -154,7 +158,7 @@ public class ParentController extends AbstractController {
 		try {
 			return objectMapper.writeValueAsString(new Message(message));
 		} catch (JsonProcessingException e) {
-			LOG.warn("Can't convert message '" + message + "' to json. Message will be send as a plain text", e);
+			log.warn("Can't convert message '" + message + "' to json. Message will be send as a plain text", e);
 		}
 
 		return message;

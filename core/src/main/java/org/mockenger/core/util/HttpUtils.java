@@ -1,16 +1,19 @@
 package org.mockenger.core.util;
 
 import com.google.common.collect.ImmutableList;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.mockenger.data.model.persistent.mock.request.part.Pair;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static java.util.Collections.list;
+import static java.util.stream.Collectors.toSet;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.ACCEPT_CHARSET;
 import static org.springframework.http.HttpHeaders.ACCEPT_ENCODING;
@@ -63,6 +66,8 @@ import static org.springframework.http.HttpHeaders.VARY;
 import static org.springframework.http.HttpHeaders.VIA;
 import static org.springframework.http.HttpHeaders.WARNING;
 import static org.springframework.http.HttpHeaders.WWW_AUTHENTICATE;
+import static org.springframework.web.servlet.HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE;
+import static org.springframework.web.servlet.HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE;
 
 /**
  * Created by Dmitry Ryazanov on 3/20/2015.
@@ -81,51 +86,80 @@ public class HttpUtils {
 
 
     /**
-     * Gets all the headers from request and returns them as Map<String, String>
+     * Gets all the headers from request and returns them as Set<String>
      *
      * @param servletRequest
-     * @param strictMatch true if you want to use headers as they are, false will set everything to lower case
+     * @param strictMatch true - if you want to use headers as they are, false - will set everything to lower case
      * @return
      */
-    public static Set<Pair> getHeaders(HttpServletRequest servletRequest, boolean strictMatch) {
-        String headerName;
-        String headerValue;
-        Set<Pair> requestHeaders = new HashSet<>();
-        Enumeration<String> headerNames = servletRequest.getHeaderNames();
+    public static Set<Pair> getHeaders(final HttpServletRequest servletRequest, boolean strictMatch) {
+		return list(servletRequest.getHeaderNames())
+				.stream()
+				.map(name -> {
+					String value = servletRequest.getHeader(name);
 
-        while (headerNames.hasMoreElements()) {
-            headerName = headerNames.nextElement();
-            if (strictMatch) {
-                headerValue = servletRequest.getHeader(headerName);
-            } else {
-                headerName = headerName.toLowerCase();
-                headerValue = servletRequest.getHeader(headerName).toLowerCase();
-            }
-            headerValue = headerValue.replaceAll(DELIMITER_PATTERN, "");
-            requestHeaders.add(new Pair(headerName, headerValue));
-        }
+					if (!strictMatch) {
+						name = name.toLowerCase();
+						value = value.toLowerCase();
+					}
 
-        return requestHeaders;
+					value = value.replaceAll(DELIMITER_PATTERN, "");
+
+					return new Pair(name, value);
+				})
+				.collect(toSet());
     }
 
 
     /**
-     * Gets all the query parameters and returns them as sorted Map<String, String>
+     * Gets all the query parameters and returns them as Set<Pair>
      *
      * @param servletRequest
      * @return
      */
-    public static Set<Pair> getParameterMap(HttpServletRequest servletRequest) {
-        Set<Pair> parameters = new HashSet<>();
-        Enumeration<String> parameterNames = servletRequest.getParameterNames();
-
-        while (parameterNames.hasMoreElements()) {
-            String name = parameterNames.nextElement();
-            parameters.add(new Pair(name, servletRequest.getParameter(name)));
-        }
-
-        return (parameters.size() > 0 ? parameters : null);
+    public static Set<Pair> getParameterSet(final HttpServletRequest servletRequest) {
+		return list(servletRequest.getParameterNames())
+				.stream()
+				.map(name -> new Pair(name, servletRequest.getParameter(name)))
+				.collect(toSet());
     }
+
+
+	/**
+	 * Gets all the query parameters and returns them as SortedSet<Pair>
+	 *
+	 * @param servletRequest
+	 * @return
+	 */
+	public static SortedSet<Pair> getParameterSortedSet(final HttpServletRequest servletRequest) {
+		return new TreeSet(getParameterSet(servletRequest));
+	}
+
+
+	/**
+	 * Parses URL query string and returns Set<Pair>
+	 *
+	 * @param stringToParse URL query string - <i>param1=value1&param2=value</i>
+	 * @return
+	 */
+	public static Set<Pair> getParameterSet(final String stringToParse) {
+		return URLEncodedUtils.parse(stringToParse, UTF_8)
+				.stream()
+				.map(p -> new Pair(p.getName(), p.getValue()))
+				.collect(toSet());
+	}
+
+
+	/**
+	 * Parses URL query string and returns SortedSet<Pair>
+	 *
+	 * @param stringToParse URL query string - <i>param1=value1&param2=value</i>
+	 * @return
+	 */
+	public static SortedSet<Pair> getParameterSortedSet(final String stringToParse) {
+		return new TreeSet(getParameterSet(stringToParse));
+	}
+
 
     /**
      * Gets request path
@@ -133,11 +167,12 @@ public class HttpUtils {
      * @param servletRequest
      * @return
      */
-    public static String getUrlPath(HttpServletRequest servletRequest) {
+    public static String getUrlPath(final HttpServletRequest servletRequest) {
         return antPathMatcher.extractPathWithinPattern(
-                (String) servletRequest.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE),
-                (String) servletRequest.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE));
+                (String) servletRequest.getAttribute(BEST_MATCHING_PATTERN_ATTRIBUTE),
+                (String) servletRequest.getAttribute(PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE));
     }
+
 
     /**
      *

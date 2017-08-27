@@ -46,6 +46,7 @@
         <aspectj.version>1.8.10</aspectj.version>
         <commons-io.version>2.5</commons-io.version>
         <httpclient.version>4.5.3</httpclient.version>
+        <xmlunit-core.version>2.4.0</xmlunit-core.version>
 
         <build.timestamp>${maven.build.timestamp}</build.timestamp>
         <maven.build.timestamp.format>ddMMyyyy-HHmm</maven.build.timestamp.format>
@@ -165,6 +166,12 @@
                 <version>${lombok.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.xmlunit</groupId>
+                <artifactId>xmlunit-core</artifactId>
+                <version>${xmlunit-core.version}</version>
+            </dependency>
+
             <!-- /Runtime Dependencies -->
 
 

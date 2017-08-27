@@ -84,7 +84,7 @@ public class HttpUtilsTest {
 
     @Test
     public void testGetParameterMap() {
-        Set<Pair> resultMap = HttpUtils.getParameterMap(httpServletRequestMock);
+        Set<Pair> resultMap = HttpUtils.getParameterSet(httpServletRequestMock);
         assertEquals(3, resultMap.size());
         assertTrue(resultMap.contains(new Pair(PARAM_NAME1, PARAM_VALUE1)));
         assertTrue(resultMap.contains(new Pair(PARAM_NAME2, PARAM_VALUE2)));
