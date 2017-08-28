@@ -1,28 +1,17 @@
 package org.mockenger.commons.utils;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.skyscreamer.jsonassert.JSONCompare;
 
-import java.io.IOException;
+import static org.skyscreamer.jsonassert.JSONCompareMode.LENIENT;
 
 /**
  * @author Dmitry Ryazanov
  */
 public class JsonHelper {
 
-    /**
-     * Convert String to JsonObject and back to String to remove whitespaces
-     *
-     * @param requestBody
-     * @return
-     * @throws IOException
-     */
-    public static String removeWhitespaces(final String requestBody) throws IOException {
-		final JsonFactory jsonFactory = new JsonFactory();
-		final ObjectMapper objectMapper = new ObjectMapper(jsonFactory);
-        final JsonNode jsonNode = objectMapper.readTree(requestBody);
-
-        return objectMapper.writeValueAsString(jsonNode);
-    }
+    public static boolean hasDifferences(final String json1, final String json2) throws JSONException {
+		return JSONCompare.compareJSON(new JSONObject(json1), new JSONObject(json2), LENIENT).failed();
+	}
 }

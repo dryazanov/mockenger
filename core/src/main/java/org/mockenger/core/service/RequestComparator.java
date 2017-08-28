@@ -1,6 +1,10 @@
 package org.mockenger.core.service;
 
 import com.google.common.base.Strings;
+import lombok.extern.slf4j.Slf4j;
+import org.json.JSONException;
+import org.mockenger.commons.utils.JsonHelper;
+import org.mockenger.commons.utils.XmlHelper;
 import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.mockenger.data.model.persistent.mock.request.part.Body;
@@ -10,8 +14,7 @@ import org.mockenger.data.model.persistent.mock.request.part.Parameters;
 import org.mockenger.data.model.persistent.mock.request.part.Path;
 import org.mockenger.data.model.persistent.transformer.AbstractMapTransformer;
 import org.mockenger.data.model.persistent.transformer.Transformer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.xmlunit.XMLUnitException;
 
 import java.util.List;
 import java.util.Set;
@@ -31,11 +34,14 @@ import static org.mockenger.core.util.MockRequestUtils.getParameters;
 import static org.mockenger.core.util.MockRequestUtils.getPath;
 import static org.mockenger.core.util.MockRequestUtils.getPathValue;
 import static org.mockenger.core.util.MockRequestUtils.isHttpMethodWithBody;
+import static org.mockenger.core.util.MockRequestUtils.isJson;
+import static org.mockenger.core.util.MockRequestUtils.isXml;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * @author Dmitry Ryazanov
  */
+@Slf4j
 public class RequestComparator {
 
     private final GenericRequest incoming;
@@ -67,6 +73,8 @@ public class RequestComparator {
             this.persistent = persistentRequest;
 
             if (comparePaths() && compareParameters() && compareHeaders() && compareBodies()) {
+				printer.printMockFound();
+
                 return true;
             }
         }
@@ -146,35 +154,50 @@ public class RequestComparator {
      * @return
      */
     private boolean compareBodies() {
-        final String checksum;
-
         if (isHttpMethodWithBody(incoming)) {
-            checksum = transformBodyAndGetChecksum();
-        } else {
-            // For other methods we only compare checksums
-            checksum = generateCheckSum(incoming);
-            printer.printChecksums(checksum, persistent.getCheckSum());
+            return transformBodyAndCompare();
         }
 
-        if (checksum.equals(persistent.getCheckSum())) {
-            printer.printMockFound();
-
-            return true;
-        }
-
-        return false;
+		// For other methods we only compare checksums
+		return compareCheckSums(generateCheckSum(incoming), persistent.getCheckSum());
     }
 
 
-	private String transformBodyAndGetChecksum() {
+	private boolean compareCheckSums(final String checksum1, final String checksum2) {
+		printer.printChecksums(checksum1, checksum2);
+
+		return checksum1.equals(checksum2);
+	}
+
+
+	private boolean transformBodyAndCompare() {
 		final Body persistBody = getBody(persistent);
-		final String incomingBody = applyBodyTransformers(getBodyValue(incoming), persistBody.getTransformers());
-		final String checksum = generateCheckSum(incomingBody);
+		final String persistBodyValue = getBodyValue(persistBody);
 
-		printer.printBodies(incomingBody, persistBody.getValue());
-		printer.printChecksums(checksum, persistent.getCheckSum());
+		if (persistBodyValue.length() > 0) {
+			final String incomingBodyValue = applyBodyTransformers(getBodyValue(incoming), persistBody.getTransformers());
 
-		return checksum;
+			printer.printBodies(incomingBodyValue, persistBodyValue);
+
+			try {
+				if (isJson(getHeaders(incoming))) {
+					return !JsonHelper.hasDifferences(incomingBodyValue, persistBodyValue);
+				} else if (isXml(getHeaders(incoming))) {
+					return !XmlHelper.hasDifferences(incomingBodyValue, persistBodyValue);
+				} else {
+					return compareCheckSums(generateCheckSum(incomingBodyValue), persistent.getCheckSum());
+				}
+			} catch (XMLUnitException | JSONException e) {
+				final String type = (e instanceof XMLUnitException ? "XML" : "JSON");
+
+				log.info("Treat objects as not equal because there is a failure during " + type + " objects creation");
+				log.debug("Unable to create " + type + " objects from provided strings", e);
+
+				return false;
+			}
+		}
+
+		return false;
 	}
 
 
@@ -241,21 +264,18 @@ public class RequestComparator {
 	 */
 	private final class Printer {
 
-		private final Logger log = LoggerFactory.getLogger(RequestComparator.Printer.class);
-
-
         public void print(final String type, final String incomingData, final String persistentData) {
-            log.debug(String.format("%s: in - %s | db - %s", type, incomingData, persistentData));
+            log.info(String.format("%s: in - %s | db - %s", type, incomingData, persistentData));
         }
 
 		public void printMockFound() {
-			log.debug(Strings.repeat("*", 25));
-			log.debug("MOCK FOUND!");
-			log.debug(Strings.repeat("*", 25));
+			log.info(Strings.repeat("*", 25));
+			log.info("MOCK FOUND!");
+			log.info(Strings.repeat("*", 25));
 		}
 
 		public void printSkipMock() {
-			log.debug("Mocks are not NOT equal, skip");
+			log.info("Mocks are not NOT equal, skip");
 		}
 
 		public void printPaths(final String path1, final String path2) {

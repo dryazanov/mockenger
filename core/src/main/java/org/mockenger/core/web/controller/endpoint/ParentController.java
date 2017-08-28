@@ -21,9 +21,9 @@ import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
-import java.util.Objects;
 
 import static java.util.Collections.EMPTY_SET;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static org.mockenger.core.util.MockRequestUtils.toAbstractRequest;
@@ -81,7 +81,7 @@ public class ParentController extends AbstractController {
      * @return
      */
     protected ResponseEntity findMockedEntities(final GenericRequest mockRequest, final Group group) {
-        if (Objects.isNull(mockRequest)) {
+        if (isNull(mockRequest)) {
             throw new MockObjectNotCreatedException("Provided mock-request is null or empty");
         }
 

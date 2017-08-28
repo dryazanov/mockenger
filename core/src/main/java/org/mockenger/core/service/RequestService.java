@@ -115,9 +115,9 @@ public class RequestService {
 			}
 		}
 
-		log.debug(Strings.repeat("*", 25));
-		log.debug("TOO BAD, NO MOCKS FOUND...");
-		log.debug(Strings.repeat("*", 25));
+		log.info(Strings.repeat("*", 25));
+		log.info("TOO BAD, NO MOCKS FOUND...");
+		log.info(Strings.repeat("*", 25));
 
 		return null;
 	}

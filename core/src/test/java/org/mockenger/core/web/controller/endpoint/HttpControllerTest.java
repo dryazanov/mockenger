@@ -1,19 +1,20 @@
 package org.mockenger.core.web.controller.endpoint;
 
 import com.google.common.collect.ImmutableSet;
-import org.mockenger.data.model.persistent.mock.request.HeadRequest;
-import org.mockenger.data.model.persistent.mock.request.OptionsRequest;
-import org.mockenger.data.model.persistent.mock.request.PatchRequest;
-import org.mockenger.data.model.persistent.mock.request.part.Pair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockenger.core.util.CommonUtils;
-import org.mockenger.core.web.controller.base.AbstractController;
+import org.mockenger.data.model.persistent.mock.request.HeadRequest;
+import org.mockenger.data.model.persistent.mock.request.OptionsRequest;
+import org.mockenger.data.model.persistent.mock.request.PatchRequest;
+import org.mockenger.data.model.persistent.mock.request.part.Pair;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Set;
 
+import static org.mockenger.core.web.controller.base.AbstractController.API_PATH;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.head;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
@@ -28,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class HttpControllerTest extends AbstractHttpControllerTest {
 
-    private static final String ENDPOINT_TEMPLATE = AbstractController.API_PATH + "/HTTP/%s/%s";
+    private static final String ENDPOINT_TEMPLATE = API_PATH + "/HTTP/%s/%s";
 
 
     @Before
@@ -43,52 +44,17 @@ public class HttpControllerTest extends AbstractHttpControllerTest {
     }
 
 
-    @Test
-    public void testPostRequestOk() throws Exception {
-		super.testPostJsonRequestOk();
-    }
 
-
-    @Test
-    public void testPostRequestNotFound() throws Exception {
-		super.testPostJsonRequestNotFound();
-    }
-
-
-    @Test
-    public void testPutRequestOk() throws Exception {
-		super.testPutJsonRequestOk();
-    }
-
-
-    @Test
-    public void testPutRequestNotFound() throws Exception {
-		super.testPutJsonRequestNotFound();
-    }
-
-
-    @Test
-    public void testGetRequestOk() throws Exception {
-		super.testGetJsonRequestOk();
-    }
+	@Test
+	public void testPostURLEncodedRequestOk() throws Exception {
+		super.testPostURLEncodedRequestOk();
+	}
 
 
 	@Test
-    public void testGetRequestNotFound() throws Exception {
-		super.testGetRequestNotFound();
-    }
-
-
-    @Test
-    public void testDeleteRequestOk() throws Exception {
-		super.testDeleteRequestOk();
-    }
-
-
-    @Test
-    public void testDeleteRequestNotFound() throws Exception {
-		super.testDeleteRequestNotFound();
-    }
+	public void testPostURLEncodedRequestDifferentOrderOk() throws Exception {
+		super.testPostURLEncodedRequestDifferentOrderOk();
+	}
 
 
 	@Test
@@ -172,7 +138,7 @@ public class HttpControllerTest extends AbstractHttpControllerTest {
 
 	protected HeadRequest createJsonMockRequestForHead(final String groupId) {
 		final HeadRequest headRequest = new HeadRequest();
-		final Set<Pair> headersSet = ImmutableSet.of(new Pair("content-type", CONTENT_TYPE_JSON_UTF8));
+		final Set<Pair> headersSet = ImmutableSet.of(new Pair(CONTENT_TYPE.toLowerCase(), CONTENT_TYPE_JSON_UTF8));
 
 		createMockRequest(headRequest, groupId, CONTENT_TYPE_JSON_UTF8.toLowerCase(), null, null);
 		headRequest.setCheckSum(CommonUtils.getCheckSum(headRequest));

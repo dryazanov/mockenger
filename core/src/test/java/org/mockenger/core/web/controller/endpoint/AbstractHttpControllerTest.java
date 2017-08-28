@@ -6,11 +6,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockenger.core.util.CommonUtils;
 import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.model.persistent.mock.project.Project;
 import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.mockenger.data.model.persistent.mock.request.DeleteRequest;
+import org.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.mockenger.data.model.persistent.mock.request.GetRequest;
 import org.mockenger.data.model.persistent.mock.request.PostRequest;
 import org.mockenger.data.model.persistent.mock.request.PutRequest;
@@ -26,9 +26,17 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.SortedSet;
 
+import static java.util.Objects.nonNull;
 import static org.mockenger.core.util.CommonUtils.generateCheckSum;
 import static org.mockenger.core.util.CommonUtils.generateUniqueId;
+import static org.mockenger.core.util.CommonUtils.getCheckSum;
+import static org.mockenger.core.util.CommonUtils.joinParams;
+import static org.mockenger.core.util.HttpUtils.getParameterSortedSet;
+import static org.mockenger.core.util.MockRequestUtils.getHeaders;
+import static org.mockenger.core.util.MockRequestUtils.isURLEncodedForm;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -52,6 +60,7 @@ public abstract class AbstractHttpControllerTest extends AbstractControllerTest 
 	protected static final String EXPECTED_RESULT_OK = "OK";
 
 	protected static final String REST_JSON_REQUEST_BODY = "{\"id\":" + ID1 + ",\"dynamicValue\":\"" + VALUE1 + "\",\"name\":\"NAME\",\"type\":\"TYPE\"}";
+	protected static final String REST_JSON_REQUEST_BODY_DIFFERENT_NODE_ORDER = "{\"id\":" + ID1 + ",\"name\":\"NAME\",\"type\":\"TYPE\",\"dynamicValue\":\"" + VALUE1 + "\"}";
 	protected static final String REST_JSON_RESPONSE_BODY = "{\"result\":\"OK\"}";
 	protected static final String REST_BAD_JSON_REQUEST = "{\"json\":\"is\",\"bad\"}";
 
@@ -65,10 +74,23 @@ public abstract class AbstractHttpControllerTest extends AbstractControllerTest 
 			"<body>Don't forget me this weekend!</body>" +
 			"</note>";
 
+	protected static final String REST_XML_REQUEST_BODY_DIFFERENT_NODE_ORDER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+			"<note>" +
+			"<body>Don't forget me this weekend!</body>" +
+			"<id>" + ID1 + "</id>" +
+			"<dynamicValue>" + VALUE1 + "</dynamicValue>" +
+			"<from>Jani</from>" +
+			"<to>Tove</to>" +
+			"<heading>Reminder</heading>" +
+			"</note>";
+
 	protected static final String REST_XML_RESPONSE_BODY = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 			"<note>" +
 			"<result>OK</result>" +
 			"</note>";
+
+	final Set<Pair> PARAM_SET_STRAIGHT = ImmutableSet.of(PARAM_PAIR_1, PARAM_PAIR_2, PARAM_PAIR_3);
+	final Set<Pair> PARAM_SET_MIXED = ImmutableSet.of(PARAM_PAIR_2, PARAM_PAIR_3, PARAM_PAIR_1);
 
 	protected Project project;
 	protected Group group;
@@ -111,6 +133,43 @@ public abstract class AbstractHttpControllerTest extends AbstractControllerTest 
 				.andExpect(jsonPath("$.result").value(EXPECTED_RESULT_OK));
 	}
 
+
+	@Test
+	public void testPostJsonRequestWithDifferentNodeOrderOk() throws Exception {
+		final GenericRequest request = createRequest(createJsonMockRequestForPost(group.getId()));
+		request.setBody(new Body(REST_JSON_REQUEST_BODY_DIFFERENT_NODE_ORDER));
+
+		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(REST_JSON_REQUEST_BODY)));
+
+		mockMvc.perform(asyncDispatch(mvcResult))
+				.andExpect(status().isCreated())
+				.andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
+				.andExpect(jsonPath("$.result").value(EXPECTED_RESULT_OK));
+	}
+
+
+	public void testPostURLEncodedRequestOk() throws Exception {
+		createRequest(createURLEncodedMockRequestForPost(group.getId()));
+
+		final String content = joinParams(PARAM_SET_STRAIGHT, "=", "&");
+		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(content), CONTENT_TYPE_X_FORM));
+
+		mockMvc.perform(asyncDispatch(mvcResult))
+				.andExpect(status().isOk())
+				.andExpect(content().string(EXPECTED_RESULT_OK));
+	}
+
+
+	public void testPostURLEncodedRequestDifferentOrderOk() throws Exception {
+		createRequest(createURLEncodedMockRequestForPost(group.getId()));
+
+		final String content = joinParams(PARAM_SET_MIXED, "=", "&");
+		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(content), CONTENT_TYPE_X_FORM));
+
+		mockMvc.perform(asyncDispatch(mvcResult))
+				.andExpect(status().isOk())
+				.andExpect(content().string(EXPECTED_RESULT_OK));
+	}
 
 	@Test
 	public void testPostJsonRequestNotFound() throws Exception {
@@ -186,11 +245,14 @@ public abstract class AbstractHttpControllerTest extends AbstractControllerTest 
 	protected abstract String getEndpointTemplate();
 
 
-	protected void createMockRequest(final AbstractRequest request, final String groupId, final String contentType,
-								   final String requestBody, final String responseBody) {
+	protected void createMockRequest(final AbstractRequest request,
+									 final String groupId,
+									 final String contentType,
+									 final String requestBody,
+									 final String responseBody) {
 
 		final String id = generateUniqueId();
-		final Set<Pair> headersSet = ImmutableSet.of(new Pair("content-type", contentType));
+		final Set<Pair> headersSet = ImmutableSet.of(new Pair(CONTENT_TYPE.toLowerCase(), contentType));
 
 		request.setId(id);
 		request.setGroupId(groupId);
@@ -200,14 +262,26 @@ public abstract class AbstractHttpControllerTest extends AbstractControllerTest 
 		request.setPath(new Path(REQUEST_PATH));
 		request.setParameters(null);
 
-		if (contentType != null) {
+		if (nonNull(contentType)) {
 			request.setHeaders(new Headers(ImmutableList.of(new KeyValueTransformer("key", ID2, ID1)), headersSet));
 		}
-		if (requestBody != null) {
+
+		if (nonNull(requestBody)) {
 			final ImmutableList<Transformer> transformers = ImmutableList.of(
 					new RegexpTransformer(ID2, ID1), new RegexpTransformer(VALUE2, VALUE1)
 			);
-			request.setBody(new Body(transformers, requestBody));
+
+			final Headers headers = getHeaders(request);
+
+			if (isURLEncodedForm(headers)) {
+				final SortedSet sortedSet = getParameterSortedSet(requestBody);
+				final String joinedParams = joinParams(sortedSet, "=", "&");
+
+				request.setBody(new Body(transformers, joinedParams));
+			} else {
+				request.setBody(new Body(transformers, requestBody));
+			}
+
 		}
 
 		request.setMockResponse(new MockResponse(200, headersSet, responseBody));
@@ -218,18 +292,32 @@ public abstract class AbstractHttpControllerTest extends AbstractControllerTest 
 		final PostRequest postRequest = new PostRequest();
 
 		createMockRequest(postRequest, groupId, CONTENT_TYPE_JSON_UTF8.toLowerCase(), REST_JSON_REQUEST_BODY, REST_JSON_RESPONSE_BODY);
-		postRequest.setCheckSum(CommonUtils.getCheckSum(postRequest));
+		postRequest.setCheckSum(getCheckSum(postRequest));
 		postRequest.getMockResponse().setHttpStatus(201);
 		postRequest.getMockResponse().setHeaders(null);
 
 		return postRequest;
 	}
 
+
+	protected PostRequest createURLEncodedMockRequestForPost(String groupId) {
+		final PostRequest postRequest = new PostRequest();
+		final String requestBody = joinParams(PARAM_SET_STRAIGHT, "=", "&");
+
+		createMockRequest(postRequest, groupId, CONTENT_TYPE_X_FORM.toLowerCase(), requestBody, "OK");
+		postRequest.setCheckSum(getCheckSum(postRequest));
+		postRequest.getMockResponse().setHttpStatus(200);
+		postRequest.getMockResponse().setHeaders(null);
+
+		return postRequest;
+	}
+
+
 	protected PutRequest createJsonMockRequestForPut(String groupId) {
 		final PutRequest putRequest = new PutRequest();
 
 		createMockRequest(putRequest, groupId, CONTENT_TYPE_JSON_UTF8.toLowerCase(), REST_JSON_REQUEST_BODY, null);
-		putRequest.setCheckSum(CommonUtils.getCheckSum(putRequest));
+		putRequest.setCheckSum(getCheckSum(putRequest));
 
 		return putRequest;
 	}

@@ -1,7 +1,7 @@
 package org.mockenger.core.web.controller.endpoint;
 
-import org.mockenger.core.service.soap.PostService;
-import org.mockenger.core.web.exception.MockObjectNotCreatedException;
+import org.mockenger.core.service.http.PostService;
+import org.mockenger.core.web.exception.BadContentTypeException;
 import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.soap.SOAPException;
-import javax.xml.transform.TransformerException;
-import java.io.IOException;
 import java.util.concurrent.Callable;
 
+import static java.util.Optional.ofNullable;
+import static org.mockenger.core.util.MockRequestUtils.APPLICATION_XML_PATTERN;
 import static org.mockenger.core.web.controller.base.AbstractController.API_PATH;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 /**
  * @author Dmitry Ryazanov
@@ -29,7 +29,7 @@ import static org.mockenger.core.web.controller.base.AbstractController.API_PATH
 public class SoapController extends ParentController {
 
 	@Autowired
-    @Qualifier("soapPostService")
+    @Qualifier("httpPostService")
     private PostService postService;
 
 
@@ -44,21 +44,23 @@ public class SoapController extends ParentController {
     public Callable<ResponseEntity> processPostRequest(@PathVariable final String groupCode,
 													   @RequestBody(required = false) final String requestBody,
 													   final HttpServletRequest request) {
+
 		return () -> {
-			final Group group = findGroupByCode(groupCode);
-
-			try {
-				final String soapBody = postService.getSoapBody(requestBody);
-				final GenericRequest mockRequest = postService.createMockRequest(group.getId(), soapBody, request);
-
-				return findMockedEntities(mockRequest, group);
-			} catch (SOAPException e) {
-				throw new MockObjectNotCreatedException("Cannot create SOAP message", e);
-			} catch (TransformerException e) {
-				throw new MockObjectNotCreatedException("An error occurred during request transformation", e);
-			} catch (IOException e) {
-				throw new MockObjectNotCreatedException("Cannot read xml from the provided source", e);
+			if (!isValidContentType(request)) {
+				throw new BadContentTypeException("Content-type is not recognized as a valid xml type");
 			}
+
+			final Group group = findGroupByCode(groupCode);
+			final GenericRequest mockRequest = postService.createGenericRequest(group.getId(), requestBody, request);
+
+			return findMockedEntities(mockRequest, group);
 		};
     }
+
+
+	private boolean isValidContentType(final HttpServletRequest servletRequest) {
+		return ofNullable(servletRequest.getHeader(CONTENT_TYPE))
+				.map(h -> h.matches(APPLICATION_XML_PATTERN))
+				.orElse(false);
+	}
 }

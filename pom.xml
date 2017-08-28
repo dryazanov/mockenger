@@ -47,6 +47,7 @@
         <commons-io.version>2.5</commons-io.version>
         <httpclient.version>4.5.3</httpclient.version>
         <xmlunit-core.version>2.4.0</xmlunit-core.version>
+        <jsonassert.version>1.5.0</jsonassert.version>
 
         <build.timestamp>${maven.build.timestamp}</build.timestamp>
         <maven.build.timestamp.format>ddMMyyyy-HHmm</maven.build.timestamp.format>
@@ -170,6 +171,11 @@
                 <groupId>org.xmlunit</groupId>
                 <artifactId>xmlunit-core</artifactId>
                 <version>${xmlunit-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.skyscreamer</groupId>
+                <artifactId>jsonassert</artifactId>
+                <version>${jsonassert.version}</version>
             </dependency>
 
             <!-- /Runtime Dependencies -->

@@ -7,7 +7,6 @@ import org.mockenger.core.service.http.PostService;
 import org.mockenger.core.service.http.PutService;
 import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
-import org.mockenger.data.model.persistent.mock.request.part.Body;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.Callable;
 
-import static java.util.Objects.isNull;
-import static org.mockenger.core.util.MockRequestUtils.cleanUpRequestBody;
 import static org.mockenger.core.web.controller.base.AbstractController.MOCK_HTTP_TYPE_PATH;
 import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
 import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
@@ -82,13 +79,6 @@ public class HttpController extends ParentController {
 		return () -> {
 			final Group group = findGroupByCode(groupCode);
 			final GenericRequest mockRequest = postService.createGenericRequest(group.getId(), requestBody, request);
-			final String cleanRequestBody = cleanUpRequestBody(mockRequest);
-
-			if (isNull(mockRequest.getBody())) {
-				mockRequest.setBody(new Body(cleanRequestBody));
-			} else {
-				mockRequest.getBody().setValue(cleanRequestBody);
-			}
 
 			return findMockedEntities(mockRequest, group);
 		};
@@ -109,13 +99,6 @@ public class HttpController extends ParentController {
 		return () -> {
 			final Group group = findGroupByCode(groupCode);
 			final GenericRequest mockRequest = putService.createMockRequest(group.getId(), requestBody, request);
-			final String cleanRequestBody = cleanUpRequestBody(mockRequest);
-
-			if (isNull(mockRequest.getBody())) {
-				mockRequest.setBody(new Body(cleanRequestBody));
-			} else {
-				mockRequest.getBody().setValue(cleanRequestBody);
-			}
 
 			return findMockedEntities(mockRequest, group);
 		};
@@ -136,13 +119,6 @@ public class HttpController extends ParentController {
 		return () -> {
 			final Group group = findGroupByCode(groupCode);
 			final GenericRequest mockRequest = patchService.createMockRequest(group.getId(), requestBody, request);
-			final String cleanRequestBody = cleanUpRequestBody(mockRequest);
-
-			if (isNull(mockRequest.getBody())) {
-				mockRequest.setBody(new Body(cleanRequestBody));
-			} else {
-				mockRequest.getBody().setValue(cleanRequestBody);
-			}
 
 			return findMockedEntities(mockRequest, group);
 		};

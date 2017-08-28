@@ -207,6 +207,7 @@ public class CommonUtils {
         return Maps.difference(map1, map2).areEqual();
     }
 
+
     /**
      * Checks if two maps contain the same entities
      *
@@ -222,9 +223,11 @@ public class CommonUtils {
         return Sets.difference(set1, set2).isEmpty();
     }
 
+
 	public static Set<Pair> keysToLowercase(final Set<Pair> set) {
 		return set.stream().map(p -> new Pair(p.getKey().toLowerCase(), p.getValue())).collect(toSet());
 	}
+
 
 	public static boolean startAndEndsWith(final String text, final String start, final String end) {
     	return !isEmpty(text) && (text.startsWith(start) && text.endsWith(end));

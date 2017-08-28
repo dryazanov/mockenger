@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableSet;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockenger.core.web.controller.base.AbstractController;
 import org.mockenger.data.model.dict.RequestMethod;
 import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.model.persistent.mock.project.Project;
@@ -23,6 +22,7 @@ import java.util.Set;
 
 import static org.mockenger.core.util.CommonUtils.generateUniqueId;
 import static org.mockenger.core.util.CommonUtils.getCheckSum;
+import static org.mockenger.core.web.controller.base.AbstractController.API_PATH;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -35,10 +35,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class SoapControllerTest extends AbstractControllerTest {
 
-    private static final String ENDPOINT_TEMPLATE = AbstractController.API_PATH + "/SOAP/%s/%s";
+    private static final String ENDPOINT_TEMPLATE = API_PATH + "/SOAP/%s/%s";
     private static final String REQUEST_PATH = "test/rest/mock/request";
     private static final String ID1 = "200000000001";
     private static final String ID2 = "100000000002";
+	private static final String INVALID_CONTENT_TYPE_ERROR_MESSAGE = "Content-type is not recognized as a valid xml type";
 
     protected static final String SOAP_XML_REQUEST_BODY = "<S:Body xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
 			"<ns3:DataRequestElement xmlns:ns3=\"http://www.af-klm.com/services/passenger/data-v1/xsd\">" +
@@ -72,7 +73,7 @@ public class SoapControllerTest extends AbstractControllerTest {
         super.setUp();
 
         project = createProject();
-        final Group group = createGroup(project.getId(), true);
+        final Group group = createGroup(project.getId(), false);
         createRequest(createSoapMockRequest(group.getId()));
 
         endpoint = String.format(ENDPOINT_TEMPLATE, group.getCode(), REQUEST_PATH);
@@ -86,7 +87,7 @@ public class SoapControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void testProcessPosRequestOk() throws Exception {
+    public void testPostRequestOk() throws Exception {
         final String content = SOAP_XML_REQUEST.replace(ID1, ID2);
 		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(content), CONTENT_TYPE_SOAP_UTF8));
 
@@ -97,28 +98,30 @@ public class SoapControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void testProcessPosRequestCustomContentType() throws Exception {
+    public void testPostRequestWrongContentType() throws Exception {
         final String content = SOAP_XML_REQUEST.replace(ID1, ID2);
 		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(content), CONTENT_TYPE_JSON_UTF8));
 
-		mockMvc.perform(asyncDispatch(mvcResult)).andExpect(status().isCreated());
+		mockMvc.perform(asyncDispatch(mvcResult))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
+				.andExpect(jsonPath("$.errors[0]").value(INVALID_CONTENT_TYPE_ERROR_MESSAGE));
     }
 
     @Test
-    public void testProcessPosRequestInvalidBody() throws Exception {
+    public void testPostRequestInvalidBody() throws Exception {
         final String content = SOAP_XML_REQUEST + "<invalidTag>";
 		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(content), CONTENT_TYPE_SOAP_UTF8));
 
 		mockMvc.perform(asyncDispatch(mvcResult))
-				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.errors[0]").value("Failed to create instance of the mock-object: Cannot create SOAP message"));
+				.andExpect(status().isNotFound());
     }
 
 
     private PostRequest createSoapMockRequest(final String groupId) {
         final Set<Pair> headersSet = ImmutableSet.of(new Pair("content-type", CONTENT_TYPE_SOAP_UTF8.toLowerCase()));
         final PostRequest postRequest = new PostRequest();
-		final Body body = new Body(ImmutableList.of(new RegexpTransformer(ID2, ID1)), SOAP_XML_REQUEST_BODY);
+		final Body body = new Body(ImmutableList.of(new RegexpTransformer(ID2, ID1)), SOAP_XML_REQUEST);
 		final MockResponse mockResponse = new MockResponse(200, headersSet, SOAP_XML_RESPONSE);
 		final String id = generateUniqueId();
 

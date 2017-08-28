@@ -1,8 +1,6 @@
 package org.mockenger.core.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.mockenger.commons.utils.JsonHelper;
-import org.mockenger.commons.utils.XmlHelper;
 import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.mockenger.data.model.persistent.mock.request.part.Body;
@@ -10,9 +8,7 @@ import org.mockenger.data.model.persistent.mock.request.part.Headers;
 import org.mockenger.data.model.persistent.mock.request.part.Pair;
 import org.mockenger.data.model.persistent.mock.request.part.Parameters;
 import org.mockenger.data.model.persistent.mock.request.part.Path;
-import org.mockenger.data.model.persistent.transformer.RegexpTransformer;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
 
@@ -26,13 +22,16 @@ import static org.mockenger.data.model.dict.RequestMethod.PUT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
-import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * @author Dmitry Ryazanov
  */
 @Slf4j
 public class MockRequestUtils {
+
+	public static final String APPLICATION_XML_PATTERN = "^[application|text]+\\/.*\\+?xml.*";
+	public static final String APPLICATION_JSON_PATTERN = "^[application]+\\/.*\\+?json.*";
+
 
 	public static boolean isMultipartFormData(final Headers headers) {
 		return containsHeader(headers, CONTENT_TYPE, MULTIPART_FORM_DATA_VALUE);
@@ -48,6 +47,15 @@ public class MockRequestUtils {
 		return getHeaderValues(headers)
 				.stream()
 				.filter(p -> headerName.equalsIgnoreCase(p.getKey()) && p.getValue().contains(headerValue))
+				.count() > 0;
+	}
+
+
+	public static boolean hasContentType(final Headers headers, final String pattern) {
+		return getHeaderValues(headers)
+				.stream()
+				.filter(p -> CONTENT_TYPE.equalsIgnoreCase(p.getKey())
+						&& p.getValue().toLowerCase().matches(pattern))
 				.count() > 0;
 	}
 
@@ -144,49 +152,23 @@ public class MockRequestUtils {
 	}
 
 
-	public static String prepareXmlBody(final String requestBody) {
-		final String body = new RegexpTransformer(">\\s+<", "><").transform(requestBody.trim());
-
-		if (body.startsWith("<?xml")) {
-			return body.substring(body.indexOf("?>") + 2);
-		}
-
-		return body;
+	public static boolean isXml(final Headers headers, final String body) {
+		return isXml(headers) || startAndEndsWith(body.trim(), "<", ">");
 	}
 
 
-	public static String prepareJsonBody(final String requestBody) throws IOException {
-		return JsonHelper.removeWhitespaces(requestBody);
+	public static boolean isXml(final Headers headers) {
+		return hasContentType(headers, APPLICATION_XML_PATTERN);
 	}
 
 
-	public static String cleanUpRequestBody(final GenericRequest genericRequest) {
-		final String body = getBodyValue(genericRequest);
-
-		return (!isEmpty(body) ? removeWhitespaces(body) : "");
+	public static boolean isJson(final Headers headers, final String body) {
+		return isJson(headers) || startAndEndsWith(body.trim(), "{", "}");
 	}
 
 
-	public static String removeWhitespaces(final String body) {
-		try {
-			if (startAndEndsWith(body.trim(), "{", "}")) {
-				return JsonHelper.removeWhitespaces(body);
-			} else if (startAndEndsWith(body.trim(), "<", ">")) {
-				return XmlHelper.removeWhitespaces(body);
-			}
-		} catch (Exception e) {
-			log.warn("Cannot remove whitespaces from the string", e);
-		}
-
-		return body;
-	}
-
-
-	public static GenericRequest getCleanCopy(final GenericRequest genericRequest) {
-		final String cleanRequestBody = cleanUpRequestBody(genericRequest);
-		final Body build = Body.builder().value(cleanRequestBody).build();
-
-		return cloneRequest(genericRequest).body(build).build();
+	public static boolean isJson(final Headers headers) {
+		return hasContentType(headers, APPLICATION_JSON_PATTERN);
 	}
 
 
@@ -205,21 +187,5 @@ public class MockRequestUtils {
 		abstractRequest.setCheckSum(getCheckSum(genericRequest));
 
 		return abstractRequest;
-	}
-
-
-	/**
-	 *
-	 * @param genericRequest
-	 * @return
-	 */
-	public static GenericRequest.GenericRequestBuilder cloneRequest(final GenericRequest genericRequest) {
-		return GenericRequest.builder()
-				.groupId(genericRequest.getGroupId())
-				.method(genericRequest.getMethod())
-				.path(genericRequest.getPath())
-				.parameters(genericRequest.getParameters())
-				.headers(genericRequest.getHeaders())
-				.body(genericRequest.getBody());
 	}
 }

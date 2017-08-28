@@ -27,7 +27,6 @@ import static org.mockenger.core.util.CommonUtils.joinParams;
 import static org.mockenger.core.util.CommonUtils.keysToLowercase;
 import static org.mockenger.core.util.HttpUtils.getParameterSortedSet;
 import static org.mockenger.core.util.MockRequestUtils.getBodyValue;
-import static org.mockenger.core.util.MockRequestUtils.getCleanCopy;
 import static org.mockenger.core.util.MockRequestUtils.isURLEncodedForm;
 
 /**
@@ -195,14 +194,9 @@ public class RequestController extends AbstractController {
 			}
 
 			request.getBody().setValue(joinedParams);
-			request.setCheckSum(getCheckSum(request));
-		} else {
-			// Remove whitespaces
-			final GenericRequest requestClone = getCleanCopy(request);
-
-			// Re-generate checksum because values could be updated
-			request.setCheckSum(getCheckSum(requestClone));
 		}
+
+		request.setCheckSum(getCheckSum(request));
 
 		// Save
 		return requestService.save(request);

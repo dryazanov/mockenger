@@ -50,6 +50,10 @@ import java.util.Set;
 import static org.mockenger.core.util.CommonUtils.generateUniqueId;
 import static org.mockenger.core.util.CommonUtils.getCheckSum;
 import static org.mockenger.core.web.controller.base.AbstractController.API_PATH;
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
+import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
 import static org.springframework.http.MediaType.parseMediaType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
@@ -64,7 +68,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {TestPropertyContext.class, TestContext.class})
 public class AbstractControllerTest {
 
-    @Autowired
+	@Autowired
     private WebApplicationContext webApplicationContext;
 
     @Autowired
@@ -94,7 +98,6 @@ public class AbstractControllerTest {
     protected static final String REQUEST_ID = "REQUEST_ID";
     protected static final String REQUEST_CODE = "RQST";
     protected static final String PROJECT_NAME_TEST = "Unit-test project";
-//    protected static final String PROJECT_CODE_TEST = "UTCODE";
     protected static final String GROUP_NAME_TEST = "Unit-test group";
     protected static final String ACCOUNT_FIRST_NAME_TEST = "First name";
     protected static final String ACCOUNT_LAST_NAME_TEST = "Last name";
@@ -103,13 +106,19 @@ public class AbstractControllerTest {
     protected static final String REQUEST_NAME_TEST = "Unit-test mock-request";
     protected static final String REQUEST_PATH = "/unit/test/mock/request";
     protected static final String REQUEST_PATH_API = API_PATH + "/projects/%s/groups/%s/requests";
+    protected static final String REQUEST_PATH_API_WITH_TRAILING_SLASH = REQUEST_PATH + "/";
+
+	protected static final Pair PARAM_PAIR_1 = new Pair("A", "1");
+	protected static final Pair PARAM_PAIR_2 = new Pair("b", "2");
+	protected static final Pair PARAM_PAIR_3 = new Pair("C", "333");
 
     protected static final String SEMICOLON = ";";
     protected static final String CHARSET_UTF8 = "charset=UTF-8";
-    protected static final String CONTENT_TYPE_JSON_UTF8 = MediaType.APPLICATION_JSON_VALUE + SEMICOLON + CHARSET_UTF8;
+    protected static final String CONTENT_TYPE_JSON_UTF8 = APPLICATION_JSON_VALUE + SEMICOLON + CHARSET_UTF8;
     protected static final String CONTENT_TYPE_SOAP_UTF8 = "application/soap+xml" + SEMICOLON + CHARSET_UTF8;
-    protected static final String CONTENT_TYPE_XML_UTF8 = MediaType.APPLICATION_XML_VALUE + SEMICOLON + CHARSET_UTF8;
-    protected static final String CONTENT_TYPE_HTML_UTF8 = MediaType.TEXT_HTML_VALUE + SEMICOLON + CHARSET_UTF8;
+    protected static final String CONTENT_TYPE_XML_UTF8 = APPLICATION_XML_VALUE + SEMICOLON + CHARSET_UTF8;
+    protected static final String CONTENT_TYPE_HTML_UTF8 = TEXT_HTML_VALUE + SEMICOLON + CHARSET_UTF8;
+    protected static final String CONTENT_TYPE_X_FORM = APPLICATION_FORM_URLENCODED_VALUE + SEMICOLON + CHARSET_UTF8;
 
     protected static final String MOCK_REQUEST_BODY = "{\"name\":\"NAME\",\"type\":\"TYPE\"}";
     protected static final String MOCK_RESPONSE_BODY = "{\"result\":\"OK\"}";
@@ -270,7 +279,7 @@ public class AbstractControllerTest {
         final List<Transformer> mapTransformers = ImmutableList.of(new KeyValueTransformer());
         final List<Transformer> transformers = ImmutableList.of(new RegexpTransformer(), new XPathTransformer());
         final Set<Pair> headersSet = ImmutableSet.of(new Pair("header1", "H1"), new Pair("header2", "H2"));
-        final Set<Pair> paramsSet = ImmutableSet.of(new Pair("A", "1"), new Pair("b", "2"));
+        final Set<Pair> paramsSet = ImmutableSet.of(PARAM_PAIR_1, PARAM_PAIR_2);
         final String id = generateUniqueId();
 
         request.setId(id);

@@ -112,7 +112,7 @@ public class ProjectControllerTest extends AbstractControllerTest {
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]").value("Unable to process request: json is not readable"));
+                .andExpect(jsonPath("$.errors[0]").value("Unable to process: request object is not readable"));
     }
 
     @Test
