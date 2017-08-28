@@ -168,9 +168,11 @@ public class HttpUtils {
      * @return
      */
     public static String getUrlPath(final HttpServletRequest servletRequest) {
-        return antPathMatcher.extractPathWithinPattern(
-                (String) servletRequest.getAttribute(BEST_MATCHING_PATTERN_ATTRIBUTE),
-                (String) servletRequest.getAttribute(PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE));
+		final String servletPathAttribute = (String) servletRequest.getAttribute(PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+		final String pathPatternAttribute = (String) servletRequest.getAttribute(BEST_MATCHING_PATTERN_ATTRIBUTE);
+
+		return antPathMatcher.extractPathWithinPattern(pathPatternAttribute, servletPathAttribute) +
+				(servletPathAttribute.endsWith("/") ? "/" : "");
     }
 
 
