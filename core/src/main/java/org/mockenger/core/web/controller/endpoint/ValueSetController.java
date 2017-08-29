@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Stream;
 
-import static org.mockenger.core.util.HttpUtils.getListOfHeaders;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
+import static org.mockenger.core.util.HttpUtils.getListOfHeaders;
 import static org.mockenger.core.web.controller.base.AbstractController.API_PATH;
 
 
@@ -122,7 +122,7 @@ public class ValueSetController extends AbstractController {
 	 */
 	@GetMapping("/eventEntityTypes")
 	public ResponseEntity getEventEntityTypes() {
-		final Map<String, String> entityTypes = Arrays.stream(EventEntityType.values())
+		final Map<String, String> entityTypes = Stream.of(EventEntityType.values())
 				.collect(toMap(Enum::name, EventEntityType::getTypeName));
 
 		return okResponseWithDefaultHeaders(ImmutableList.of(entityTypes));

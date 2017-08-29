@@ -36,6 +36,11 @@ label {
     background-color: #DDDDDD;
 }
 
+.close {
+	color: #FFF;
+	text-shadow: none;
+}
+
 /* ==========================================================================
 Hide ng-cloak on page load, https://docs.angularjs.org/api/ng/directive/ngCloak
 ========================================================================== */

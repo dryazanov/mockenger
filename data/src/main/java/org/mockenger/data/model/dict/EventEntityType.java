@@ -9,11 +9,11 @@ import org.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.mockenger.data.model.persistent.mock.request.GetRequest;
 import org.mockenger.data.model.persistent.mock.request.PostRequest;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.EMPTY_LIST;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author  Dmitry Ryazanov
@@ -28,22 +28,23 @@ public enum EventEntityType {
     private List<String> classList;
 
 
-    EventEntityType(final String name, final Class ... classes) {
+    EventEntityType(final String name, final Class ...classes) {
 		this.typeName = name;
-        this.classList = asList(classes).parallelStream()
+        this.classList = asList(classes)
+				.stream()
 				.map(c -> c.getCanonicalName())
-				.collect(Collectors.toList());
+				.collect(toList());
     }
 
 
 	public static List<String> getClassNames(final String entityType) {
-		for (EventEntityType type : EventEntityType.values()) {
+		for (EventEntityType type : values()) {
 			if (type.name().equals(entityType.toUpperCase())) {
 				return type.classList;
 			}
 		}
 
-		return Collections.EMPTY_LIST;
+		return EMPTY_LIST;
 	}
 
 	public String getTypeName() {

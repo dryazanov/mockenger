@@ -1,8 +1,9 @@
 'use strict';
 
 angular.module('mockengerClientMainApp')
-    .controller('EventListController', ['$scope', 'eventListService',
-        function($scope, eventListService) {
+    .controller('EventListController', ['$scope', 'eventService', 'eventListService',
+        function($scope, eventService, eventListService) {
+            $scope.eventService = eventService;
             $scope.eventListService = eventListService;
 
             // Get event list
@@ -55,4 +56,32 @@ angular.module('mockengerClientMainApp')
                     $scope.updateEventList(eventListService.getCurrentPage());
                 }
             };
+
+            $scope.showFullEvent = function(event, index) {
+				eventService.openEventModal(event);
+			}
+
+            $scope.getParametersAsString = function(params) {
+				var result = "";
+
+				if (params != null && params.values != null) {
+					for (var i = 0, l = params.values.length; i < l; i++) {
+						result += " '" + params.values[i].key + "=" + params.values[i].value + "',";
+					}
+				}
+
+				return result;
+			}
+
+            $scope.getHeadersAsString = function(headers) {
+				var result = "";
+
+				if (headers != null && headers.values != null) {
+					for (var i = 0, l = headers.values.length; i < l; i++) {
+						result += " '" + headers.values[i].key + ": " + headers.values[i].value + "',";
+					}
+				}
+
+				return result;
+			}
 }]);
