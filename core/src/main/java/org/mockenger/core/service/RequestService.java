@@ -125,7 +125,7 @@ public class RequestService {
 		final boolean isURLEncodedForm = ofNullable(request.getHeader(CONTENT_TYPE))
 				.map(h -> h.equalsIgnoreCase(APPLICATION_FORM_URLENCODED_VALUE))
 				.orElse(false);
-		final Parameters parameters = new Parameters((isURLEncodedForm ? null : HttpUtils.getParameterMap(request)));
+		final Parameters parameters = new Parameters((isURLEncodedForm ? null : HttpUtils.getParameterSet(request)));
 
         mockRequest.setGroupId(groupId);
         mockRequest.setPath(path);
