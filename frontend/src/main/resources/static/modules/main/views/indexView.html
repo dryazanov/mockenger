@@ -62,6 +62,7 @@
                         <label for="code">Code</label>
                         <input type="text" name="code" id="code" ng-model="currentProject.code"
                                ng-pattern="/^[a-zA-Z0-9]+$/" ng-disabled="currentProject.id != null" class="form-control" required>
+						<a href ng-click="generateProjectCode()" ng-if="currentProject.id == null && currentProject.name">Generate code</a>
                         <div ng-show="hasError(projectForm.code)">
                             <p ng-show="projectForm.code.$error.required" class="help-block">Code is required</p>
                             <p ng-show="projectForm.code.$error.pattern" class="help-block">Only letters and numbers allowed</p>

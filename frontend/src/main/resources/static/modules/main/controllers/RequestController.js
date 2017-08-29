@@ -307,13 +307,11 @@ angular.module('mockengerClientMainApp')
 			}
 
 			$scope.getBody = function() {
-				var body = requestListService.getCurrent().body.value;
-
-				try {
-					return angular.toJson(angular.fromJson(body), true);
-				} catch (err) {
-					return body;
+				if (requestListService.getCurrent().body != null && requestListService.getCurrent().body.value != null) {
+					return requestListService.getCurrent().body.value;
 				}
+
+				return '';
 			}
 
 			$scope.getHeadersAsString = function() {
@@ -336,6 +334,22 @@ angular.module('mockengerClientMainApp')
 				}
 
 				return result;
+			}
+
+			$scope.isURLEncodedType = function() {
+				if (!$scope.isRequestTabDisabled()) {
+					var headers = $scope.getRequestHeaders();
+
+					for (var i = 0, l = headers.length; i < l; i++) {
+						if (headers[i].key.trim().toLowerCase() === 'content-type'
+							&& headers[i].value.trim().toLowerCase() === APPLICATION_FORM_URLENCODED_VALUE) {
+
+							return true;
+						}
+					}
+				}
+
+				return false;
 			}
 
 

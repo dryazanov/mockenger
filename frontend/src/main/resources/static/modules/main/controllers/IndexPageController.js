@@ -86,6 +86,12 @@ angular.module('mockengerClientMainApp')
             }, function (errorResponse) {
                 $scope.showRedMessage(errorResponse);
             });
+
+            $scope.generateProjectCode = function() {
+				if ($scope.currentProject.name.length > 0) {
+					$scope.currentProject.code = $scope.currentProject.name.replace(/[aeiou\s]/ig, '');
+				}
+			}
         }
     ]
 );
