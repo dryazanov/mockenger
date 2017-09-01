@@ -54,6 +54,7 @@ angular.module('mockengerClientMainApp')
             $scope.getAccountList = function() {
                 accountListService.ajax.query(function(response) {
                     accountListService.setData(response);
+                    $scope.loadAccountEvents();
                 }, function (errorResponse) {
                     $scope.showRedMessage(errorResponse);
                 });

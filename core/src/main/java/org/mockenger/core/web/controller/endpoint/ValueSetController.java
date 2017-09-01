@@ -25,6 +25,7 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
 import static org.mockenger.core.util.HttpUtils.getListOfHeaders;
 import static org.mockenger.core.web.controller.base.AbstractController.API_PATH;
+import static org.mockenger.data.model.dict.EventEntityType.ACCOUNT;
 
 
 /**
@@ -123,6 +124,7 @@ public class ValueSetController extends AbstractController {
 	@GetMapping("/eventEntityTypes")
 	public ResponseEntity getEventEntityTypes() {
 		final Map<String, String> entityTypes = Stream.of(EventEntityType.values())
+				.filter(v -> v != ACCOUNT)
 				.collect(toMap(Enum::name, EventEntityType::getTypeName));
 
 		return okResponseWithDefaultHeaders(ImmutableList.of(entityTypes));

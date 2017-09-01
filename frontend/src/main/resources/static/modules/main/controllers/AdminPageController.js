@@ -25,8 +25,7 @@ angular.module('mockengerClientMainApp')
 
             $scope.loadAccountEvents = function() {
                 var page = 0;
-                var sort = "";
-                eventListService.events.get({types: $scope.eventEntityType, page: page, sort: sort}, function(response) {
+                eventListService.events.get({types: $scope.eventEntityType, page: page}, function(response) {
                     eventListService.setCurrentPage(page);
                     eventListService.setEntityType($scope.eventEntityType);
                     eventListService.setData(response);

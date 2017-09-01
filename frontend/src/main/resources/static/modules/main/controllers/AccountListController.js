@@ -21,6 +21,7 @@ angular.module('mockengerClientMainApp')
                     accountListService.ajax.delete({accountId: account.id}, function(response, getResponseHeaders) {
                         $scope.updateAccountList();
                         $scope.showGreenMessage('Account <b>' + account.username + '</b> has been deleted');
+                        $scope.getAccountList();
                     }, function(errorResponse) {
                         $scope.showRedMessage(errorResponse);
                     });

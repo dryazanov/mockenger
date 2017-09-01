@@ -5,10 +5,18 @@ angular.module('mockengerClientMainApp')
         function($scope, eventService, eventListService) {
             $scope.eventService = eventService;
             $scope.eventListService = eventListService;
+            eventListService.setData(null);
 
             // Get event list
-            $scope.updateEventList = function(types, page, sort) {
-                eventListService.events.get({types: eventListService.getEntityType(), page: page, sort: sort}, function(response) {
+            $scope.updateEventList = function(page) {
+            	var params = {
+            		types: eventListService.getEntityType(),
+            		startDate: moment($scope.dp.dateRangeStart || 0).valueOf(),
+            		endDate: moment($scope.dp.dateRangeEnd || new Date).valueOf(),
+            		page: page
+            	};
+
+                eventListService.events.get(params, function(response) {
                     eventListService.setCurrentPage(page);
                     eventListService.setData(response);
                 }, function (errorResponse) {
@@ -84,4 +92,59 @@ angular.module('mockengerClientMainApp')
 
 				return result;
 			}
+
+
+			$scope.cleanSearchFilter = function() {
+				$scope.dp.dateRangeStart = null;
+				$scope.dp.dateRangeEnd = null;
+				$scope.updateEventList(0);
+			}
+
+
+			// DATE PICKERS
+
+            moment.locale('en', {
+            	longDateFormat : {
+					LT: "HH:mm",
+					LTS: "HH:mm:ss"}
+            	}
+            );
+
+			$scope.dp = {
+				dateRangeStart: null,
+				dateRangeEnd: null
+			};
+
+			$scope.endDateBeforeRender = function($view, $dates) {
+				if ($scope.dp.dateRangeStart) {
+					var activeDate = moment($scope.dp.dateRangeStart).subtract(1, $view).add(1, 'minute');
+
+					$dates.filter(function (date) {
+						return date.localDateValue() <= activeDate.valueOf()
+					}).forEach(function (date) {
+						date.selectable = false;
+					});
+				}
+			}
+
+            $scope.startDateBeforeRender = function($dates) {
+				if ($scope.dp.dateRangeEnd) {
+					var activeDate = moment($scope.dp.dateRangeEnd);
+
+					$dates.filter(function (date) {
+						return date.localDateValue() >= activeDate.valueOf()
+					}).forEach(function (date) {
+						date.selectable = false;
+					});
+				}
+			}
+
+            $scope.startDateOnSetTime = function(newDate, oldDate) {
+				$scope.$broadcast('start-date-changed');
+			}
+
+            $scope.endDateOnSetTime = function() {
+				$scope.$broadcast('end-date-changed');
+			}
+
 }]);

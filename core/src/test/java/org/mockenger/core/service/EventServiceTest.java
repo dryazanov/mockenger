@@ -11,11 +11,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
+import static java.util.Optional.ofNullable;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockenger.core.service.EventService.DEFAULT_SORT_FIELD;
+import static org.mockenger.data.model.dict.EventEntityType.PROJECT;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -52,7 +57,7 @@ public class EventServiceTest {
         when(eventRepositoryMock.findAll()).thenReturn(eventList);
         when(eventRepositoryMock.findAll(any(PageRequest.class))).thenReturn(events);
         when(eventRepositoryMock.findOne(eq(EVENT_ID))).thenReturn(eventMock);
-        when(eventRepositoryMock.findByEntityTypeIn(any(List.class), any(PageRequest.class))).thenReturn(events);
+        when(eventRepositoryMock.findByEntityTypeAndEventDate(any(List.class), any(Date.class), any(Date.class), any(PageRequest.class))).thenReturn(events);
     }
 
     @Test
@@ -80,7 +85,7 @@ public class EventServiceTest {
 
     @Test
     public void testFindAllWithParams() {
-        final Page<Event> events = classUnderTest.findAll(1, EventService.DEFAULT_SORT_FIELD);
+        final Page<Event> events = classUnderTest.findAll(1, DEFAULT_SORT_FIELD);
 
         assertNotNull(events);
         assertEquals(1, events.getNumberOfElements());
@@ -92,14 +97,23 @@ public class EventServiceTest {
 
     @Test
     public void testFindByEntityTypes() {
-        final List<String> className = EventEntityType.getClassNames(EventEntityType.PROJECT.name());
-        final Page<Event> events = classUnderTest.findByEntityTypes(className, 1, EventService.DEFAULT_SORT_FIELD);
+        final List<String> className = EventEntityType.getClassNames(PROJECT.name());
+        final Page<Event> events = classUnderTest.findByEntityTypesAndEventDate(className, getDate(0L),
+				getDate(4099680000000L), 1, DEFAULT_SORT_FIELD);
 
         assertNotNull(events);
         assertEquals(1, events.getNumberOfElements());
         assertEquals(EVENT_ID, events.getContent().get(0).getId());
 
-        verify(eventRepositoryMock).findByEntityTypeIn(any(List.class), any(PageRequest.class));
+        verify(eventRepositoryMock).findByEntityTypeAndEventDate(any(List.class), any(Date.class), any(Date.class), any(PageRequest.class));
         verifyNoMoreInteractions(eventRepositoryMock);
     }
+
+	private Date getDate(final Long initDate) {
+		final Calendar date = Calendar.getInstance();
+
+		date.setTimeInMillis(ofNullable(initDate).orElse(0L));
+
+		return date.getTime();
+	}
 }

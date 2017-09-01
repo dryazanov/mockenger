@@ -108,7 +108,7 @@ gulp.task('copyNpmDependencies', function() {
 
 
 gulp.task('copyViews', function() {
-    return gulp.src([properties.project.source + 'modules/main/views/*.html'])
+    return gulp.src([properties.project.source + 'modules/main/views/**/*.html'])
         .pipe(gulp.dest(properties.project.dest + 'modules/main/views/'))
 });
 

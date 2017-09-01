@@ -14,6 +14,8 @@ angular.module('mockengerClientMainApp', [
         'angular-confirm',
         'ngProgress',
         'ui.codemirror',
+        'ui.dateTimeInput',
+        'ui.bootstrap.datetimepicker'
     ])
     .config(['$locationProvider', '$routeProvider', '$httpProvider', '$qProvider', 'ngToastProvider', 'SECURITY',
         function ($locationProvider, $routeProvider, $httpProvider, $qProvider, ngToastProvider, SECURITY) {

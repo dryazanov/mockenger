@@ -1,0 +1,52 @@
+<!-- Modal for Account -->
+<div class="modal fade" id="accountModal" tabindex="-1" role="dialog" aria-labelledby="accountModalLabel" ng-controller="AccountController">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<form name="accountForm" novalidate>
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="requestModalLabel">{{currentAccount.id == null ? 'Create account' : 'Edit account'}}</h4>
+				</div>
+				<div class="modal-body">
+					<input type="hidden" ng-model="currentAccount.id">
+					<div class="form-group" ng-class="getErrorStyle(accountForm.username)">
+						<label for="username">Username</label>
+						<input type="text" name="username" id="username" ng-model="currentAccount.username" class="form-control" required>
+						<p ng-show="hasError(accountForm.username)" class="help-block">Username is required</p>
+					</div>
+					<div class="form-group" ng-class="getErrorStyle(accountForm.firstName)">
+						<label for="firstName">First name</label>
+						<input type="text" name="firstName" id="firstName" ng-model="currentAccount.firstName" class="form-control" required>
+						<p ng-show="hasError(accountForm.firstName)" class="help-block">First name is required</p>
+					</div>
+					<div class="form-group" ng-class="getErrorStyle(accountForm.lastName)">
+						<label for="lastName">Last name</label>
+						<input type="text" name="lastName" id="lastName" ng-model="currentAccount.lastName" class="form-control" required>
+						<p ng-show="hasError(accountForm.lastName)" class="help-block">Last name is required</p>
+					</div>
+					<div class="form-group">
+						<label for="password">Password</label>
+						<input type="password" name="password" id="password" ng-model="currentAccount.password" class="form-control">
+					</div>
+					<div class="form-group" ng-class="accountForm.repassword.$invalid ? 'has-error': ''">
+						<label for="repassword">Confirm password</label>
+						<input type="password" name="repassword" id="repassword" ng-model="currentAccount.repassword" class="form-control">
+						<p ng-show="accountForm.repassword.$invalid" class="help-block">'Password' and 'Confirm password' are not equal</p>
+					</div>
+					<div class="form-group">
+						<label for="roles">Roles</label>
+						<div class="form-group">
+							<div class="btn-group" id="roles">
+								<label ng-repeat="role in roles" class="btn btn-primary" uib-btn-radio="'{{role}}'" ng-model="currentAccount.role">{{role}}</label>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-primary" ng-disabled="accountForm.$invalid" ng-click="saveAccount(currentAccount)">Save</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

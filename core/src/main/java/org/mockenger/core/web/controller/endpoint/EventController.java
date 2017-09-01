@@ -6,6 +6,7 @@ import org.mockenger.core.web.exception.ObjectNotFoundException;
 import org.mockenger.data.model.dict.EventEntityType;
 import org.mockenger.data.model.persistent.log.Event;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static java.util.Optional.ofNullable;
@@ -38,6 +41,8 @@ public class EventController extends AbstractController {
      */
     @GetMapping
     public ResponseEntity getEventList(@RequestParam(value = "types", required = false) final List<String> types,
+                                       @RequestParam(value = "startDate", required = false, defaultValue = "0") final Long startDate,
+                                       @RequestParam(value = "endDate", required = false, defaultValue = "4099680000000") final Long endDate,
                                        @RequestParam(value = "page", required = false) final Integer page,
                                        @RequestParam(value = "sort", required = false) final String sort) {
 
@@ -47,11 +52,22 @@ public class EventController extends AbstractController {
                     .filter(type -> !isEmpty(type))
                     .collect(toList());
 
-            return okResponseWithDefaultHeaders(eventService.findByEntityTypes(typeList, page, sort));
+			final Page<Event> events = eventService.findByEntityTypesAndEventDate(typeList, getDate(startDate), getDate(endDate), page, sort);
+
+			return okResponseWithDefaultHeaders(events);
         }
 
         return okResponseWithDefaultHeaders(eventService.findAll(page, sort));
     }
+
+
+    private Date getDate(final Long initDate) {
+		final Calendar date = Calendar.getInstance();
+
+		date.setTimeInMillis(ofNullable(initDate).orElse(0L));
+
+		return date.getTime();
+	}
 
 
 	/**
