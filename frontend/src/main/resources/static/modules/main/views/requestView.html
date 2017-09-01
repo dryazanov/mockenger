@@ -1,0 +1,383 @@
+<div class="row" ng-if="requestListService.getCurrent()">
+	<div class="col-md-12" ng-controller="RequestController">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="pull-right">
+							<button class="btn btn-sm btn-primary" ng-click="requestListService.setCurrent(null)">
+								<span class="glyphicon glyphicon-list"></span>
+							</button>
+							<button class="btn btn-sm btn-primary" ng-class="{disabled: isPrevRequestDisabled()}" ng-click="prevRequest()">
+								<span class="glyphicon glyphicon-chevron-left"></span>
+							</button>
+							<button class="btn btn-sm btn-primary" ng-class="{disabled: isNextRequestDisabled()}" ng-click="nextRequest()">
+								<span class="glyphicon glyphicon-chevron-right"></span>
+							</button>
+						</div>
+						<h5>{{requestListService.getCurrent().name}}</h5>
+					</div>
+				</div>
+			</div>
+			<div class="panel-body">
+				<form name="mockRequestForm" novalidate>
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-md-12">
+								<uib-tabset>
+									<uib-tab heading="#">
+										<br/>
+										<div class="form-group" ng-class="getErrorStyle(mockRequestForm.requestName)">
+											<label for="url">Name</label>
+											<table class="table">
+												<tr>
+													<td>
+														<input type="text" name="requestName" id="requestName"
+															   ng-model="requestListService.getCurrent().name"
+															   class="form-control" required
+															   aria-describedby="sizing-addon1">
+														<p ng-show="hasError(mockRequestForm.requestName)"
+														   class="help-block">Name is required.</p>
+													</td>
+												</tr>
+											</table>
+										</div>
+										<div class="form-group" ng-if="requestListService.getCurrent().id">
+											<table class="table">
+												<tr>
+													<td class="col-lg-2">
+														<label>Creation date</label>
+													</td>
+													<td>
+														{{requestListService.getCurrent().creationDate | date:'dd-MM-yyyy HH:mm:ss'}}
+													</td>
+												</tr>
+												<tr>
+													<td class="col-lg-2">
+														<label>Request unique code</label>
+													</td>
+													<td>
+														{{requestListService.getCurrent().code}}
+													</td>
+												</tr>
+												<tr>
+													<td class="col-lg-2">
+														<label>cURL</label>
+													</td>
+													<td>
+																	<textarea readonly="true" class="form-control" id="curlCommand"
+																			  aria-describedby="sizing-addon1" rows="10">{{getCURL()}}</textarea>
+
+														<button class="curlCommand btn-warning btn-sm" data-clipboard-target="#curlCommand">
+															<span class="glyphicon glyphicon-duplicate"></span> Copy to clipboard
+														</button>
+														<span ng-class="{'text-danger': clipboardMessage.failure}">{{clipboardMessage.text}}</span>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</uib-tab>
+									<uib-tab heading="Path">
+										<br/>
+										<div class="form-group">
+											<label for="url">Path</label>
+											<table class="table">
+												<tr>
+													<td>
+														<div class="input-group">
+															<div class="input-group-btn">
+																<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+																	{{requestListService.getCurrent().method}} <span class="caret"></span>
+																</button>
+																<ul class="dropdown-menu">
+																	<li ng-repeat="method in requestMethods">
+																		<a href ng-click="selectMethod(method)">{{method}}</a>
+																	</li>
+																</ul>
+															</div>
+															<span class="input-group-addon">/</span>
+															<input name="url" id="url" ng-model="requestListService.getCurrent().path.value"
+																   class="form-control" aria-describedby="sizing-addon1" placeholder="Path">
+														</div>
+													</td>
+												</tr>
+											</table>
+										</div>
+
+										<div class="form-group">
+											<label>Transformers</label>
+											<table class="table">
+												<tr ng-repeat="pathTransformer in requestListService.getCurrent().path.transformers">
+													<td class="col-lg-6">
+														<input type="text" ng-model="pathTransformer.pattern" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Pattern, regular expressions allowed">
+													</td>
+													<td class="col-lg-6">
+														<input type="text" ng-model="pathTransformer.replacement" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Replacement">
+													</td>
+													<td class="col-lg-1" ng-if="isManagerOrAdmin(user.role)">
+														<button class="btn-danger btn-sm" ng-click="deleteTransformer($index, requestListService.getCurrent().path.transformers)">
+															<span class="glyphicon glyphicon-trash"></span>
+														</button>
+													</td>
+												</tr>
+												<tr>
+													<td colspan="4">
+														<a href ng-click="addPathTransformer()">Add transformer</a>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</uib-tab>
+									<uib-tab heading="Parameters">
+										<br/>
+										<div class="form-group">
+											<label for="url">Parameters</label>
+											<table class="table">
+												<tr ng-repeat="parameter in requestListService.getCurrent().parameters.values track by $index">
+													<td class="col-lg-6">
+														<input type="text" ng-model="parameter.key" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Parameter">
+													</td>
+													<td class="col-lg-6">
+														<input type="text" ng-model="parameter.value" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Value">
+													</td>
+													<td ng-if="isManagerOrAdmin(user.role)">
+														<button class="btn-danger btn-sm" ng-click="deleteParameter($index)">
+															<span class="glyphicon glyphicon-trash"></span>
+														</button>
+													</td>
+												</tr>
+												<tr>
+													<td colspan="3">
+														<a href ng-click="addParameter()">Add parameter</a>
+													</td>
+												</tr>
+											</table>
+										</div>
+
+										<div class="form-group">
+											<label>Transformers</label>
+											<table class="table">
+												<tr ng-repeat="paramTransformer in requestListService.getCurrent().parameters.transformers">
+													<td class="col-lg-4">
+														<input type="text" ng-model="paramTransformer.key" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Parameter name">
+													</td>
+													<td class="col-lg-4">
+														<input type="text" ng-model="paramTransformer.pattern" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Value pattern">
+													</td>
+													<td class="col-lg-4">
+														<input type="text" ng-model="paramTransformer.replacement" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Value replacement">
+													</td>
+													<td class="col-lg-1" ng-if="isManagerOrAdmin(user.role)">
+														<button class="btn-danger btn-sm" ng-click="deleteTransformer($index, requestListService.getCurrent().parameters.transformers)">
+															<span class="glyphicon glyphicon-trash"></span>
+														</button>
+													</td>
+												</tr>
+												<tr>
+													<td colspan="4">
+														<a href ng-click="addParamTransformer()">Add transformer</a>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</uib-tab>
+									<uib-tab heading="Headers">
+										<br/>
+										<div class="form-group">
+											<label for="url">Headers</label>
+											<table class="table">
+												<tr ng-repeat="requestHeader in requestListService.getCurrent().headers.values track by $index">
+													<td class="col-lg-6">
+														<input type="text" ng-model="requestHeader.key"
+															   uib-typeahead="header for header in headerList | filter:$viewValue | limitTo:10"
+															   class="form-control" aria-describedby="sizing-addon1" placeholder="Header name">
+													</td>
+													<td class="col-lg-6">
+														<input type="text" ng-model="requestHeader.value" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Value">
+													</td>
+													<td ng-if="isManagerOrAdmin(user.role)">
+														<button class="btn-danger btn-sm" ng-click="deleteHeader($index, requestListService.getCurrent().headers.values)">
+															<span class="glyphicon glyphicon-trash"></span>
+														</button>
+													</td>
+												</tr>
+												<tr>
+													<td colspan="3">
+														<a href ng-click="addRequestHeader()">Add header</a>
+													</td>
+												</tr>
+											</table>
+										</div>
+
+										<div class="form-group">
+											<label>Transformers</label>
+											<table class="table">
+												<tr ng-repeat="headerTransformer in requestListService.getCurrent().headers.transformers">
+													<td class="col-lg-4">
+														<input type="text" ng-model="headerTransformer.key" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Header name">
+													</td>
+													<td class="col-lg-4">
+														<input type="text" ng-model="headerTransformer.pattern" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Value pattern">
+													</td>
+													<td class="col-lg-4">
+														<input type="text" ng-model="headerTransformer.replacement" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Value replacement">
+													</td>
+													<td class="col-lg-1" ng-if="isManagerOrAdmin(user.role)">
+														<button class="btn-danger btn-sm" ng-click="deleteTransformer($index, requestListService.getCurrent().headers.transformers)">
+															<span class="glyphicon glyphicon-trash"></span>
+														</button>
+													</td>
+												</tr>
+												<tr>
+													<td colspan="4">
+														<a href ng-click="addHeaderTransformer()">Add transformer</a>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</uib-tab>
+									<uib-tab heading="Request body" disable="isRequestTabDisabled()" ng-click="onRequestTabClick()">
+										<br/>
+										<div class="form-group">
+											<label>Transformers</label>
+											<table class="table">
+												<tr ng-repeat="bodyTransformer in requestListService.getCurrent().body.transformers">
+													<td class="col-lg-2">
+														<select ng-model="bodyTransformer.type" required class="form-control">
+															<option ng-repeat="typeName in bodyTransformerTypes">{{typeName}}</option>
+														</select>
+													</td>
+													<td class="col-lg-5">
+														<input type="text" ng-model="bodyTransformer.pattern" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Pattern">
+													</td>
+													<td class="col-lg-5">
+														<input type="text" ng-model="bodyTransformer.replacement" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Replacement">
+													</td>
+													<td ng-if="isManagerOrAdmin(user.role)">
+														<button class="btn-danger btn-sm" ng-click="deleteTransformer($index, requestListService.getCurrent().body.transformers)">
+															<span class="glyphicon glyphicon-trash"></span>
+														</button>
+													</td>
+												</tr>
+												<tr>
+													<td colspan="4">
+														<a href ng-click="addRequestBodyTransformer()">Add transformer</a>
+													</td>
+												</tr>
+											</table>
+										</div>
+
+										<div class="form-group">
+											<label for="requestBody">Request body</label>
+											<section class="section-table">
+															<textarea ui-codemirror="cmOptionRequest" ui-refresh="cmRefreshRequest"
+																	  ng-model="requestListService.getCurrent().body.value"
+																	  name="requestBody" id="requestBody" class="form-control"
+																	  aria-describedby="sizing-addon1" rows="30"></textarea>
+
+												<button class="btn btn-sm btn-primary" ng-class="{'btn-warning' : prettyModel.Request.xml}"
+														ng-click="prettify('Request', 'xml')" type="button">
+													<span class="glyphicon glyphicon-list-alt"></span> XML
+												</button>
+												<button class="btn btn-sm btn-primary"  ng-class="{'btn-warning' : prettyModel.Request.json}"
+														ng-click="prettify('Request', 'json')" type="button">
+													<span class="glyphicon glyphicon-list-alt"></span> JSON
+												</button>
+											</section>
+										</div>
+									</uib-tab>
+									<uib-tab heading="Response" ng-click="onResponseTabClick()">
+										<br/>
+										<div class="form-group">
+											<label for="url">Headers</label>
+											<table class="table">
+												<tr ng-repeat="responseHeader in requestListService.getCurrent().mockResponse.headers track by $index">
+													<td class="col-lg-6">
+														<input ng-model="responseHeader.key"
+															   uib-typeahead="header for header in headerList | filter:$viewValue | limitTo:10"
+															   class="form-control" aria-describedby="sizing-addon1" placeholder="Header name">
+													</td>
+													<td class="col-lg-6">
+														<input ng-model="responseHeader.value" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Value">
+													</td>
+													<td ng-if="isManagerOrAdmin(user.role)">
+														<button class="btn-danger btn-sm" ng-click="deleteHeader($index, requestListService.getCurrent().mockResponse.headers)">
+															<span class="glyphicon glyphicon-trash"></span>
+														</button>
+													</td>
+												</tr>
+												<tr>
+													<td colspan="3">
+														<a href ng-click="addResponseHeader()">Add header</a>
+													</td>
+												</tr>
+											</table>
+										</div>
+
+										<div class="form-group" ng-class="getErrorStyle(mockRequestForm.httpStatus)">
+											<label for="httpStatus">HTTP status code</label>
+											<table class="table">
+												<tr>
+													<td>
+														<input name="httpStatus" id="httpStatus" class="form-control"
+															   ng-model="requestListService.getCurrent().mockResponse.httpStatus"
+															   aria-describedby="sizing-addon1" ng-pattern="/^[0-9]{3}$/" required>
+
+														<div ng-show="hasError(mockRequestForm.httpStatus)">
+															<p ng-show="mockRequestForm.httpStatus.$error.required" class="help-block">HTTP status code is required</p>
+															<p ng-show="mockRequestForm.httpStatus.$error.pattern" class="help-block">Must be 3 digits long</p>
+														</div>
+													</td>
+												</tr>
+											</table>
+										</div>
+
+										<div class="form-group">
+											<label for="responseBody">Response body</label>
+											<section class="section-table">
+															<textarea ui-codemirror="cmOptionResponse" ui-refresh="cmRefreshResponse"
+																	  ng-model="requestListService.getCurrent().mockResponse.body"
+																	  name="responseBody" id="responseBody" class="form-control"
+																	  aria-describedby="sizing-addon1" rows="10"></textarea>
+
+												<button class="btn btn-sm btn-primary" ng-class="{'btn-warning' : prettyModel.Response.xml}"
+														ng-click="prettify('Response', 'xml')" type="button">
+													<span class="glyphicon glyphicon-list-alt"></span> XML
+												</button>
+												<button class="btn btn-sm btn-primary"  ng-class="{'btn-warning' : prettyModel.Response.json}"
+														ng-click="prettify('Response', 'json')" type="button">
+													<span class="glyphicon glyphicon-list-alt"></span> JSON
+												</button>
+											</section>
+										</div>
+									</uib-tab>
+								</uib-tabset>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="panel-footer" ng-if="isManagerOrAdmin(user.role)">
+				<div class="pull-right">
+					<button type="button" class="btn btn-danger" data-dismiss="modal" ng-click="requestListService.setCurrent(null)">Cancel</button>
+					<button type="button" class="btn btn-primary" ng-disabled="projectForm.$invalid" ng-click="saveRequest(requestListService.getCurrent())">Save</button>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+	</div>
+</div>

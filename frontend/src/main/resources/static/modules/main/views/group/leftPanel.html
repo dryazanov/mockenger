@@ -1,0 +1,44 @@
+<div class="col-md-3" ng-controller="GroupListController">
+	<div class="panel panel-default">
+		<ul class="list-group">
+			<li class="list-group-item">
+				<h3>
+					<div class="pull-right" ng-if="isManagerOrAdmin(user.role)">
+						<button type="button" class="btn btn-warning btn-sm" ng-click="createGroup()">
+							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+						</button>
+					</div>
+					<div class="pull-right">
+						<a type="button" href="/#/index" class="btn btn-sm btn-primary" >
+							<span class="glyphicon glyphicon-list"></span>
+						</a>
+					</div>
+					{{currentProject.name}} <span class="label label-success">{{currentProject.type}}</span>
+					<div class="clearfix"></div>
+				</h3>
+			</li>
+			<li class="list-group-item" ng-if="groupListService.getData().length == 0">
+				No groups here
+			</li>
+			<li class="list-group-item" ng-if="groupListService.getData().length > 0" ng-repeat="group in groupListService.getData() track by $index">
+				<div class="pull-right" ng-if="isManagerOrAdmin(user.role)">
+					<button class="btn-primary btn-xs" ng-click="editGroup(group)">
+						<span class="glyphicon glyphicon-cog"></span>
+					</button>
+					<button class="btn-danger btn-xs" ng-click="deleteGroup($index, group)">
+						<span class="glyphicon glyphicon-trash"></span>
+					</button>
+				</div>
+				<div>
+					<a href ng-click="loadGroupRequests(group)">
+						{{group.name}}
+					</a>
+					&nbsp;
+					<span ng-show="!group.recording" class="label label-primary">Not recording</span>
+					<span ng-show="group.recording" class="label label-danger">Recording</span>
+				</div>
+			</li>
+		</ul>
+		<div class="panel-footer">&nbsp;</div>
+	</div>
+</div>

@@ -41,6 +41,31 @@ label {
 	text-shadow: none;
 }
 
+.wrapword {
+	white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+	white-space: -webkit-pre-wrap; /*Chrome & Safari */
+	white-space: -pre-wrap;      /* Opera 4-6 */
+	white-space: -o-pre-wrap;    /* Opera 7 */
+	white-space: pre-wrap;       /* css-3 */
+	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+	word-break: break-all;
+	white-space: normal;
+}
+
+ul.nav li a {
+	height: 60px;
+	padding-top: 20px;
+	text-align: center;
+}
+
+.navbar-links {
+	padding-left: 7px;
+}
+
+.navbar-links ul.nav li a {
+	width: 110px;
+}
+
 /* ==========================================================================
 Hide ng-cloak on page load, https://docs.angularjs.org/api/ng/directive/ngCloak
 ========================================================================== */

@@ -1,37 +1,37 @@
 <mkngr-navbar></mkngr-navbar>
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="panel panel-default">
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <h4>Events</h4>
-                    </li>
-                    <li class="list-group-item" ng-repeat="(entityType, entityTypeName) in eventEntityTypes">
-                        <div>
-                            <a href ng-click="loadEventsByEntityType(entityType)">
-                                {{entityTypeName}}
-                            </a>
-                        </div>
-                    </li>
-                </ul>
-                <div class="panel-footer">&nbsp;</div>
-            </div>
-        </div>
+	<div class="row">
+		<div class="col-md-3">
+			<div class="panel panel-default">
+				<ul class="list-group">
+					<li class="list-group-item">
+						<h4>Events</h4>
+					</li>
+					<li class="list-group-item" ng-repeat="(entityType, entityTypeName) in eventEntityTypes">
+						<div>
+							<a href ng-click="loadEventsByEntityType(entityType)">
+								{{entityTypeName}}
+							</a>
+						</div>
+					</li>
+				</ul>
+				<div class="panel-footer">&nbsp;</div>
+			</div>
+		</div>
 
 
-        <div class="col-md-9" ng-controller="EventListController">
-            <h5 ng-if="eventListService.getData() == null">Please select an event type</h5>
+		<div class="col-md-9" ng-controller="EventListController">
+			<h5 ng-if="eventListService.getData() == null">Please select an event type</h5>
 
-            <div ng-if="eventListService.getData() != null && !eventListService.getCurrent()"  class="panel panel-default">
-                <div class="panel-heading">
+			<div ng-if="eventListService.getData() != null && !eventListService.getCurrent()"  class="panel panel-default">
+				<div class="panel-heading">
 
 					<ng-include src="'/modules/main/views/event/searchPanel.html'"/>
 
-                </div>
+				</div>
 
-                <div class="panel-body">
+				<div class="panel-body">
 					<div ng-if="pageCount() <= 0">
 						<h5>No results found</h5>
 					</div>
@@ -129,7 +129,7 @@
 										</tr>
 										<tr>
 											<td class="col-md-1 text-info">Headers</td>
-											<td>{{getHeadersAsString(event.entity.headers)}}</td>
+											<td class="wrapword">{{getHeadersAsString(event.entity.headers)}}</td>
 										</tr>
 										<tr>
 											<td>&nbsp;</td>
@@ -142,31 +142,31 @@
 							</tr>
 						</tbody>
 					</table>
-                </div>
+				</div>
 
-                <div class="panel-footer" ng-show="pageCount() > 1">
-                    <ul class="pagination pull-right">
-                        <li ng-class="{disabled: isPrevPageDisabled()}">
-                            <a href ng-click="prevPage()" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
+				<div class="panel-footer" ng-show="pageCount() > 1">
+					<ul class="pagination pull-right">
+						<li ng-class="{disabled: isPrevPageDisabled()}">
+							<a href ng-click="prevPage()" aria-label="Previous">
+								<span aria-hidden="true">&laquo;</span>
+							</a>
+						</li>
 
-                        <li ng-repeat="n in range()" ng-class="{active: isActive(n)}">
-                            <a href ng-click="updateEventList(n)">{{n+1}}</a>
-                        </li>
+						<li ng-repeat="n in range()" ng-class="{active: isActive(n)}">
+							<a href ng-click="updateEventList(n)">{{n+1}}</a>
+						</li>
 
-                        <li ng-class="{disabled: isNextPageDisabled()}">
-                            <a href ng-click="nextPage()" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                    <div class="clearfix"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+						<li ng-class="{disabled: isNextPageDisabled()}">
+							<a href ng-click="nextPage()" aria-label="Next">
+								<span aria-hidden="true">&raquo;</span>
+							</a>
+						</li>
+					</ul>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <ng-include src="'/modules/main/views/event/detailsModal.html'"/>

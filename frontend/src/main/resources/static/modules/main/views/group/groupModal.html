@@ -1,0 +1,68 @@
+<!-- Modal for Group -->
+<div class="modal fade" id="groupModal" tabindex="-1" role="dialog" aria-labelledby="groupModalLabel" ng-controller="GroupController">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<form name="groupForm" novalidate>
+				<input type="hidden" ng-model="groupToSave.projectId">
+				<input type="hidden" ng-model="groupToSave.id">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="requestModalLabel">{{groupToSave.id == null ? 'Create group' : 'Edit group'}}</h4>
+				</div>
+				<div class="modal-body">
+					<div>
+						<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)" dismiss-on-timeout="true">{{alert.msg}}</alert>
+					</div>
+					<div class="form-group" ng-if="urlToSendRequests != null">
+						<label>URL for requests</label>
+						<p>{{urlToSendRequests}}</p>
+					</div>
+					<div class="form-group" ng-class="getErrorStyle(groupForm.name)">
+						<label for="name">Name</label>
+						<input name="name" id="name" ng-model="groupToSave.name" class="form-control" required>
+						<p ng-show="hasError(groupForm.name)" class="help-block">Group name is required</p>
+					</div>
+					<div class="form-group" ng-class="getErrorStyle(groupForm.code)">
+						<label for="code">Group code</label>
+						<input name="code" id="code" ng-model="groupToSave.code"
+							   ng-pattern="/^[a-zA-Z0-9]+$/" ng-disabled="groupToSave.id != null"  class="form-control" required>
+						<a href ng-click="generateGroupCode()" ng-if="groupToSave.id == null && groupToSave.name">Generate code</a>
+						<div ng-show="hasError(groupForm.code)">
+							<p ng-show="groupForm.code.$error.required" class="help-block">Code is required</p>
+							<p ng-show="groupForm.code.$error.pattern" class="help-block">Only letters and numbers allowed</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="recording">Record incoming requests</label>
+						<div class="form-group">
+							<div class="btn-group" id="recording">
+								<label class="btn btn-primary" ng-model="groupToSave.recording" uib-btn-radio="true">Yes</label>
+								<label class="btn btn-primary" ng-model="groupToSave.recording" uib-btn-radio="false">&nbsp;No&nbsp;</label>
+							</div>
+						</div>
+					</div>
+					<hr/>
+					<div class="form-group">
+						<label for="recording">Forward incoming requests</label>
+						<div class="form-group">
+							<div class="btn-group" id="forwarding">
+								<label class="btn btn-primary" ng-model="groupToSave.forwarding" uib-btn-radio="true">Yes</label>
+								<label class="btn btn-primary" ng-model="groupToSave.forwarding" uib-btn-radio="false">&nbsp;No&nbsp;</label>
+							</div>
+						</div>
+					</div>
+					<div class="form-group" ng-class="getErrorStyle(groupForm.forwardTo)" ng-show="groupToSave.forwarding">
+						<label for="forwardTo">Base URL for forwarding</label>
+						<input type="text" name="forwardTo" id="forwardTo" ng-model="groupToSave.forwardTo" class="form-control" ng-required="groupToSave.forwarding">
+						<p ng-show="groupToSave.forwarding == true && hasError(groupForm.forwardTo)" class="help-block">Base URL cannot be empty</p>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-primary" ng-disabled="groupForm.$invalid" ng-click="saveGroup(groupToSave)">Save</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

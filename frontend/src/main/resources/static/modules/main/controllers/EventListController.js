@@ -1,75 +1,75 @@
 'use strict';
 
 angular.module('mockengerClientMainApp')
-    .controller('EventListController', ['$scope', 'eventService', 'eventListService',
-        function($scope, eventService, eventListService) {
-            $scope.eventService = eventService;
-            $scope.eventListService = eventListService;
-            eventListService.setData(null);
+	.controller('EventListController', ['$scope', 'eventService', 'eventListService',
+		function($scope, eventService, eventListService) {
+			$scope.eventService = eventService;
+			$scope.eventListService = eventListService;
+			eventListService.setData(null);
 
-            // Get event list
-            $scope.updateEventList = function(page) {
-            	var params = {
-            		types: eventListService.getEntityType(),
-            		startDate: moment($scope.dp.dateRangeStart || 0).valueOf(),
-            		endDate: moment($scope.dp.dateRangeEnd || new Date).valueOf(),
-            		page: page
-            	};
+			// Get event list
+			$scope.updateEventList = function(page) {
+				var params = {
+					types: eventListService.getEntityType(),
+					startDate: moment($scope.dp.dateRangeStart || 0).valueOf(),
+					endDate: moment($scope.dp.dateRangeEnd || new Date).valueOf(),
+					page: page
+				};
 
-                eventListService.events.get(params, function(response) {
-                    eventListService.setCurrentPage(page);
-                    eventListService.setData(response);
-                }, function (errorResponse) {
-                    $scope.showRedMessage(errorResponse);
-                });
-            };
+				eventListService.events.get(params, function(response) {
+					eventListService.setCurrentPage(page);
+					eventListService.setData(response);
+				}, function (errorResponse) {
+					$scope.showRedMessage(errorResponse);
+				});
+			};
 
-            $scope.pageCount = function() {
-                if (eventListService.getData() != null) {
-                    return eventListService.getData().totalPages;
-                }
-                return 0;
-            };
+			$scope.pageCount = function() {
+				if (eventListService.getData() != null) {
+					return eventListService.getData().totalPages;
+				}
+				return 0;
+			};
 
-            $scope.range = function() {
-                var range = [];
-                for (var i = 0, l = $scope.pageCount(); i < l; i++) {
-                    range.push(i);
-                }
-                return range;
-            };
+			$scope.range = function() {
+				var range = [];
+				for (var i = 0, l = $scope.pageCount(); i < l; i++) {
+					range.push(i);
+				}
+				return range;
+			};
 
-            $scope.isActive = function(n) {
-                return (eventListService.getCurrentPage() == n);
-            };
+			$scope.isActive = function(n) {
+				return (eventListService.getCurrentPage() == n);
+			};
 
-            $scope.isPrevPageDisabled = function() {
-                return (eventListService.getCurrentPage() === 0);
-            };
+			$scope.isPrevPageDisabled = function() {
+				return (eventListService.getCurrentPage() === 0);
+			};
 
-            $scope.isNextPageDisabled = function() {
-                return (eventListService.getCurrentPage() === $scope.pageCount() - 1);
-            };
+			$scope.isNextPageDisabled = function() {
+				return (eventListService.getCurrentPage() === $scope.pageCount() - 1);
+			};
 
-            $scope.prevPage = function() {
-                if (eventListService.getCurrentPage() > 0) {
-                    eventListService.setCurrentPage(eventListService.getCurrentPage() - 1);
-                    $scope.updateEventList(eventListService.getCurrentPage());
-                }
-            };
+			$scope.prevPage = function() {
+				if (eventListService.getCurrentPage() > 0) {
+					eventListService.setCurrentPage(eventListService.getCurrentPage() - 1);
+					$scope.updateEventList(eventListService.getCurrentPage());
+				}
+			};
 
-            $scope.nextPage = function() {
-                if (eventListService.getCurrentPage() < $scope.pageCount() - 1) {
-                    eventListService.setCurrentPage(eventListService.getCurrentPage() + 1);
-                    $scope.updateEventList(eventListService.getCurrentPage());
-                }
-            };
+			$scope.nextPage = function() {
+				if (eventListService.getCurrentPage() < $scope.pageCount() - 1) {
+					eventListService.setCurrentPage(eventListService.getCurrentPage() + 1);
+					$scope.updateEventList(eventListService.getCurrentPage());
+				}
+			};
 
-            $scope.showFullEvent = function(event, index) {
+			$scope.showFullEvent = function(event, index) {
 				eventService.openEventModal(event);
 			}
 
-            $scope.getParametersAsString = function(params) {
+			$scope.getParametersAsString = function(params) {
 				var result = "";
 
 				if (params != null && params.values != null) {
@@ -81,7 +81,7 @@ angular.module('mockengerClientMainApp')
 				return result;
 			}
 
-            $scope.getHeadersAsString = function(headers) {
+			$scope.getHeadersAsString = function(headers) {
 				var result = "";
 
 				if (headers != null && headers.values != null) {
@@ -103,12 +103,12 @@ angular.module('mockengerClientMainApp')
 
 			// DATE PICKERS
 
-            moment.locale('en', {
-            	longDateFormat : {
+			moment.locale('en', {
+				longDateFormat : {
 					LT: "HH:mm",
 					LTS: "HH:mm:ss"}
-            	}
-            );
+				}
+			);
 
 			$scope.dp = {
 				dateRangeStart: null,
@@ -127,23 +127,23 @@ angular.module('mockengerClientMainApp')
 				}
 			}
 
-            $scope.startDateBeforeRender = function($dates) {
+			$scope.startDateBeforeRender = function($dates) {
 				if ($scope.dp.dateRangeEnd) {
 					var activeDate = moment($scope.dp.dateRangeEnd);
 
 					$dates.filter(function (date) {
-						return date.localDateValue() >= activeDate.valueOf()
+						return date.localDateValue() >= activeDate.valueOf();
 					}).forEach(function (date) {
 						date.selectable = false;
 					});
 				}
 			}
 
-            $scope.startDateOnSetTime = function(newDate, oldDate) {
+			$scope.startDateOnSetTime = function(newDate, oldDate) {
 				$scope.$broadcast('start-date-changed');
 			}
 
-            $scope.endDateOnSetTime = function() {
+			$scope.endDateOnSetTime = function() {
 				$scope.$broadcast('end-date-changed');
 			}
 
