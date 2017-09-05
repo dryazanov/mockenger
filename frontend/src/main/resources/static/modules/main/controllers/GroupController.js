@@ -18,11 +18,14 @@ angular.module('mockengerClientMainApp')
 				if (group.id == null) {
 					$scope.urlToSendRequests = null;
 					$scope.groupToSave = group;
+					$scope.groupToSave.latencyType = null;
 				} else {
 					$scope.urlToSendRequests = API_BASE_PATH + "/" + projectListService.getCurrent().type + "/" + group.code + "/"
 					$scope.groupToSave = {};
 					angular.copy(group, $scope.groupToSave);
+					$scope.groupToSave.latencyType = $scope.getLatencyType($scope.groupToSave.latency);
 				}
+
 				$scope.groupForm.$setPristine();
 				groupModal.modal({});
 			});
@@ -31,6 +34,8 @@ angular.module('mockengerClientMainApp')
 				var requestParams = {
 					projectCode: projectListService.getCurrent().code,
 				}
+
+				group.latency = $scope.cleanUpLatency(group.latencyType, group.latency);
 
 				if (group.id != null) {
 					requestParams.groupCode = group.code;
@@ -63,5 +68,9 @@ angular.module('mockengerClientMainApp')
 				if ($scope.groupToSave.name.length > 0) {
 					$scope.groupToSave.code = $scope.groupToSave.name.replace(/[aeiou\s]/ig, '');
 				}
+			}
+
+			$scope.isLatencyTypeNotNull = function() {
+				return ($scope.groupToSave.latencyType != null);
 			}
 }]);

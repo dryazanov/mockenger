@@ -32,6 +32,8 @@ public class AbstractRequest extends GenericRequest {
 
     private Date lastUpdateDate;
 
+	private Latency latency;
+
     @MockResponseValidation
     private MockResponse mockResponse;
 

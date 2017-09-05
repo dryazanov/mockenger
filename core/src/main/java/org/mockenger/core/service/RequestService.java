@@ -8,6 +8,7 @@ import org.mockenger.core.web.exception.NotUniqueValueException;
 import org.mockenger.data.model.persistent.log.Eventable;
 import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
+import org.mockenger.data.model.persistent.mock.request.Latency;
 import org.mockenger.data.model.persistent.mock.request.part.Body;
 import org.mockenger.data.model.persistent.mock.request.part.Headers;
 import org.mockenger.data.model.persistent.mock.request.part.Parameters;
@@ -26,7 +27,9 @@ import java.util.SortedSet;
 
 import static java.util.Collections.EMPTY_SET;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.mockenger.core.util.CommonUtils.getCheckSum;
+import static org.mockenger.core.util.CommonUtils.getRandom;
 import static org.mockenger.core.util.CommonUtils.joinParams;
 import static org.mockenger.core.util.HttpUtils.getParameterSortedSet;
 import static org.mockenger.core.util.MockRequestUtils.isURLEncodedForm;
@@ -120,6 +123,19 @@ public class RequestService {
 		log.info(Strings.repeat("*", 25));
 
 		return null;
+	}
+
+
+	public void simulateDelay(final Latency latency) {
+		if (nonNull(latency)) {
+			try {
+				final long sleep = (latency.getMin() > 0 && latency.getMax() > 0 ? getRandom(latency.getMin(), latency.getMax()) : latency.getFixed());
+
+				Thread.sleep(sleep);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}
 	}
 
 

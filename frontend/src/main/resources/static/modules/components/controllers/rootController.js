@@ -112,5 +112,48 @@ angular.module('mockengerClientComponents')
 					});
 				}
 			}
+
+
+			$scope.cleanUpLatency = function(latencyType, latency) {
+				if (latencyType == null) {
+					return latencyType;
+				}
+
+				if (latencyType) {
+					var fixed = parseInt(latency.fixed);
+
+					if (fixed > 0) {
+						latency.fixed = fixed;
+					} else {
+						latency.fixed = 0;
+					}
+
+					latency.min = 0;
+					latency.max = 0;
+				} else {
+					var min = parseInt(latency.min);
+					var max = parseInt(latency.max);
+
+					if (min > 0 && max > 0) {
+						latency.min = min;
+						latency.max = max;
+					} else {
+						latency.min = 0;
+						latency.max = 0;
+					}
+
+					latency.fixed = 0;
+				}
+
+				return latency;
+			}
+
+			$scope.getLatencyType = function(latency) {
+				if (latency == null) {
+					return latency;
+				}
+
+				return !(latency.min > 0 && latency.max > 0);
+			}
 		}
 ]);

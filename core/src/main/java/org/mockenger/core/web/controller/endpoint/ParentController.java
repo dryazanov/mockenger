@@ -12,6 +12,7 @@ import org.mockenger.data.model.dto.Message;
 import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
+import org.mockenger.data.model.persistent.mock.request.Latency;
 import org.mockenger.data.model.persistent.mock.response.MockResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -98,15 +99,31 @@ public class ParentController extends AbstractController {
      * @return
      */
     protected ResponseEntity generateResponse(final GenericRequest mockRequest, final AbstractRequest mockResult, final Group group) {
+		ResponseEntity responseEntity = null;
+
         if (nonNull(mockResult)) {
             final MockResponse mockResponse = createMockResponse(mockResult);
 			final HttpHeaders headers = getHttpHeaders(mockRequest, mockResponse);
 			final HttpStatus httpStatus = HttpStatus.valueOf(mockResponse.getHttpStatus());
 
-			return new ResponseEntity<>(mockResponse.getBody(), headers, httpStatus);
+			responseEntity = new ResponseEntity<>(mockResponse.getBody(), headers, httpStatus);
         } else if (group.isRecording()) {
-            return processRecording(group, mockRequest);
+			responseEntity = processRecording(group, mockRequest);
         }
+
+        if (nonNull(responseEntity)) {
+			final Latency latency = ofNullable(mockResult)
+					.map(r -> r.getLatency())
+					.orElse(
+							ofNullable(group)
+									.map(g -> g.getLatency())
+									.orElse(null)
+					);
+
+			requestService.simulateDelay(latency);
+
+        	return responseEntity;
+		}
 
         return notFoundWithDefaultHeaders();
     }

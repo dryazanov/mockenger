@@ -10,9 +10,10 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
 import static java.util.Optional.ofNullable;
+import static org.mockenger.core.util.CommonUtils.cleanUpObject;
 
 /**
- * Created by Dmitry Ryazanov on 3/20/2015.
+ * @author Dmitry Ryazanov
  */
 @Component
 public class GroupService {
@@ -69,6 +70,7 @@ public class GroupService {
                 .projectId(group.getProjectId())
 				.code(group.getCode())
                 .name(group.getName())
+				.latency(cleanUpObject(group.getLatency()))
                 .recording(group.isRecording())
                 .forwarding(group.isForwarding())
                 .forwardTo(group.getForwardTo());

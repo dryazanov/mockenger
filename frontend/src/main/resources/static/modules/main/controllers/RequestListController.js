@@ -37,7 +37,8 @@ angular.module('mockengerClientMainApp')
 						transformers: null,
 						value: null
 					},
-					mockResponse: null
+					mockResponse: null,
+					latencyType: null
 				});
 			}
 
@@ -77,10 +78,14 @@ angular.module('mockengerClientMainApp')
 			$scope.selectRequest = function(index, request) {
 				requestListService.filteredDataCurrentIndex = $scope.getOffset() + index;
 				requestListService.setFilteredData(requestListService.getData());
+
 				if (requestListService.filters.search.query != undefined && requestListService.filters.search.query != '') {
 					requestListService.setFilteredData($filter('filter')(requestListService.getFilteredData(), requestListService.filters.search.query));
 				}
+
 				requestListService.setFilteredData($filter('orderBy')(requestListService.getFilteredData(), requestListService.filters.order));
+
+				request.latencyType = $scope.getLatencyType(request.latency);
 				requestListService.setCurrent(request);
 			}
 

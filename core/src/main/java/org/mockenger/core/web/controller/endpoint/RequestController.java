@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.SortedSet;
 
 import static java.util.Objects.isNull;
+import static org.mockenger.core.util.CommonUtils.cleanUpObject;
 import static org.mockenger.core.util.CommonUtils.getCheckSum;
 import static org.mockenger.core.util.CommonUtils.joinParams;
 import static org.mockenger.core.util.CommonUtils.keysToLowercase;
@@ -83,6 +84,9 @@ public class RequestController extends AbstractController {
         // Set creation date
         request.setCreationDate(new Date());
 
+        // Set latency
+		request.setLatency(cleanUpObject(request.getLatency()));
+
         // Generate new unique code
 		request.setCode(getUniqueCode(project, group));
 
@@ -129,6 +133,9 @@ public class RequestController extends AbstractController {
         // Creation date can't be changed by user
         request.setCreationDate(existingRequest.getCreationDate());
         request.setLastUpdateDate(new Date());
+
+		// Set latency
+		request.setLatency(cleanUpObject(request.getLatency()));
 
 		final Headers requestHeaders = request.getHeaders();
 

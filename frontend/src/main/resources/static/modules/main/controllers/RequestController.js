@@ -191,6 +191,8 @@ angular.module('mockengerClientMainApp')
 					groupCode: groupListService.getCurrent().code
 				}
 
+				request.latency = $scope.cleanUpLatency(requestListService.getCurrent().latencyType, request.latency);
+
 				if (request.id != null) {
 					requestParams.requestCode = request.code;
 
@@ -229,12 +231,19 @@ angular.module('mockengerClientMainApp')
 
 			$scope.nextRequest = function() {
 				requestListService.filteredDataCurrentIndex++;
-				requestListService.setCurrent(requestListService.getFilteredData()[requestListService.filteredDataCurrentIndex])
+				$scope.setCurrentRequest();
 			}
 
 			$scope.prevRequest = function() {
 				requestListService.filteredDataCurrentIndex--;
-				requestListService.setCurrent(requestListService.getFilteredData()[requestListService.filteredDataCurrentIndex]);
+				$scope.setCurrentRequest();
+			}
+
+			$scope.setCurrentRequest = function(index) {
+				var request = requestListService.getFilteredData()[requestListService.filteredDataCurrentIndex]
+
+				request.latencyType = $scope.getLatencyType(request.latency);
+				requestListService.setCurrent(request);
 			}
 
 			$scope.isRequestTabDisabled = function() {
@@ -252,6 +261,27 @@ angular.module('mockengerClientMainApp')
 			$scope.getRequestHeaders = function() {
 				return requestListService.getCurrent().headers.values;
 			}
+
+			$scope.hasLatencyOnGroupLevel = function() {
+				var group = groupListService.getCurrent() || null;
+
+				if (group != null && group.latency != undefined && group.latency != null) {
+					groupListService.getCurrent().latencyType = $scope.getLatencyType(groupListService.getCurrent().latency);
+
+					var latency = $scope.cleanUpLatency(group.latencyType, group.latency);
+
+					if (latency != null && latency.fixed > 0 || (latency.min > 0 && latency.max > 0)) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			$scope.isLatencyTypeNotNull = function() {
+				return (requestListService.getCurrent().latencyType != null);
+			}
+
 
 			// ================
 			// Clipboard

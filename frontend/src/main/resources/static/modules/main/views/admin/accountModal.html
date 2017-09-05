@@ -11,17 +11,17 @@
 					<input type="hidden" ng-model="currentAccount.id">
 					<div class="form-group" ng-class="getErrorStyle(accountForm.username)">
 						<label for="username">Username</label>
-						<input type="text" name="username" id="username" ng-model="currentAccount.username" class="form-control" required>
+						<input name="username" id="username" ng-model="currentAccount.username" class="form-control" required />
 						<p ng-show="hasError(accountForm.username)" class="help-block">Username is required</p>
 					</div>
 					<div class="form-group" ng-class="getErrorStyle(accountForm.firstName)">
 						<label for="firstName">First name</label>
-						<input type="text" name="firstName" id="firstName" ng-model="currentAccount.firstName" class="form-control" required>
+						<input name="firstName" id="firstName" ng-model="currentAccount.firstName" class="form-control" required />
 						<p ng-show="hasError(accountForm.firstName)" class="help-block">First name is required</p>
 					</div>
 					<div class="form-group" ng-class="getErrorStyle(accountForm.lastName)">
 						<label for="lastName">Last name</label>
-						<input type="text" name="lastName" id="lastName" ng-model="currentAccount.lastName" class="form-control" required>
+						<input name="lastName" id="lastName" ng-model="currentAccount.lastName" class="form-control" required />
 						<p ng-show="hasError(accountForm.lastName)" class="help-block">Last name is required</p>
 					</div>
 					<div class="form-group">
@@ -37,7 +37,8 @@
 						<label for="roles">Roles</label>
 						<div class="form-group">
 							<div class="btn-group" id="roles">
-								<label ng-repeat="role in roles" class="btn btn-primary" uib-btn-radio="'{{role}}'" ng-model="currentAccount.role">{{role}}</label>
+								<label ng-repeat="role in roles" class="btn btn-success" uib-btn-radio="'{{role}}'"
+									   ng-model="currentAccount.role">{{role}}</label>
 							</div>
 						</div>
 					</div>

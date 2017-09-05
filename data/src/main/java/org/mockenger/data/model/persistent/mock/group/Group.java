@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.validator.constraints.NotBlank;
+import org.mockenger.data.model.persistent.mock.request.Latency;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -32,6 +33,8 @@ public class Group {
     @NotBlank(message = "name: may not be null or empty")
     private String name;
 
+	private Latency latency;
+
     private boolean recording;
 
     private boolean forwarding;
@@ -44,6 +47,7 @@ public class Group {
                  @JsonProperty("projectId") final String projectId,
                  @JsonProperty("code") final String code,
                  @JsonProperty("name") final String name,
+                 @JsonProperty("latency") final Latency latency,
                  @JsonProperty("recording") final boolean recording,
                  @JsonProperty("forwarding") final boolean forwarding,
                  @JsonProperty("forwardTo") final String forwardTo) {
@@ -52,6 +56,7 @@ public class Group {
         this.projectId = projectId;
         this.code = code;
         this.name = name;
+        this.latency = latency;
         this.recording = recording;
         this.forwarding = forwarding;
         this.forwardTo = forwardTo;

@@ -5,14 +5,17 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.mockenger.data.model.dict.RequestMethod;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
+import org.mockenger.data.model.persistent.mock.request.Latency;
 import org.mockenger.data.model.persistent.mock.request.part.Pair;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
 import static org.mockenger.core.util.MockRequestUtils.getBodyValue;
@@ -231,5 +234,29 @@ public class CommonUtils {
 
 	public static boolean startAndEndsWith(final String text, final String start, final String end) {
     	return !isEmpty(text) && (text.startsWith(start) && text.endsWith(end));
+	}
+
+
+	public static Latency cleanUpObject(final Latency latency) {
+    	if (isNull(latency)) {
+    		return latency;
+		}
+
+		final Latency.LatencyBuilder latencyBuilder = Latency.builder();
+
+    	if (nonNull(latency)) {
+			if (latency.getFixed() > 0) {
+    			latencyBuilder.fixed(latency.getFixed());
+			} else if (latency.getMin() > 0 && latency.getMax() > 0) {
+				latencyBuilder.min(latency.getMin()).max(latency.getMax());
+			}
+		}
+
+		return latencyBuilder.build();
+	}
+
+
+	public static long getRandom(final long min, final long max) {
+		return ThreadLocalRandom.current().nextLong(min, max + 1);
 	}
 }

@@ -27,54 +27,93 @@
 								<uib-tabset>
 									<uib-tab heading="#">
 										<br/>
-										<div class="form-group" ng-class="getErrorStyle(mockRequestForm.requestName)">
-											<label for="url">Name</label>
-											<table class="table">
-												<tr>
-													<td>
-														<input type="text" name="requestName" id="requestName"
-															   ng-model="requestListService.getCurrent().name"
-															   class="form-control" required
-															   aria-describedby="sizing-addon1">
-														<p ng-show="hasError(mockRequestForm.requestName)"
-														   class="help-block">Name is required.</p>
-													</td>
-												</tr>
-											</table>
+										<div class="row" ng-class="getErrorStyle(mockRequestForm.requestName)">
+											<div class="col-xs-2">
+												<label>Name</label>
+											</div>
+											<div class="col-xs-10">
+												<input name="requestName" id="requestName" ng-model="requestListService.getCurrent().name"
+													   class="form-control" required aria-describedby="sizing-addon1">
+												<p ng-show="hasError(mockRequestForm.requestName)" class="help-block">Name is required.</p>
+											</div>
 										</div>
-										<div class="form-group" ng-if="requestListService.getCurrent().id">
-											<table class="table">
-												<tr>
-													<td class="col-lg-2">
-														<label>Creation date</label>
-													</td>
-													<td>
-														{{requestListService.getCurrent().creationDate | date:'dd-MM-yyyy HH:mm:ss'}}
-													</td>
-												</tr>
-												<tr>
-													<td class="col-lg-2">
-														<label>Request unique code</label>
-													</td>
-													<td>
-														{{requestListService.getCurrent().code}}
-													</td>
-												</tr>
-												<tr>
-													<td class="col-lg-2">
-														<label>cURL</label>
-													</td>
-													<td>
-																	<textarea readonly="true" class="form-control" id="curlCommand"
-																			  aria-describedby="sizing-addon1" rows="10">{{getCURL()}}</textarea>
 
-														<button class="curlCommand btn-warning btn-sm" data-clipboard-target="#curlCommand">
-															<span class="glyphicon glyphicon-duplicate"></span> Copy to clipboard
-														</button>
-														<span ng-class="{'text-danger': clipboardMessage.failure}">{{clipboardMessage.text}}</span>
-													</td>
-												</tr>
-											</table>
+										<hr/>
+
+										<div class="row">
+											<div class="col-xs-2">
+												<label>Latency</label>
+												<span ng-show="hasLatencyOnGroupLevel()" class="glyphicon glyphicon-info-sign btn-md text-info" tooltip-placement="bottom"
+													  uib-tooltip="Latency already set on the group level. Its value can be overridden."></span>
+											</div>
+											<div class="col-xs-10">
+												<div class="form-group">
+													<div class="btn-group" id="isRange">
+														<label class="btn btn-default" ng-model="requestListService.getCurrent().latencyType" uib-btn-radio="null"
+															   ng-class="{'btn-success' : isLatencyTypeNotNull()}">Inherited</label>
+														<label class="btn btn-default" ng-model="requestListService.getCurrent().latencyType" uib-btn-radio="true"
+															   ng-class="{'btn-success' : isLatencyTypeNotNull()}">Fixed</label>
+														<label class="btn btn-default" ng-model="requestListService.getCurrent().latencyType" uib-btn-radio="false"
+															   ng-class="{'btn-success' : isLatencyTypeNotNull()}">Range</label>
+													</div>
+												</div>
+												<div class="form-group" ng-show="isLatencyTypeNotNull()">
+													<div class="form-inline">
+														<span ng-show="requestListService.getCurrent().latencyType">
+															<input ng-model="requestListService.getCurrent().latency.fixed" class="form-control"
+																   placeholder="value" aria-describedby="sizing-addon1" />
+														</span>
+														<span ng-show="!requestListService.getCurrent().latencyType">
+															<input ng-model="requestListService.getCurrent().latency.min" class="form-control"
+																   placeholder="min" aria-describedby="sizing-addon1" />
+															<input ng-model="requestListService.getCurrent().latency.max" class="form-control"
+																   placeholder="max" aria-describedby="sizing-addon1" />
+														</span>
+														ms
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div ng-if="requestListService.getCurrent().id">
+											<hr/>
+
+											<div class="row">
+												<div class="col-xs-2">
+													<label>Creation date</label>
+												</div>
+												<div class="col-xs-10">
+													{{requestListService.getCurrent().creationDate | date:'dd-MM-yyyy HH:mm:ss'}}
+												</div>
+											</div>
+
+											<hr/>
+
+											<div class="row">
+												<div class="col-xs-2">
+													<label>Unique code</label>
+												</div>
+												<div class="col-xs-10">
+													{{requestListService.getCurrent().code}}
+												</div>
+											</div>
+
+											<hr/>
+
+											<div class="row">
+												<div class="col-xs-2">
+													<label>cURL</label>
+												</div>
+												<div class="col-xs-10">
+													<textarea readonly="true" class="form-control" id="curlCommand"
+															  aria-describedby="sizing-addon1" rows="10">{{getCURL()}}</textarea>
+
+													<button class="curlCommand btn-warning btn-sm" data-clipboard-target="#curlCommand">
+														<span class="glyphicon glyphicon-duplicate"></span> Copy to clipboard
+													</button>
+													<span ng-class="{'text-danger': clipboardMessage.failure}">{{clipboardMessage.text}}</span>
+												</div>
+											</div>
 										</div>
 									</uib-tab>
 									<uib-tab heading="Path">
@@ -109,12 +148,12 @@
 											<table class="table">
 												<tr ng-repeat="pathTransformer in requestListService.getCurrent().path.transformers">
 													<td class="col-lg-6">
-														<input type="text" ng-model="pathTransformer.pattern" class="form-control"
-															   aria-describedby="sizing-addon1" placeholder="Pattern, regular expressions allowed">
+														<input ng-model="pathTransformer.pattern" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Pattern, regular expressions allowed" />
 													</td>
 													<td class="col-lg-6">
-														<input type="text" ng-model="pathTransformer.replacement" class="form-control"
-															   aria-describedby="sizing-addon1" placeholder="Replacement">
+														<input ng-model="pathTransformer.replacement" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Replacement" />
 													</td>
 													<td class="col-lg-1" ng-if="isManagerOrAdmin(user.role)">
 														<button class="btn-danger btn-sm" ng-click="deleteTransformer($index, requestListService.getCurrent().path.transformers)">
@@ -137,12 +176,10 @@
 											<table class="table">
 												<tr ng-repeat="parameter in requestListService.getCurrent().parameters.values track by $index">
 													<td class="col-lg-6">
-														<input type="text" ng-model="parameter.key" class="form-control"
-															   aria-describedby="sizing-addon1" placeholder="Parameter">
+														<input ng-model="parameter.key" class="form-control" aria-describedby="sizing-addon1" placeholder="Parameter" />
 													</td>
 													<td class="col-lg-6">
-														<input type="text" ng-model="parameter.value" class="form-control"
-															   aria-describedby="sizing-addon1" placeholder="Value">
+														<input ng-model="parameter.value" class="form-control" aria-describedby="sizing-addon1" placeholder="Value" />
 													</td>
 													<td ng-if="isManagerOrAdmin(user.role)">
 														<button class="btn-danger btn-sm" ng-click="deleteParameter($index)">
@@ -163,16 +200,16 @@
 											<table class="table">
 												<tr ng-repeat="paramTransformer in requestListService.getCurrent().parameters.transformers">
 													<td class="col-lg-4">
-														<input type="text" ng-model="paramTransformer.key" class="form-control"
-															   aria-describedby="sizing-addon1" placeholder="Parameter name">
+														<input ng-model="paramTransformer.key" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Parameter name" />
 													</td>
 													<td class="col-lg-4">
-														<input type="text" ng-model="paramTransformer.pattern" class="form-control"
-															   aria-describedby="sizing-addon1" placeholder="Value pattern">
+														<input ng-model="paramTransformer.pattern" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Value pattern" />
 													</td>
 													<td class="col-lg-4">
-														<input type="text" ng-model="paramTransformer.replacement" class="form-control"
-															   aria-describedby="sizing-addon1" placeholder="Value replacement">
+														<input ng-model="paramTransformer.replacement" class="form-control"
+															   aria-describedby="sizing-addon1" placeholder="Value replacement" />
 													</td>
 													<td class="col-lg-1" ng-if="isManagerOrAdmin(user.role)">
 														<button class="btn-danger btn-sm" ng-click="deleteTransformer($index, requestListService.getCurrent().parameters.transformers)">
