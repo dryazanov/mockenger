@@ -67,6 +67,7 @@
 								<td class="col-md-1">
 									<span ng-show="!request.lastUpdateDate && request.requestCounter == 0" class="label label-success">new</span>
 									<span ng-show="request.mockResponse.httpStatus == 500" class="label label-danger">!</span>
+									<span ng-show="request.latency" class="label label-success">L</span>
 								</td>
 								<td class="col-md-1">{{request.requestCounter}}</td>
 

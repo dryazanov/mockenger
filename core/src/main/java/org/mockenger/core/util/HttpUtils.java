@@ -170,9 +170,9 @@ public class HttpUtils {
     public static String getUrlPath(final HttpServletRequest servletRequest) {
 		final String servletPathAttribute = (String) servletRequest.getAttribute(PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 		final String pathPatternAttribute = (String) servletRequest.getAttribute(BEST_MATCHING_PATTERN_ATTRIBUTE);
+		final String path = antPathMatcher.extractPathWithinPattern(pathPatternAttribute, servletPathAttribute);
 
-		return antPathMatcher.extractPathWithinPattern(pathPatternAttribute, servletPathAttribute) +
-				(servletPathAttribute.endsWith("/") ? "/" : "");
+		return path + (path.length() > 0 && servletPathAttribute.endsWith("/") ? "/" : "");
     }
 
 

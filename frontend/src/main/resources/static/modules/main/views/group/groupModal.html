@@ -36,6 +36,7 @@
 					<hr/>
 					<div class="form-group">
 						<label>Latency</label>
+						<span class="label label-success">L</span>
 						<div class="form-group">
 							<div class="btn-group" id="isRange">
 								<label class="btn btn-default" ng-model="groupToSave.latencyType" uib-btn-radio="true"
@@ -59,7 +60,8 @@
 					</div>
 					<hr/>
 					<div class="form-group">
-						<label for="recording">Record incoming requests</label>
+						<label>Record incoming requests</label>
+						<span class="label label-danger">R</span>
 						<div class="form-group">
 							<div class="btn-group" id="recording">
 								<label class="btn btn-default" ng-class="{'btn-success' : groupToSave.recording}"
@@ -70,7 +72,8 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="recording">Forward incoming requests</label>
+						<label>Forward incoming requests</label>
+						<span class="label label-info">F</span>
 						<div class="form-group">
 							<div class="btn-group" id="forwarding">
 								<label class="btn btn-default" ng-class="{'btn-success' : groupToSave.forwarding}"

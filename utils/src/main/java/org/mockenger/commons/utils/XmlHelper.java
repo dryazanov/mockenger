@@ -18,13 +18,20 @@ import java.io.StringReader;
  */
 public class XmlHelper {
 
-    public static Document stringToXml(final String source) throws ParserConfigurationException, IOException, SAXException {
+	public static Document stringToXml(final String source) throws ParserConfigurationException, IOException, SAXException {
+		return stringToXml(source, false);
+	}
+
+    public static Document stringToXml(final String source, final boolean isNamespaceAware)
+			throws ParserConfigurationException, IOException, SAXException {
+
 		final StringReader stringReader = new StringReader(source);
 		final InputSource inputSource = new InputSource(stringReader);
+		final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 
-		return DocumentBuilderFactory.newInstance()
-				.newDocumentBuilder()
-				.parse(inputSource);
+		builderFactory.setNamespaceAware(isNamespaceAware);
+
+		return builderFactory.newDocumentBuilder().parse(inputSource);
     }
 
 

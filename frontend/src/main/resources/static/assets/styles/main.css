@@ -66,6 +66,22 @@ ul.nav li a {
 	width: 110px;
 }
 
+.label-xs {
+  font-size: x-small;
+}
+
+.label-sm {
+  font-size: small;
+}
+
+.label-md {
+  font-size: medium;
+}
+
+.label-lg {
+  font-size: large;
+}
+
 /* ==========================================================================
 Hide ng-cloak on page load, https://docs.angularjs.org/api/ng/directive/ngCloak
 ========================================================================== */
@@ -113,10 +129,9 @@ Browser Upgrade Prompt
 }
 
 .section-table {
-	padding: 8px;
+	padding: 8px 0;
 	line-height: 1.42857143;
 	vertical-align: top;
-	border-top: 1px solid #1c1e22;
 }
 
 .CodeMirror-wrap {

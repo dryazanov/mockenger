@@ -2,7 +2,7 @@
 	<div class="panel panel-default">
 		<ul class="list-group">
 			<li class="list-group-item">
-				<h3>
+				<h4>
 					<div class="pull-right" ng-if="isManagerOrAdmin(user.role)">
 						<button type="button" class="btn btn-warning btn-sm" ng-click="createGroup()">
 							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
@@ -15,7 +15,7 @@
 					</div>
 					{{currentProject.name}} <span class="label label-success">{{currentProject.type}}</span>
 					<div class="clearfix"></div>
-				</h3>
+				</h4>
 			</li>
 			<li class="list-group-item" ng-if="groupListService.getData().length == 0">
 				No groups here
@@ -34,8 +34,9 @@
 						{{group.name}}
 					</a>
 					&nbsp;
-					<span ng-show="!group.recording" class="label label-primary">Not recording</span>
-					<span ng-show="group.recording" class="label label-danger">Recording</span>
+					<span ng-show="group.latency" class="label label-success">L</span>
+					<span ng-show="group.recording" class="label label-danger">R</span>
+					<span ng-show="group.forwarding" class="label label-info">F</span>
 				</div>
 			</li>
 		</ul>

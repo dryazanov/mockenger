@@ -5,9 +5,14 @@ import org.mockenger.data.model.persistent.account.Account;
 import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.model.persistent.mock.project.Project;
 import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
+import org.mockenger.data.model.persistent.mock.request.DeleteRequest;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.mockenger.data.model.persistent.mock.request.GetRequest;
+import org.mockenger.data.model.persistent.mock.request.HeadRequest;
+import org.mockenger.data.model.persistent.mock.request.OptionsRequest;
+import org.mockenger.data.model.persistent.mock.request.PatchRequest;
 import org.mockenger.data.model.persistent.mock.request.PostRequest;
+import org.mockenger.data.model.persistent.mock.request.PutRequest;
 
 import java.util.List;
 
@@ -22,7 +27,8 @@ public enum EventEntityType {
     ACCOUNT("Account", Account.class),
     PROJECT("Project", Project.class),
     GROUP("Group", Group.class),
-    REQUEST("Request", GenericRequest.class, AbstractRequest.class, GetRequest.class, PostRequest.class);
+    REQUEST("Request", GenericRequest.class, AbstractRequest.class, GetRequest.class, PostRequest.class,
+			PutRequest.class, DeleteRequest.class, PatchRequest.class, HeadRequest.class, OptionsRequest.class);
 
     private String typeName;
     private List<String> classList;

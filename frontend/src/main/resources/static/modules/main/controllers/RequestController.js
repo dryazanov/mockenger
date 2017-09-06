@@ -18,6 +18,10 @@ angular.module('mockengerClientMainApp')
 
 			$scope.bodyTransformerTypes = new Array(REGEXP, XPATH);
 
+			$scope.isXPathTransformer = function(transformer) {
+				return transformer.type === XPATH;
+			}
+
 			var pushKeyValuePair = function(source) {
 				source.push({
 					key: "",
@@ -32,6 +36,14 @@ angular.module('mockengerClientMainApp')
 					replacement: null
 				});
 			}
+
+			var addTransformer = function(source, transformerType) {
+            				source.push({
+            					type: transformerType,
+            					pattern: null,
+            					replacement: null
+            				});
+            			}
 
 			var isMethodWithBody = function(method) {
 				return (method === 'POST' || method === 'PUT' || method === 'PATCH');
@@ -51,19 +63,6 @@ angular.module('mockengerClientMainApp')
 				}
 
 				pushKeyValuePair($scope.getParams());
-			}
-
-			$scope.deleteParameter = function(index) {
-				$confirm({
-					text: "Do you really want to delete this parameter?"
-				}).then(function() {
-					var source = $scope.getParams();
-					if (source != null && source[index] != null) {
-						source.splice(index, 1);
-					}
-				}, function() {
-					// cancel
-				});
 			}
 
 			$scope.addRequestHeader = function() {
@@ -91,15 +90,7 @@ angular.module('mockengerClientMainApp')
 			}
 
 			$scope.deleteHeader = function(index, source) {
-				$confirm({
-					text: "Do you really want to delete this header?"
-				}).then(function() {
-					if (source != null && source[index] != null) {
-						source.splice(index, 1);
-					}
-				}, function() {
-					// cancel
-				});
+				$scope.deleteElement(index, source, 'header');
 			}
 
 			// Add transformer for Path
@@ -138,9 +129,21 @@ angular.module('mockengerClientMainApp')
 				addTransformer(requestListService.getCurrent().body.transformers, REGEXP);
 			}
 
-			$scope.deleteTransformer = function(index, source) {
+			// Add namespace to XPath transformer
+			$scope.addXPathNamespace = function(transformer) {
+				if (transformer.namespaces == null) {
+					transformer.namespaces = [];
+				}
+
+				transformer.namespaces.push({
+					key: null,
+					value: null
+				});
+			}
+
+			$scope.deleteElement = function(index, source, elementName) {
 				$confirm({
-					text: "Do you really want to delete this transformer?"
+					text: "Do you really want to delete this " + elementName + "?"
 				}).then(function() {
 					if (source != null && source[index] != null) {
 						source.splice(index, 1);
@@ -148,6 +151,10 @@ angular.module('mockengerClientMainApp')
 				}, function() {
 					// cancel
 				});
+			}
+
+			$scope.deleteTransformer = function(index, source) {
+				$scope.deleteElement(index, source, 'transformer');
 			}
 
 			var isNameOk = function(name) {

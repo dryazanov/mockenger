@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mockenger.data.model.dict.RequestMethod;
 import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.model.persistent.mock.project.Project;
+import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.mockenger.data.model.persistent.mock.request.PostRequest;
 import org.mockenger.data.model.persistent.mock.request.part.Body;
 import org.mockenger.data.model.persistent.mock.request.part.Headers;
@@ -15,9 +16,12 @@ import org.mockenger.data.model.persistent.mock.request.part.Pair;
 import org.mockenger.data.model.persistent.mock.request.part.Path;
 import org.mockenger.data.model.persistent.mock.response.MockResponse;
 import org.mockenger.data.model.persistent.transformer.RegexpTransformer;
+import org.mockenger.data.model.persistent.transformer.Transformer;
+import org.mockenger.data.model.persistent.transformer.XPathTransformer;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import static org.mockenger.core.util.CommonUtils.generateUniqueId;
@@ -49,13 +53,13 @@ public class SoapControllerTest extends AbstractControllerTest {
 			"</ns3:DataRequestElement>" +
 			"</S:Body>";
 
-    protected static final String SOAP_XML_REQUEST = "<?xml version='1.0' encoding='UTF-8'?>" +
+    protected static final String SOAP_XML_REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 			"<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
 			"<S:Header/>" +
 			SOAP_XML_REQUEST_BODY +
 			"</S:Envelope>";
 
-    protected static final String SOAP_XML_RESPONSE = "<?xml version='1.0' encoding='UTF-8'?>" +
+    protected static final String SOAP_XML_RESPONSE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 			"<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
 			"<S:Header/>" +
 			"<S:Body>" +
@@ -66,18 +70,21 @@ public class SoapControllerTest extends AbstractControllerTest {
 			"</S:Envelope>";
 
     private Project project;
+    private Group group;
     private String endpoint;
+
 
     @Before
     public void setUp() {
         super.setUp();
 
         project = createProject();
-        final Group group = createGroup(project.getId(), false);
+        group = createGroup(project.getId(), false);
         createRequest(createSoapMockRequest(group.getId()));
 
         endpoint = String.format(ENDPOINT_TEMPLATE, group.getCode(), REQUEST_PATH);
     }
+
 
     @After
     public void cleanup() {
@@ -86,18 +93,47 @@ public class SoapControllerTest extends AbstractControllerTest {
         deleteAllRequests();
     }
 
+
     @Test
     public void testPostRequestOk() throws Exception {
-        final String content = SOAP_XML_REQUEST.replace(ID1, ID2);
-		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(content), CONTENT_TYPE_SOAP_UTF8));
-
-		mockMvc.perform(asyncDispatch(mvcResult))
-				.andExpect(status().isOk())
-				.andExpect(content().contentType(CONTENT_TYPE_SOAP_UTF8.toLowerCase()))
-				.andExpect(xpath("//result").string("OK"));
+		sendAndCheckResultWithXPath();
     }
 
-    @Test
+
+	@Test
+	public void testWithXPathTransformationOk() throws Exception {
+		deleteAllRequests();
+
+		final AbstractRequest request = createRequest(createSoapMockRequest(group.getId()));
+		final String xPath = "/Envelope/Body/DataRequestElement/identificationNumber/text()";
+		final ImmutableList<Transformer> transformers = ImmutableList.of(new XPathTransformer(xPath, ID1));
+
+		request.setBody(new Body(transformers, SOAP_XML_REQUEST));
+		createRequest(request);
+
+		sendAndCheckResultWithXPath();
+	}
+
+
+	@Test
+	public void testWithXPathTransformationAndNamespacesOk() throws Exception {
+		deleteAllRequests();
+
+		final AbstractRequest request = createRequest(createSoapMockRequest(group.getId()));
+		final Pair sNamespace = new Pair("S", "http://schemas.xmlsoap.org/soap/envelope/");
+		final Pair ns3NameSpace = new Pair("ns3", "http://www.af-klm.com/services/passenger/data-v1/xsd");
+		final List<Pair> namespaces = ImmutableList.of(sNamespace, ns3NameSpace);
+		final String xPath = "/S:Envelope/S:Body/ns3:DataRequestElement/identificationNumber/text()";
+		final ImmutableList<Transformer> transformers = ImmutableList.of(new XPathTransformer(xPath, ID1, namespaces));
+
+		request.setBody(new Body(transformers, SOAP_XML_REQUEST));
+		createRequest(request);
+
+		sendAndCheckResultWithXPath();
+	}
+
+
+	@Test
     public void testPostRequestWrongContentType() throws Exception {
         final String content = SOAP_XML_REQUEST.replace(ID1, ID2);
 		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(content), CONTENT_TYPE_JSON_UTF8));
@@ -108,6 +144,7 @@ public class SoapControllerTest extends AbstractControllerTest {
 				.andExpect(jsonPath("$.errors[0]").value(INVALID_CONTENT_TYPE_ERROR_MESSAGE));
     }
 
+
     @Test
     public void testPostRequestInvalidBody() throws Exception {
         final String content = SOAP_XML_REQUEST + "<invalidTag>";
@@ -116,6 +153,17 @@ public class SoapControllerTest extends AbstractControllerTest {
 		mockMvc.perform(asyncDispatch(mvcResult))
 				.andExpect(status().isNotFound());
     }
+
+
+	private void sendAndCheckResultWithXPath() throws Exception {
+		final String content = SOAP_XML_REQUEST.replace(ID1, ID2);
+		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(content), CONTENT_TYPE_SOAP_UTF8));
+
+		mockMvc.perform(asyncDispatch(mvcResult))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(CONTENT_TYPE_SOAP_UTF8.toLowerCase()))
+				.andExpect(xpath("//result").string("OK"));
+	}
 
 
     private PostRequest createSoapMockRequest(final String groupId) {
