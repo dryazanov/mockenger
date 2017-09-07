@@ -145,24 +145,9 @@
 				</div>
 
 				<div class="panel-footer" ng-show="pageCount() > 1">
-					<ul class="pagination pull-right">
-						<li ng-class="{disabled: isPrevPageDisabled()}">
-							<a href ng-click="prevPage()" aria-label="Previous">
-								<span aria-hidden="true">&laquo;</span>
-							</a>
-						</li>
-
-						<li ng-repeat="n in range()" ng-class="{active: isActive(n)}">
-							<a href ng-click="updateEventList(n)">{{n+1}}</a>
-						</li>
-
-						<li ng-class="{disabled: isNextPageDisabled()}">
-							<a href ng-click="nextPage()" aria-label="Next">
-								<span aria-hidden="true">&raquo;</span>
-							</a>
-						</li>
-					</ul>
-					<div class="clearfix"></div>
+					<ul uib-pagination class="pagination-md" total-items="totalElements()" items-per-page="elementsPerPage()"
+						max-size="5" force-ellipses="true" boundary-link-numbers="true" rotate="true"
+						ng-model="bigCurrentPage" ng-change="updateEventList(bigCurrentPage - 1)"></ul>
 				</div>
 			</div>
 		</div>

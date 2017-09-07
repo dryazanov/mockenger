@@ -31,39 +31,13 @@ angular.module('mockengerClientMainApp')
 				return 0;
 			};
 
-			$scope.range = function() {
-				var range = [];
-				for (var i = 0, l = $scope.pageCount(); i < l; i++) {
-					range.push(i);
-				}
-				return range;
-			};
+			$scope.totalElements = function() {
+				return eventListService.getData().totalElements;
+			}
 
-			$scope.isActive = function(n) {
-				return (eventListService.getCurrentPage() == n);
-			};
-
-			$scope.isPrevPageDisabled = function() {
-				return (eventListService.getCurrentPage() === 0);
-			};
-
-			$scope.isNextPageDisabled = function() {
-				return (eventListService.getCurrentPage() === $scope.pageCount() - 1);
-			};
-
-			$scope.prevPage = function() {
-				if (eventListService.getCurrentPage() > 0) {
-					eventListService.setCurrentPage(eventListService.getCurrentPage() - 1);
-					$scope.updateEventList(eventListService.getCurrentPage());
-				}
-			};
-
-			$scope.nextPage = function() {
-				if (eventListService.getCurrentPage() < $scope.pageCount() - 1) {
-					eventListService.setCurrentPage(eventListService.getCurrentPage() + 1);
-					$scope.updateEventList(eventListService.getCurrentPage());
-				}
-			};
+			$scope.elementsPerPage = function() {
+				return eventListService.getData().size;
+			}
 
 			$scope.showFullEvent = function(event, index) {
 				eventService.openEventModal(event);
@@ -146,5 +120,11 @@ angular.module('mockengerClientMainApp')
 			$scope.endDateOnSetTime = function() {
 				$scope.$broadcast('end-date-changed');
 			}
+
+			$scope.bigCurrentPage = 1;
+
+			$scope.pageChanged = function() {
+				console.log('Page changed to: ' + $scope.bigCurrentPage);
+			};
 
 }]);

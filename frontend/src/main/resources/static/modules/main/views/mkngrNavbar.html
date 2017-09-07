@@ -9,7 +9,7 @@
 				<li class="">
 					<a href="/#/index" class="btn-default" ng-class="{ active: isActive('/index') || isActive('/project') }">PROJECTS</a>
 				</li>
-				<li ng-if="isSecurityMode() && isAdmin(user.role)">
+				<li>
 					<a href="/#/audit" class="btn-default" ng-class="{ active: isActive('/audit') }">EVENTS</a>
 				</li>
 				<li ng-if="isSecurityMode() && isAdmin(user.role)">

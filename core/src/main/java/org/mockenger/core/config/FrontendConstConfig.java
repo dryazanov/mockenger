@@ -37,6 +37,9 @@ public class FrontendConstConfig {
 	@Value("${build.timestamp}")
 	private String buildTimestamp;
 
+	@Value("${frontend.audit.log.events.per.page}")
+	public int itemsPerPage = 25;
+
 
 	@Bean(name = "constantsBean")
 	public String getConstants(final ApplicationContext applicationContext) {
@@ -75,6 +78,6 @@ public class FrontendConstConfig {
 		final boolean isSecurityOn = applicationContext.getEnvironment().acceptsProfiles("security");
 		final String secretKey = Base64Utils.encodeToString((clientAppName + ":" + clientAppSecret).getBytes());
 
-		return format(constantsTemplate, environment, isSecurityOn, secretKey, apiBaseUrl, appVersion, 20, buildTimestamp);
+		return format(constantsTemplate, environment, isSecurityOn, secretKey, apiBaseUrl, appVersion, itemsPerPage, buildTimestamp);
 	}
 }

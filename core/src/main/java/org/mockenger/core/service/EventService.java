@@ -26,7 +26,7 @@ public class EventService {
     public static final String DEFAULT_SORT_FIELD = "eventDate";
 
 	@Value("${frontend.audit.log.events.per.page}")
-    public int itemsPerPage = 5;
+    public int itemsPerPage = 25;
 
     @Autowired
     private EventRepository<Event> eventRepository;
