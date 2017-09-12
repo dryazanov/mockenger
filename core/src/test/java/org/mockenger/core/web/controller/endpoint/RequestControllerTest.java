@@ -120,15 +120,15 @@ public class RequestControllerTest extends AbstractControllerTest {
     public void testAddRequest() throws Exception {
         ResultActions resultActions;
 
-        // Expect response status 200
+        // Expect response status 201
         resultActions = createRequestRest(project.getCode(), group.getCode(), request);
-        resultActions.andExpect(status().isOk())
+        resultActions.andExpect(status().isCreated())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.id").value(not(request.getId())));
 
-        // Expect response status 200
+        // Expect response status 201
         resultActions = createRequestRest(project.getCode(), group.getCode(), request);
-        resultActions.andExpect(status().isOk())
+        resultActions.andExpect(status().isCreated())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.id").value(not(request.getId())));
     }

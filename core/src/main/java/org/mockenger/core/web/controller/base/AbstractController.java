@@ -12,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
+import java.net.URI;
+
 import static java.util.Optional.ofNullable;
+import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.notFound;
 import static org.springframework.http.ResponseEntity.ok;
@@ -108,6 +111,17 @@ public abstract class AbstractController {
 	 */
 	protected <T> ResponseEntity<T> okResponseWithDefaultHeaders(final T body) {
 		return ok().headers(getResponseHeaders()).body(body);
+	}
+
+
+	/**
+	 *
+	 * @param body
+	 * @param <T>
+	 * @return
+	 */
+	protected <T> ResponseEntity<T> createdResponseWithDefaultHeaders(final URI uri, final T body) {
+		return created(uri).headers(getResponseHeaders()).body(body);
 	}
 
 

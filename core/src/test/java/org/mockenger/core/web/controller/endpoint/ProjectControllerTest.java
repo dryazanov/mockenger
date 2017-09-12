@@ -119,10 +119,10 @@ public class ProjectControllerTest extends AbstractControllerTest {
     public void testAddProject() throws Exception {
         final Project project1 = getProjectBuilder().build();
 
-        // Expect response status 200
+        // Expect response status 201
         final ResultActions resultActions1 = createProjectRest(project1);
 
-        resultActions1.andExpect(status().isOk())
+        resultActions1.andExpect(status().isCreated())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.id").value(not(project1.getId())));
 
@@ -133,11 +133,11 @@ public class ProjectControllerTest extends AbstractControllerTest {
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors[0]").value(String.format("Project with the code '%s' already exist", project1.getCode())));
 
-        // Expect response status 200
+        // Expect response status 201
         final Project project2 = getProjectBuilder().code(PROJECT_CODE + "1").build();
         final ResultActions resultActions3 = createProjectRest(project2);
 
-        resultActions3.andExpect(status().isOk())
+        resultActions3.andExpect(status().isCreated())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.id").value(not(project2.getId())));
 

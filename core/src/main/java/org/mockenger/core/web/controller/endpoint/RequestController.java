@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.Date;
 import java.util.SortedSet;
 
@@ -95,8 +96,9 @@ public class RequestController extends AbstractController {
         // Change headers to lowercase
 		request.setHeaders(processHeaders(requestHeaders));
 
-        return okResponseWithDefaultHeaders(
-        		processBodyAndSave(request, isURLEncodedForm(requestHeaders)));
+		final URI uri = URI.create(API_PATH + "/projects/" + project.getCode() + "/groups/" + group.getCode() + "/requests/" + request.getCode());
+
+        return createdResponseWithDefaultHeaders(uri, processBodyAndSave(request, isURLEncodedForm(requestHeaders)));
     }
 
 

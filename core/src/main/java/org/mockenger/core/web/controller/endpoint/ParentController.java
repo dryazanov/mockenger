@@ -29,7 +29,6 @@ import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static org.mockenger.core.util.MockRequestUtils.toAbstractRequest;
 import static org.springframework.http.HttpStatus.FOUND;
-import static org.springframework.http.ResponseEntity.created;
 
 /**
  *
@@ -155,7 +154,7 @@ public class ParentController extends AbstractController {
 
         requestService.save(abstractRequest);
 
-        return created(URI.create("")).headers(getResponseHeaders()).body(mockRequest);
+        return createdResponseWithDefaultHeaders(URI.create(""), mockRequest);
     }
 
 

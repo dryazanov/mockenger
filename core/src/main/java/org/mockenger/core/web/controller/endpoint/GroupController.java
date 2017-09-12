@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+import java.net.URI;
+
 import static org.mockenger.core.service.GroupService.cloneGroup;
 
 /**
@@ -46,9 +48,11 @@ public class GroupController extends AbstractController {
             throw new IllegalArgumentException(result.getFieldError().getDefaultMessage());
         }
 
+		final Project project = findProjectById(group.getProjectId());
         final Group groupCandidate = cloneGroup(group).id(null).build();
+		final URI uri = URI.create(API_PATH + "/projects/" + project.getCode() + "/groups/" + group.getCode());
 
-        return okResponseWithDefaultHeaders(groupService.save(groupCandidate));
+        return createdResponseWithDefaultHeaders(uri, groupService.save(groupCandidate));
     }
 
 

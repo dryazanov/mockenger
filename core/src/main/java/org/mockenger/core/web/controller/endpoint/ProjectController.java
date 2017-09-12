@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.net.URI;
 
 /**
  * @author Dmitry Ryazanov
@@ -55,8 +56,9 @@ public class ProjectController extends AbstractController {
         }
 
         final Project projectToAdd = ProjectService.cloneProject(project).id(null).build();
+		final URI uri = URI.create(API_PATH + "/projects/" + project.getCode());
 
-        return okResponseWithDefaultHeaders(projectService.save(projectToAdd));
+		return createdResponseWithDefaultHeaders(uri, projectService.save(projectToAdd));
     }
 
 
