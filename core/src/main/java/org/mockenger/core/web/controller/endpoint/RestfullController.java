@@ -1,9 +1,8 @@
 package org.mockenger.core.web.controller.endpoint;
 
-import org.mockenger.core.service.rest.PostService;
-import org.mockenger.core.service.rest.PutService;
+import org.mockenger.core.service.http.PostService;
+import org.mockenger.core.service.http.PutService;
 import org.mockenger.core.web.exception.BadContentTypeException;
-import org.mockenger.core.web.exception.MockObjectNotCreatedException;
 import org.mockenger.data.model.persistent.mock.group.Group;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.concurrent.Callable;
 
+import static java.util.Optional.ofNullable;
+import static org.mockenger.core.util.MockRequestUtils.APPLICATION_JSON_PATTERN;
+import static org.mockenger.core.util.MockRequestUtils.APPLICATION_XML_PATTERN;
 import static org.mockenger.core.web.controller.base.AbstractController.API_PATH;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 /**
  * @author Dmitry Ryazanov
@@ -36,11 +34,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 public class RestfullController extends ParentController {
 
 	@Autowired
-    @Qualifier("restPostService")
+    @Qualifier("httpPostService")
     private PostService postService;
 
     @Autowired
-    @Qualifier("restPutService")
+    @Qualifier("httpPutService")
     private PutService putService;
 
 
@@ -70,35 +68,25 @@ public class RestfullController extends ParentController {
 
     /**
      *
-     */
-    @RequestMapping(method = {POST, PUT})
-    public void processPosRequest() {
-        throw new BadContentTypeException("Invalid header 'Content-type': application/json or application/xml are only allowed in REST requests");
-    }
-
-
-    /**
-     *
      * @param groupCode
-     * @param jsonBody
+     * @param requestBody
      * @param request
      * @return
      */
-    @PostMapping(consumes = APPLICATION_JSON_VALUE)
-    public Callable<ResponseEntity> processPostJsonRequest(@PathVariable final String groupCode,
-														   @RequestBody final String jsonBody,
-														   final HttpServletRequest request) {
-    	return () -> {
-			final Group group = findGroupByCode(groupCode);
+    @PostMapping
+    public Callable<ResponseEntity> processPostRequest(@PathVariable final String groupCode,
+													   @RequestBody(required = false) final String requestBody,
+													   final HttpServletRequest request) {
 
-			try {
-				final GenericRequest mockRequest = postService.createMockRequestFromJson(group.getId(), jsonBody, request);
-				ResponseEntity responseEntity = findMockedEntities(mockRequest, group);
-				System.out.println(responseEntity.getBody());
-				return responseEntity;
-			} catch (IOException e) {
-				throw new MockObjectNotCreatedException("Cannot read json from the provided source", e);
+    	return () -> {
+    		if (!isValidContentType(request)) {
+				throw new BadContentTypeException("Content-type is not recognized as a valid json or xml type");
 			}
+
+			final Group group = findGroupByCode(groupCode);
+			final GenericRequest mockRequest = postService.createGenericRequest(group.getId(), requestBody, request);
+
+			return findMockedEntities(mockRequest, group);
 		};
     }
 
@@ -110,59 +98,24 @@ public class RestfullController extends ParentController {
      * @param request
      * @return
      */
-    @PostMapping(consumes = APPLICATION_XML_VALUE)
-    public Callable<ResponseEntity> processPostXmlRequest(@PathVariable final String groupCode,
-														  @RequestBody final String requestBody,
-														  final HttpServletRequest request) {
+    @PutMapping
+    public Callable<ResponseEntity> processPutRequest(@PathVariable final String groupCode,
+													  @RequestBody(required = false) final String requestBody,
+													  final HttpServletRequest request) {
+
     	return () -> {
 			final Group group = findGroupByCode(groupCode);
-			final GenericRequest mockRequest = postService.createMockRequestFromXml(group.getId(), requestBody, request);
+			final GenericRequest mockRequest = putService.createMockRequest(group.getId(), requestBody, request);
 
 			return findMockedEntities(mockRequest, group);
 		};
     }
 
 
-    /**
-     *
-     * @param groupCode
-     * @param jsonBody
-     * @param request
-     * @return
-     */
-    @PutMapping(consumes = APPLICATION_JSON_VALUE)
-    public Callable<ResponseEntity> processPutJsonRequest(@PathVariable final String groupCode,
-														  @RequestBody final String jsonBody,
-														  final HttpServletRequest request) {
-    	return () -> {
-			final Group group = findGroupByCode(groupCode);
-
-			try {
-				final GenericRequest mockRequest = putService.createMockRequestFromJson(group.getId(), jsonBody, request);
-				return findMockedEntities(mockRequest, group);
-			} catch (IOException e) {
-				throw new MockObjectNotCreatedException("Cannot read json from the provided source", e);
-			}
-		};
-    }
-
-
-    /**
-     *
-     * @param groupCode
-     * @param requestBody
-     * @param request
-     * @return
-     */
-    @PutMapping(consumes = APPLICATION_XML_VALUE)
-    public Callable<ResponseEntity> processPutXmlRequest(@PathVariable final String groupCode,
-														 @RequestBody final String requestBody,
-														 final HttpServletRequest request) {
-		return () -> {
-			final Group group = findGroupByCode(groupCode);
-			final GenericRequest mockRequest = putService.createMockRequestFromXml(group.getId(), requestBody, request);
-
-			return findMockedEntities(mockRequest, group);
-		};
-    }
+	private boolean isValidContentType(final HttpServletRequest servletRequest) {
+		return ofNullable(servletRequest.getHeader(CONTENT_TYPE))
+				.map(h -> h.toLowerCase().matches(APPLICATION_XML_PATTERN)
+						|| h.toLowerCase().matches(APPLICATION_JSON_PATTERN))
+				.orElse(false);
+	}
 }

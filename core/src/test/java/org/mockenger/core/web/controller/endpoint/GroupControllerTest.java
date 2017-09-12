@@ -97,26 +97,30 @@ public class GroupControllerTest extends AbstractControllerTest {
 
     @Test
     public void testAddGroup() throws Exception {
-        final Group group = getGroupBuilder().build();
+    	final Project project = createProject(true);
+        final Group.GroupBuilder groupBuilder = getGroupBuilder().projectId(project.getId());
 
-        // Expect response status 200
-        callAddGroup(group);
+        // Expect response status 201
+        callAddGroup(groupBuilder.build());
 
-		final Group groupWithUniqueCode = getGroupBuilder().code(GROUP_CODE + new Date().getTime()).build();
-        // Expect response status 200
+		final String newGroupCode = GROUP_CODE + new Date().getTime();
+		final Group groupWithUniqueCode = groupBuilder.code(newGroupCode).build();
+
+        // Expect response status 201
         callAddGroup(groupWithUniqueCode);
 
 		// Expect response status 400
 		callAddGroupWithSameCode(groupWithUniqueCode);
 
         deleteAllGroups();
+        deleteProject(project);
     }
 
 
     private void callAddGroup(final Group group) throws Exception {
         final ResultActions resultActions1 = createGroupRest(group);
 
-        resultActions1.andExpect(status().isOk())
+        resultActions1.andExpect(status().isCreated())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.id").value(not(group.getId())));
     }

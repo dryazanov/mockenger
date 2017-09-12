@@ -12,6 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class HeadService extends RequestService {
     public HeadRequest createMockRequest(final String groupId, final HttpServletRequest request) {
-        return (HeadRequest) fillUpEntity(new HeadRequest(), groupId, request);
+        return fillUpEntity(new HeadRequest(), groupId, request);
     }
 }

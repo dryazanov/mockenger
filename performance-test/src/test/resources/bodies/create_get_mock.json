@@ -1,0 +1,47 @@
+{
+  "id": null,
+  "groupId": "${group_id}",
+  "name": "GET mock request",
+  "method": "GET",
+  "path": {
+    "transformers": null,
+    "value": "mock/get"
+  },
+  "headers": {
+    "transformers": null,
+    "values": [
+      {
+        "key": "Content-Type",
+        "value": "application/json"
+      },
+      {
+        "key": "performance-test-header",
+        "value": "true"
+      }
+    ]
+  },
+  "parameters": {
+    "transformers": null,
+    "values": [
+      {
+        "key": "a",
+        "value": "1"
+      },
+      {
+        "key": "b",
+        "value": "2"
+      },
+      {
+        "key": "c",
+        "value": "3"
+      }
+    ]
+  },
+  "body": null,
+  "mockResponse": {
+    "httpStatus": "201",
+    "body": "{\n    \"entry\": {\n        \"affectedRows\": 1,\n        \"keyField\": \"14382%3ANCOMS\",\n        \"uri\": \"http://localhost/objectserver/restapi/alerts/status/kf/14382%3ANCOMS\"\n    }\n}"
+  },
+  "latencyType": null,
+  "latency": null
+}

@@ -6,25 +6,28 @@ import org.mockenger.core.web.exception.ObjectNotFoundException;
 import org.mockenger.data.model.dict.EventEntityType;
 import org.mockenger.data.model.persistent.log.Event;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static org.springframework.http.ResponseEntity.ok;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+import static org.mockenger.core.web.controller.base.AbstractController.API_PATH;
+import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * @author Dmitry Ryazanov
  */
 @RestController
-@RequestMapping(path = AbstractController.API_PATH + "/events")
+@RequestMapping(path = API_PATH + "/events")
 public class EventController extends AbstractController {
 
     @Autowired
@@ -38,25 +41,33 @@ public class EventController extends AbstractController {
      */
     @GetMapping
     public ResponseEntity getEventList(@RequestParam(value = "types", required = false) final List<String> types,
+                                       @RequestParam(value = "startDate", required = false, defaultValue = "0") final Long startDate,
+                                       @RequestParam(value = "endDate", required = false, defaultValue = "4099680000000") final Long endDate,
                                        @RequestParam(value = "page", required = false) final Integer page,
                                        @RequestParam(value = "sort", required = false) final String sort) {
 
         if (types != null) {
             final List<String> typeList = types.stream()
                     .flatMap(type -> EventEntityType.getClassNames(type).stream())
-                    .filter(type -> !StringUtils.isEmpty(type))
-                    .collect(Collectors.toList());
+                    .filter(type -> !isEmpty(type))
+                    .collect(toList());
 
-            return getResponse(eventService.findByEntityTypes(typeList, page, sort));
+			final Page<Event> events = eventService.findByEntityTypesAndEventDate(typeList, getDate(startDate), getDate(endDate), page, sort);
+
+			return okResponseWithDefaultHeaders(events);
         }
 
-        return getResponse(eventService.findAll(page, sort));
+        return okResponseWithDefaultHeaders(eventService.findAll(page, sort));
     }
 
 
-    private ResponseEntity getResponse(final Iterable<Event> events) {
-        return ok().headers(getResponseHeaders()).body(events);
-    }
+    private Date getDate(final Long initDate) {
+		final Calendar date = Calendar.getInstance();
+
+		date.setTimeInMillis(ofNullable(initDate).orElse(0L));
+
+		return date.getTime();
+	}
 
 
 	/**
@@ -67,9 +78,9 @@ public class EventController extends AbstractController {
 	 */
 	@GetMapping("/{eventId}")
 	public ResponseEntity getEvent(@PathVariable final String eventId) {
-		final Event event = Optional.ofNullable(eventService.findById(eventId))
+		final Event event = ofNullable(eventService.findById(eventId))
 				.orElseThrow(() -> new ObjectNotFoundException("Event", eventId));
 
-		return ok().headers(getResponseHeaders()).body(event);
+		return okResponseWithDefaultHeaders(event);
 	}
 }

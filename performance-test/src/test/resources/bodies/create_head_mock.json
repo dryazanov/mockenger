@@ -1,0 +1,46 @@
+{
+  "id": null,
+  "groupId": "${group_id}",
+  "name": "HEAD mock request",
+  "method": "HEAD",
+  "path": {
+    "transformers": null,
+    "value": "mock/head"
+  },
+  "headers": {
+    "transformers": null,
+    "values": [
+      {
+        "key": "Content-Type",
+        "value": "application/json"
+      },
+      {
+        "key": "performance-test-header",
+        "value": "true"
+      }
+    ]
+  },
+  "parameters": {
+    "transformers": null,
+    "values": [
+      {
+        "key": "a",
+        "value": "1"
+      },
+      {
+        "key": "b",
+        "value": "2"
+      },
+      {
+        "key": "c",
+        "value": "3"
+      }
+    ]
+  },
+  "body": null,
+  "mockResponse": {
+    "httpStatus": "200"
+  },
+  "latencyType": null,
+  "latency": null
+}

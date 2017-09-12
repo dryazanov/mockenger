@@ -1,93 +1,157 @@
 <mkngr-navbar></mkngr-navbar>
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="panel panel-default">
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <h4>Events</h4>
-                    </li>
-                    <li class="list-group-item" ng-repeat="(entityType, entityTypeName) in eventEntityTypes">
-                        <div>
-                            <a href ng-click="loadEventsByEntityType(entityType)">
-                                {{entityTypeName}}
-                            </a>
-                        </div>
-                    </li>
-                </ul>
-                <div class="panel-footer">&nbsp;</div>
-            </div>
-        </div>
+	<div class="row">
+		<div class="col-md-3">
+			<div class="panel panel-default">
+				<ul class="list-group">
+					<li class="list-group-item">
+						<h4>Events</h4>
+					</li>
+					<li class="list-group-item" ng-repeat="(entityType, entityTypeName) in eventEntityTypes">
+						<div>
+							<a href ng-click="loadEventsByEntityType(entityType)">
+								{{entityTypeName}}
+							</a>
+						</div>
+					</li>
+				</ul>
+				<div class="panel-footer">&nbsp;</div>
+			</div>
+		</div>
 
 
-        <div class="col-md-9" ng-controller="EventListController">
-            <h5 ng-if="eventListService.getData() == null">
-                Please select an event type
-            </h5>
+		<div class="col-md-9" ng-controller="EventListController">
+			<h5 ng-if="eventListService.getData() == null">Please select an event type</h5>
 
-            <div ng-if="eventListService.getData() != null &&  !eventListService.getCurrent()"  class="panel panel-default">
-                <div class="panel-heading">
-                    <!--<form class="form-inline">
-                        <div class="form-group">
-                            <input type="search" ng-model="eventListService.filters.search.query" class="form-control" id="searchRequests" placeholder="Search">
-                        </div>
-                        <div class="form-group">
-                            <select ng-model="eventListService.filters.order" id="orderRequests" class="form-control">
-                                <optgroup label="Order by">
-                                    <option value="creationDate">Date</option>
-                                    <option value="name">Name</option>
-                                    <option value="method">Method</option>
-                                </optgroup>
-                            </select>
-                        </div>
-                    </form>-->
-                </div>
+			<div ng-if="eventListService.getData() != null && !eventListService.getCurrent()"  class="panel panel-default">
+				<div class="panel-heading">
 
-                <div class="panel-body">
-                    <table class="table table-striped table-hover">
-                        <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Date</th>
-                            <th>Action</th>
-                            <th>Result</th>
-                            <th>Details</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="event in eventListService.getData().content">
-                            <td class="col-md-1">{{event.username}}</td>
-                            <td class="col-md-2">{{event.eventDate | date:'dd-MM-yyyy HH:mm:ss'}}</td>
-                            <td class="col-md-1">{{event.eventType}}</td>
-                            <td class="col-md-1">{{event.resultType}}</td>
-							<td>{{event.entity | json}}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+					<ng-include src="'/modules/main/views/event/searchPanel.html'"/>
 
-                <div class="panel-footer" ng-show="pageCount() > 1">
-                    <ul class="pagination pull-right">
-                        <li ng-class="{disabled: isPrevPageDisabled()}">
-                            <a href ng-click="prevPage()" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
+				</div>
 
-                        <li ng-repeat="n in range()" ng-class="{active: isActive(n)}">
-                            <a href ng-click="updateEventList(eventEntityType, n)">{{n+1}}</a>
-                        </li>
+				<div class="panel-body">
+					<div ng-if="pageCount() <= 0">
+						<h5>No results found</h5>
+					</div>
 
-                        <li ng-class="{disabled: isNextPageDisabled()}">
-                            <a href ng-click="nextPage()" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                    <div class="clearfix"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+					<table class="table table-striped table-hover" ng-if="pageCount() > 0">
+						<thead>
+							<tr>
+								<th>User</th>
+								<th>Date</th>
+								<th>Action</th>
+								<th>Result</th>
+								<th>Details</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="event in eventListService.getData().content">
+								<td class="col-md-1"><span ng-if="event.username != 'anonymousUser'">{{event.username}}</span></td>
+								<td class="col-md-2">{{event.eventDate | date:'dd-MM-yyyy HH:mm:ss'}}</td>
+								<td class="col-md-1 text-info">{{event.eventType}}</td>
+								<td class="col-md-1">
+									<span class="text-success" ng-if="event.resultType == 'FOUND'">Found</span>
+									<span class="text-danger" ng-if="event.resultType == 'NOT_FOUND'">Not found</span>
+								</td>
+								<td>
+									<table class="table" ng-if="eventListService.getEntityType() == 'PROJECT'">
+										<tr>
+											<td class="col-md-1 text-info">Name</td>
+											<td>{{event.entity.name}}</td>
+										</tr>
+										<tr>
+											<td class="col-md-1 text-info">Code</td>
+											<td>{{event.entity.code}}</td>
+										</tr>
+										<tr>
+											<td class="col-md-1 text-info">Type</td>
+											<td><span class="label label-success ng-binding">{{event.entity.type}}</span></td>
+										</tr>
+										<tr>
+											<td>&nbsp;</td>
+											<td>
+												<a href ng-click="showFullEvent(event)">Show full object</a>
+											</td>
+										</tr>
+									</table>
+
+
+									<table class="table" ng-if="eventListService.getEntityType() == 'GROUP'">
+										<tr>
+											<td class="col-md-1 text-info">Name</td>
+											<td>{{event.entity.name}}</td>
+										</tr>
+										<tr>
+											<td class="col-md-1 text-info">Code</td>
+											<td>{{event.entity.code}}</td>
+										</tr>
+										<tr>
+											<td class="col-md-1 text-info">Recording</td>
+											<td>
+												<span ng-class="event.entity.recording ? 'glyphicon glyphicon-ok-circle text-success'
+																: 'glyphicon glyphicon-remove-circle text-danger'"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="col-md-1 text-info">Forwarding</td>
+											<td>
+												<span ng-class="event.entity.forwarding ? 'glyphicon glyphicon-ok-circle text-success'
+																: 'glyphicon glyphicon-remove-circle text-danger'"></span>
+											</td>
+										</tr>
+										<tr ng-if="event.entity.forwardTo != null">
+											<td class="col-md-1 text-info">Forward to</td>
+											<td>{{event.entity.forwardTo}}</td>
+										</tr>
+										<tr>
+											<td>&nbsp;</td>
+											<td>
+												<a href ng-click="showFullEvent(event)">Show full object</a>
+											</td>
+										</tr>
+									</table>
+
+
+									<table class="table" ng-if="eventListService.getEntityType() == 'REQUEST'">
+										<tr>
+											<td class="col-md-1 text-info">Method</td>
+											<td>{{event.entity.method}}</td>
+										</tr>
+										<tr>
+											<td class="col-md-1 text-info">Path</td>
+											<td>/{{event.entity.path.value}}</td>
+										</tr>
+										<tr>
+											<td class="col-md-1 text-info">Params</td>
+											<td>{{getParametersAsString(event.entity.parameters)}}</td>
+										</tr>
+										<tr>
+											<td class="col-md-1 text-info">Headers</td>
+											<td class="wrapword">{{getHeadersAsString(event.entity.headers)}}</td>
+										</tr>
+										<tr>
+											<td>&nbsp;</td>
+											<td>
+												<a href ng-click="showFullEvent(event)">Show full object</a>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="panel-footer" ng-show="pageCount() > 1">
+					<ul uib-pagination class="pagination-md" total-items="totalElements()" items-per-page="elementsPerPage()"
+						max-size="5" force-ellipses="true" boundary-link-numbers="true" rotate="true"
+						ng-model="bigCurrentPage" ng-change="updateEventList(bigCurrentPage - 1)"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
+
+<ng-include src="'/modules/main/views/event/detailsModal.html'"/>

@@ -1,257 +1,294 @@
 'use strict';
 
 angular.module('mockengerClientMainApp')
-    .controller('RequestController',[
-        '$scope',
-        '$confirm',
-        '$timeout',
-        'projectListService',
-        'groupListService',
-        'requestService',
-        'requestListService',
+	.controller('RequestController',[
+		'$scope',
+		'$confirm',
+		'$timeout',
+		'projectListService',
+		'groupListService',
+		'requestService',
+		'requestListService',
 
-        function ($scope, $confirm, $timeout, projectListService, groupListService, requestService, requestListService) {
-            var REGEXP = 'REGEXP';
-            var KEY_VALUE = 'KEY_VALUE';
-            var XPATH = 'XPATH';
-            var APPLICATION_FORM_URLENCODED_VALUE = 'application/x-www-form-urlencoded';
+		function ($scope, $confirm, $timeout, projectListService, groupListService, requestService, requestListService) {
+			var REGEXP = 'REGEXP';
+			var KEY_VALUE = 'KEY_VALUE';
+			var XPATH = 'XPATH';
+			var APPLICATION_FORM_URLENCODED_VALUE = 'application/x-www-form-urlencoded';
 
-            $scope.bodyTransformerTypes = new Array(REGEXP, XPATH);
+			$scope.bodyTransformerTypes = new Array(REGEXP, XPATH);
 
-            var pushKeyValuePair = function(source) {
-                source.push({
-                    key: "",
-                    value: ""
-                });
-            }
+			$scope.isXPathTransformer = function(transformer) {
+				return transformer.type === XPATH;
+			}
 
-            var addTransformer = function(source, transformerType) {
-                source.push({
-                    type: transformerType,
-                    pattern: null,
-                    replacement: null
-                });
-            }
+			var pushKeyValuePair = function(source) {
+				source.push({
+					key: "",
+					value: ""
+				});
+			}
 
-            var isMethodWithBody = function(method) {
-                return (method === 'POST' || method === 'PUT' || method === 'PATCH');
-            }
+			var addTransformer = function(source, transformerType) {
+				source.push({
+					type: transformerType,
+					pattern: null,
+					replacement: null
+				});
+			}
 
-            $scope.selectMethod = function(method) {
-                requestListService.getCurrent().method = method;
-            }
+			var addTransformer = function(source, transformerType) {
+            				source.push({
+            					type: transformerType,
+            					pattern: null,
+            					replacement: null
+            				});
+            			}
 
-            $scope.selectTransformerType = function(type, transformer) {
-                transformer.type = type;
-            }
+			var isMethodWithBody = function(method) {
+				return (method === 'POST' || method === 'PUT' || method === 'PATCH');
+			}
 
-            $scope.addParameter = function() {
-                if ($scope.getParams() == null) {
-                    requestListService.getCurrent().parameters.values = [];
-                }
+			$scope.selectMethod = function(method) {
+				requestListService.getCurrent().method = method;
+			}
 
-                pushKeyValuePair($scope.getParams());
-            }
+			$scope.selectTransformerType = function(type, transformer) {
+				transformer.type = type;
+			}
 
-            $scope.deleteParameter = function(index) {
-                $confirm({
-                    text: "Do you really want to delete this parameter?"
-                }).then(function() {
-                    var source = $scope.getParams();
-                    if (source != null && source[index] != null) {
-                        source.splice(index, 1);
-                    }
-                }, function() {
+			$scope.addParameter = function() {
+				if ($scope.getParams() == null) {
+					requestListService.getCurrent().parameters.values = [];
+				}
+
+				pushKeyValuePair($scope.getParams());
+			}
+
+			$scope.addRequestHeader = function() {
+				if ($scope.getRequestHeaders() == null) {
+					requestListService.getCurrent().headers.values = [];
+				}
+
+				pushKeyValuePair($scope.getRequestHeaders());
+			}
+
+			$scope.addResponseHeader = function() {
+				if (requestListService.getCurrent().mockResponse == null) {
+					requestListService.getCurrent().mockResponse = {
+						headers: [],
+						httpStatus: null,
+						body: null
+					}
+				} else {
+					if (requestListService.getCurrent().mockResponse.headers == null) {
+						requestListService.getCurrent().mockResponse.headers = [];
+					}
+				}
+
+				pushKeyValuePair(requestListService.getCurrent().mockResponse.headers);
+			}
+
+			$scope.deleteHeader = function(index, source) {
+				$scope.deleteElement(index, source, 'header');
+			}
+
+			// Add transformer for Path
+			$scope.addPathTransformer = function() {
+				if (requestListService.getCurrent().path.transformers == null) {
+					requestListService.getCurrent().path.transformers = [];
+				}
+
+				addTransformer(requestListService.getCurrent().path.transformers, REGEXP);
+			}
+
+			// Add transformer for Parameters
+			$scope.addParamTransformer = function() {
+				if (requestListService.getCurrent().parameters.transformers == null) {
+					requestListService.getCurrent().parameters.transformers = [];
+				}
+
+				addTransformer(requestListService.getCurrent().parameters.transformers, KEY_VALUE);
+			}
+
+			// Add transformer for Headers
+			$scope.addHeaderTransformer = function() {
+				if (requestListService.getCurrent().headers.transformers == null) {
+					requestListService.getCurrent().headers.transformers = [];
+				}
+
+				addTransformer(requestListService.getCurrent().headers.transformers, KEY_VALUE);
+			}
+
+			// Add transformer for Request Body
+			$scope.addRequestBodyTransformer = function() {
+				if (requestListService.getCurrent().body.transformers == null) {
+					requestListService.getCurrent().body.transformers = [];
+				}
+
+				addTransformer(requestListService.getCurrent().body.transformers, REGEXP);
+			}
+
+			// Add namespace to XPath transformer
+			$scope.addXPathNamespace = function(transformer) {
+				if (transformer.namespaces == null) {
+					transformer.namespaces = [];
+				}
+
+				transformer.namespaces.push({
+					key: null,
+					value: null
+				});
+			}
+
+			$scope.deleteElement = function(index, source, elementName) {
+				$confirm({
+					text: "Do you really want to delete this " + elementName + "?"
+				}).then(function() {
+					if (source != null && source[index] != null) {
+						source.splice(index, 1);
+					}
+				}, function() {
 					// cancel
 				});
-            }
+			}
 
-            $scope.addRequestHeader = function() {
-                if ($scope.getRequestHeaders() == null) {
-                    requestListService.getCurrent().headers.values = [];
-                }
+			$scope.deleteTransformer = function(index, source) {
+				$scope.deleteElement(index, source, 'transformer');
+			}
 
-                pushKeyValuePair($scope.getRequestHeaders());
-            }
+			var isNameOk = function(name) {
+				if (!name) {
+					$scope.showRedMessage({data: {errors: new Array('Field <b>Name</b> is required')}});
+					return false;
+				}
 
-            $scope.addResponseHeader = function() {
-                if (requestListService.getCurrent().mockResponse == null) {
-                    requestListService.getCurrent().mockResponse = {
-                        headers: [],
-                        httpStatus: null,
-                        body: null
-                    }
-                } else {
-                    if (requestListService.getCurrent().mockResponse.headers == null) {
-                        requestListService.getCurrent().mockResponse.headers = [];
-                    }
-                }
+				return true;
+			}
 
-                pushKeyValuePair(requestListService.getCurrent().mockResponse.headers);
-            }
+			var isResponseDataOk = function(mockResponse) {
+				if (!mockResponse || !mockResponse.httpStatus) {
+					$scope.showRedMessage({data: {errors: new Array('Field <b>HTTP status code</b> is required')}});
+					return false;
+				}
 
-            $scope.deleteHeader = function(index, source) {
-                $confirm({
-                    text: "Do you really want to delete this header?"
-                }).then(function() {
-                    if (source != null && source[index] != null) {
-                        source.splice(index, 1);
-                    }
-                }, function() {
-                	// cancel
-                });
-            }
+				return true;
+			}
 
-            // Add transformer for Path
-            $scope.addPathTransformer = function() {
-                if (requestListService.getCurrent().path.transformers == null) {
-                    requestListService.getCurrent().path.transformers = [];
-                }
+			var isHttpMethodOk = function(method) {
+				if (!method) {
+					$scope.showRedMessage({data: {errors: new Array('<b>Method</b> may not be null or empty')}});
+					return false;
+				}
 
-                addTransformer(requestListService.getCurrent().path.transformers, REGEXP);
-            }
+				return true;
+			}
 
-            // Add transformer for Parameters
-            $scope.addParamTransformer = function() {
-                if (requestListService.getCurrent().parameters.transformers == null) {
-                    requestListService.getCurrent().parameters.transformers = [];
-                }
+			$scope.saveRequest = function(request) {
+				if (!isNameOk(request.name) || !isResponseDataOk(request.mockResponse) || !isHttpMethodOk(request.method)) {
+					return;
+				}
 
-                addTransformer(requestListService.getCurrent().parameters.transformers, KEY_VALUE);
-            }
+				if (!isMethodWithBody(request.method)) {
+					request.body = null;
+				}
 
-            // Add transformer for Headers
-            $scope.addHeaderTransformer = function() {
-                if (requestListService.getCurrent().headers.transformers == null) {
-                    requestListService.getCurrent().headers.transformers = [];
-                }
+				var requestParams = {
+					projectCode: projectListService.getCurrent().code,
+					groupCode: groupListService.getCurrent().code
+				}
 
-                addTransformer(requestListService.getCurrent().headers.transformers, KEY_VALUE);
-            }
+				request.latency = $scope.cleanUpLatency(requestListService.getCurrent().latencyType, request.latency);
 
-            // Add transformer for Request Body
-            $scope.addRequestBodyTransformer = function() {
-                if (requestListService.getCurrent().body.transformers == null) {
-                    requestListService.getCurrent().body.transformers = [];
-                }
+				if (request.id != null) {
+					requestParams.requestCode = request.code;
 
-                addTransformer(requestListService.getCurrent().body.transformers, REGEXP);
-            }
+					requestService.ajax.update(requestParams, request, function() {
+						$scope.showGreenMessage('Mock-request <b>' + request.name + '</b> successfully updated');
+					}, function(errorResponse) {
+						$scope.showRedMessage(errorResponse);
+					});
+				} else {
+					requestService.ajax.save(requestParams, request, function(response) {
+						requestListService.getData().push(response);
+						requestListService.setFilteredData(response);
+						requestListService.setCurrent(response);
+						$scope.showGreenMessage('Mock-request <b>' + response.name + '</b> has been created');
+					}, function(errorResponse) {
+						$scope.showRedMessage(errorResponse);
+					});
+				}
+			}
 
-            $scope.deleteTransformer = function(index, source) {
-                $confirm({
-                    text: "Do you really want to delete this transformer?"
-                }).then(function() {
-                    if (source != null && source[index] != null) {
-                        source.splice(index, 1);
-                    }
-                }, function() {
-					// cancel
-				});
-            }
+			$scope.isPrevRequestDisabled = function() {
+				if (requestListService.getCurrent().id == null) {
+					return true;
+				} else {
+					return (requestListService.filteredDataCurrentIndex <= 0);
+				}
+			}
 
-            var isNameOk = function(name) {
-                if (!name) {
-                    $scope.showRedMessage({data: {errors: new Array('Field <b>Name</b> is required')}});
-                    return false;
-                }
+			$scope.isNextRequestDisabled = function() {
+				if (requestListService.getCurrent().id == null) {
+					return true;
+				} else {
+					return (requestListService.filteredDataCurrentIndex >= requestListService.getFilteredData().length - 1);
+				}
+			}
 
-                return true;
-            }
+			$scope.nextRequest = function() {
+				requestListService.filteredDataCurrentIndex++;
+				$scope.setCurrentRequest();
+			}
 
-            var isResponseDataOk = function(mockResponse) {
-                if (!mockResponse || !mockResponse.httpStatus) {
-                    $scope.showRedMessage({data: {errors: new Array('Field <b>HTTP status code</b> is required')}});
-                    return false;
-                }
+			$scope.prevRequest = function() {
+				requestListService.filteredDataCurrentIndex--;
+				$scope.setCurrentRequest();
+			}
 
-                return true;
-            }
+			$scope.setCurrentRequest = function(index) {
+				var request = requestListService.getFilteredData()[requestListService.filteredDataCurrentIndex]
 
-            var isHttpMethodOk = function(method) {
-                if (!method) {
-                    $scope.showRedMessage({data: {errors: new Array('<b>Method</b> may not be null or empty')}});
-                    return false;
-                }
+				request.latencyType = $scope.getLatencyType(request.latency);
+				requestListService.setCurrent(request);
+			}
 
-                return true;
-            }
+			$scope.isRequestTabDisabled = function() {
+				return ($scope.getMethod() != null && isMethodWithBody($scope.getMethod()) ? false : true);
+			}
 
-            $scope.saveRequest = function(request) {
-                if (!isNameOk(request.name) || !isResponseDataOk(request.mockResponse) || !isHttpMethodOk(request.method)) {
-                    return;
-                }
+			$scope.getMethod = function() {
+				return requestListService.getCurrent().method;
+			}
 
-                if (!isMethodWithBody(request.method)) {
-                    request.body = null;
-                }
-
-                var requestParams = {
-                    projectCode: projectListService.getCurrent().code,
-                    groupCode: groupListService.getCurrent().code
-                }
-
-                if (request.id != null) {
-                    requestParams.requestCode = request.code;
-
-                    requestService.ajax.update(requestParams, request, function() {
-                        $scope.showGreenMessage('Mock-request <b>' + request.name + '</b> successfully updated');
-                    }, function(errorResponse) {
-                        $scope.showRedMessage(errorResponse);
-                    });
-                } else {
-                    requestService.ajax.save(requestParams, request, function(response) {
-                        requestListService.getData().push(response);
-                        requestListService.setFilteredData(response);
-                        requestListService.setCurrent(response);
-                        $scope.showGreenMessage('Mock-request <b>' + response.name + '</b> has been created');
-                    }, function(errorResponse) {
-                        $scope.showRedMessage(errorResponse);
-                    });
-                }
-            }
-
-            $scope.isPrevRequestDisabled = function() {
-                if (requestListService.getCurrent().id == null) {
-                    return true;
-                } else {
-                    return (requestListService.filteredDataCurrentIndex <= 0);
-                }
-            }
-
-            $scope.isNextRequestDisabled = function() {
-                if (requestListService.getCurrent().id == null) {
-                    return true;
-                } else {
-                    return (requestListService.filteredDataCurrentIndex >= requestListService.getFilteredData().length - 1);
-                }
-            }
-
-            $scope.nextRequest = function() {
-                requestListService.filteredDataCurrentIndex++;
-                requestListService.setCurrent(requestListService.getFilteredData()[requestListService.filteredDataCurrentIndex])
-            }
-
-            $scope.prevRequest = function() {
-                requestListService.filteredDataCurrentIndex--;
-                requestListService.setCurrent(requestListService.getFilteredData()[requestListService.filteredDataCurrentIndex]);
-            }
-
-            $scope.isRequestTabDisabled = function() {
-                return ($scope.getMethod() != null && isMethodWithBody($scope.getMethod()) ? false : true);
-            }
-
-            $scope.getMethod = function() {
-            	return requestListService.getCurrent().method;
-            }
-
-            $scope.getParams = function() {
+			$scope.getParams = function() {
 				return requestListService.getCurrent().parameters.values;
 			}
 
 			$scope.getRequestHeaders = function() {
 				return requestListService.getCurrent().headers.values;
 			}
+
+			$scope.hasLatencyOnGroupLevel = function() {
+				var group = groupListService.getCurrent() || null;
+
+				if (group != null && group.latency != undefined && group.latency != null) {
+					groupListService.getCurrent().latencyType = $scope.getLatencyType(groupListService.getCurrent().latency);
+
+					var latency = $scope.cleanUpLatency(group.latencyType, group.latency);
+
+					if (latency != null && latency.fixed > 0 || (latency.min > 0 && latency.max > 0)) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			$scope.isLatencyTypeNotNull = function() {
+				return (requestListService.getCurrent().latencyType != null);
+			}
+
 
 			// ================
 			// Clipboard
@@ -293,7 +330,7 @@ angular.module('mockengerClientMainApp')
 			// ================
 			// cURL
 			// ================
-            $scope.getCURL = function() {
+			$scope.getCURL = function() {
 				return "curl -i -X " + requestListService.getCurrent().method + " \\\n " +
 					(
 						'\'' +
@@ -307,13 +344,11 @@ angular.module('mockengerClientMainApp')
 			}
 
 			$scope.getBody = function() {
-				var body = requestListService.getCurrent().body.value;
-
-				try {
-					return angular.toJson(angular.fromJson(body), true);
-				} catch (err) {
-					return body;
+				if (requestListService.getCurrent().body != null && requestListService.getCurrent().body.value != null) {
+					return requestListService.getCurrent().body.value;
 				}
+
+				return '';
 			}
 
 			$scope.getHeadersAsString = function() {
@@ -338,8 +373,24 @@ angular.module('mockengerClientMainApp')
 				return result;
 			}
 
+			$scope.isURLEncodedType = function() {
+				if (!$scope.isRequestTabDisabled()) {
+					var headers = $scope.getRequestHeaders();
 
-            // ================
+					for (var i = 0, l = headers.length; i < l; i++) {
+						if (headers[i].key.trim().toLowerCase() === 'content-type'
+							&& headers[i].value.trim().toLowerCase() === APPLICATION_FORM_URLENCODED_VALUE) {
+
+							return true;
+						}
+					}
+				}
+
+				return false;
+			}
+
+
+			// ================
 			// PRETTY PRINT
 			// ================
 			$scope.prettyModel = {

@@ -70,9 +70,9 @@ public class ExceptionHandlingAdvice {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400
     public ErrorMessage handleHttpMessageNotReadableException(final HttpMessageNotReadableException ex) {
-        LOG.error("JSON object is not readable", ex);
+        LOG.error("Object is not readable", ex);
 
-        return new ErrorMessage("Unable to process request: json is not readable");
+        return new ErrorMessage("Unable to process: request object is not readable");
     }
 
     @ExceptionHandler(AccountDeleteException.class)

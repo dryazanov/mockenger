@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class PatchService extends RequestService {
     public PatchRequest createMockRequest(final String groupId, final String requestBody, final HttpServletRequest request) {
-        final Body body = new Body(requestBody);
-        return (PatchRequest) fillUpEntity(new PatchRequest(body), groupId, request);
+		return createMockRequest(new PatchRequest(new Body(requestBody)), groupId, request);
     }
 }

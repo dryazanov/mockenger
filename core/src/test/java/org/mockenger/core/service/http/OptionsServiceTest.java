@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 
 /**
- * Created by Dmitry Ryazanov on 6/18/2015.
+ * @author  Dmitry Ryazanov
  */
 public class OptionsServiceTest extends AbstractServiceTest {
 
@@ -16,7 +16,8 @@ public class OptionsServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCreateMockRequest() {
-        OptionsRequest optionsEntity = classUnderTest.createMockRequest(GROUP_ID, httpServletRequestMock);
+        final OptionsRequest optionsEntity = classUnderTest.createMockRequest(GROUP_ID, httpServletRequestMock);
+
         checkEntityWithoutBody(optionsEntity, RequestMethod.OPTIONS);
     }
 }

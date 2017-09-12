@@ -2,15 +2,15 @@
 
 <html lang="en" ng-app="mockengerClientMainApp">
 <head>
-    <base href="/">
-    <meta charset="utf-8">
+	<base href="/">
+	<meta charset="utf-8">
 
-    <title>Mockenger</title>
-    <meta name="description" content="Mockenger: mock server for developers">
-    <meta name="author" content="Dmitry Ryazanov">
+	<title>Mockenger</title>
+	<meta name="description" content="Mockenger: mock server for developers">
+	<meta name="author" content="Dmitry Ryazanov">
 
-    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/x-icon" />
-    <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/x-icon" />
+	<link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon" />
 
 	<!-- build:css assets/styles/light/bootstrap.css id="light-theme" -->
 	<link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css" id="light-theme" />
@@ -20,19 +20,16 @@
 	<link rel="stylesheet alternate" href="assets/styles/dark/bootstrap.css" id="dark-theme" />
 	<!-- endbuild -->
 
-    <!-- build:css assets/styles/vendor.css -->
-    <link rel="stylesheet" href="node_modules/ng-toast/dist/ngToast.css" />
-    <link rel="stylesheet" href="node_modules/ngprogress-npm/ngProgress.css" />
-    <!-- endbuild -->
+	<!-- build:css assets/styles/vendor.css -->
+	<link rel="stylesheet" href="node_modules/ng-toast/dist/ngToast.css" />
+	<link rel="stylesheet" href="node_modules/ngprogress-npm/ngProgress.css" />
+	<link rel="stylesheet" href="node_modules/angular-bootstrap-datetimepicker/src/css/datetimepicker.css" />
+	<!-- endbuild -->
 
-    <!-- build:css assets/styles/main.css -->
-    <link rel="stylesheet" href="assets/styles/main.css">
+	<!-- build:css assets/styles/main.css -->
+	<link rel="stylesheet" href="assets/styles/main.css">
 	<link rel="stylesheet" href="assets/styles/codemirror.css">
-    <!-- endbuild -->
-
-    <!--[if lt IE 9]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+	<!-- endbuild -->
 </head>
 
 <body ng-controller="rootController">
@@ -45,11 +42,11 @@
 <div ng-view=""></div>
 
 <footer class="navbar navbar-fixed-bottom">
-    <div class="container-fluid">
-        <div class="col-md-9 ">
-            <p class="text-muted">Mockenger: version {{app.version}}, built on {{app.buildDate}}</p>
-        </div>
-    </div>
+	<div class="container-fluid">
+		<div class="col-md-9 ">
+			<p class="text-muted">Mockenger: version {{app.version}}, built on {{app.buildDate}}</p>
+		</div>
+	</div>
 </footer>
 <script type="text/javascript">
 // Prevent console error for module.exports
@@ -66,6 +63,7 @@ if (window && !window.module) {
 <script src="assets/js/codemirror/xml.js"></script>
 <script src="assets/js/codemirror/javascript.js"></script>
 
+<script src="node_modules/moment/moment.js"></script>
 <script src="node_modules/jquery/dist/jquery.js"></script>
 <script src="node_modules/angular/angular.js"></script>
 <script src="node_modules/angular-cookies/angular-cookies.js"></script>
@@ -75,10 +73,13 @@ if (window && !window.module) {
 <script src="node_modules/angular-sanitize/angular-sanitize.js"></script>
 <script src="node_modules/angular-touch/angular-touch.js"></script>
 <script src="node_modules/angular-animate/angular-animate.js"></script>
-<script src="node_modules/angular-ui-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
 <script src="node_modules/angular-ui-codemirror/src/ui-codemirror.js"></script>
 <script src="node_modules/angular-confirm/angular-confirm.js"></script>
 <script src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
+<script src="node_modules/angular-date-time-input/src/dateTimeInput.js"></script>
+<script src="node_modules/angular-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
+<script src="node_modules/angular-bootstrap-datetimepicker/src/js/datetimepicker.templates.js"></script>
 <script src="node_modules/ng-toast/dist/ngToast.js"></script>
 <script src="node_modules/ngprogress-npm/build/ngprogress.js"></script>
 <script src="node_modules/clipboard/dist/clipboard.min.js"></script>
@@ -112,6 +113,7 @@ if (window && !window.module) {
 <script src="modules/main/controllers/AccountController.js"></script>
 <script src="modules/main/controllers/AccountListController.js"></script>
 <script src="modules/main/controllers/AuditPageController.js"></script>
+<script src="modules/main/controllers/EventController.js"></script>
 <script src="modules/main/controllers/EventListController.js"></script>
 <script src="modules/main/services/valuesetService.js"></script>
 <script src="modules/main/services/projectListService.js"></script>
@@ -123,6 +125,7 @@ if (window && !window.module) {
 <script src="modules/main/services/accountListService.js"></script>
 <script src="modules/main/services/loginService.js"></script>
 <script src="modules/main/services/tokenService.js"></script>
+<script src="modules/main/services/eventService.js"></script>
 <script src="modules/main/services/eventListService.js"></script>
 <!-- endbuild -->
 

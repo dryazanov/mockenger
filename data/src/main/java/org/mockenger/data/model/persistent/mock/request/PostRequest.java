@@ -1,8 +1,9 @@
 package org.mockenger.data.model.persistent.mock.request;
 
-import org.mockenger.data.model.dict.RequestMethod;
 import org.mockenger.data.model.persistent.mock.request.part.Body;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import static org.mockenger.data.model.dict.RequestMethod.POST;
 
 /**
  * @author Dmitry Ryazanov
@@ -10,10 +11,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class PostRequest extends AbstractRequest {
     public PostRequest() {
-        setMethod(RequestMethod.POST);
+        setMethod(POST);
     }
 
-    public PostRequest(Body body) {
+    public PostRequest(final Body body) {
         this();
         setBody(body);
     }

@@ -1,0 +1,47 @@
+{
+  "id": null,
+  "groupId": "${group_id}",
+  "name": "POST with SOAP+XML body",
+  "method": "POST",
+  "path": {
+    "transformers": null,
+    "value": "mock/post/with/soap/xml"
+  },
+  "headers": {
+    "transformers": null,
+    "values": [
+      {
+        "key": "Content-Type",
+        "value": "application/soap+xml"
+      },
+      {
+        "key": "performance-test-header",
+        "value": "true"
+      },
+      {
+        "key": "SOAPAction",
+        "value": "create"
+      }
+    ]
+  },
+  "parameters": {
+    "transformers": null,
+    "values": []
+  },
+  "body": {
+    "transformers": null,
+    "value": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soapenv:Envelope\n    xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n    xmlns:urn=\"urn:enterprise.soap.sforce.com\"\n    xmlns:urn1=\"urn:sobject.enterprise.soap.sforce.com\"\n    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n    <soapenv:Header>\n        <urn:SessionHeader>\n            <urn:sessionId>\n                <b>QwWsHJyTPW.1pd0_jXlNKOSU</b>\n            </urn:sessionId>\n        </urn:SessionHeader>\n    </soapenv:Header>\n    <soapenv:Body>\n        <urn:upsert>\n            <!--Custom Field defined in Setup as the External ID-->\n            <urn:externalIDFieldName>\n                <b>External_Id__c</b>\n            </urn:externalIDFieldName>\n            <urn:sObjects xsi:type=\"Account\">\n                <!--Zero or more repetitions:-->\n                <b>\n                    <!--Existing Id, this record will be updated-->\n                </b>\n                <External_Id__c>\n                    <b>ars1</b>\n                </External_Id__c>\n                <Name>\n                    <b>Acme Rocket Superstore</b>\n                </Name>\n                <b>\n                    <!--You may enter ANY elements at this point-->\n                </b>\n                <NumberOfEmployees>\n                    <b>340</b>\n                </NumberOfEmployees>\n            </urn:sObjects>\n            <urn:sObjects xsi:type=\"Account\">\n                <b>\n                    <!--New External Id, this record will be created (ensure required fields are present)-->\n                </b>\n                <External_Id__c>\n                    <b>ams1</b>\n                </External_Id__c>\n                <Name>\n                    <b>Acme Medical Supplies</b>\n                </Name>\n                <NumberOfEmployees>\n                    <b>17</b>\n                </NumberOfEmployees>\n            </urn:sObjects>\n        </urn:upsert>\n    </soapenv:Body>\n</soapenv:Envelope>"
+  },
+  "mockResponse": {
+    "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soapenv:Envelope\n    xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n    xmlns=\"urn:enterprise.soap.sforce.com\">\n    <soapenv:Body>\n        <upsertResponse>\n            <result>\n                <created>false</created>\n                <id>001D000000HRzKDIA1</id>\n                <success>true</success>\n            </result>\n            <result>\n                <created>true</created>\n                <id>001D000000HSDQZIA5</id>\n                <success>true</success>\n            </result>\n        </upsertResponse>\n    </soapenv:Body>\n</soapenv:Envelope>",
+    "httpStatus": "201",
+    "headers": [
+      {
+        "key": "Content-Type",
+        "value": "application/soap+xml"
+      }
+    ]
+  },
+  "latencyType": null,
+  "latency": null
+}

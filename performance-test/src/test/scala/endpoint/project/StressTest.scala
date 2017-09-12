@@ -1,32 +1,72 @@
 package test.scala.endpoint.project
 
-import endpoint.project.RequestListTest
-import io.gatling.core.Predef._
-import io.gatling.http.Predef._
+import endpoint.project.CreateGroupTest.groupCode
+import endpoint.project.{CreateGroupTest, CreateMockRequestTest, DoMockTest}
+import test.scala.Config._
+import io.gatling.core.Predef.{exec, _}
 
+
+/**
+  * @author Dmitry Ryazanov
+  */
 class StressTest extends Simulation {
+  val scenarios = List(
+    scenario("Prepare test data")
+      .exec(CreateProjectTest.apply)
+      .exec(CreateGroupTest.apply)
+      .exec(CreateMockRequestTest.createGETRequest)
+      .exec(CreateMockRequestTest.createHEADRequest)
+      .exec(CreateMockRequestTest.createDELETERequest)
+      .exec(CreateMockRequestTest.createOPTIONSRequest)
+      .exec(CreateMockRequestTest.createPOSTRequestWithJSONBody)
+      .exec(CreateMockRequestTest.createPUTRequestWithJSONBody)
+      .exec(CreateMockRequestTest.createPATCHRequestWithJSONBody)
+      .exec(CreateMockRequestTest.createPOSTRequestWithJSONBodyAndTransformers)
+      .exec(CreateMockRequestTest.createPOSTRequestWithSOAPXMLBody)
+      .exec(CreateMockRequestTest.createPOSTRequestWithLargeXMLBody)
+      .inject(atOnceUsers(1)),
 
-	val httpProtocol = http
-		.baseURL("http://localhost:8080")
-		.inferHtmlResources(BlackList(""".*\.js""", """.*\.css""", """.*\.gif""", """.*\.jpeg""", """.*\.jpg""", """.*\.ico""", """.*\.woff""", """.*\.(t|o)tf""", """.*\.png"""), WhiteList())
+    scenario("Run stress tests")
+      .exec(session => session.set("group_code", groupCode))
+      .pause(5)
+      .randomSwitch(
+        10.0 -> exec(
+          DoMockTest.runForGET
+        ),
+        10.0 -> exec(
+          DoMockTest.runForHEAD
+        ),
+        10.0 -> exec(
+          DoMockTest.runForDELETE
+        ),
+        10.0 -> exec(
+          DoMockTest.runForOPTIONS
+        ),
+        10.0 -> exec(
+          DoMockTest.runForPOSTWithJSONBody
+        ),
+        10.0 -> exec(
+          DoMockTest.runForPUTWithJSONBody
+        ),
+        10.0 -> exec(
+          DoMockTest.runForPATCHWithJSONBody
+        ),
+        10.0 -> exec(
+          DoMockTest.runForPOSTWithJSONBodyAndTransformers
+        ),
+        10.0 -> exec(
+          DoMockTest.runForPOSTWithSOAPXMLBody
+        ),
+        10.0 -> exec(
+          DoMockTest.runForPOSTWithLargeXMLBody
+        )
+      )
+      .inject(
+        constantUsersPerSec(50) during(2*60*60), //2 hours
+        rampUsersPerSec(5) to (500) during(60*60), // 1 hour
+        constantUsersPerSec(100) during(2*60*60), //2 hours
+      )
+  )
 
-	val contentType = "application/json;charset=UTF-8"
-	val headers = Map("Content-Type" -> contentType)
-  val headersWithToken = Map("Content-Type" -> contentType, "Authorization" -> "Bearer ${access_token}")
-
-	val scn = scenario("RecordedSimulation")
-		.exec(GetTokenTest.run(contentType))
-    .randomSwitch(
-      10.0 -> exec(
-        ProjectListTest.run(headersWithToken, contentType),
-        GroupListTest.run(headersWithToken, contentType),
-        RequestListTest.run(headersWithToken, contentType)
-      ),
-      40.0 -> WishlistTest.run(headersWithToken, contentType)
-    )
-
-	setUp(scn.inject(atOnceUsers(100)))
-//	setUp(scn.inject(atOnceUsers(10), constantUsersPerSec(10).during(5)))
-//	setUp(scn.inject(splitUsers(100).into(rampUsers(10).over(10)).separatedBy(7)))
-		.protocols(httpProtocol)
+  setUp(scenarios).protocols(httpProtocol)
 }

@@ -10,11 +10,11 @@
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
-		<scala.version>2.11.7</scala.version>
+		<scala.version>2.11.8</scala.version>
 		<encoding>UTF-8</encoding>
 
-		<gatling.version>2.1.7</gatling.version>
-        <gatling-plugin.version>2.1.7</gatling-plugin.version>
+		<gatling.version>2.2.0</gatling.version>
+        <gatling-plugin.version>2.2.0</gatling-plugin.version>
 		<scala-maven-plugin.version>3.2.2</scala-maven-plugin.version>
 	</properties>
 
@@ -62,64 +62,34 @@
 		</dependency>
 	</dependencies>
 
-	<build>
-		<testSourceDirectory>src/test/scala</testSourceDirectory>
-		<resources>
-			<resource>
-				<directory>src/test/resources</directory>
-				<filtering>true</filtering>
-				<excludes>
-					<exclude>logback.xml</exclude>
-				</excludes>
-			</resource>
-		</resources>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>net.alchim31.maven</groupId>
-					<artifactId>scala-maven-plugin</artifactId>
-					<version>${scala-maven-plugin.version}</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-		<plugins>
-            <plugin>
-                <groupId>io.gatling</groupId>
-                <artifactId>gatling-maven-plugin</artifactId>
-                <version>${gatling-plugin.version}</version>
-				<configuration>
-					<!--<simulationClass>test.scala.endpoint.project.IntegrationTest</simulationClass>-->
-					<simulationClass>test.scala.endpoint.project.StressTest</simulationClass>
-				</configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-			<plugin>
-				<groupId>net.alchim31.maven</groupId>
-				<artifactId>scala-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>testCompile</goal>
-						</goals>
-						<configuration>
-							<args>
-								<arg>-target:jvm-1.7</arg>
-								<arg>-deprecation</arg>
-								<arg>-feature</arg>
-								<arg>-unchecked</arg>
-								<arg>-language:implicitConversions</arg>
-								<arg>-language:postfixOps</arg>
-							</args>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+    <profiles>
+        <profile>
+            <id>stress-test</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.gatling</groupId>
+                        <artifactId>gatling-maven-plugin</artifactId>
+                        <version>${gatling-plugin.version}</version>
+                        <configuration>
+                            <noReports>false</noReports>
+                            <runMultipleSimulations>true</runMultipleSimulations>
+                            <simulationsFolder>src/test/scala</simulationsFolder>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>stress</id>
+                                <configuration>
+                                    <simulationClass>endpoint.project.StressTest</simulationClass>
+                                </configuration>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

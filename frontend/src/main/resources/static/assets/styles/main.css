@@ -36,6 +36,52 @@ label {
     background-color: #DDDDDD;
 }
 
+.close {
+	color: #FFF;
+	text-shadow: none;
+}
+
+.wrapword {
+	white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+	white-space: -webkit-pre-wrap; /*Chrome & Safari */
+	white-space: -pre-wrap;      /* Opera 4-6 */
+	white-space: -o-pre-wrap;    /* Opera 7 */
+	white-space: pre-wrap;       /* css-3 */
+	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+	word-break: break-all;
+	white-space: normal;
+}
+
+ul.nav li a {
+	height: 60px;
+	padding-top: 20px;
+	text-align: center;
+}
+
+.navbar-links {
+	padding-left: 7px;
+}
+
+.navbar-links ul.nav li a {
+	width: 110px;
+}
+
+.label-xs {
+  font-size: x-small;
+}
+
+.label-sm {
+  font-size: small;
+}
+
+.label-md {
+  font-size: medium;
+}
+
+.label-lg {
+  font-size: large;
+}
+
 /* ==========================================================================
 Hide ng-cloak on page load, https://docs.angularjs.org/api/ng/directive/ngCloak
 ========================================================================== */
@@ -83,10 +129,9 @@ Browser Upgrade Prompt
 }
 
 .section-table {
-	padding: 8px;
+	padding: 8px 0;
 	line-height: 1.42857143;
 	vertical-align: top;
-	border-top: 1px solid #1c1e22;
 }
 
 .CodeMirror-wrap {

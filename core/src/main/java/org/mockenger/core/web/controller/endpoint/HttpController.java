@@ -79,9 +79,6 @@ public class HttpController extends ParentController {
 		return () -> {
 			final Group group = findGroupByCode(groupCode);
 			final GenericRequest mockRequest = postService.createGenericRequest(group.getId(), requestBody, request);
-			final String cleanRequestBody = getRequestService().cleanUpRequestBody(mockRequest);
-
-			mockRequest.getBody().setValue(cleanRequestBody);
 
 			return findMockedEntities(mockRequest, group);
 		};
@@ -97,14 +94,31 @@ public class HttpController extends ParentController {
 	 */
 	@PutMapping
 	public Callable<ResponseEntity> processPutRequest(@PathVariable final String groupCode,
-													  @RequestBody final String requestBody,
+													  @RequestBody(required = false) final String requestBody,
 													  final HttpServletRequest request) {
 		return () -> {
 			final Group group = findGroupByCode(groupCode);
 			final GenericRequest mockRequest = putService.createMockRequest(group.getId(), requestBody, request);
-			final String cleanRequestBody = getRequestService().cleanUpRequestBody(mockRequest);
 
-			mockRequest.getBody().setValue(cleanRequestBody);
+			return findMockedEntities(mockRequest, group);
+		};
+	}
+
+
+	/**
+	 *
+	 * @param groupCode
+	 * @param requestBody
+	 * @param request
+	 * @return
+	 */
+	@PatchMapping
+	public Callable<ResponseEntity> processPatchRequest(@PathVariable final String groupCode,
+														@RequestBody(required = false) final String requestBody,
+														final HttpServletRequest request) {
+		return () -> {
+			final Group group = findGroupByCode(groupCode);
+			final GenericRequest mockRequest = patchService.createMockRequest(group.getId(), requestBody, request);
 
 			return findMockedEntities(mockRequest, group);
 		};
@@ -151,29 +165,6 @@ public class HttpController extends ParentController {
     	return () -> {
 			final Group group = findGroupByCode(groupCode);
 			final GenericRequest mockRequest = optionsService.createMockRequest(group.getId(), request);
-
-			return findMockedEntities(mockRequest, group);
-		};
-    }
-
-
-    /**
-     *
-     * @param groupCode
-     * @param requestBody
-     * @param request
-     * @return
-     */
-    @PatchMapping
-    public Callable<ResponseEntity> processPatchRequest(@PathVariable final String groupCode,
-														@RequestBody final String requestBody,
-														final HttpServletRequest request) {
-    	return () -> {
-			final Group group = findGroupByCode(groupCode);
-			final GenericRequest mockRequest = patchService.createMockRequest(group.getId(), requestBody, request);
-			final String cleanRequestBody = getRequestService().cleanUpRequestBody(mockRequest);
-
-			mockRequest.getBody().setValue(cleanRequestBody);
 
 			return findMockedEntities(mockRequest, group);
 		};

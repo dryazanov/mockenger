@@ -8,7 +8,7 @@ import org.mockenger.data.model.persistent.mock.request.AbstractRequest;
 import org.mockenger.data.model.persistent.mock.request.GetRequest;
 import org.mockenger.data.model.persistent.mock.request.PostRequest;
 import org.mockenger.data.model.persistent.mock.request.PutRequest;
-import org.springframework.http.MediaType;
+import org.mockenger.data.model.persistent.mock.request.part.Body;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.concurrent.ExecutorService;
@@ -37,11 +37,7 @@ public class RestfullControllerTest extends AbstractHttpControllerTest {
 
     private static final String ENDPOINT_TEMPLATE = API_PATH + "/REST/%s/%s";
 
-	private static final String READ_JSON_ERROR_MESSAGE = "Failed to create instance of the mock-object: " +
-			"Cannot read json from the provided source";
-
-	private static final String INVALID_CONTENT_TYPE_ERROR_MESSAGE = "Invalid header 'Content-type': " +
-			"application/json or application/xml are only allowed in REST requests";
+	private static final String INVALID_CONTENT_TYPE_ERROR_MESSAGE = "Content-type is not recognized as a valid json or xml type";
 
 	private static final String MOCK_REQUEST_ENDPOINT = REQUEST_PATH_API + "/%s";
 
@@ -61,24 +57,12 @@ public class RestfullControllerTest extends AbstractHttpControllerTest {
     //========== POST ==========//
 
     @Test
-    public void testPostJsonRequestOk() throws Exception {
-        super.testPostJsonRequestOk();
-    }
-
-
-	@Test
-	public void testPostJsonRequestNotFound() throws Exception {
-		super.testPostJsonRequestNotFound();
-	}
-
-
-    @Test
     public void testPostJsonRequestWithBadJson() throws Exception {
+		createRequest(createJsonMockRequestForPost(group.getId()));
+
 		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(REST_BAD_JSON_REQUEST)));
 
-		mockMvc.perform(asyncDispatch(mvcResult))
-				.andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors[0]").value(READ_JSON_ERROR_MESSAGE));
+		mockMvc.perform(asyncDispatch(mvcResult)).andExpect(status().isNotFound());
     }
 
 
@@ -115,27 +99,35 @@ public class RestfullControllerTest extends AbstractHttpControllerTest {
     }
 
 
+	@Test
+	public void testPostXmlWithDifferentNodeOrder() throws Exception {
+		// Prepare request to add via API
+		final AbstractRequest postRequest = createXmlMockRequestForPost(groupWithRecording.getId());
+		final String postEndpoint = format(REQUEST_PATH_API, project.getCode(), groupWithRecording.getCode());
+
+		// Update body
+		postRequest.setBody(new Body(REST_XML_REQUEST_BODY_DIFFERENT_NODE_ORDER));
+
+		// Send real request to API
+		sendPostRequest(postEndpoint, parseMediaType(CONTENT_TYPE_JSON_UTF8), postRequest);
+
+		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpointWithRecording).content(REST_XML_REQUEST_BODY), CONTENT_TYPE_XML_UTF8));
+
+		mockMvc.perform(asyncDispatch(mvcResult))
+				.andExpect(status().isCreated())
+				.andExpect(content().contentType(CONTENT_TYPE_XML_UTF8))
+				.andExpect(xpath("/note/result").string(EXPECTED_RESULT_OK));
+	}
+
+
     //========== PUT ==========//
-
-    @Test
-    public void testPutJsonRequestOk() throws Exception {
-        super.testPutJsonRequestOk();
-    }
-
-
-    @Test
-    public void testPutJsonRequestNotFound() throws Exception {
-        super.testPutJsonRequestNotFound();
-    }
-
 
     @Test
     public void testPutJsonRequestWithBadJson() throws Exception {
 		final MvcResult mvcResult = getMvcResult(withMediaType(put(endpoint).content(REST_BAD_JSON_REQUEST)));
 
 		mockMvc.perform(asyncDispatch(mvcResult))
-				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.errors[0]").value(READ_JSON_ERROR_MESSAGE));
+				.andExpect(status().isNotFound());
     }
 
 
@@ -162,18 +154,6 @@ public class RestfullControllerTest extends AbstractHttpControllerTest {
     //========== GET ==========//
 
     @Test
-    public void testGetJsonRequestOk() throws Exception {
-        super.testGetJsonRequestOk();
-    }
-
-
-	@Test
-    public void testGetRequestNotFound() throws Exception {
-		super.testGetRequestNotFound();
-    }
-
-
-    @Test
     public void testGetXmlRequestOk() throws Exception {
         createRequest(createXmlMockRequestForGet(group.getId()));
 
@@ -187,26 +167,16 @@ public class RestfullControllerTest extends AbstractHttpControllerTest {
 
 
     //========== DELETE ==============//
-
-    @Test
-    public void testDeleteRequestOk() throws Exception {
-        super.testDeleteRequestOk();
-    }
-
-
-    @Test
-    public void testDeleteRequestNotFound() throws Exception {
-		super.testDeleteRequestNotFound();
-    }
+	// Run from parent class
 
 
     //========== POST BAD REQUEST WITH HTML =================//
 
     @Test
     public void testPostHtmlRequestNotOk() throws Exception {
-        final MediaType mediaType = parseMediaType(CONTENT_TYPE_HTML_UTF8);
+		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(""), CONTENT_TYPE_HTML_UTF8));
 
-        this.mockMvc.perform(post(endpoint).contentType(mediaType).content(""))
+		mockMvc.perform(asyncDispatch(mvcResult))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors[0]").value(INVALID_CONTENT_TYPE_ERROR_MESSAGE));
@@ -217,10 +187,10 @@ public class RestfullControllerTest extends AbstractHttpControllerTest {
 
     @Test
     public void testPutHtmlRequestNotOk() throws Exception {
-        final MediaType mediaType = parseMediaType(CONTENT_TYPE_HTML_UTF8);
+		final MvcResult mvcResult = getMvcResult(withMediaType(post(endpoint).content(""), CONTENT_TYPE_HTML_UTF8));
 
-        this.mockMvc.perform(put(endpoint).contentType(mediaType).content(""))
-                .andExpect(status().isBadRequest())
+		mockMvc.perform(asyncDispatch(mvcResult))
+				.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
                 .andExpect(jsonPath("$.errors[0]").value(INVALID_CONTENT_TYPE_ERROR_MESSAGE));
     }
@@ -237,13 +207,15 @@ public class RestfullControllerTest extends AbstractHttpControllerTest {
 		final String mockRequestEndpoint = format(MOCK_REQUEST_ENDPOINT, project.getCode(), group.getCode(), request.getCode());
 		final ExecutorService taskExecutor = Executors.newFixedThreadPool(numOfThreadToRun);
 
-		IntStream.range(0, numOfMocks).forEach(i -> taskExecutor.execute(() -> {
-			try {
-				mockMvc.perform(withMediaType(get(endpoint))).andExpect(status().isOk());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}));
+		IntStream.range(0, numOfMocks).forEach(i ->
+				taskExecutor.execute(() -> {
+						try {
+							mockMvc.perform(withMediaType(get(endpoint))).andExpect(status().isOk());
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+				}
+		));
 
 		// Disable new tasks from being submitted
 		taskExecutor.shutdown();

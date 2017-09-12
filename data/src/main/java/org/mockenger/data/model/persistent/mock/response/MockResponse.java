@@ -18,7 +18,10 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MockResponse {
+
     private int httpStatus;
+
     private Set<Pair> headers;
+
     private String body;
 }

@@ -1,7 +1,7 @@
 {
   "name": "mockenger-frontend",
-  "version": "1.0.0",
-  "description": "Frontend for the mock server",
+  "version": "3.0.0",
+  "description": "Mockenger's frontend",
   "private": true,
   "main": "index.html",
   "scripts": {
@@ -42,24 +42,26 @@
     "ng-annotate": "^1.2.1",
     "requirejs": "2.1",
     "run-sequence": "^2.1.0",
-    "time-grunt": "^1.2.1",
     "xml2js": "0.4.5"
   },
   "dependencies": {
     "angular": "^1.4.4",
     "angular-animate": "^1.4.4",
+    "angular-bootstrap-datetimepicker": "^1.1.4",
     "angular-confirm": "^1.2.6",
     "angular-cookies": "^1.4.4",
+    "angular-date-time-input": "^1.2.1",
     "angular-messages": "^1.4.4",
     "angular-resource": "^1.4.4",
     "angular-route": "^1.4.4",
     "angular-sanitize": "^1.4.4",
     "angular-touch": "^1.4.4",
-    "angular-ui-bootstrap": "^0.14.3",
+    "angular-ui-bootstrap": "^2.5.0",
     "angular-ui-codemirror": "^0.3.0",
     "bootstrap": "3.3.4",
     "clipboard": "^1.7.1",
     "jquery": "^3.2.1",
+    "moment": "^2.18.1",
     "ng-toast": "^1.5.5",
     "ngprogress-npm": "^1.1.2"
   },

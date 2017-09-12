@@ -1,0 +1,10 @@
+{
+  "groupId": null,
+  "projectId": "${project_id}",
+  "code": "${group_code}",
+  "name": "Group for performance tests",
+  "recording": false,
+  "forwarding": false,
+  "recordTo": null,
+  "latency": null
+}

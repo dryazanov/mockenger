@@ -4,13 +4,18 @@ package org.mockenger.data.model.dict;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.mockenger.data.model.dict.RequestMethod.DELETE;
+import static org.mockenger.data.model.dict.RequestMethod.GET;
+import static org.mockenger.data.model.dict.RequestMethod.POST;
+import static org.mockenger.data.model.dict.RequestMethod.PUT;
+
 /**
  * @author Dmitry Ryazanov
  */
 public enum ProjectType {
-    REST(Arrays.asList(RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE)),
-    SOAP(Arrays.asList(RequestMethod.POST)),
-    HTTP(Arrays.asList(RequestMethod.values()));
+    HTTP(Arrays.asList(RequestMethod.values())),
+    REST(Arrays.asList(GET, POST, PUT, DELETE)),
+    SOAP(Arrays.asList(POST));
 
     private final List<RequestMethod> allowedMethods;
 
@@ -26,7 +31,7 @@ public enum ProjectType {
 
 
     public static boolean contains(final String value) {
-        for (ProjectType type : ProjectType.values()) {
+        for (ProjectType type : values()) {
             if (type.name().equals(value)) {
                 return true;
             }

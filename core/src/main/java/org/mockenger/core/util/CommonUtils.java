@@ -5,15 +5,22 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.mockenger.data.model.dict.RequestMethod;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
+import org.mockenger.data.model.persistent.mock.request.Latency;
 import org.mockenger.data.model.persistent.mock.request.part.Pair;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.concurrent.ThreadLocalRandom;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
+import static org.mockenger.core.util.MockRequestUtils.getBodyValue;
+import static org.mockenger.core.util.MockRequestUtils.getParamValues;
+import static org.mockenger.core.util.MockRequestUtils.getPathValue;
 import static org.springframework.util.DigestUtils.md5DigestAsHex;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -26,26 +33,31 @@ public class CommonUtils {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
-    public static String getCheckSum(final GenericRequest abstractRequest) {
-        if (abstractRequest.getBody() != null && !isEmpty(abstractRequest.getBody().getValue())) {
-            return generateCheckSum(abstractRequest.getBody().getValue());
-        }
+    public static String getCheckSum(final GenericRequest genericRequest) {
+    	final String body = getBodyValue(genericRequest);
 
-        return generateCheckSum(abstractRequest);
+		return (body.length() > 0 ? generateCheckSum(body) : generateCheckSum(genericRequest));
     }
 
 
     public static String generateCheckSum(final GenericRequest genericRequest) {
-		final String path = genericRequest.getPath().getValue();
-		final Set<Pair> params = genericRequest.getParameters().getValues();
+		final String path = getPathValue(genericRequest);
+		final Set<Pair> paramValues = getParamValues(genericRequest);
 		final RequestMethod method = genericRequest.getMethod();
 
-		return generateCheckSum(path + joinParams(params) + method);
+		return generateCheckSum(path + joinParams(paramValues) + method);
     }
 
 
-    private static String joinParams(final Set<Pair> params) {
-		return params.stream().map(p -> p.getKey() + p.getValue()).collect(Collectors.joining());
+	private static String joinParams(final Set<Pair> params) {
+		return joinParams(params, "", "");
+	}
+
+
+    public static String joinParams(final Set<Pair> params, final String keyValueDelimiter, final String parametersDelimiter) {
+		return params.stream()
+				.map(p -> p.getKey() + keyValueDelimiter + p.getValue())
+				.collect(joining(parametersDelimiter));
 	}
 
 
@@ -63,9 +75,10 @@ public class CommonUtils {
 
 
     public static String generateCheckSum(final String source) {
-        if (source == null) {
+        if (isNull(source)) {
             return "";
         }
+
         return md5DigestAsHex(source.getBytes(Charsets.UTF_8));
     }
 
@@ -197,6 +210,7 @@ public class CommonUtils {
         return Maps.difference(map1, map2).areEqual();
     }
 
+
     /**
      * Checks if two maps contain the same entities
      *
@@ -212,11 +226,37 @@ public class CommonUtils {
         return Sets.difference(set1, set2).isEmpty();
     }
 
+
 	public static Set<Pair> keysToLowercase(final Set<Pair> set) {
 		return set.stream().map(p -> new Pair(p.getKey().toLowerCase(), p.getValue())).collect(toSet());
 	}
 
+
 	public static boolean startAndEndsWith(final String text, final String start, final String end) {
     	return !isEmpty(text) && (text.startsWith(start) && text.endsWith(end));
+	}
+
+
+	public static Latency cleanUpObject(final Latency latency) {
+    	if (isNull(latency)) {
+    		return latency;
+		}
+
+		final Latency.LatencyBuilder latencyBuilder = Latency.builder();
+
+    	if (nonNull(latency)) {
+			if (latency.getFixed() > 0) {
+    			latencyBuilder.fixed(latency.getFixed());
+			} else if (latency.getMin() > 0 && latency.getMax() > 0) {
+				latencyBuilder.min(latency.getMin()).max(latency.getMax());
+			}
+		}
+
+		return latencyBuilder.build();
+	}
+
+
+	public static long getRandom(final long min, final long max) {
+		return ThreadLocalRandom.current().nextLong(min, max + 1);
 	}
 }

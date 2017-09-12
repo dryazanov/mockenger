@@ -12,6 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class DeleteService extends RequestService {
     public DeleteRequest createMockRequest(String groupId, HttpServletRequest request) {
-        return (DeleteRequest) fillUpEntity(new DeleteRequest(), groupId, request);
+        return fillUpEntity(new DeleteRequest(), groupId, request);
     }
 }

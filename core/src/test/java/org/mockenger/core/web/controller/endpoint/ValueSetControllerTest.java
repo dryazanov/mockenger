@@ -45,9 +45,9 @@ public class ValueSetControllerTest extends AbstractControllerTest {
         ResultActions resultActions = this.mockMvc.perform(get(PROJECT_TYPES_VALUESET));
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE_JSON_UTF8))
-                .andExpect(jsonPath("$.[0]").value(ProjectType.REST.name()))
-                .andExpect(jsonPath("$.[1]").value(ProjectType.SOAP.name()))
-                .andExpect(jsonPath("$.[2]").value(ProjectType.HTTP.name()));
+                .andExpect(jsonPath("$.[0]").value(ProjectType.HTTP.name()))
+                .andExpect(jsonPath("$.[1]").value(ProjectType.REST.name()))
+                .andExpect(jsonPath("$.[2]").value(ProjectType.SOAP.name()));
     }
 
     @Test

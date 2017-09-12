@@ -11,8 +11,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 /**
  * @author Dmitry Ryazanov
@@ -23,7 +26,7 @@ public class EventService {
     public static final String DEFAULT_SORT_FIELD = "eventDate";
 
 	@Value("${frontend.audit.log.events.per.page}")
-    public int itemsPerPage = 5;
+    public int itemsPerPage = 25;
 
     @Autowired
     private EventRepository<Event> eventRepository;
@@ -34,10 +37,13 @@ public class EventService {
     }
 
 
-    public Page<Event> findByEntityTypes(final List<String> eventClassTypes, final Integer page, final String sort) {
-        final PageRequest pageable = new PageRequest(getPage(page), itemsPerPage, Sort.Direction.DESC, getSortField(sort));
-        return eventRepository.findByEntityTypeIn(eventClassTypes, pageable);
-    }
+	public Page<Event> findByEntityTypesAndEventDate(final List<String> eventClassTypes, final Date startDate,
+													 final Date endDate, final Integer page, final String sort) {
+
+		final PageRequest pageable = new PageRequest(getPage(page), itemsPerPage, DESC, getSortField(sort));
+
+		return eventRepository.findByEntityTypeAndEventDate(eventClassTypes, startDate, endDate, pageable);
+	}
 
 
     public Page<Event> findAll(final Integer page, final String sort) {
@@ -62,7 +68,7 @@ public class EventService {
 
 
     public Iterable<Event> findAll() {
-        return Optional.ofNullable(eventRepository.findAll()).orElse(ImmutableList.of());
+        return ofNullable(eventRepository.findAll()).orElse(ImmutableList.of());
     }
 
 
