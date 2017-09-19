@@ -9,7 +9,6 @@ body {
 
 a {
     color: #34A8CF;
-    /*text-decoration: underline;*/
 }
 
 a.list-group-item, button.list-group-item {
@@ -18,6 +17,13 @@ a.list-group-item, button.list-group-item {
 
 label {
     color: #F5AD42;
+}
+
+.logo {
+	background-image: url('../images/logo.png');
+	background-size: 230px 60px;
+	width: 230px;
+	height: 60px;
 }
 
 .table > thead > tr > th {
