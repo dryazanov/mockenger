@@ -1,6 +1,6 @@
 [![](https://github.com/dryazanov/mockenger/blob/master/frontend/src/main/resources/static/assets/images/logo.png)](http://mockenger.io)
 
-[![Build Status](https://semaphoreci.com/api/v1/dryazanov/mockenger-2/branches/develop/badge.svg)](https://semaphoreci.com/dryazanov/mockenger-2)
+[![Build Status](https://semaphoreci.com/api/v1/dryazanov/mockenger/branches/master/badge.svg)](https://semaphoreci.com/dryazanov/mockenger)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8767ae18cc6e4977b6bde215ac0e65e2)](https://www.codacy.com/app/dryazanov/mockenger?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dryazanov/mockenger&amp;utm_campaign=Badge_Grade)
 
 ## Releases
