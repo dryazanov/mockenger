@@ -62,9 +62,9 @@ class StressTest extends Simulation {
         )
       )
       .inject(
-        constantUsersPerSec(50) during(2*60*60), //2 hours
-        rampUsersPerSec(5) to (500) during(60*60), // 1 hour
-        constantUsersPerSec(100) during(2*60*60), //2 hours
+        constantUsersPerSec(5) during(2), //2 hours
+        rampUsersPerSec(2) to (5) during(1), // 1 hour
+        constantUsersPerSec(5) during(2) //2 hours
       )
   )
 
