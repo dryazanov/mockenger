@@ -2,8 +2,8 @@
 [![Build Status](https://semaphoreci.com/api/v1/dryazanov/mockenger-2/branches/develop/badge.svg)](https://semaphoreci.com/dryazanov/mockenger-2)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8767ae18cc6e4977b6bde215ac0e65e2)](https://www.codacy.com/app/dryazanov/mockenger?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dryazanov/mockenger&amp;utm_campaign=Badge_Grade)
 
-
-[Mockenger v3.0 releaed](https://github.com/dryazanov/mockenger/releases/tag/v3.0)
+## Releases
+[Version 3.0 released](https://github.com/dryazanov/mockenger/releases/tag/v3.0)
 
 [All releases](https://github.com/dryazanov/mockenger/releases)
 
