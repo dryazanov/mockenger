@@ -35,7 +35,7 @@
         "value": "application/xml"
       }
     ],
-    "httpStatus": "200",
+    "httpStatus": "201",
     "body": "<?xml version=\"1.0\" ?>\n<root>\n    <result>OK</result>\n</root>"
   },
   "latencyType": null,

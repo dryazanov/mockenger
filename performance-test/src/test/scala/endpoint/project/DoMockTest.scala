@@ -118,7 +118,7 @@ object DoMockTest {
         .post(baseUrl + "mock/post/with/large/xml")
         .body(RawFileBody("mock_request_large_xml_body.xml")).asXML
         .headers(headersXml)
-        .check(status.is(200))
+        .check(status.is(201))
     )
   }
 }

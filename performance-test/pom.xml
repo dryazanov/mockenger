@@ -80,7 +80,7 @@
                             <execution>
                                 <id>stress</id>
                                 <configuration>
-                                    <simulationClass>endpoint.project.StressTest</simulationClass>
+                                    <simulationClass>test.scala.endpoint.project.StressTest</simulationClass>
                                 </configuration>
                                 <goals>
                                     <goal>execute</goal>
