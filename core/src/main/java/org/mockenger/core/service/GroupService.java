@@ -64,6 +64,13 @@ public class GroupService {
     }
 
 
+	@Eventable
+	public void removeAll() {
+		requestService.removeAll();
+		groupEntityRepository.deleteAll();
+	}
+
+
     public static Group.GroupBuilder cloneGroup(final Group group) {
         return Group.builder()
                 .id(group.getId())

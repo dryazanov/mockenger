@@ -3,7 +3,6 @@ package org.mockenger.core.util;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.mockenger.data.model.dict.RequestMethod;
 import org.mockenger.data.model.persistent.mock.request.GenericRequest;
 import org.mockenger.data.model.persistent.mock.request.Latency;
 import org.mockenger.data.model.persistent.mock.request.part.Pair;
@@ -40,12 +39,22 @@ public class CommonUtils {
     }
 
 
-    public static String generateCheckSum(final GenericRequest genericRequest) {
-		final String path = getPathValue(genericRequest);
-		final Set<Pair> paramValues = getParamValues(genericRequest);
-		final RequestMethod method = genericRequest.getMethod();
+	public static String generateCheckSum(final GenericRequest genericRequest) {
+		return generateCheckSum(genericRequest, false);
+	}
 
-		return generateCheckSum(path + joinParams(paramValues) + method);
+
+    public static String generateCheckSum(final GenericRequest genericRequest, final boolean includeBody) {
+    	final StringBuilder sb = new StringBuilder()
+				.append(getPathValue(genericRequest))
+				.append(joinParams(getParamValues(genericRequest)))
+				.append(genericRequest.getMethod());
+
+    	if (includeBody) {
+			sb.append(getBodyValue(genericRequest));
+		}
+
+		return generateCheckSum(sb.toString());
     }
 
 

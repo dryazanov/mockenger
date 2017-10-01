@@ -16,6 +16,8 @@ import org.mockenger.data.model.persistent.mock.request.part.Path;
 import org.mockenger.data.repository.RequestEntityCustomRepository;
 import org.mockenger.data.repository.RequestEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -41,7 +43,9 @@ import static org.mockenger.core.util.MockRequestUtils.isURLEncodedForm;
 @Component
 public class RequestService {
 
-    @Autowired
+	private static final String MOCKS_CACHE_NAME = "mocksCache";
+
+	@Autowired
     private RequestEntityRepository requestEntityRepository;
 
     @Autowired
@@ -73,6 +77,7 @@ public class RequestService {
 
 
     @Eventable
+	@CacheEvict(value = MOCKS_CACHE_NAME, allEntries = true)
     public AbstractRequest save(final AbstractRequest entity) {
 		try {
 			return requestEntityRepository.save(entity);
@@ -82,9 +87,17 @@ public class RequestService {
     }
 
     @Eventable
+	@CacheEvict(value = MOCKS_CACHE_NAME, allEntries = true)
     public void remove(final AbstractRequest entity) {
         requestEntityRepository.delete(entity);
     }
+
+
+	@Eventable
+	@CacheEvict(value = MOCKS_CACHE_NAME, allEntries = true)
+	public void removeAll() {
+		requestEntityRepository.deleteAll();
+	}
 
 
 	/**
@@ -92,6 +105,7 @@ public class RequestService {
 	 * @param mockRequest
 	 * @return
 	 */
+	@Cacheable(value = MOCKS_CACHE_NAME, keyGenerator = "keyGenerator", unless="#result == null")
 	public AbstractRequest findMockedEntities(final GenericRequest mockRequest) {
         final List<AbstractRequest> entities = requestEntityRepository.findByGroupIdAndMethod(mockRequest.getGroupId(), mockRequest.getMethod());
 
@@ -118,9 +132,16 @@ public class RequestService {
 			}
 		}
 
-		log.info(Strings.repeat("*", 25));
-		log.info("TOO BAD, NO MOCKS FOUND...");
-		log.info(Strings.repeat("*", 25));
+		if (log.isDebugEnabled()) {
+			final StringBuilder sb = new StringBuilder()
+					.append(Strings.repeat("*", 25))
+					.append("\n")
+					.append("TOO BAD, NO MOCKS FOUND...")
+					.append("\n")
+					.append(Strings.repeat("*", 25));
+
+			log.debug(sb.toString());
+		}
 
 		return null;
 	}

@@ -17,6 +17,7 @@ import org.mockenger.data.model.persistent.transformer.Transformer;
 import org.xmlunit.XMLUnitException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
@@ -46,9 +47,7 @@ public class RequestComparator {
 
     private final GenericRequest incoming;
 
-    private AbstractRequest persistent;
-
-	final private Printer printer;
+	private Printer printer = new DummyPrinter();
 
 
     /**
@@ -58,21 +57,24 @@ public class RequestComparator {
      */
     public RequestComparator(final GenericRequest incomingRequest) {
         this.incoming = incomingRequest;
-		this.printer = new Printer();
     }
 
 
     /**
      * Compares incoming with every passed persistent
      *
-     * @param persistentRequest
+     * @param persistent
      * @return
      */
-    public boolean compareTo(final AbstractRequest persistentRequest) {
-        if (persistentRequest != null) {
-            this.persistent = persistentRequest;
+    public boolean compareTo(final AbstractRequest persistent) {
+    	if (log.isDebugEnabled()) {
+			this.printer = new Printer();
+		}
 
-            if (comparePaths() && compareParameters() && compareHeaders() && compareBodies()) {
+        if (persistent != null) {
+            if (comparePaths(persistent) && compareParameters(persistent)
+					&& compareHeaders(persistent) && compareBodies(persistent)) {
+
 				printer.printMockFound();
 
                 return true;
@@ -90,12 +92,12 @@ public class RequestComparator {
 	 *
      * @return
      */
-    private boolean comparePaths() {
+    private boolean comparePaths(final AbstractRequest persistent) {
 		final Path persistentPath = getPath(persistent);
 		final List<Transformer> transformers = persistentPath.getTransformers();
 		final String incomingPath = applyPathTransformers(getPathValue(incoming), transformers);
 
-		printer.printPaths(incomingPath, persistentPath.getValue());
+		printer.addPaths(incomingPath, persistentPath.getValue());
 
         if (incomingPath.equals(persistentPath.getValue())) {
 			incoming.getPath().setValue(incomingPath);
@@ -112,14 +114,14 @@ public class RequestComparator {
 	 *
      * @return
      */
-    private boolean compareParameters() {
+    private boolean compareParameters(final AbstractRequest persistent) {
 		final Parameters persistParams = getParameters(persistent);
 		final Set<Pair> persistentParams = persistParams.getValues();
         Set<Pair> incomingParams = getParamValues(incoming);
 
         if (allNotEmpty(incomingParams, persistentParams)) {
             incomingParams = applyTransformers(incomingParams, persistParams.getTransformers());
-            printer.printParams(incomingParams, persistentParams);
+            printer.addParams(incomingParams, persistentParams);
 
             return containsEqualEntries(incomingParams, persistentParams);
         }
@@ -132,7 +134,7 @@ public class RequestComparator {
 	 *
      * @return
      */
-    private boolean compareHeaders() {
+    private boolean compareHeaders(final AbstractRequest persistent) {
 		final Headers persistHeaders = getHeaders(persistent);
 		final Set<Pair> persistHeaderValues = persistHeaders.getValues();
         final Set<Pair> incomingHeaders = getHeaderValues(incoming);
@@ -140,7 +142,7 @@ public class RequestComparator {
         if (allNotEmpty(incomingHeaders, persistHeaderValues)) {
             final Set<Pair> transformedHeaders = applyTransformers(incomingHeaders, persistHeaders.getTransformers());
 
-            printer.printHeaders(transformedHeaders, persistHeaderValues);
+            printer.addHeaders(transformedHeaders, persistHeaderValues);
 
             return containsAllIgnoreCase(transformedHeaders, persistHeaderValues);
         }
@@ -153,9 +155,9 @@ public class RequestComparator {
      *
      * @return
      */
-    private boolean compareBodies() {
+    private boolean compareBodies(final AbstractRequest persistent) {
         if (isHttpMethodWithBody(incoming)) {
-            return transformBodyAndCompare();
+            return transformBodyAndCompare(persistent);
         }
 
 		// For other methods we only compare checksums
@@ -164,20 +166,20 @@ public class RequestComparator {
 
 
 	private boolean compareCheckSums(final String checksum1, final String checksum2) {
-		printer.printChecksums(checksum1, checksum2);
+		printer.addChecksums(checksum1, checksum2);
 
 		return checksum1.equals(checksum2);
 	}
 
 
-	private boolean transformBodyAndCompare() {
+	private boolean transformBodyAndCompare(final AbstractRequest persistent) {
 		final Body persistBody = getBody(persistent);
 		final String persistBodyValue = getBodyValue(persistBody);
 
 		if (persistBodyValue.length() > 0) {
 			final String incomingBodyValue = applyBodyTransformers(getBodyValue(incoming), persistBody.getTransformers());
 
-			printer.printBodies(incomingBodyValue, persistBodyValue);
+			printer.addBodies(incomingBodyValue, persistBodyValue);
 
 			try {
 				if (isJson(getHeaders(incoming))) {
@@ -190,7 +192,7 @@ public class RequestComparator {
 			} catch (XMLUnitException | JSONException e) {
 				final String type = (e instanceof XMLUnitException ? "XML" : "JSON");
 
-				log.info("Treat objects as not equal because there is a failure during " + type + " objects creation");
+				log.debug("Treat objects as not equal because there is a failure during " + type + " objects creation");
 				log.debug("Unable to create " + type + " objects from provided strings", e);
 
 				return false;
@@ -262,40 +264,84 @@ public class RequestComparator {
 	/**
 	 * Local printer of the comparison steps
 	 */
-	private final class Printer {
+	private class Printer {
 
-        public void print(final String type, final String incomingData, final String persistentData) {
-            log.info(String.format("%s: in - %s | db - %s", type, incomingData, persistentData));
+		private StringBuilder sb;
+
+        protected void addToBuffer(final String type, final String incomingData, final String persistentData) {
+        	if (Objects.isNull(sb)) {
+				sb = new StringBuilder("\n");
+			}
+
+			sb.append(Strings.repeat("-", 25));
+			sb.append("\n");
+			sb.append(type);
+			sb.append("\n");
+			sb.append(Strings.repeat("-", 25));
+			sb.append("\n");
+			sb.append("in - ");
+			sb.append(incomingData);
+			sb.append("\n.....\n");
+			sb.append("db - ");
+			sb.append(persistentData);
+			sb.append("\n");
+        }
+
+        protected void print(final String result) {
+			if (Objects.nonNull(sb)) {
+				sb.append(Strings.repeat("*", 25));
+				sb.append("\n");
+				sb.append(result);
+				sb.append("\n");
+				sb.append(Strings.repeat("*", 25));
+				sb.append("\n");
+
+				log.debug(sb.toString());
+			}
         }
 
 		public void printMockFound() {
-			log.info(Strings.repeat("*", 25));
-			log.info("MOCK FOUND!");
-			log.info(Strings.repeat("*", 25));
+			print("MOCK FOUND!");
 		}
 
 		public void printSkipMock() {
-			log.info("Mocks are not NOT equal, skip");
+			print("NOT EQUAL, SKIP");
 		}
 
-		public void printPaths(final String path1, final String path2) {
-            print("PATHS", path1, path2);
+		public void addPaths(final String path1, final String path2) {
+            addToBuffer("PATHS", path1, path2);
         }
 
-		public void printParams(final Set<Pair> params1, final Set<Pair> params2) {
-            print("PARAMETERS", params1.toString(), params2.toString());
+		public void addParams(final Set<Pair> params1, final Set<Pair> params2) {
+            addToBuffer("PARAMETERS", params1.toString(), params2.toString());
         }
 
-		public void printHeaders(final Set<Pair> headers1, final Set<Pair> headers2) {
-            print("HEADERS", headers1.toString(), headers2.toString());
+		public void addHeaders(final Set<Pair> headers1, final Set<Pair> headers2) {
+            addToBuffer("HEADERS", headers1.toString(), headers2.toString());
         }
 
-		public void printBodies(final String body1, final String body2) {
-            print("BODIES", body1, body2);
+		public void addBodies(final String body1, final String body2) {
+            addToBuffer("BODIES", body1, body2);
         }
 
-		public void printChecksums(final String checksum1, final String checksum2) {
-            print("CHECKSUMS", checksum1, checksum2);
+		public void addChecksums(final String checksum1, final String checksum2) {
+            addToBuffer("CHECKSUMS", checksum1, checksum2);
         }
     }
+
+
+	/**
+	 * Dummy printer to prevent unnecessary objects creation
+	 */
+	private final class DummyPrinter extends Printer {
+		@Override
+		protected void addToBuffer(final String type, final String incomingData, final String persistentData) {
+			// Do nothing
+		}
+
+		@Override
+		protected void print(final String result) {
+			// Do nothing
+		}
+	}
 }

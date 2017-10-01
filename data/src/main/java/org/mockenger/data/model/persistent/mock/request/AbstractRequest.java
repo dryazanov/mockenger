@@ -17,7 +17,7 @@ import java.util.Date;
  */
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor
 @Document(collection = "request")
 public class AbstractRequest extends GenericRequest {

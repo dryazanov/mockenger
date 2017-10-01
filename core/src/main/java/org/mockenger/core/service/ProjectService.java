@@ -55,7 +55,8 @@ public class ProjectService {
 
 	@Eventable
 	public void removeAll() {
-		findAll().forEach(this::remove);
+    	groupService.removeAll();
+		projectEntityRepository.deleteAll();
 	}
 
 

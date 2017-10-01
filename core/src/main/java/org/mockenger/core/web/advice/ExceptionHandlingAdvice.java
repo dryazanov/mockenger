@@ -1,13 +1,12 @@
 package org.mockenger.core.web.advice;
 
+import lombok.extern.slf4j.Slf4j;
 import org.mockenger.core.web.exception.AccountDeleteException;
 import org.mockenger.core.web.exception.BadContentTypeException;
 import org.mockenger.core.web.exception.MockObjectNotCreatedException;
 import org.mockenger.core.web.exception.NotUniqueValueException;
 import org.mockenger.core.web.exception.ObjectNotFoundException;
 import org.mockenger.data.model.dto.ErrorMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,10 +16,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 /**
  * @author Dmitry Ryazanov
  */
+@Slf4j
 @RestControllerAdvice
 public class ExceptionHandlingAdvice {
-
-    private final Logger LOG = LoggerFactory.getLogger(ExceptionHandlingAdvice.class);
 
     /**
      * Handle errors about bad content-type in the header
@@ -31,7 +29,7 @@ public class ExceptionHandlingAdvice {
     @ExceptionHandler(BadContentTypeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
     public ErrorMessage handleBadContentTypeException(final BadContentTypeException ex) {
-        LOG.debug("BadContentTypeException has occurred", ex);
+        log.debug("BadContentTypeException has occurred", ex);
 
         return new ErrorMessage(ex.getMessage());
     }
@@ -45,7 +43,7 @@ public class ExceptionHandlingAdvice {
     @ExceptionHandler(NotUniqueValueException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
     public ErrorMessage handleNotUniqueKeyException(NotUniqueValueException ex) {
-        LOG.debug("NotUniqueValueException has occurred", ex);
+        log.debug("NotUniqueValueException has occurred", ex);
         return new ErrorMessage(ex.getMessage());
     }
 
@@ -62,7 +60,7 @@ public class ExceptionHandlingAdvice {
 				.append(ex.getClassName() != null ? ex.getClassName() : "Item")
 				.append(" with ID '").append(ex.getItemId()).append("' not found");
 
-        LOG.debug(sb.toString(), ex);
+        log.debug(sb.toString(), ex);
 
         return new ErrorMessage(sb.toString());
     }
@@ -70,7 +68,7 @@ public class ExceptionHandlingAdvice {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400
     public ErrorMessage handleHttpMessageNotReadableException(final HttpMessageNotReadableException ex) {
-        LOG.error("Object is not readable", ex);
+        log.error("Object is not readable", ex);
 
         return new ErrorMessage("Unable to process: request object is not readable");
     }
@@ -78,7 +76,7 @@ public class ExceptionHandlingAdvice {
     @ExceptionHandler(AccountDeleteException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400
     public ErrorMessage handleAccountDeleteException(final AccountDeleteException ex) {
-        LOG.error("", ex);
+        log.error("", ex);
 
         return new ErrorMessage(ex.getMessage());
     }
@@ -87,7 +85,7 @@ public class ExceptionHandlingAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400
     public ErrorMessage handleMockObjectNotCreatedException(final MockObjectNotCreatedException ex) {
         final String msg = "Failed to create instance of the mock-object";
-        LOG.error(msg, ex);
+        log.error(msg, ex);
 
         return new ErrorMessage(String.format("%s: %s", msg, ex.getMessage()));
     }
@@ -96,7 +94,7 @@ public class ExceptionHandlingAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
     public ErrorMessage handleIllegalArgumentException(final IllegalArgumentException ex) {
 		String message;
-        LOG.error("IllegalArgumentException has occurred", ex);
+        log.error("IllegalArgumentException has occurred", ex);
 
 		if (ex == null || ex.getMessage() == null) {
 			message = "Unable to process request";
@@ -114,7 +112,7 @@ public class ExceptionHandlingAdvice {
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)  // 500
     public ErrorMessage handleError500(final RuntimeException ex) {
-        LOG.error("RuntimeException has occurred", ex);
+        log.error("RuntimeException has occurred", ex);
 
         return getInternalServerErrorMessage();
     }
@@ -122,7 +120,7 @@ public class ExceptionHandlingAdvice {
 	@ExceptionHandler(Throwable.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)  // 500
 	public ErrorMessage handleError500(final Throwable ex) {
-		LOG.error("Throwable has occurred", ex);
+		log.error("Throwable has occurred", ex);
 
 		return getInternalServerErrorMessage();
 	}
