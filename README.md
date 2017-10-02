@@ -18,6 +18,10 @@
 java -jar mockenger-vX.X.jar --spring.config.location=/path/to/your/config/user.properties
 ```
 
+Introduction video is available!
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/ASAx_xByPY0/0.jpg)](https://www.youtube.com/watch?v=ASAx_xByPY0)
+
 ## For developers
 
 * [Install](https://nodejs.org) Node JS
