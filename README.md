@@ -12,7 +12,7 @@
 
 * [Install](https://www.mongodb.com) and run MongoDB
 * [Download](https://github.com/dryazanov/mockenger/releases/latest) runable jar
-* Create configuration file ([example](https://github.com/dryazanov/mockenger/blob/develop/examples/user.properties))
+* Create configuration file ([example](https://github.com/dryazanov/mockenger/blob/master/examples/user.properties))
 * Run!
 ```
 java -jar mockenger-vX.X.jar --spring.config.location=/path/to/your/config/user.properties
